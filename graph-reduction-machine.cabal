@@ -1,0 +1,30 @@
+cabal-version: 3.0
+name: graph-reduction-machine
+version: 0.1.0.0
+build-type: Custom
+synopsis: Lambda calculus graph reduction machine
+category: Compilers/Interpreters
+extra-source-files: grammar/Syntax.cf
+
+custom-setup
+  setup-depends:
+      base >=4.16 && <5
+    , Cabal >=3.0 && <3.17
+    , directory
+    , process
+
+library
+  hs-source-dirs: src
+  exposed-modules:
+      Syntax.Abs
+    , Syntax.Par
+    , Syntax.Print
+  other-modules: Syntax.Lex
+  build-depends:
+      base >=4.16 && <5
+    , array
+  build-tool-depends:
+      BNFC:bnfc >=2.9.6 && <2.10
+    , alex:alex >=3.2 && <4
+    , happy:happy >=2 && <3
+  default-language: Haskell2010

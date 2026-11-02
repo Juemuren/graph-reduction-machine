@@ -1,0 +1,28 @@
+-- Source of truth for the two textual input formats.
+-- BNFC can generate Haskell AST, lexer, parser, and pretty-printer from this file.
+
+entrypoints Exp, Graph;
+
+-- Lambda calculus: abstraction binds less tightly than application.
+-- Application associates to the left; parentheses override precedence.
+EAbs. Exp  ::= "\\" Name "->" Exp ;
+_.    Exp  ::= Exp1 ;
+EApp. Exp1 ::= Exp1 Exp2 ;
+_.    Exp1 ::= Exp2 ;
+EVar. Exp2 ::= Name ;
+_.    Exp2 ::= "(" Exp ")" ;
+
+token Name (lower (letter | digit | '_')*) ;
+
+-- A graph is a root pointer followed by node definitions.
+GGraph. Graph ::= "root" NodeId ";" [NodeDef] ;
+terminator nonempty NodeDef ";" ;
+
+NApp. NodeDef ::= NodeId "=" "app" NodeId NodeId ;
+NS.   NodeDef ::= NodeId "=" "S" ;
+NK.   NodeDef ::= NodeId "=" "K" ;
+NI.   NodeDef ::= NodeId "=" "I" ;
+
+token NodeId ('#' digit+) ;
+
+comment "--" ;
