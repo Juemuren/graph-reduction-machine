@@ -1,14 +1,17 @@
 -- Lambda expressions. BNFC generates the Lambda.* Haskell modules.
 entrypoints Exp;
 
--- Abstraction binds less tightly than application.
--- Application associates to the left; parentheses override precedence.
+-- Abstraction binds less tightly than addition, which binds less tightly
+-- than application. Addition and application associate to the left.
 EAbs. Exp  ::= "\\" Name "->" Exp ;
 _.    Exp  ::= Exp1 ;
-EApp. Exp1 ::= Exp1 Exp2 ;
+EAdd. Exp1 ::= Exp1 "+" Exp2 ;
 _.    Exp1 ::= Exp2 ;
-EVar. Exp2 ::= Name ;
-_.    Exp2 ::= "(" Exp ")" ;
+EApp. Exp2 ::= Exp2 Exp3 ;
+_.    Exp2 ::= Exp3 ;
+EVar. Exp3 ::= Name ;
+ENat. Exp3 ::= Integer ;
+_.    Exp3 ::= "(" Exp ")" ;
 
 token Name (lower (letter | digit | '_')*) ;
 comment "--" ;

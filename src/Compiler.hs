@@ -2,6 +2,7 @@
 module Compiler (compile, compileSource) where
 
 import Data.List (intercalate, nub)
+import Desugar (desugar)
 import qualified Graph.Abs as Graph
 import qualified Lambda.Abs as Lambda
 import qualified Lambda.Par as Lambda
@@ -14,9 +15,11 @@ compileSource source = Lambda.pExp (Lambda.myLexer source) >>= compile
 
 compile :: Lambda.Exp -> Either String Graph.Graph
 compile expression =
-  case nub (freeVariables [] expression) of
-    [] -> Right (Graph.GGraph (snd (emit 0 (toTerm expression))))
+  case nub (freeVariables [] pureExpression) of
+    [] -> Right (Graph.GGraph (snd (emit 0 (toTerm pureExpression))))
     names -> Left ("free variable(s): " ++ intercalate ", " (map nameText names))
+  where
+    pureExpression = desugar expression
 
 nameText :: Lambda.Name -> String
 nameText (Lambda.Name name) = name
@@ -28,12 +31,14 @@ freeVariables bound expression = case expression of
   Lambda.EApp function argument ->
     freeVariables bound function ++ freeVariables bound argument
   Lambda.EAbs name body -> freeVariables (name : bound) body
+  _ -> error "freeVariables: arithmetic syntax escaped desugaring"
 
 toTerm :: Lambda.Exp -> Term
 toTerm expression = case expression of
   Lambda.EVar name -> Var name
   Lambda.EApp function argument -> App (toTerm function) (toTerm argument)
   Lambda.EAbs name body -> abstract name (toTerm body)
+  _ -> error "toTerm: arithmetic syntax escaped desugaring"
 
 abstract :: Lambda.Name -> Term -> Term
 abstract name term

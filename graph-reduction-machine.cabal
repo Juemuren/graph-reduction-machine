@@ -23,6 +23,7 @@ library
   hs-source-dirs: src
   exposed-modules:
       Compiler
+    , Desugar
     , Lambda.Abs
     , Lambda.Par
     , Lambda.Print
