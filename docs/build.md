@@ -41,3 +41,14 @@ cabal build exe:lambda-to-graph
 ```sh
 cabal build exe:ski-interpreter
 ```
+
+## 构建处理器
+
+首先在项目中安装安装 Clash
+
+```sh
+cabal build clash-ghc
+cabal exec -- clash --version
+```
+
+<!-- TODO 处理器 -->
