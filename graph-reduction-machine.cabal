@@ -7,6 +7,10 @@ category: Compilers/Interpreters
 extra-source-files:
     grammar/Lambda.cf
   , grammar/Graph.cf
+  , test/cases/valid/*.lambda
+  , test/cases/valid/*.ski
+  , test/cases/errors/*.lambda
+  , test/cases/errors/*.error
 
 custom-setup
   setup-depends:
@@ -18,7 +22,8 @@ custom-setup
 library
   hs-source-dirs: src
   exposed-modules:
-      Lambda.Abs
+      Compiler
+    , Lambda.Abs
     , Lambda.Par
     , Lambda.Print
     , Graph.Abs
@@ -34,4 +39,23 @@ library
       BNFC:bnfc >=2.9.6 && <2.10
     , alex:alex >=3.2 && <4
     , happy:happy >=2 && <3
+  default-language: Haskell2010
+
+executable lambda-to-graph
+  hs-source-dirs: app
+  main-is: Main.hs
+  build-depends:
+      base >=4.16 && <5
+    , graph-reduction-machine
+  default-language: Haskell2010
+
+test-suite compiler-tests
+  type: exitcode-stdio-1.0
+  hs-source-dirs: test
+  main-is: Main.hs
+  build-depends:
+      base >=4.16 && <5
+    , directory
+    , filepath
+    , graph-reduction-machine
   default-language: Haskell2010

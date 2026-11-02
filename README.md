@@ -37,3 +37,15 @@
 ```sh
 cabal build
 ```
+
+## 使用
+
+### 编译 λ 表达式
+
+把 λ 表达式编译为 SKI 图
+
+```sh
+cabal exec -- lambda-to-graph example.lambda
+```
+
+不提供文件名时从标准输入读取，结果写到标准输出。
