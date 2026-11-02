@@ -1,5 +1,5 @@
 -- | Reduce a parsed SKI graph to normal form while preserving shared nodes.
-module Interpreter (interpretSource, interpret) where
+module Interpreter (interpretSource, interpret, decodeChurchSource, decodeChurch) where
 
 import Control.Monad (foldM, when)
 import Control.Monad.State.Strict (StateT, evalStateT, get, gets, lift, modify)
@@ -12,6 +12,7 @@ import qualified Graph.Par as Graph
 type Address = Int
 
 data Node = S | K | I | App Address Address | Indirect Address
+          | ProbeFunction | ProbeValue
 
 data Machine = Machine
   { heap :: IntMap.IntMap Node
@@ -31,6 +32,36 @@ interpret limit graph = do
   (initialHeap, root) <- loadGraph graph
   let machine = Machine initialHeap (IntMap.size initialHeap) 0 limit
   evalStateT (normalize root >> serialize root) machine
+
+-- | Apply a closed SKI term to symbolic f and x, then recognize f^n x.
+decodeChurchSource :: Int -> String -> Either String (Maybe Integer)
+decodeChurchSource limit source =
+  Graph.pGraph (Graph.myLexer source) >>= decodeChurch limit
+
+decodeChurch :: Int -> Graph.Graph -> Either String (Maybe Integer)
+decodeChurch limit graph = do
+  (initialHeap, root) <- loadGraph graph
+  let machine = Machine initialHeap (IntMap.size initialHeap) 0 limit
+  evalStateT (do
+    function <- allocate ProbeFunction
+    value <- allocate ProbeValue
+    appliedOnce <- allocate (App root function)
+    appliedTwice <- allocate (App appliedOnce value)
+    normalize appliedTwice
+    countApplications function value appliedTwice 0) machine
+
+countApplications :: Address -> Address -> Address -> Integer -> Run (Maybe Integer)
+countApplications function value address count = do
+  actual <- resolve address
+  if actual == value then pure (Just count) else do
+    node <- readNode actual
+    case node of
+      App headAddress argument -> do
+        actualHead <- resolve headAddress
+        if actualHead == function
+          then countApplications function value argument (count + 1)
+          else pure Nothing
+      _ -> pure Nothing
 
 loadGraph :: Graph.Graph -> Either String (IntMap.IntMap Node, Address)
 loadGraph (Graph.GGraph definitions) = do
@@ -194,3 +225,5 @@ serialize root = do
                     (nodeId (afterArgument Map.! argumentAddress))
               pure (afterArgument, definition : functionDefs ++ argumentDefs)
             Indirect _ -> lift (Left "internal error: unresolved indirection")
+            ProbeFunction -> lift (Left "internal error: cannot serialize probe function")
+            ProbeValue -> lift (Left "internal error: cannot serialize probe value")

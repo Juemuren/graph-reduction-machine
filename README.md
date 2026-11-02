@@ -53,8 +53,16 @@ cabal exec -- ski-interpreter example.ski
 
 不提供文件名时从标准输入读取。成功时结果写到标准输出；错误信息写到标准错误。
 
-默认最多进行 100000 次归约，可用 `--max-steps N` 调整
+默认最多进行 100000 次归约。规约次数超过限制会报错。可用 `--max-steps N` 调整规约限制
 
 ```sh
 cabal exec -- ski-interpreter --max-steps 1000000 example.ski
 ```
+
+默认不对结果进行丘奇解码。可用 `--decode-church` 尝试输出十进制整数
+
+```sh
+cabal exec -- ski-interpreter --decode-church example.ski
+```
+
+无法识别为丘奇数时会报错。解码过程也受 `--max-steps` 限制。
