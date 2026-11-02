@@ -1,17 +1,30 @@
 -- Lambda expressions with arithmetic syntax. BNFC generates ArithmeticLambda.*.
 entrypoints Exp;
 
--- Abstraction binds less tightly than addition, which binds less tightly
--- than application. Addition and application associate to the left.
+{-
+Precedence, from lowest to highest:
+
+- abstraction
+- addition
+- multiplication
+- exponentiation
+- application
+
+Exponentiation associates to the right; addition, multiplication and application to the left.
+-}
 EAbs. Exp  ::= "\\" Name "->" Exp ;
 _.    Exp  ::= Exp1 ;
 EAdd. Exp1 ::= Exp1 "+" Exp2 ;
 _.    Exp1 ::= Exp2 ;
-EApp. Exp2 ::= Exp2 Exp3 ;
+EMul. Exp2 ::= Exp2 "*" Exp3 ;
 _.    Exp2 ::= Exp3 ;
-EVar. Exp3 ::= Name ;
-ENat. Exp3 ::= Integer ;
-_.    Exp3 ::= "(" Exp ")" ;
+EPow. Exp3 ::= Exp4 "^" Exp3 ;
+_.    Exp3 ::= Exp4 ;
+EApp. Exp4 ::= Exp4 Exp5 ;
+_.    Exp4 ::= Exp5 ;
+EVar. Exp5 ::= Name ;
+ENat. Exp5 ::= Integer ;
+_.    Exp5 ::= "(" Exp ")" ;
 
 token Name (lower (letter | digit | '_')*) ;
 comment "--" ;

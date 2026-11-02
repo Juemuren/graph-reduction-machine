@@ -13,11 +13,20 @@ desugar expression = case expression of
   Arithmetic.ENat number -> churchNumeral number
   Arithmetic.EAdd left right ->
     Pure.EApp (Pure.EApp churchAdd (desugar left)) (desugar right)
+  Arithmetic.EMul left right ->
+    Pure.EApp (Pure.EApp churchMul (desugar left)) (desugar right)
+  Arithmetic.EPow base exponent ->
+    Pure.EApp (Pure.EApp churchPow (desugar base)) (desugar exponent)
 
 pureName :: Arithmetic.Name -> Pure.Name
 pureName (Arithmetic.Name name) = Pure.Name name
 
--- λf.λx.f^n x
+{-
+0: λf.λx.x
+1: λf.λx.f x
+2: λf.λx.f (f x)
+3: λf.λx.f (f (f x))
+-}
 churchNumeral :: Integer -> Pure.Exp
 churchNumeral number =
   Pure.EAbs f (Pure.EAbs x (go number (Pure.EVar x)))
@@ -39,3 +48,21 @@ churchAdd =
     apply = Pure.EApp
     body = apply (apply (Pure.EVar m) (Pure.EVar f))
                  (apply (apply (Pure.EVar n) (Pure.EVar f)) (Pure.EVar x))
+
+-- λm.λn.λf.m (n f)
+churchMul :: Pure.Exp
+churchMul =
+  Pure.EAbs m (Pure.EAbs n (Pure.EAbs f body))
+  where
+    m = Pure.Name "m"
+    n = Pure.Name "n"
+    f = Pure.Name "f"
+    body = Pure.EApp (Pure.EVar m) (Pure.EApp (Pure.EVar n) (Pure.EVar f))
+
+-- λm.λn.n m
+churchPow :: Pure.Exp
+churchPow =
+  Pure.EAbs m (Pure.EAbs n (Pure.EApp (Pure.EVar n) (Pure.EVar m)))
+  where
+    m = Pure.Name "m"
+    n = Pure.Name "n"
