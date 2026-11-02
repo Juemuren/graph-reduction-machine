@@ -33,3 +33,11 @@ Cabal 会调用 BNFC、Alex 和 Happy，根据语法定义分别生成并编译 
 ```sh
 cabal build exe:lambda-to-graph
 ```
+
+## 构建解释器
+
+构建解释器及其依赖
+
+```sh
+cabal build exe:ski-interpreter
+```

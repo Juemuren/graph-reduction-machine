@@ -29,6 +29,7 @@ library
   exposed-modules:
       Compiler
     , Desugar
+    , Interpreter
     , ArithmeticLambda.Abs
     , ArithmeticLambda.Par
     , PureLambda.Abs
@@ -43,6 +44,8 @@ library
   build-depends:
       base >=4.16 && <5
     , array
+    , containers
+    , mtl
   build-tool-depends:
       BNFC:bnfc >=2.9.6 && <2.10
     , alex:alex >=3.2 && <4
@@ -57,6 +60,14 @@ executable lambda-to-graph
     , graph-reduction-machine
   default-language: Haskell2010
 
+executable ski-interpreter
+  hs-source-dirs: app
+  main-is: SkiMain.hs
+  build-depends:
+      base >=4.16 && <5
+    , graph-reduction-machine
+  default-language: Haskell2010
+
 test-suite compiler-tests
   type: exitcode-stdio-1.0
   hs-source-dirs: test
@@ -65,5 +76,14 @@ test-suite compiler-tests
       base >=4.16 && <5
     , directory
     , filepath
+    , graph-reduction-machine
+  default-language: Haskell2010
+
+test-suite interpreter-tests
+  type: exitcode-stdio-1.0
+  hs-source-dirs: test
+  main-is: InterpreterMain.hs
+  build-depends:
+      base >=4.16 && <5
     , graph-reduction-machine
   default-language: Haskell2010
