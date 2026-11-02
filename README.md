@@ -28,7 +28,7 @@
 ## 语法
 
 - λ 表达式与 SKI 图的输入格式见 [syntax.md](docs/syntax.md)
-- 机器可读的定义见 [Syntax.cf](grammar/Syntax.cf)
+- 机器可读的定义见 [Lambda.cf](grammar/Lambda.cf) 和 [Graph.cf](grammar/Graph.cf)
 
 ## 构建
 

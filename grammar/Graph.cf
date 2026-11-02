@@ -1,0 +1,14 @@
+-- SKI graphs. Node #0 is the root by convention.
+entrypoints Graph;
+
+GGraph. Graph ::= [NodeDef] ;
+terminator nonempty NodeDef ";" ;
+
+-- The first referenced node is the function; the second is its argument.
+NApp. NodeDef ::= NodeId "=" NodeId NodeId ;
+NS.   NodeDef ::= NodeId "=" "S" ;
+NK.   NodeDef ::= NodeId "=" "K" ;
+NI.   NodeDef ::= NodeId "=" "I" ;
+
+token NodeId ('#' digit+) ;
+comment "--" ;
