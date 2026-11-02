@@ -15,11 +15,10 @@ import System.FilePath ((</>), dropExtension, takeExtension)
 
 main :: IO ()
 main = do
-  runCases "test/cases/compile" ".ski" checkPureGraph
-  runCases "test/cases/integration" ".ski" checkIntegrationGraph
-  runCases "test/cases/errors" ".error" checkError
-  runCases "test/cases/syntax" ".parsed.lambda" checkSyntax
-  runCases "test/cases/desugar" ".pure.lambda" checkDesugar
+  runCases "test/cases/compiler/compile" ".ski" checkPureGraph
+  runCases "test/cases/compiler/errors" ".error" checkError
+  runCases "test/cases/compiler/syntax" ".parsed.lambda" checkSyntax
+  runCases "test/cases/compiler/desugar" ".pure.lambda" checkDesugar
   putStrLn "compiler tests passed"
 
 runCases :: FilePath -> String -> (FilePath -> FilePath -> IO ()) -> IO ()
@@ -74,11 +73,6 @@ checkPureGraph sourcePath expectedPath = do
   source <- readFile sourcePath
   expression <- parsePure sourcePath source
   checkGraphResult sourcePath expectedPath (compile expression)
-
-checkIntegrationGraph :: FilePath -> FilePath -> IO ()
-checkIntegrationGraph sourcePath expectedPath = do
-  source <- readFile sourcePath
-  checkGraphResult sourcePath expectedPath (compileSource source)
 
 checkGraphResult :: FilePath -> FilePath -> Either String Graph.Graph -> IO ()
 checkGraphResult sourcePath expectedPath result = do

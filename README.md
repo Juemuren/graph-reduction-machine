@@ -48,7 +48,7 @@ cabal exec -- lambda-to-graph example.lambda
 将 `.ski` 文件中的 SKI 图归约为完整范式，结果仍是可解析的 `.ski` 图
 
 ```sh
-cabal exec -- ski-interpreter test/cases/compile/application.ski
+cabal exec -- ski-interpreter example.ski
 ```
 
 不提供文件名时从标准输入读取。成功时结果写到标准输出；错误信息写到标准错误。

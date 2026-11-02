@@ -10,11 +10,10 @@ cabal test compiler-tests
 
 测试用例使用静态文件对：
 
-- `test/cases/syntax` 比较输入与补全括号后的语法树
-- `test/cases/desugar` 比较带糖的 λ 表达式与展开后的纯 λ 表达式
-- `test/cases/compile` 比较纯 λ 表达式与编译得到的 SKI 图
-- `test/cases/integration` 比较带糖的 λ 表达式与展开并编译得到的 SKI 图
-- `test/cases/errors` 比较错误信息
+- `test/cases/compiler/syntax` 比较输入与补全括号后的语法树
+- `test/cases/compiler/desugar` 比较带糖的 λ 表达式与展开后的纯 λ 表达式
+- `test/cases/compiler/compile` 比较纯 λ 表达式与编译得到的 SKI 图
+- `test/cases/compiler/errors` 比较错误信息
 
 ## 测试解释器
 
@@ -29,3 +28,15 @@ cabal test interpreter-tests
 - `test/cases/interpreter/reduce` 比较 SKI 图与归约后的 SKI 图
 - `test/cases/interpreter/errors` 比较错误信息
 - `test/cases/interpreter/step-limit` 比较归约步数超限时的错误信息
+
+## 集成测试
+
+从带糖 λ 演算到规约后 SKI 图的集成测试
+
+```sh
+cabal test integration-tests
+```
+
+测试用例使用静态文件对：
+
+- `test/cases/integration` 比较带糖的 λ 表达式经过展开、编译、规约后得到的 SKI 图

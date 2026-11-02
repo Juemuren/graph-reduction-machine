@@ -8,8 +8,12 @@ extra-source-files:
     grammar/ArithmeticLambda.cf
   , grammar/PureLambda.cf
   , grammar/Graph.cf
-  , test/cases/compile/*.lambda
-  , test/cases/compile/*.ski
+  , test/cases/compiler/compile/*.lambda
+  , test/cases/compiler/compile/*.ski
+  , test/cases/compiler/desugar/*.lambda
+  , test/cases/compiler/errors/*.lambda
+  , test/cases/compiler/errors/*.error
+  , test/cases/compiler/syntax/*.lambda
   , test/cases/integration/*.lambda
   , test/cases/integration/*.ski
   , test/cases/interpreter/reduce/*.ski
@@ -17,10 +21,6 @@ extra-source-files:
   , test/cases/interpreter/errors/*.error
   , test/cases/interpreter/step-limit/*.ski
   , test/cases/interpreter/step-limit/*.error
-  , test/cases/errors/*.lambda
-  , test/cases/errors/*.error
-  , test/cases/syntax/*.lambda
-  , test/cases/desugar/*.lambda
 
 custom-setup
   setup-depends:
@@ -88,6 +88,17 @@ test-suite interpreter-tests
   type: exitcode-stdio-1.0
   hs-source-dirs: test
   main-is: InterpreterMain.hs
+  build-depends:
+      base >=4.16 && <5
+    , directory
+    , filepath
+    , graph-reduction-machine
+  default-language: Haskell2010
+
+test-suite integration-tests
+  type: exitcode-stdio-1.0
+  hs-source-dirs: test
+  main-is: IntegrationMain.hs
   build-depends:
       base >=4.16 && <5
     , directory
