@@ -104,7 +104,6 @@ checkError sourcePath expectedPath = do
                   ++ ", got " ++ show problem)
     Right _ -> die (sourcePath ++ ": expected compilation to fail")
 
--- Ignore platform line endings and a final newline in golden files.
 normalize :: String -> [String]
 normalize = lines . filter (/= '\r')
 

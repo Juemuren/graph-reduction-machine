@@ -12,6 +12,11 @@ extra-source-files:
   , test/cases/compile/*.ski
   , test/cases/integration/*.lambda
   , test/cases/integration/*.ski
+  , test/cases/interpreter/reduce/*.ski
+  , test/cases/interpreter/errors/*.ski
+  , test/cases/interpreter/errors/*.error
+  , test/cases/interpreter/step-limit/*.ski
+  , test/cases/interpreter/step-limit/*.error
   , test/cases/errors/*.lambda
   , test/cases/errors/*.error
   , test/cases/syntax/*.lambda
@@ -85,5 +90,7 @@ test-suite interpreter-tests
   main-is: InterpreterMain.hs
   build-depends:
       base >=4.16 && <5
+    , directory
+    , filepath
     , graph-reduction-machine
   default-language: Haskell2010
