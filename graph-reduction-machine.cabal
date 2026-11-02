@@ -14,13 +14,19 @@ extra-source-files:
   , test/cases/compiler/errors/*.lambda
   , test/cases/compiler/errors/*.error
   , test/cases/compiler/syntax/*.lambda
-  , test/cases/integration/*.lambda
-  , test/cases/integration/*.ski
+  , test/cases/integration/undecode/*.lambda
+  , test/cases/integration/undecode/*.ski
+  , test/cases/integration/decode/*.lambda
+  , test/cases/integration/decode/*.decoded
   , test/cases/interpreter/reduce/*.ski
   , test/cases/interpreter/errors/*.ski
   , test/cases/interpreter/errors/*.error
-  , test/cases/interpreter/step-limit/*.ski
-  , test/cases/interpreter/step-limit/*.error
+  , test/cases/interpreter/limit-errors/*.ski
+  , test/cases/interpreter/limit-errors/*.error
+  , test/cases/interpreter/decode-errors/*.ski
+  , test/cases/interpreter/decode-errors/*.error
+  , test/cases/interpreter/decode-limit-errors/*.ski
+  , test/cases/interpreter/decode-limit-errors/*.error
 
 custom-setup
   setup-depends:

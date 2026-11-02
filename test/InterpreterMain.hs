@@ -2,7 +2,7 @@ module Main (main) where
 
 import Data.List (isInfixOf, isSuffixOf, sort)
 import Graph.Print (printTree)
-import Interpreter (interpretSource)
+import Interpreter (decodeChurchSource, interpretSource)
 import System.Directory (listDirectory)
 import System.Exit (die)
 import System.FilePath ((</>), dropExtension, takeExtension)
@@ -11,7 +11,9 @@ main :: IO ()
 main = do
   runCases "test/cases/interpreter/reduce" ".reduced.ski" (checkResult 100)
   runCases "test/cases/interpreter/errors" ".error" (checkError 100)
-  runCases "test/cases/interpreter/step-limit" ".error" (checkError 1)
+  runCases "test/cases/interpreter/limit-errors" ".error" (checkError 1)
+  runCases "test/cases/interpreter/decode-errors" ".error" (checkDecodeError 100)
+  runCases "test/cases/interpreter/decode-limit-errors" ".error" (checkDecodeError 1)
   putStrLn "interpreter tests passed"
 
 runCases :: FilePath -> String -> (FilePath -> FilePath -> IO ()) -> IO ()
@@ -55,6 +57,20 @@ checkError limit sourcePath expectedPath = do
         else die (sourcePath ++ ": expected error containing " ++ show (trim expected)
                   ++ ", got " ++ problem)
     Right _ -> die (sourcePath ++ ": expected interpretation to fail")
+
+checkDecodeError :: Int -> FilePath -> FilePath -> IO ()
+checkDecodeError limit sourcePath expectedPath = do
+  source <- readFile sourcePath
+  expected <- readFile expectedPath
+  let result = decodeChurchSource limit source
+               >>= maybe (Left "not a Church numeral") Right
+  case result of
+    Left problem ->
+      if not (null (trim expected)) && trim expected `isInfixOf` problem
+        then putStrLn (sourcePath ++ ": PASS")
+        else die (sourcePath ++ ": expected error containing " ++ show (trim expected)
+                  ++ ", got " ++ problem)
+    Right number -> die (sourcePath ++ ": expected decoding to fail, got " ++ show number)
 
 normalize :: String -> [String]
 normalize = lines . filter (/= '\r')

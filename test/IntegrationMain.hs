@@ -3,14 +3,14 @@ module Main (main) where
 import Compiler (compileSource)
 import Data.List (sort)
 import Graph.Print (printTree)
-import Interpreter (interpret)
+import Interpreter (decodeChurch, interpret)
 import System.Directory (listDirectory)
 import System.Exit (die)
 import System.FilePath ((</>), dropExtension, takeExtension)
 
 main :: IO ()
 main = do
-  let directory = "test/cases/integration"
+  let directory = "test/cases/integration/undecode"
   entries <- listDirectory directory
   let sources = sort
         [ directory </> name
@@ -19,7 +19,28 @@ main = do
         ]
   if null sources then die ("no test cases in " ++ directory) else pure ()
   mapM_ check sources
+  let decodeDirectory = "test/cases/integration/decode"
+  decodeEntries <- listDirectory decodeDirectory
+  let decodeSources = sort
+        [ decodeDirectory </> name
+        | name <- decodeEntries
+        , takeExtension name == ".lambda"
+        ]
+  if null decodeSources then die ("no test cases in " ++ decodeDirectory) else pure ()
+  mapM_ checkDecoded decodeSources
   putStrLn "integration tests passed"
+
+checkDecoded :: FilePath -> IO ()
+checkDecoded sourcePath = do
+  let expectedPath = dropExtension sourcePath ++ ".decoded"
+  source <- readFile sourcePath
+  expected <- readFile expectedPath
+  case compileSource source >>= decodeChurch 100000 of
+    Left problem -> die (sourcePath ++ ": " ++ problem)
+    Right (Just actual) | show actual == unwords (words expected) ->
+      putStrLn (sourcePath ++ ": PASS")
+    Right actual -> die (sourcePath ++ ": expected " ++ show expected
+                         ++ ", decoded " ++ show actual)
 
 check :: FilePath -> IO ()
 check sourcePath = do
