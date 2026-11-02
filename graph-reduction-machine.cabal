@@ -5,12 +5,15 @@ build-type: Custom
 synopsis: Lambda calculus graph reduction machine
 category: Compilers/Interpreters
 extra-source-files:
-    grammar/Lambda.cf
+    grammar/ArithmeticLambda.cf
+  , grammar/PureLambda.cf
   , grammar/Graph.cf
   , test/cases/valid/*.lambda
   , test/cases/valid/*.ski
   , test/cases/errors/*.lambda
   , test/cases/errors/*.error
+  , test/cases/syntax/*.lambda
+  , test/cases/desugar/*.lambda
 
 custom-setup
   setup-depends:
@@ -24,14 +27,16 @@ library
   exposed-modules:
       Compiler
     , Desugar
-    , Lambda.Abs
-    , Lambda.Par
-    , Lambda.Print
+    , ArithmeticLambda.Abs
+    , ArithmeticLambda.Par
+    , PureLambda.Abs
+    , PureLambda.Par
     , Graph.Abs
     , Graph.Par
     , Graph.Print
   other-modules:
-      Lambda.Lex
+      ArithmeticLambda.Lex
+    , PureLambda.Lex
     , Graph.Lex
   build-depends:
       base >=4.16 && <5

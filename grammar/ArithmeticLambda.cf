@@ -1,4 +1,4 @@
--- Lambda expressions. BNFC generates the Lambda.* Haskell modules.
+-- Lambda expressions with arithmetic syntax. BNFC generates ArithmeticLambda.*.
 entrypoints Exp;
 
 -- Abstraction binds less tightly than addition, which binds less tightly

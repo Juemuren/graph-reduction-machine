@@ -16,9 +16,15 @@ cabal build
 cabal build
 ```
 
-Cabal 会调用 BNFC、Alex 和 Happy，根据 `grammar/Lambda.cf` 和 `grammar/Graph.cf` 分别生成并编译 Haskell 解析器。
+Cabal 会调用 BNFC、Alex 和 Happy，根据语法定义分别生成并编译 Haskell 解析器。生成的源码不需要进行手工修改，也不提交仓库。
 
-生成的源码分别保存在 `src/Lambda` 和 `src/Graph` 下，不需要进行手工修改，也不提交仓库。
+其中各语法源码生成的源码分别位于
+
+| 语法文件                      | 源码目录               |
+| ----------------------------- | ---------------------- |
+| `grammar/ArithmeticLambda.cf` | `src/ArithmeticLambda` |
+| `grammar/PureLambda.cf`       | `src/PureLambda`       |
+| `grammar/Graph.cf`            | `src/Graph`            |
 
 ## 构建编译器
 
@@ -26,10 +32,4 @@ Cabal 会调用 BNFC、Alex 和 Happy，根据 `grammar/Lambda.cf` 和 `grammar/
 
 ```sh
 cabal build exe:lambda-to-graph
-```
-
-测试所有用例
-
-```sh
-cabal test compiler-tests
 ```

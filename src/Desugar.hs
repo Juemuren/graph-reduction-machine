@@ -1,37 +1,41 @@
 -- | Expand arithmetic syntax into pure lambda calculus.
 module Desugar (desugar) where
 
-import qualified Lambda.Abs as Lambda
+import qualified ArithmeticLambda.Abs as Arithmetic
+import qualified PureLambda.Abs as Pure
 
-desugar :: Lambda.Exp -> Lambda.Exp
+desugar :: Arithmetic.Exp -> Pure.Exp
 desugar expression = case expression of
-  Lambda.EVar name -> Lambda.EVar name
-  Lambda.EApp function argument ->
-    Lambda.EApp (desugar function) (desugar argument)
-  Lambda.EAbs name body -> Lambda.EAbs name (desugar body)
-  Lambda.ENat number -> churchNumeral number
-  Lambda.EAdd left right ->
-    Lambda.EApp (Lambda.EApp churchAdd (desugar left)) (desugar right)
+  Arithmetic.EVar name -> Pure.EVar (pureName name)
+  Arithmetic.EApp function argument ->
+    Pure.EApp (desugar function) (desugar argument)
+  Arithmetic.EAbs name body -> Pure.EAbs (pureName name) (desugar body)
+  Arithmetic.ENat number -> churchNumeral number
+  Arithmetic.EAdd left right ->
+    Pure.EApp (Pure.EApp churchAdd (desugar left)) (desugar right)
+
+pureName :: Arithmetic.Name -> Pure.Name
+pureName (Arithmetic.Name name) = Pure.Name name
 
 -- λf.λx.f^n x
-churchNumeral :: Integer -> Lambda.Exp
+churchNumeral :: Integer -> Pure.Exp
 churchNumeral number =
-  Lambda.EAbs f (Lambda.EAbs x (go number (Lambda.EVar x)))
+  Pure.EAbs f (Pure.EAbs x (go number (Pure.EVar x)))
   where
-    f = Lambda.Name "f"
-    x = Lambda.Name "x"
+    f = Pure.Name "f"
+    x = Pure.Name "x"
     go 0 result = result
-    go remaining result = go (remaining - 1) (Lambda.EApp (Lambda.EVar f) result)
+    go remaining result = go (remaining - 1) (Pure.EApp (Pure.EVar f) result)
 
 -- λm.λn.λf.λx.m f (n f x)
-churchAdd :: Lambda.Exp
+churchAdd :: Pure.Exp
 churchAdd =
-  Lambda.EAbs m (Lambda.EAbs n (Lambda.EAbs f (Lambda.EAbs x body)))
+  Pure.EAbs m (Pure.EAbs n (Pure.EAbs f (Pure.EAbs x body)))
   where
-    m = Lambda.Name "m"
-    n = Lambda.Name "n"
-    f = Lambda.Name "f"
-    x = Lambda.Name "x"
-    apply = Lambda.EApp
-    body = apply (apply (Lambda.EVar m) (Lambda.EVar f))
-                 (apply (apply (Lambda.EVar n) (Lambda.EVar f)) (Lambda.EVar x))
+    m = Pure.Name "m"
+    n = Pure.Name "n"
+    f = Pure.Name "f"
+    x = Pure.Name "x"
+    apply = Pure.EApp
+    body = apply (apply (Pure.EVar m) (Pure.EVar f))
+                 (apply (apply (Pure.EVar n) (Pure.EVar f)) (Pure.EVar x))

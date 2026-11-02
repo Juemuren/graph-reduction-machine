@@ -4,43 +4,39 @@ module Compiler (compile, compileSource) where
 import Data.List (intercalate, nub)
 import Desugar (desugar)
 import qualified Graph.Abs as Graph
-import qualified Lambda.Abs as Lambda
-import qualified Lambda.Par as Lambda
+import qualified ArithmeticLambda.Par as Arithmetic
+import qualified PureLambda.Abs as Pure
 
-data Term = Var Lambda.Name | S | K | I | App Term Term
+data Term = Var Pure.Name | S | K | I | App Term Term
 
 -- | Parse and compile one expression. A pure SKI graph cannot contain free names.
 compileSource :: String -> Either String Graph.Graph
-compileSource source = Lambda.pExp (Lambda.myLexer source) >>= compile
+compileSource source = Arithmetic.pExp (Arithmetic.myLexer source) >>= compile . desugar
 
-compile :: Lambda.Exp -> Either String Graph.Graph
+compile :: Pure.Exp -> Either String Graph.Graph
 compile expression =
-  case nub (freeVariables [] pureExpression) of
-    [] -> Right (Graph.GGraph (snd (emit 0 (toTerm pureExpression))))
+  case nub (freeVariables [] expression) of
+    [] -> Right (Graph.GGraph (snd (emit 0 (toTerm expression))))
     names -> Left ("free variable(s): " ++ intercalate ", " (map nameText names))
-  where
-    pureExpression = desugar expression
 
-nameText :: Lambda.Name -> String
-nameText (Lambda.Name name) = name
+nameText :: Pure.Name -> String
+nameText (Pure.Name name) = name
 
-freeVariables :: [Lambda.Name] -> Lambda.Exp -> [Lambda.Name]
+freeVariables :: [Pure.Name] -> Pure.Exp -> [Pure.Name]
 freeVariables bound expression = case expression of
-  Lambda.EVar name | name `elem` bound -> []
+  Pure.EVar name | name `elem` bound -> []
                    | otherwise -> [name]
-  Lambda.EApp function argument ->
+  Pure.EApp function argument ->
     freeVariables bound function ++ freeVariables bound argument
-  Lambda.EAbs name body -> freeVariables (name : bound) body
-  _ -> error "freeVariables: arithmetic syntax escaped desugaring"
+  Pure.EAbs name body -> freeVariables (name : bound) body
 
-toTerm :: Lambda.Exp -> Term
+toTerm :: Pure.Exp -> Term
 toTerm expression = case expression of
-  Lambda.EVar name -> Var name
-  Lambda.EApp function argument -> App (toTerm function) (toTerm argument)
-  Lambda.EAbs name body -> abstract name (toTerm body)
-  _ -> error "toTerm: arithmetic syntax escaped desugaring"
+  Pure.EVar name -> Var name
+  Pure.EApp function argument -> App (toTerm function) (toTerm argument)
+  Pure.EAbs name body -> abstract name (toTerm body)
 
-abstract :: Lambda.Name -> Term -> Term
+abstract :: Pure.Name -> Term -> Term
 abstract name term
   | not (occurs name term) = App K term
 abstract name (Var _) = I
@@ -48,7 +44,7 @@ abstract name (App function argument) =
   App (App S (abstract name function)) (abstract name argument)
 abstract _ _ = error "abstract: variable occurrence in a combinator"
 
-occurs :: Lambda.Name -> Term -> Bool
+occurs :: Pure.Name -> Term -> Bool
 occurs name term = case term of
   Var other -> name == other
   App function argument -> occurs name function || occurs name argument

@@ -1,9 +1,10 @@
-# 输入语法
+# 语法
 
-有两种输入：
+项目涉及多种语法：
 
-- 给编译器的 **λ 表达式**，由 [Lambda.cf](../grammar/Lambda.cf) 定义
-- 给图归约机的 **SKI 图**，由 [Graph.cf](../grammar/Graph.cf) 定义
+- 给编译器的源代码，为 **带算术语法糖的 λ 表达式**，由 [ArithmeticLambda.cf](../grammar/ArithmeticLambda.cf) 定义
+- 丘奇编码后的中间表示，为 **纯 λ 表达式**，由 [PureLambda.cf](../grammar/PureLambda.cf) 定义
+- 给图归约机的机器码，为 **SKI 图**，由 [Graph.cf](../grammar/Graph.cf) 定义
 
 ## λ 表达式
 
@@ -41,11 +42,11 @@
 - 自然数表示为 `0`、`1`、`2`，要求是非负十进制整数
 - 加法表示为 `a + b`，从左向右结合
 
-结合优先级规则为：
+解析优先级从高到低为：
 
 1. 函数应用
 2. 加法
-3. 函数定义
+3. λ 抽象
 
 因此 `f 1 + 2` 等价于 `(f 1) + 2`；`\x -> x + 1` 等价于 `\x -> (x + 1)`
 

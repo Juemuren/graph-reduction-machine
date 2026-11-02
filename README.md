@@ -11,7 +11,7 @@
 
 ### 编译器
 
-使用 Haskell 编写编译器，把 λ 表达式 变成 SKI 组合子图。
+使用 Haskell 编写编译器，先把算术语法糖展开为纯 λ 表达式，再编译成 SKI 组合子图。
 
 ### 软件解释器
 
@@ -25,18 +25,11 @@
 
 最后根据 iCESugar 的说明 <https://github.com/wuxx/icesugar> 进行综合、布局布线、烧写。
 
-## 语法
+## 文档
 
-- λ 表达式与 SKI 图的输入格式见 [syntax.md](docs/syntax.md)
-- 机器可读的定义见 [Lambda.cf](grammar/Lambda.cf) 和 [Graph.cf](grammar/Graph.cf)
-
-## 构建
-
-使用 Cabal 构建
-
-```sh
-cabal build
-```
+- 语法文档为 [syntax.md](docs/syntax.md)
+- 构建文档为 [build.md](docs/build.md)
+- 测试文档为 [test.md](docs/test.md)
 
 ## 使用
 
