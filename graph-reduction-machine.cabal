@@ -83,6 +83,7 @@ test-suite compiler-tests
   type: exitcode-stdio-1.0
   hs-source-dirs: test
   main-is: Main.hs
+  other-modules: TestSupport
   build-depends:
       base >=4.16 && <5
     , directory
@@ -94,6 +95,7 @@ test-suite interpreter-tests
   type: exitcode-stdio-1.0
   hs-source-dirs: test
   main-is: InterpreterMain.hs
+  other-modules: TestSupport
   build-depends:
       base >=4.16 && <5
     , directory
@@ -105,6 +107,7 @@ test-suite integration-tests
   type: exitcode-stdio-1.0
   hs-source-dirs: test
   main-is: IntegrationMain.hs
+  other-modules: TestSupport
   build-depends:
       base >=4.16 && <5
     , directory

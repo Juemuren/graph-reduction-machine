@@ -3,35 +3,19 @@ module Main (main) where
 import qualified ArithmeticLambda.Abs as Arithmetic
 import qualified ArithmeticLambda.Par as Arithmetic
 import Compiler (compile, compileSource)
-import Data.List (isInfixOf, isSuffixOf, sort)
 import Desugar (desugar)
-import qualified Graph.Abs as Graph
-import Graph.Print (printTree)
 import qualified PureLambda.Abs as Pure
 import qualified PureLambda.Par as Pure
-import System.Directory (listDirectory)
 import System.Exit (die)
-import System.FilePath ((</>), dropExtension, takeExtension)
+import TestSupport (assertExpectedError, assertGraphResult, runCases)
 
 main :: IO ()
 main = do
-  runCases "test/cases/compiler/compile" ".ski" checkPureGraph
-  runCases "test/cases/compiler/errors" ".error" checkError
-  runCases "test/cases/compiler/syntax" ".parsed.lambda" checkSyntax
-  runCases "test/cases/compiler/desugar" ".pure.lambda" checkDesugar
+  runCases "test/cases/compiler/compile" ".lambda" ".ski" checkPureGraph
+  runCases "test/cases/compiler/syntax" ".lambda" ".parsed.lambda" checkSyntax
+  runCases "test/cases/compiler/desugar" ".lambda" ".pure.lambda" checkDesugar
+  runCases "test/cases/compiler/errors" ".lambda" ".error" checkError
   putStrLn "compiler tests passed"
-
-runCases :: FilePath -> String -> (FilePath -> FilePath -> IO ()) -> IO ()
-runCases directory expectedSuffix check = do
-  entries <- listDirectory directory
-  let sources = sort
-        [ directory </> name
-        | name <- entries
-        , takeExtension name == ".lambda"
-        , not (expectedSuffix `isSuffixOf` name)
-        ]
-  if null sources then die ("no test cases in " ++ directory) else pure ()
-  mapM_ (\source -> check source (dropExtension source ++ expectedSuffix)) sources
 
 parseArithmetic :: FilePath -> String -> IO Arithmetic.Exp
 parseArithmetic path source =
@@ -72,34 +56,11 @@ checkPureGraph :: FilePath -> FilePath -> IO ()
 checkPureGraph sourcePath expectedPath = do
   source <- readFile sourcePath
   expression <- parsePure sourcePath source
-  checkGraphResult sourcePath expectedPath (compile expression)
-
-checkGraphResult :: FilePath -> FilePath -> Either String Graph.Graph -> IO ()
-checkGraphResult sourcePath expectedPath result = do
-  expected <- readFile expectedPath
-  case result of
-    Left problem -> die (sourcePath ++ ": " ++ problem)
-    Right graph -> do
-      let actual = printTree graph
-      if normalize actual == normalize expected
-        then putStrLn (sourcePath ++ ": PASS")
-        else die (sourcePath ++ ": graph differs from " ++ expectedPath
-                  ++ "\nexpected:\n" ++ expected ++ "\nactual:\n" ++ actual)
+  _ <- assertGraphResult sourcePath expectedPath (compile expression)
+  putStrLn (sourcePath ++ ": PASS")
 
 checkError :: FilePath -> FilePath -> IO ()
 checkError sourcePath expectedPath = do
   source <- readFile sourcePath
-  expected <- readFile expectedPath
-  case compileSource source of
-    Left problem ->
-      if not (null (trim expected)) && trim expected `isInfixOf` problem
-        then putStrLn (sourcePath ++ ": PASS")
-        else die (sourcePath ++ ": expected error containing " ++ show (trim expected)
-                  ++ ", got " ++ show problem)
-    Right _ -> die (sourcePath ++ ": expected compilation to fail")
-
-normalize :: String -> [String]
-normalize = lines . filter (/= '\r')
-
-trim :: String -> String
-trim = unwords . words
+  assertExpectedError sourcePath expectedPath (compileSource source)
+  putStrLn (sourcePath ++ ": PASS")

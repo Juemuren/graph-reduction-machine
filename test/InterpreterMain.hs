@@ -1,79 +1,40 @@
 module Main (main) where
 
-import Data.List (isInfixOf, isSuffixOf, sort)
 import Graph.Print (printTree)
 import Interpreter (decodeChurchSource, interpretSource)
-import System.Directory (listDirectory)
 import System.Exit (die)
-import System.FilePath ((</>), dropExtension, takeExtension)
+import TestSupport (assertExpectedError, assertGraphResult, normalizeGraph, runCases)
 
 main :: IO ()
 main = do
-  runCases "test/cases/interpreter/reduce" ".reduced.ski" (checkResult 100)
-  runCases "test/cases/interpreter/errors" ".error" (checkError 100)
-  runCases "test/cases/interpreter/limit-errors" ".error" (checkError 1)
-  runCases "test/cases/interpreter/decode-errors" ".error" (checkDecodeError 100)
-  runCases "test/cases/interpreter/decode-limit-errors" ".error" (checkDecodeError 1)
+  runCases "test/cases/interpreter/reduce" ".ski" ".reduced.ski" (checkResult 100)
+  runCases "test/cases/interpreter/errors" ".ski" ".error" (checkError 100)
+  runCases "test/cases/interpreter/limit-errors" ".ski" ".error" (checkError 1)
+  runCases "test/cases/interpreter/decode-errors" ".ski" ".error" (checkDecodeError 100)
+  runCases "test/cases/interpreter/decode-limit-errors" ".ski" ".error" (checkDecodeError 1)
   putStrLn "interpreter tests passed"
-
-runCases :: FilePath -> String -> (FilePath -> FilePath -> IO ()) -> IO ()
-runCases directory expectedSuffix check = do
-  entries <- listDirectory directory
-  let sources = sort
-        [ directory </> name
-        | name <- entries
-        , takeExtension name == ".ski"
-        , not (".reduced.ski" `isSuffixOf` name)
-        ]
-  if null sources then die ("no test cases in " ++ directory) else pure ()
-  mapM_ (\source -> check source (dropExtension source ++ expectedSuffix)) sources
 
 checkResult :: Int -> FilePath -> FilePath -> IO ()
 checkResult limit sourcePath expectedPath = do
   source <- readFile sourcePath
-  expected <- readFile expectedPath
-  case interpretSource limit source of
-    Left problem -> die (sourcePath ++ ": " ++ problem)
-    Right graph -> do
-      let actual = printTree graph
-      if normalize actual /= normalize expected
-        then die (sourcePath ++ ": graph differs from " ++ expectedPath
-                  ++ "\nexpected:\n" ++ expected ++ "\nactual:\n" ++ actual)
-        else case interpretSource limit actual of
-          Left problem -> die (sourcePath ++ ": output cannot be parsed: " ++ problem)
-          Right again ->
-            if normalize (printTree again) == normalize actual
-              then putStrLn (sourcePath ++ ": PASS")
-              else die (sourcePath ++ ": output changes on second interpretation")
+  actual <- assertGraphResult sourcePath expectedPath (interpretSource limit source)
+  case interpretSource limit actual of
+    Left problem -> die (sourcePath ++ ": output cannot be parsed: " ++ problem)
+    Right again ->
+      if normalizeGraph (printTree again) == normalizeGraph actual
+        then putStrLn (sourcePath ++ ": PASS")
+        else die (sourcePath ++ ": output changes on second interpretation")
 
 checkError :: Int -> FilePath -> FilePath -> IO ()
 checkError limit sourcePath expectedPath = do
   source <- readFile sourcePath
-  expected <- readFile expectedPath
-  case interpretSource limit source of
-    Left problem ->
-      if not (null (trim expected)) && trim expected `isInfixOf` problem
-        then putStrLn (sourcePath ++ ": PASS")
-        else die (sourcePath ++ ": expected error containing " ++ show (trim expected)
-                  ++ ", got " ++ problem)
-    Right _ -> die (sourcePath ++ ": expected interpretation to fail")
+  assertExpectedError sourcePath expectedPath (interpretSource limit source)
+  putStrLn (sourcePath ++ ": PASS")
 
 checkDecodeError :: Int -> FilePath -> FilePath -> IO ()
 checkDecodeError limit sourcePath expectedPath = do
   source <- readFile sourcePath
-  expected <- readFile expectedPath
   let result = decodeChurchSource limit source
                >>= maybe (Left "not a Church numeral") Right
-  case result of
-    Left problem ->
-      if not (null (trim expected)) && trim expected `isInfixOf` problem
-        then putStrLn (sourcePath ++ ": PASS")
-        else die (sourcePath ++ ": expected error containing " ++ show (trim expected)
-                  ++ ", got " ++ problem)
-    Right number -> die (sourcePath ++ ": expected decoding to fail, got " ++ show number)
-
-normalize :: String -> [String]
-normalize = lines . filter (/= '\r')
-
-trim :: String -> String
-trim = unwords . words
+  assertExpectedError sourcePath expectedPath result
+  putStrLn (sourcePath ++ ": PASS")
