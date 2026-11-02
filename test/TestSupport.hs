@@ -1,5 +1,6 @@
 module TestSupport (runCases, assertGraphResult, assertExpectedError, normalizeGraph) where
 
+import Control.Monad (when)
 import Data.List (isInfixOf, isSuffixOf, sort)
 import qualified Graph.Abs as Graph
 import Graph.Print (printTree)
@@ -18,7 +19,7 @@ runCases directory sourceSuffix expectedSuffix check = do
           , takeExtension name == sourceSuffix
           , not (expectedSuffix `isSuffixOf` name)
           ]
-  if null sources then die ("no test cases in " ++ directory) else pure ()
+  when (null sources) $ die ("no test cases in " ++ directory)
   mapM_ (\source -> check source (dropExtension source ++ expectedSuffix)) sources
 
 assertGraphResult ::
