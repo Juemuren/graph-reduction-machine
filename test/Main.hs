@@ -48,9 +48,16 @@ checkDesugar sourcePath expectedPath = do
   let actualExpression = desugar expression
   if actualExpression == expectedExpression
     then putStrLn (sourcePath ++ ": PASS")
-    else die (sourcePath ++ ": Church encoding differs from " ++ expectedPath
-              ++ "\nexpected:\n" ++ show expectedExpression
-              ++ "\nactual:\n" ++ show actualExpression)
+    else
+      die
+        ( sourcePath
+            ++ ": Church encoding differs from "
+            ++ expectedPath
+            ++ "\nexpected:\n"
+            ++ show expectedExpression
+            ++ "\nactual:\n"
+            ++ show actualExpression
+        )
 
 checkPureGraph :: FilePath -> FilePath -> IO ()
 checkPureGraph sourcePath expectedPath = do

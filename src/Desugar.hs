@@ -30,39 +30,41 @@ pureName (Arithmetic.Name name) = Pure.Name name
 churchNumeral :: Integer -> Pure.Exp
 churchNumeral number =
   Pure.EAbs f (Pure.EAbs x (go number (Pure.EVar x)))
-  where
-    f = Pure.Name "f"
-    x = Pure.Name "x"
-    go 0 result = result
-    go remaining result = go (remaining - 1) (Pure.EApp (Pure.EVar f) result)
+ where
+  f = Pure.Name "f"
+  x = Pure.Name "x"
+  go 0 result = result
+  go remaining result = go (remaining - 1) (Pure.EApp (Pure.EVar f) result)
 
 -- λm.λn.λf.λx.m f (n f x)
 churchAdd :: Pure.Exp
 churchAdd =
   Pure.EAbs m (Pure.EAbs n (Pure.EAbs f (Pure.EAbs x body)))
-  where
-    m = Pure.Name "m"
-    n = Pure.Name "n"
-    f = Pure.Name "f"
-    x = Pure.Name "x"
-    apply = Pure.EApp
-    body = apply (apply (Pure.EVar m) (Pure.EVar f))
-                 (apply (apply (Pure.EVar n) (Pure.EVar f)) (Pure.EVar x))
+ where
+  m = Pure.Name "m"
+  n = Pure.Name "n"
+  f = Pure.Name "f"
+  x = Pure.Name "x"
+  apply = Pure.EApp
+  body =
+    apply
+      (apply (Pure.EVar m) (Pure.EVar f))
+      (apply (apply (Pure.EVar n) (Pure.EVar f)) (Pure.EVar x))
 
 -- λm.λn.λf.m (n f)
 churchMul :: Pure.Exp
 churchMul =
   Pure.EAbs m (Pure.EAbs n (Pure.EAbs f body))
-  where
-    m = Pure.Name "m"
-    n = Pure.Name "n"
-    f = Pure.Name "f"
-    body = Pure.EApp (Pure.EVar m) (Pure.EApp (Pure.EVar n) (Pure.EVar f))
+ where
+  m = Pure.Name "m"
+  n = Pure.Name "n"
+  f = Pure.Name "f"
+  body = Pure.EApp (Pure.EVar m) (Pure.EApp (Pure.EVar n) (Pure.EVar f))
 
 -- λm.λn.n m
 churchPow :: Pure.Exp
 churchPow =
   Pure.EAbs m (Pure.EAbs n (Pure.EApp (Pure.EVar n) (Pure.EVar m)))
-  where
-    m = Pure.Name "m"
-    n = Pure.Name "n"
+ where
+  m = Pure.Name "m"
+  n = Pure.Name "n"

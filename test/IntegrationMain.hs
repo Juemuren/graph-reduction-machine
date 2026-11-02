@@ -14,8 +14,11 @@ main = do
 checkUndecode :: FilePath -> FilePath -> IO ()
 checkUndecode sourcePath expectedPath = do
   source <- readFile sourcePath
-  _ <- assertGraphResult sourcePath expectedPath
-         (compileSource source >>= interpret 100000)
+  _ <-
+    assertGraphResult
+      sourcePath
+      expectedPath
+      (compileSource source >>= interpret 100000)
   putStrLn (sourcePath ++ ": PASS")
 
 checkDecoded :: FilePath -> FilePath -> IO ()
@@ -24,7 +27,14 @@ checkDecoded sourcePath expectedPath = do
   expected <- readFile expectedPath
   case compileSource source >>= decodeChurch 100000 of
     Left problem -> die (sourcePath ++ ": " ++ problem)
-    Right (Just actual) | show actual == unwords (words expected) ->
-      putStrLn (sourcePath ++ ": PASS")
-    Right actual -> die (sourcePath ++ ": expected " ++ show expected
-                         ++ ", decoded " ++ show actual)
+    Right (Just actual)
+      | show actual == unwords (words expected) ->
+          putStrLn (sourcePath ++ ": PASS")
+    Right actual ->
+      die
+        ( sourcePath
+            ++ ": expected "
+            ++ show expected
+            ++ ", decoded "
+            ++ show actual
+        )

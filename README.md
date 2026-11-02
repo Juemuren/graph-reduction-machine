@@ -11,25 +11,35 @@
 
 ### 编译器
 
-使用 Haskell 编写编译器，先把算术语法糖展开为纯 λ 表达式，再编译成 SKI 组合子图。
+使用 Haskell 编写 λ 表达式编译器。
+
+编译器先把带算术语法糖的 λ表达式展开为纯 λ 表达式，再编译成 SKI 组合子图。
 
 ### 软件解释器
 
-使用 Haskell 编写 SKI 图归约解释器，用于开发、测试和验证，并作为硬件处理器的参考实现。
+使用 Haskell 编写 SKI 图归约解释器。
+
+软件解释器用于开发、测试和验证，并作为硬件处理器的参考实现。
 
 ### 硬件处理器
 
-使用的 FPGA 为 [iCESugar](https://github.com/wuxx/icesugar)。
+使用的 FPGA 为 iCESugar。
 
-可以复用 Haskell 软件解释器的部分逻辑，用 [Clash](https://github.com/clash-lang/clash-compiler) 编写硬件实现，并编译到 Verilog。
+先由 Clash 把 Haskell 编译到 Verilog，再对 iCESugar 进行综合、布局布线、烧写。
 
-最后根据 iCESugar 的说明 <https://github.com/wuxx/icesugar> 进行综合、布局布线、烧写。
+Clash 部分可以复用 Haskell 软件解释器的相同逻辑，iCESugar 部分需要参考硬件说明。
+
+相关链接：
+
+- Clash：<https://github.com/clash-lang/clash-compiler>
+- iCESugar：<https://github.com/wuxx/icesugar>
 
 ## 文档
 
 - 语法文档为 [syntax.md](docs/syntax.md)
 - 构建文档为 [build.md](docs/build.md)
 - 测试文档为 [test.md](docs/test.md)
+- 代码质量文档为 [quality.md](docs/quality.md)
 
 ## 使用
 

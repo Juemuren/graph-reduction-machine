@@ -11,8 +11,14 @@ import qualified Graph.Par as Graph
 
 type Address = Int
 
-data Node = S | K | I | App Address Address | Indirect Address
-          | ProbeFunction | ProbeValue
+data Node
+  = S
+  | K
+  | I
+  | App Address Address
+  | Indirect Address
+  | ProbeFunction
+  | ProbeValue
 
 data Machine = Machine
   { heap :: IntMap.IntMap Node
@@ -42,26 +48,32 @@ decodeChurch :: Int -> Graph.Graph -> Either String (Maybe Integer)
 decodeChurch limit graph = do
   (initialHeap, root) <- loadGraph graph
   let machine = Machine initialHeap (IntMap.size initialHeap) 0 limit
-  evalStateT (do
-    function <- allocate ProbeFunction
-    value <- allocate ProbeValue
-    appliedOnce <- allocate (App root function)
-    appliedTwice <- allocate (App appliedOnce value)
-    normalize appliedTwice
-    countApplications function value appliedTwice 0) machine
+  evalStateT
+    ( do
+        function <- allocate ProbeFunction
+        value <- allocate ProbeValue
+        appliedOnce <- allocate (App root function)
+        appliedTwice <- allocate (App appliedOnce value)
+        normalize appliedTwice
+        countApplications function value appliedTwice 0
+    )
+    machine
 
-countApplications :: Address -> Address -> Address -> Integer -> Run (Maybe Integer)
+countApplications ::
+  Address -> Address -> Address -> Integer -> Run (Maybe Integer)
 countApplications function value address count = do
   actual <- resolve address
-  if actual == value then pure (Just count) else do
-    node <- readNode actual
-    case node of
-      App headAddress argument -> do
-        actualHead <- resolve headAddress
-        if actualHead == function
-          then countApplications function value argument (count + 1)
-          else pure Nothing
-      _ -> pure Nothing
+  if actual == value
+    then pure (Just count)
+    else do
+      node <- readNode actual
+      case node of
+        App headAddress argument -> do
+          actualHead <- resolve headAddress
+          if actualHead == function
+            then countApplications function value argument (count + 1)
+            else pure Nothing
+        _ -> pure Nothing
 
 loadGraph :: Graph.Graph -> Either String (IntMap.IntMap Node, Address)
 loadGraph (Graph.GGraph definitions) = do
@@ -77,24 +89,24 @@ loadGraph (Graph.GGraph definitions) = do
       rootAddress = addresses Map.! "#0"
   checkAcyclic initialHeap rootAddress
   pure (initialHeap, rootAddress)
-  where
-    addDefinition table definition =
-      let name = definitionName definition
-      in if Map.member name table
-         then Left ("duplicate node " ++ name)
-         else Right (Map.insert name definition table)
+ where
+  addDefinition table definition =
+    let name = definitionName definition
+     in if Map.member name table
+          then Left ("duplicate node " ++ name)
+          else Right (Map.insert name definition table)
 
-    resolveDefinition addresses (address, definition) = do
-      node <- case definition of
-        Graph.NS _ -> Right S
-        Graph.NK _ -> Right K
-        Graph.NI _ -> Right I
-        Graph.NApp _ function argument ->
-          App <$> findReference addresses function <*> findReference addresses argument
-      pure (address, node)
+  resolveDefinition addresses (address, definition) = do
+    node <- case definition of
+      Graph.NS _ -> Right S
+      Graph.NK _ -> Right K
+      Graph.NI _ -> Right I
+      Graph.NApp _ function argument ->
+        App <$> findReference addresses function <*> findReference addresses argument
+    pure (address, node)
 
-    findReference addresses (Graph.NodeId name) =
-      maybe (Left ("undefined node " ++ name)) Right (Map.lookup name addresses)
+  findReference addresses (Graph.NodeId name) =
+    maybe (Left ("undefined node " ++ name)) Right (Map.lookup name addresses)
 
 definitionName :: Graph.NodeDef -> String
 definitionName definition = case definition of
@@ -102,23 +114,24 @@ definitionName definition = case definition of
   Graph.NK node -> name node
   Graph.NI node -> name node
   Graph.NApp node _ _ -> name node
-  where name (Graph.NodeId value) = value
+ where
+  name (Graph.NodeId value) = value
 
 checkAcyclic :: IntMap.IntMap Node -> Address -> Either String ()
 checkAcyclic nodes root = do
   _ <- visit Set.empty Set.empty root
   pure ()
-  where
-    visit active done address
-      | Set.member address active = Left "cycle reachable from #0"
-      | Set.member address done = Right done
-      | otherwise = case nodes IntMap.! address of
-          App function argument -> do
-            let active' = Set.insert address active
-            done' <- visit active' done function
-            done'' <- visit active' done' argument
-            Right (Set.insert address done'')
-          _ -> Right (Set.insert address done)
+ where
+  visit active done address
+    | Set.member address active = Left "cycle reachable from #0"
+    | Set.member address done = Right done
+    | otherwise = case nodes IntMap.! address of
+        App function argument -> do
+          let active' = Set.insert address active
+          done' <- visit active' done function
+          done'' <- visit active' done' argument
+          Right (Set.insert address done'')
+        _ -> Right (Set.insert address done)
 
 resolve :: Address -> Run Address
 resolve address = do
@@ -134,27 +147,31 @@ readNode address = do
 
 writeNode :: Address -> Node -> Run ()
 writeNode address node =
-  modify (\machine -> machine { heap = IntMap.insert address node (heap machine) })
+  modify
+    (\machine -> machine{heap = IntMap.insert address node (heap machine)})
 
 allocate :: Node -> Run Address
 allocate node = do
   address <- gets nextAddress
-  modify (\machine -> machine
-    { heap = IntMap.insert address node (heap machine)
-    , nextAddress = address + 1
-    })
+  modify
+    ( \machine ->
+        machine
+          { heap = IntMap.insert address node (heap machine)
+          , nextAddress = address + 1
+          }
+    )
   pure address
 
 -- Applications and arguments are ordered from the head outwards.
 spine :: Address -> Run (Node, [(Address, Address)])
 spine address = go address []
-  where
-    go current applications = do
-      actual <- resolve current
-      node <- readNode actual
-      case node of
-        App function argument -> go function ((actual, argument) : applications)
-        _ -> pure (node, applications)
+ where
+  go current applications = do
+    actual <- resolve current
+    node <- readNode actual
+    case node of
+      App function argument -> go function ((actual, argument) : applications)
+      _ -> pure (node, applications)
 
 whnf :: Address -> Run ()
 whnf address = do
@@ -180,7 +197,7 @@ whnf address = do
           right <- allocate (App y z)
           writeNode redex (App left right)
         _ -> lift (Left "internal error: invalid SKI redex")
-      modify (\state -> state { steps = steps state + 1 })
+      modify (\state -> state{steps = steps state + 1})
       whnf address
 
 normalize :: Address -> Run ()
@@ -201,29 +218,31 @@ serialize :: Address -> Run Graph.Graph
 serialize root = do
   (_, definitions) <- emit Map.empty root
   pure (Graph.GGraph definitions)
-  where
-    emit seen address = do
-      actual <- resolve address
-      case Map.lookup actual seen of
-        Just _ -> pure (seen, [])
-        Nothing -> do
-          let number = Map.size seen
-              seen' = Map.insert actual number seen
-              nodeId n = Graph.NodeId ('#' : show n)
-          node <- readNode actual
-          case node of
-            S -> pure (seen', [Graph.NS (nodeId number)])
-            K -> pure (seen', [Graph.NK (nodeId number)])
-            I -> pure (seen', [Graph.NI (nodeId number)])
-            App function argument -> do
-              (afterFunction, functionDefs) <- emit seen' function
-              (afterArgument, argumentDefs) <- emit afterFunction argument
-              functionAddress <- resolve function
-              argumentAddress <- resolve argument
-              let definition = Graph.NApp (nodeId number)
+ where
+  emit seen address = do
+    actual <- resolve address
+    case Map.lookup actual seen of
+      Just _ -> pure (seen, [])
+      Nothing -> do
+        let number = Map.size seen
+            seen' = Map.insert actual number seen
+            nodeId n = Graph.NodeId ('#' : show n)
+        node <- readNode actual
+        case node of
+          S -> pure (seen', [Graph.NS (nodeId number)])
+          K -> pure (seen', [Graph.NK (nodeId number)])
+          I -> pure (seen', [Graph.NI (nodeId number)])
+          App function argument -> do
+            (afterFunction, functionDefs) <- emit seen' function
+            (afterArgument, argumentDefs) <- emit afterFunction argument
+            functionAddress <- resolve function
+            argumentAddress <- resolve argument
+            let definition =
+                  Graph.NApp
+                    (nodeId number)
                     (nodeId (afterArgument Map.! functionAddress))
                     (nodeId (afterArgument Map.! argumentAddress))
-              pure (afterArgument, definition : functionDefs ++ argumentDefs)
-            Indirect _ -> lift (Left "internal error: unresolved indirection")
-            ProbeFunction -> lift (Left "internal error: cannot serialize probe function")
-            ProbeValue -> lift (Left "internal error: cannot serialize probe value")
+            pure (afterArgument, definition : functionDefs ++ argumentDefs)
+          Indirect _ -> lift (Left "internal error: unresolved indirection")
+          ProbeFunction -> lift (Left "internal error: cannot serialize probe function")
+          ProbeValue -> lift (Left "internal error: cannot serialize probe value")

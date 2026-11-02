@@ -1,1 +1,4 @@
 packages: .
+
+extra-packages:
+  fourmolu >= 0.17 && < 0.18

@@ -1,10 +1,10 @@
 -- | Compile closed lambda expressions into graphs of SKI combinators.
 module Compiler (compile, compileSource) where
 
+import qualified ArithmeticLambda.Par as Arithmetic
 import Data.List (intercalate, nub)
 import Desugar (desugar)
 import qualified Graph.Abs as Graph
-import qualified ArithmeticLambda.Par as Arithmetic
 import qualified PureLambda.Abs as Pure
 
 data Term = Var Pure.Name | S | K | I | App Term Term
@@ -24,8 +24,9 @@ nameText (Pure.Name name) = name
 
 freeVariables :: [Pure.Name] -> Pure.Exp -> [Pure.Name]
 freeVariables bound expression = case expression of
-  Pure.EVar name | name `elem` bound -> []
-                   | otherwise -> [name]
+  Pure.EVar name
+    | name `elem` bound -> []
+    | otherwise -> [name]
   Pure.EApp function argument ->
     freeVariables bound function ++ freeVariables bound argument
   Pure.EAbs name body -> freeVariables (name : bound) body
@@ -60,7 +61,7 @@ emit next term = case term of
     let (afterFunction, functionNodes) = emit (next + 1) function
         (afterArgument, argumentNodes) = emit afterFunction argument
         parent = Graph.NApp (nodeId next) (nodeId (next + 1)) (nodeId afterFunction)
-    in (afterArgument, parent : functionNodes ++ argumentNodes)
+     in (afterArgument, parent : functionNodes ++ argumentNodes)
   Var _ -> error "emit: free variable escaped validation"
 
 nodeId :: Int -> Graph.NodeId
