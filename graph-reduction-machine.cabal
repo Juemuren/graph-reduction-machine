@@ -8,8 +8,10 @@ extra-source-files:
     grammar/ArithmeticLambda.cf
   , grammar/PureLambda.cf
   , grammar/Graph.cf
-  , test/cases/valid/*.lambda
-  , test/cases/valid/*.ski
+  , test/cases/compile/*.lambda
+  , test/cases/compile/*.ski
+  , test/cases/integration/*.lambda
+  , test/cases/integration/*.ski
   , test/cases/errors/*.lambda
   , test/cases/errors/*.error
   , test/cases/syntax/*.lambda

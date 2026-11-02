@@ -2,9 +2,10 @@ module Main (main) where
 
 import qualified ArithmeticLambda.Abs as Arithmetic
 import qualified ArithmeticLambda.Par as Arithmetic
-import Compiler (compileSource)
+import Compiler (compile, compileSource)
 import Data.List (isInfixOf, isSuffixOf, sort)
 import Desugar (desugar)
+import qualified Graph.Abs as Graph
 import Graph.Print (printTree)
 import qualified PureLambda.Abs as Pure
 import qualified PureLambda.Par as Pure
@@ -14,7 +15,8 @@ import System.FilePath ((</>), dropExtension, takeExtension)
 
 main :: IO ()
 main = do
-  runCases "test/cases/valid" ".ski" checkGraph
+  runCases "test/cases/compile" ".ski" checkPureGraph
+  runCases "test/cases/integration" ".ski" checkIntegrationGraph
   runCases "test/cases/errors" ".error" checkError
   runCases "test/cases/syntax" ".parsed.lambda" checkSyntax
   runCases "test/cases/desugar" ".pure.lambda" checkDesugar
@@ -67,11 +69,21 @@ checkDesugar sourcePath expectedPath = do
               ++ "\nexpected:\n" ++ show expectedExpression
               ++ "\nactual:\n" ++ show actualExpression)
 
-checkGraph :: FilePath -> FilePath -> IO ()
-checkGraph sourcePath expectedPath = do
+checkPureGraph :: FilePath -> FilePath -> IO ()
+checkPureGraph sourcePath expectedPath = do
   source <- readFile sourcePath
+  expression <- parsePure sourcePath source
+  checkGraphResult sourcePath expectedPath (compile expression)
+
+checkIntegrationGraph :: FilePath -> FilePath -> IO ()
+checkIntegrationGraph sourcePath expectedPath = do
+  source <- readFile sourcePath
+  checkGraphResult sourcePath expectedPath (compileSource source)
+
+checkGraphResult :: FilePath -> FilePath -> Either String Graph.Graph -> IO ()
+checkGraphResult sourcePath expectedPath result = do
   expected <- readFile expectedPath
-  case compileSource source of
+  case result of
     Left problem -> die (sourcePath ++ ": " ++ problem)
     Right graph -> do
       let actual = printTree graph
