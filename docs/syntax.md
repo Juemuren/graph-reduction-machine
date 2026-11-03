@@ -115,6 +115,8 @@
 - `0` 可以表示为 `INT +0`，也可以表示为 `INT -0`。必须显式写出符号
 - 整数也可以表示为 `PAIR a b`，其值为 `a - b`
 - 取负表示为 `NEG a`，等价于语法糖 `-a`
+- 整数加法表示为 `ZADD a b`
+- 整数减法表示为 `ZSUB a b`
 
 运算优先级为
 
@@ -124,8 +126,10 @@
 
 - `INT +n` 展开为 `PAIR n 0`，`INT -n` 展开为 `PAIR 0 n`。其中 `n` 是自然数。`PAIR` 与自然数会继续展开为纯 λ 表达式
 - `NEG` 和 `-a` 都展开为 `(\p -> PAIR (SND p) (FST p)) a`。其中有序对及投影函数会继续展开为纯 λ 表达式
+- `ZADD a b` 展开为 `(\p -> \q -> PAIR (ADD (FST p) (FST q)) (ADD (SND p) (SND q))) a b`
+- `ZSUB a b` 展开为 `(\p -> \q -> PAIR (ADD (FST p) (SND q)) (ADD (SND p) (FST q))) a b`
 
-<!-- TODO 整数加法 ZADD、整数减法 ZSUB -->
+整数加减法的结果仍是自然数有序对，不会消去两个分量中相同的部分。以上表达式中的内置函数会继续展开为纯 λ 表达式。
 
 ### 优先级顺序
 

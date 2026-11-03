@@ -14,6 +14,8 @@ desugar expression = case expression of
   Arithmetic.EIntPos nat -> encodeInteger nat
   Arithmetic.EIntNeg nat -> encodeInteger (negate nat)
   Arithmetic.ENegOp -> integerNegate
+  Arithmetic.EZAddOp -> integerAdd
+  Arithmetic.EZSubOp -> integerSubtract
   Arithmetic.EAddOp -> naturalAdd
   Arithmetic.EMulOp -> naturalMul
   Arithmetic.EPowOp -> naturalPow
@@ -89,6 +91,30 @@ integerNegate = Pure.EAbs p body
   first = Pure.EApp encodeSnd (Pure.EVar p)
   second = Pure.EApp encodeFst (Pure.EVar p)
   body = Pure.EApp (Pure.EApp encodePair first) second
+
+-- λp.λq.PAIR (ADD (FST p) (FST q)) (ADD (SND p) (SND q))
+integerAdd :: Pure.Exp
+integerAdd = integerCombine encodeFst encodeSnd
+
+-- λp.λq.PAIR (ADD (FST p) (SND q)) (ADD (SND p) (FST q))
+integerSubtract :: Pure.Exp
+integerSubtract = integerCombine encodeSnd encodeFst
+
+integerCombine :: Pure.Exp -> Pure.Exp -> Pure.Exp
+integerCombine rightFirst rightSecond =
+  Pure.EAbs p (Pure.EAbs q (apply (apply encodePair first) second))
+ where
+  p = Pure.Name "p"
+  q = Pure.Name "q"
+  apply = Pure.EApp
+  first =
+    apply
+      (apply naturalAdd (apply encodeFst (Pure.EVar p)))
+      (apply rightFirst (Pure.EVar q))
+  second =
+    apply
+      (apply naturalAdd (apply encodeSnd (Pure.EVar p)))
+      (apply rightSecond (Pure.EVar q))
 
 {-
 0: λf.λx.x
