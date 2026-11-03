@@ -11,6 +11,9 @@ desugar expression = case expression of
     Pure.EApp (desugar function) (desugar argument)
   Arithmetic.EAbs name body -> Pure.EAbs (pureName name) (desugar body)
   Arithmetic.ENat nat -> encodeNatural nat
+  Arithmetic.EIntPos nat -> encodeInteger nat
+  Arithmetic.EIntNeg nat -> encodeInteger (negate nat)
+  Arithmetic.ENegOp -> integerNegate
   Arithmetic.EAddOp -> naturalAdd
   Arithmetic.EMulOp -> naturalMul
   Arithmetic.EPowOp -> naturalPow
@@ -25,6 +28,7 @@ desugar expression = case expression of
     Pure.EApp (Pure.EApp naturalMul (desugar left)) (desugar right)
   Arithmetic.EPow base exponent ->
     Pure.EApp (Pure.EApp naturalPow (desugar base)) (desugar exponent)
+  Arithmetic.ENeg value -> Pure.EApp integerNegate (desugar value)
 
 pureName :: Arithmetic.Name -> Pure.Name
 pureName (Arithmetic.Name name) = Pure.Name name
@@ -52,6 +56,13 @@ encodePair = Pure.EAbs a (Pure.EAbs b (Pure.EAbs s body))
   s = Pure.Name "s"
   body = Pure.EApp (Pure.EApp (Pure.EVar s) (Pure.EVar a)) (Pure.EVar b)
 
+-- Encode an integer as a pair of Church naturals whose difference is the value.
+encodeInteger :: Integer -> Pure.Exp
+encodeInteger value =
+  Pure.EApp
+    (Pure.EApp encodePair (encodeNatural (max value 0)))
+    (encodeNatural (max (negate value) 0))
+
 -- λp.p (λa.λb.a)
 encodeFst :: Pure.Exp
 encodeFst = Pure.EAbs p (Pure.EApp (Pure.EVar p) selector)
@@ -69,6 +80,15 @@ encodeSnd = Pure.EAbs p (Pure.EApp (Pure.EVar p) selector)
   a = Pure.Name "a"
   b = Pure.Name "b"
   selector = Pure.EAbs a (Pure.EAbs b (Pure.EVar b))
+
+-- λp.PAIR (SND p) (FST p)
+integerNegate :: Pure.Exp
+integerNegate = Pure.EAbs p body
+ where
+  p = Pure.Name "p"
+  first = Pure.EApp encodeSnd (Pure.EVar p)
+  second = Pure.EApp encodeFst (Pure.EVar p)
+  body = Pure.EApp (Pure.EApp encodePair first) second
 
 {-
 0: λf.λx.x

@@ -7,6 +7,7 @@ Precedence, from lowest to highest:
 - abstraction
 - addition
 - multiplication
+- unary negation
 - exponentiation
 - application
 
@@ -18,12 +19,16 @@ EAdd.   Exp1 ::= Exp1 "+" Exp2 ;
 _.      Exp1 ::= Exp2 ;
 EMul.   Exp2 ::= Exp2 "*" Exp3 ;
 _.      Exp2 ::= Exp3 ;
+ENeg.   Exp3 ::= "-" Exp3 ;
 EPow.   Exp3 ::= Exp4 "^" Exp3 ;
 _.      Exp3 ::= Exp4 ;
 EApp.   Exp4 ::= Exp4 Exp5 ;
 _.      Exp4 ::= Exp5 ;
 EVar.   Exp5 ::= Name ;
 ENat.   Exp5 ::= Integer ;
+EIntPos. Exp5 ::= "INT" "+" Integer ;
+EIntNeg. Exp5 ::= "INT" "-" Integer ;
+ENegOp. Exp5 ::= "NEG" ;
 EAddOp. Exp5 ::= "ADD" ;
 EMulOp. Exp5 ::= "MUL" ;
 EPowOp. Exp5 ::= "POW" ;
