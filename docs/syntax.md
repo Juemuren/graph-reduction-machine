@@ -2,7 +2,7 @@
 
 项目涉及多种语法：
 
-- 给编译器的源代码，为 **带算术语法糖的 λ 表达式**，由 [ArithmeticLambda.cf](../grammar/ArithmeticLambda.cf) 定义
+- 给编译器的源代码，为 **带算术语法的 λ 表达式**，由 [ArithmeticLambda.cf](../grammar/ArithmeticLambda.cf) 定义
 - 丘奇编码后的中间表示，为 **纯 λ 表达式**，由 [PureLambda.cf](../grammar/PureLambda.cf) 定义
 - 给图归约机的机器码，为 **SKI 图**，由 [Graph.cf](../grammar/Graph.cf) 定义
 
@@ -69,9 +69,9 @@
 语法：
 
 - 自然数表示为 `0`、`1`、`2`，要求是非负十进制整数
-- 加法的前缀表示为 `ADD a b`，等价于中缀表示 `a + b`，后者从左向右结合
-- 乘法的前缀表示为 `MUL a b`，等价于中缀表示 `a * b`，后者从左向右结合
-- 幂的前缀表示为 `POW a b`，等价于中缀表示 `a ^ b`，后者从右向左结合
+- 加法的表示为 `ADD a b`，等价于语法糖 `a + b`，后者从左向右结合
+- 乘法的表示为 `MUL a b`，等价于语法糖 `a * b`，后者从左向右结合
+- 幂的表示为 `POW a b`，等价于语法糖 `a ^ b`，后者从右向左结合
 
 <!-- TODO 后继 SUCC，语法糖 a++；前驱 PREV，语法糖 a--（会截断到 0）；自然数减法 SUB，语法糖 -（截断到 0） -->
 
@@ -123,7 +123,7 @@
 展开：
 
 - `INT +n` 展开为 `PAIR n 0`，`INT -n` 展开为 `PAIR 0 n`。其中 `n` 是自然数。`PAIR` 与自然数会继续展开为纯 λ 表达式
-- `NEG` 和 `-a` 都展开为 `(\p -> PAIR (SND p) (FST p)) a`，其中有序对及投影函数会继续展开为纯 λ 表达式
+- `NEG` 和 `-a` 都展开为 `(\p -> PAIR (SND p) (FST p)) a`。其中有序对及投影函数会继续展开为纯 λ 表达式
 
 <!-- TODO 整数加法 ZADD、整数减法 ZSUB -->
 

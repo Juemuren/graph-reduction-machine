@@ -13,7 +13,8 @@ main :: IO ()
 main = do
   runCases "test/cases/compiler/compile" ".lambda" ".ski" checkPureGraph
   runCases "test/cases/compiler/syntax" ".lambda" ".parsed.lambda" checkSyntax
-  runCases "test/cases/compiler/desugar" ".lambda" ".pure.lambda" checkDesugar
+  runCases "test/cases/compiler/desugar" ".lambda" ".desugared.lambda" checkDesugar
+  runCases "test/cases/compiler/encode" ".lambda" ".pure.lambda" checkEncode
   runCases "test/cases/compiler/errors" ".lambda" ".error" checkError
   putStrLn "compiler tests passed"
 
@@ -41,6 +42,27 @@ checkSyntax sourcePath expectedPath = do
 
 checkDesugar :: FilePath -> FilePath -> IO ()
 checkDesugar sourcePath expectedPath = do
+  source <- readFile sourcePath
+  expected <- readFile expectedPath
+  expression <- parseArithmetic sourcePath source
+  expectedExpression <- parseArithmetic expectedPath expected
+  let actualExpression = desugar expression
+      expandedExpected = desugar expectedExpression
+  if actualExpression == expandedExpected
+    then putStrLn (sourcePath ++ ": PASS")
+    else
+      die
+        ( sourcePath
+            ++ ": desugaring differs from "
+            ++ expectedPath
+            ++ "\nexpected after expansion:\n"
+            ++ show expandedExpected
+            ++ "\nactual after expansion:\n"
+            ++ show actualExpression
+        )
+
+checkEncode :: FilePath -> FilePath -> IO ()
+checkEncode sourcePath expectedPath = do
   source <- readFile sourcePath
   expected <- readFile expectedPath
   expression <- parseArithmetic sourcePath source
