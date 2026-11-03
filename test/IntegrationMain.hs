@@ -1,7 +1,7 @@
 module Main (main) where
 
 import Compiler (compileSource)
-import Interpreter (decodeChurch, interpret)
+import Interpreter (decodeBoolean, decodeChurch, interpret)
 import System.Exit (die)
 import TestSupport (assertGraphResult, runCases)
 
@@ -9,6 +9,7 @@ main :: IO ()
 main = do
   runCases "test/cases/integration/undecode" ".lambda" ".ski" checkUndecode
   runCases "test/cases/integration/decode" ".lambda" ".decoded" checkDecoded
+  runCases "test/cases/integration/decode-boolean" ".lambda" ".decoded" checkDecodedBoolean
   putStrLn "integration tests passed"
 
 checkUndecode :: FilePath -> FilePath -> IO ()
@@ -26,6 +27,24 @@ checkDecoded sourcePath expectedPath = do
   source <- readFile sourcePath
   expected <- readFile expectedPath
   case compileSource source >>= decodeChurch 100000 of
+    Left problem -> die (sourcePath ++ ": " ++ problem)
+    Right (Just actual)
+      | show actual == unwords (words expected) ->
+          putStrLn (sourcePath ++ ": PASS")
+    Right actual ->
+      die
+        ( sourcePath
+            ++ ": expected "
+            ++ show expected
+            ++ ", decoded "
+            ++ show actual
+        )
+
+checkDecodedBoolean :: FilePath -> FilePath -> IO ()
+checkDecodedBoolean sourcePath expectedPath = do
+  source <- readFile sourcePath
+  expected <- readFile expectedPath
+  case compileSource source >>= decodeBoolean 100000 of
     Left problem -> die (sourcePath ++ ": " ++ problem)
     Right (Just actual)
       | show actual == unwords (words expected) ->

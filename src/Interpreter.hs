@@ -1,5 +1,5 @@
 -- | Reduce a parsed SKI graph to normal form while preserving shared nodes.
-module Interpreter (interpretSource, interpret, decodeChurchSource, decodeChurch) where
+module Interpreter (interpretSource, interpret, decodeChurchSource, decodeChurch, decodeBooleanSource, decodeBoolean) where
 
 import Control.Monad (foldM, when)
 import Control.Monad.State.Strict (StateT, evalStateT, get, gets, lift, modify)
@@ -56,6 +56,30 @@ decodeChurch limit graph = do
         appliedTwice <- allocate (App appliedOnce value)
         normalize appliedTwice
         countApplications function value appliedTwice 0
+    )
+    machine
+
+-- | Apply a closed SKI term to two distinct symbolic values and identify the selected one.
+decodeBooleanSource :: Int -> String -> Either String (Maybe Bool)
+decodeBooleanSource limit source =
+  Graph.pGraph (Graph.myLexer source) >>= decodeBoolean limit
+
+decodeBoolean :: Int -> Graph.Graph -> Either String (Maybe Bool)
+decodeBoolean limit graph = do
+  (initialHeap, root) <- loadGraph graph
+  let machine = Machine initialHeap (IntMap.size initialHeap) 0 limit
+  evalStateT
+    ( do
+        trueValue <- allocate ProbeFunction
+        falseValue <- allocate ProbeValue
+        appliedOnce <- allocate (App root trueValue)
+        appliedTwice <- allocate (App appliedOnce falseValue)
+        normalize appliedTwice
+        result <- resolve appliedTwice
+        pure $
+          if result == trueValue
+            then Just True
+            else if result == falseValue then Just False else Nothing
     )
     machine
 

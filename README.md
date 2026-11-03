@@ -69,10 +69,22 @@ cabal exec -- ski-interpreter example.ski
 cabal exec -- ski-interpreter --max-steps 1000000 example.ski
 ```
 
-默认不对结果进行丘奇解码。可用 `--decode-church` 尝试输出十进制整数
+默认不对输出的 SKI 图进行解码。解码需要显式开启。
 
-```sh
-cabal exec -- ski-interpreter --decode-church example.ski
-```
+- 用 `--decode-number` 尝试解码并输出十进制整数
 
-无法识别为丘奇数时会报错。解码过程也受 `--max-steps` 限制。
+    ```sh
+    cabal exec -- ski-interpreter --decode-number example.ski
+    ```
+
+- 用 `--decode-boolean` 尝试解码并输出 `TRUE` 或 `FALSE`
+
+    ```sh
+    cabal exec -- ski-interpreter --decode-boolean example.ski
+    ```
+
+若无法识别为指定类型，则解码失败，解释器报错。
+
+解码过程也受 `--max-steps` 限制。
+
+解码选项不能同时使用。具体原因请参考 [syntax.md#丘奇解码](docs/syntax.md#丘奇解码)。

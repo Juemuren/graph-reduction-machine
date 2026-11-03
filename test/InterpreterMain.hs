@@ -1,10 +1,12 @@
 module Main (main) where
 
 import Graph.Print (printTree)
-import Interpreter (decodeChurchSource, interpretSource)
-import System.Exit (die)
+import Interpreter (interpretSource)
+import System.Exit (ExitCode (..), die)
+import System.Process (readProcessWithExitCode)
 import TestSupport (
   assertExpectedError,
+  assertExpectedErrorText,
   assertGraphResult,
   normalizeGraph,
   runCases,
@@ -19,12 +21,17 @@ main = do
     "test/cases/interpreter/decode-errors"
     ".ski"
     ".error"
-    (checkDecodeError 100)
+    (checkDecodeError ["--decode-number"])
   runCases
     "test/cases/interpreter/decode-limit-errors"
     ".ski"
     ".error"
-    (checkDecodeError 1)
+    (checkDecodeError ["--max-steps", "1", "--decode-number"])
+  runCases
+    "test/cases/interpreter/decode-boolean-errors"
+    ".ski"
+    ".error"
+    (checkDecodeError ["--decode-boolean"])
   putStrLn "interpreter tests passed"
 
 checkResult :: Int -> FilePath -> FilePath -> IO ()
@@ -45,11 +52,17 @@ checkError limit sourcePath expectedPath = do
   assertExpectedError sourcePath expectedPath (interpretSource limit source)
   putStrLn (sourcePath ++ ": PASS")
 
-checkDecodeError :: Int -> FilePath -> FilePath -> IO ()
-checkDecodeError limit sourcePath expectedPath = do
-  source <- readFile sourcePath
-  let result =
-        decodeChurchSource limit source
-          >>= maybe (Left "not a Church numeral") Right
-  assertExpectedError sourcePath expectedPath result
-  putStrLn (sourcePath ++ ": PASS")
+checkDecodeError :: [String] -> FilePath -> FilePath -> IO ()
+checkDecodeError options sourcePath expectedPath = do
+  (exitCode, output, errors) <-
+    readProcessWithExitCode "ski-interpreter" (options ++ [sourcePath]) ""
+  if exitCode /= ExitFailure 1 || not (null output)
+    then
+      die
+        ( sourcePath
+            ++ ": expected exit 1 and empty stdout, got "
+            ++ show (exitCode, output, errors)
+        )
+    else do
+      assertExpectedErrorText sourcePath expectedPath errors
+      putStrLn (sourcePath ++ ": PASS")

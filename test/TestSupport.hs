@@ -1,7 +1,7 @@
-module TestSupport (runCases, assertGraphResult, assertExpectedError, normalizeGraph) where
+module TestSupport (runCases, assertGraphResult, assertExpectedError, assertExpectedErrorText, normalizeGraph) where
 
 import Control.Monad (when)
-import Data.List (isInfixOf, isSuffixOf, sort)
+import Data.List (isSuffixOf, sort)
 import qualified Graph.Abs as Graph
 import Graph.Print (printTree)
 import System.Directory (listDirectory)
@@ -44,24 +44,23 @@ assertGraphResult sourcePath expectedPath result = do
             )
 
 assertExpectedError :: FilePath -> FilePath -> Either String a -> IO ()
-assertExpectedError sourcePath expectedPath result = do
-  expected <- readFile expectedPath
+assertExpectedError sourcePath expectedPath result =
   case result of
-    Left problem ->
-      if not (null (trim expected)) && trim expected `isInfixOf` problem
-        then pure ()
-        else
-          die
-            ( sourcePath
-                ++ ": expected error containing "
-                ++ show (trim expected)
-                ++ ", got "
-                ++ show problem
-            )
+    Left problem -> assertExpectedErrorText sourcePath expectedPath problem
     Right _ -> die (sourcePath ++ ": expected failure")
+
+assertExpectedErrorText :: FilePath -> FilePath -> String -> IO ()
+assertExpectedErrorText sourcePath expectedPath problem = do
+  expected <- readFile expectedPath
+  if not (null (normalizeError expected))
+      && normalizeError expected == normalizeError problem
+    then pure ()
+    else
+      die
+        (sourcePath ++ ": expected error " ++ show (normalizeError expected) ++ ", got " ++ show problem)
 
 normalizeGraph :: String -> [String]
 normalizeGraph = lines . filter (/= '\r')
 
-trim :: String -> String
-trim = unwords . words
+normalizeError :: String -> String
+normalizeError = reverse . dropWhile (== '\n') . reverse . filter (/= '\r')

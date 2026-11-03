@@ -18,6 +18,8 @@ extra-source-files:
   , test/cases/integration/undecode/*.ski
   , test/cases/integration/decode/*.lambda
   , test/cases/integration/decode/*.decoded
+  , test/cases/integration/decode-boolean/*.lambda
+  , test/cases/integration/decode-boolean/*.decoded
   , test/cases/interpreter/reduce/*.ski
   , test/cases/interpreter/errors/*.ski
   , test/cases/interpreter/errors/*.error
@@ -27,6 +29,8 @@ extra-source-files:
   , test/cases/interpreter/decode-errors/*.error
   , test/cases/interpreter/decode-limit-errors/*.ski
   , test/cases/interpreter/decode-limit-errors/*.error
+  , test/cases/interpreter/decode-boolean-errors/*.ski
+  , test/cases/interpreter/decode-boolean-errors/*.error
 
 custom-setup
   setup-depends:
@@ -101,6 +105,9 @@ test-suite interpreter-tests
     , directory
     , filepath
     , graph-reduction-machine
+    , process
+  build-tool-depends:
+      graph-reduction-machine:ski-interpreter
   default-language: Haskell2010
 
 test-suite integration-tests

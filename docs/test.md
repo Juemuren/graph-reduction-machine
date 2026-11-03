@@ -35,9 +35,10 @@ cabal test interpreter-tests
 
 - `test/cases/interpreter/reduce` 比较 SKI 图与归约后的 SKI 图
 - `test/cases/interpreter/errors` 比较错误信息
-- `test/cases/interpreter/limit-errors` 比较归约步数超限时的错误信息
-- `test/cases/interpreter/decode-errors` 比较非丘奇数解码时的错误信息
-- `test/cases/interpreter/decode-limit-errors` 比较解码步数超限时的错误信息
+- `test/cases/interpreter/limit-errors` 比较归约步数超限时的错误信息和退出码
+- `test/cases/interpreter/decode-errors` 比较非丘奇数解码时的错误信息和退出码
+- `test/cases/interpreter/decode-limit-errors` 比较解码步数超限时的错误信息和退出码
+- `test/cases/interpreter/decode-boolean-errors` 比较非丘奇布尔值解码时的错误信息和退出码
 
 ## 集成测试
 
@@ -51,3 +52,4 @@ cabal test integration-tests
 
 - `test/cases/integration/undecode` 比较带糖的 λ 表达式经过展开、编译、规约后得到的 SKI 图
 - `test/cases/integration/decode` 比较带糖的 λ 表达式经过展开、编译、规约、解码后得到的十进制整数
+- `test/cases/integration/decode-boolean` 比较带糖的 λ 表达式经过展开、编译、规约、解码后得到的布尔值
