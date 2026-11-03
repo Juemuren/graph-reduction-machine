@@ -7,10 +7,11 @@ Precedence, from lowest to highest:
 - def
 - or
 - and
-- add
+- add / sub
 - mul
-- neg
+- neg / not
 - pow
+- succ / pred
 - apply
 
 Right associative:
@@ -19,50 +20,55 @@ Right associative:
 
 Left associative:
 
-- add
-- or
-- and
-- sub
-- mul
+- add / sub / mul
+- or / and
 - apply
 -}
-EAbs.   Exp  ::= "\\" Name "->" Exp ;
-_.      Exp  ::= Exp1 ;
-EOr.    Exp1 ::= Exp1 "|" Exp2 ;
-_.      Exp1 ::= Exp2 ;
-EAnd.   Exp2 ::= Exp2 "&" Exp3 ;
-_.      Exp2 ::= Exp3 ;
-EAdd.   Exp3 ::= Exp3 "+" Exp4 ;
-EZAdd.  Exp3 ::= Exp3 "+z" Exp4 ;
-EZSub.  Exp3 ::= Exp3 "-z" Exp4 ;
-_.      Exp3 ::= Exp4 ;
-EMul.   Exp4 ::= Exp4 "*" Exp5 ;
-_.      Exp4 ::= Exp5 ;
-ENeg.   Exp5 ::= "-" Exp5 ;
-ENot.   Exp5 ::= "!" Exp5 ;
-EPow.   Exp5 ::= Exp6 "^" Exp5 ;
-_.      Exp5 ::= Exp6 ;
-EApp.   Exp6 ::= Exp6 Exp7 ;
-_.      Exp6 ::= Exp7 ;
-EVar.   Exp7 ::= Name ;
-ENat.   Exp7 ::= Integer ;
-EIntPos. Exp7 ::= "INT" "+" Integer ;
-EIntNeg. Exp7 ::= "INT" "-" Integer ;
-ENegOp. Exp7 ::= "NEG" ;
-EZAddOp. Exp7 ::= "ZADD" ;
-EZSubOp. Exp7 ::= "ZSUB" ;
-EAddOp. Exp7 ::= "ADD" ;
-EMulOp. Exp7 ::= "MUL" ;
-EPowOp. Exp7 ::= "POW" ;
-EAndOp. Exp7 ::= "AND" ;
-EOrOp.  Exp7 ::= "OR" ;
-ENotOp. Exp7 ::= "NOT" ;
-EFalse. Exp7 ::= "FALSE" ;
-ETrue.  Exp7 ::= "TRUE" ;
-EPair.  Exp7 ::= "PAIR" ;
-EFst.   Exp7 ::= "FST" ;
-ESnd.   Exp7 ::= "SND" ;
-_.      Exp7 ::= "(" Exp ")" ;
+
+EAbs.    Exp  ::= "\\" Name "->" Exp ;
+_.       Exp  ::= Exp1 ;
+EOr.     Exp1 ::= Exp1 "|" Exp2 ;
+_.       Exp1 ::= Exp2 ;
+EAnd.    Exp2 ::= Exp2 "&" Exp3 ;
+_.       Exp2 ::= Exp3 ;
+EAdd.    Exp3 ::= Exp3 "+" Exp4 ;
+ESub.    Exp3 ::= Exp3 "-" Exp4 ;
+EZAdd.   Exp3 ::= Exp3 "+z" Exp4 ;
+EZSub.   Exp3 ::= Exp3 "-z" Exp4 ;
+_.       Exp3 ::= Exp4 ;
+EMul.    Exp4 ::= Exp4 "*" Exp5 ;
+_.       Exp4 ::= Exp5 ;
+ENeg.    Exp5 ::= "-" Exp5 ;
+ENot.    Exp5 ::= "!" Exp5 ;
+EPow.    Exp5 ::= Exp6 "^" Exp5 ;
+_.       Exp5 ::= Exp6 ;
+ESucc.   Exp6 ::= Exp6 "++" ;
+EPred.   Exp6 ::= Exp6 "--" ;
+_.       Exp6 ::= Exp7 ;
+EApp.    Exp7 ::= Exp7 Exp8 ;
+_.       Exp7 ::= Exp8 ;
+EVar.    Exp8 ::= Name ;
+ENat.    Exp8 ::= Integer ;
+ESuccOp. Exp8 ::= "SUCC" ;
+EPredOp. Exp8 ::= "PRED" ;
+EAddOp.  Exp8 ::= "ADD" ;
+ESubOp.  Exp8 ::= "SUB" ;
+EMulOp.  Exp8 ::= "MUL" ;
+EPowOp.  Exp8 ::= "POW" ;
+EFalse.  Exp8 ::= "FALSE" ;
+ETrue.   Exp8 ::= "TRUE" ;
+EAndOp.  Exp8 ::= "AND" ;
+EOrOp.   Exp8 ::= "OR" ;
+ENotOp.  Exp8 ::= "NOT" ;
+EPair.   Exp8 ::= "PAIR" ;
+EFst.    Exp8 ::= "FST" ;
+ESnd.    Exp8 ::= "SND" ;
+EIntPos. Exp8 ::= "INT" "+" Integer ;
+EIntNeg. Exp8 ::= "INT" "-" Integer ;
+ENegOp.  Exp8 ::= "NEG" ;
+EZAddOp. Exp8 ::= "ZADD" ;
+EZSubOp. Exp8 ::= "ZSUB" ;
+_.       Exp8 ::= "(" Exp ")" ;
 
 token Name (lower (letter | digit | '_')*) ;
-comment "--" ;
+comment "#" ;

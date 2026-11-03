@@ -11,4 +11,4 @@ EVar. Exp2 ::= Name ;
 _.    Exp2 ::= "(" Exp ")" ;
 
 token Name (lower (letter | digit | '_')*) ;
-comment "--" ;
+comment "#" ;
