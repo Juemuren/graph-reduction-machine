@@ -28,8 +28,10 @@ library
     , Interpreter
     , ArithmeticLambda.Abs
     , ArithmeticLambda.Par
+    , ArithmeticLambda.Print
     , PureLambda.Abs
     , PureLambda.Par
+    , PureLambda.Print
     , Graph.Abs
     , Graph.Par
     , Graph.Print

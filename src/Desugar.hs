@@ -1,8 +1,28 @@
 -- | Expand arithmetic and Boolean syntax into pure lambda calculus.
-module Desugar (desugar) where
+module Desugar (desugar, desugarSyntax) where
 
 import qualified ArithmeticLambda.Abs as Arithmetic
 import qualified PureLambda.Abs as Pure
+
+-- | Replace arithmetic operators with applications of built-in functions.
+-- Built-ins and literals remain available for the later expansion step.
+desugarSyntax :: Arithmetic.Exp -> Arithmetic.Exp
+desugarSyntax expression = case expression of
+  Arithmetic.EApp function argument ->
+    Arithmetic.EApp (desugarSyntax function) (desugarSyntax argument)
+  Arithmetic.EAbs name body -> Arithmetic.EAbs name (desugarSyntax body)
+  Arithmetic.EAdd left right -> binary Arithmetic.EAddOp left right
+  Arithmetic.EZAdd left right -> binary Arithmetic.EZAddOp left right
+  Arithmetic.EZSub left right -> binary Arithmetic.EZSubOp left right
+  Arithmetic.EMul left right -> binary Arithmetic.EMulOp left right
+  Arithmetic.EPow base exponent -> binary Arithmetic.EPowOp base exponent
+  Arithmetic.ENeg value -> Arithmetic.EApp Arithmetic.ENegOp (desugarSyntax value)
+  other -> other
+ where
+  binary operator left right =
+    Arithmetic.EApp
+      (Arithmetic.EApp operator (desugarSyntax left))
+      (desugarSyntax right)
 
 desugar :: Arithmetic.Exp -> Pure.Exp
 desugar expression = case expression of

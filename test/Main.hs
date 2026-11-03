@@ -3,7 +3,7 @@ module Main (main) where
 import qualified ArithmeticLambda.Abs as Arithmetic
 import qualified ArithmeticLambda.Par as Arithmetic
 import Compiler (compile, compileSource)
-import Desugar (desugar)
+import Desugar (desugar, desugarSyntax)
 import qualified PureLambda.Abs as Pure
 import qualified PureLambda.Par as Pure
 import System.Exit (die)
@@ -50,20 +50,9 @@ checkDesugar sourcePath expectedPath = do
   expected <- readFile expectedPath
   expression <- parseArithmetic sourcePath source
   expectedExpression <- parseArithmetic expectedPath expected
-  let actualExpression = desugar expression
-      expandedExpected = desugar expectedExpression
-  if actualExpression == expandedExpected
+  if desugarSyntax expression == expectedExpression
     then putStrLn (sourcePath ++ ": PASS")
-    else
-      die
-        ( sourcePath
-            ++ ": desugaring differs from "
-            ++ expectedPath
-            ++ "\nexpected after expansion:\n"
-            ++ show expandedExpected
-            ++ "\nactual after expansion:\n"
-            ++ show actualExpression
-        )
+    else die (sourcePath ++ ": desugaring differs from " ++ expectedPath)
 
 checkEncode :: FilePath -> FilePath -> IO ()
 checkEncode sourcePath expectedPath = do

@@ -53,6 +53,20 @@ cabal exec -- lambda-to-graph example.lambda
 
 不提供文件名时从标准输入读取。成功时结果写到标准输出；错误信息写到标准错误。
 
+默认进行完整编译。可以指定完成后停止的阶段。
+
+- 用 `--desugar` 在脱糖后停止
+    
+    ```sh
+    cabal exec -- lambda-to-graph --desugar example.lambda
+    ```
+
+- 用 `--expand` 在展开后停止
+
+    ```sh
+    cabal exec -- lambda-to-graph --expand example.lambda
+    ```
+
 ### 运行 SKI 图
 
 将 `.ski` 文件中的 SKI 图归约为完整范式，结果仍是可解析的 `.ski` 图
