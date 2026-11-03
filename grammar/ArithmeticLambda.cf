@@ -27,6 +27,8 @@ ENat.   Exp5 ::= Integer ;
 EAddOp. Exp5 ::= "ADD" ;
 EMulOp. Exp5 ::= "MUL" ;
 EPowOp. Exp5 ::= "POW" ;
+EFalse. Exp5 ::= "FALSE" ;
+ETrue.  Exp5 ::= "TRUE" ;
 _.      Exp5 ::= "(" Exp ")" ;
 
 token Name (lower (letter | digit | '_')*) ;

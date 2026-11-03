@@ -1,4 +1,4 @@
--- | Expand arithmetic syntax into pure lambda calculus.
+-- | Expand arithmetic and Boolean syntax into pure lambda calculus.
 module Desugar (desugar) where
 
 import qualified ArithmeticLambda.Abs as Arithmetic
@@ -14,6 +14,8 @@ desugar expression = case expression of
   Arithmetic.EAddOp -> churchAdd
   Arithmetic.EMulOp -> churchMul
   Arithmetic.EPowOp -> churchPow
+  Arithmetic.EFalse -> churchFalse
+  Arithmetic.ETrue -> churchTrue
   Arithmetic.EAdd left right ->
     Pure.EApp (Pure.EApp churchAdd (desugar left)) (desugar right)
   Arithmetic.EMul left right ->
@@ -23,6 +25,20 @@ desugar expression = case expression of
 
 pureName :: Arithmetic.Name -> Pure.Name
 pureName (Arithmetic.Name name) = Pure.Name name
+
+-- λt.λf.f
+churchFalse :: Pure.Exp
+churchFalse = Pure.EAbs t (Pure.EAbs f (Pure.EVar f))
+ where
+  t = Pure.Name "t"
+  f = Pure.Name "f"
+
+-- λt.λf.t
+churchTrue :: Pure.Exp
+churchTrue = Pure.EAbs t (Pure.EAbs f (Pure.EVar t))
+ where
+  t = Pure.Name "t"
+  f = Pure.Name "f"
 
 {-
 0: λf.λx.x
