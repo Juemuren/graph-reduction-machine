@@ -10,42 +10,42 @@ desugar expression = case expression of
   Arithmetic.EApp function argument ->
     Pure.EApp (desugar function) (desugar argument)
   Arithmetic.EAbs name body -> Pure.EAbs (pureName name) (desugar body)
-  Arithmetic.ENat number -> churchNumeral number
-  Arithmetic.EAddOp -> churchAdd
-  Arithmetic.EMulOp -> churchMul
-  Arithmetic.EPowOp -> churchPow
-  Arithmetic.EFalse -> churchFalse
-  Arithmetic.ETrue -> churchTrue
-  Arithmetic.EPair -> churchPair
-  Arithmetic.EFst -> churchFst
-  Arithmetic.ESnd -> churchSnd
+  Arithmetic.ENat nat -> encodeNatural nat
+  Arithmetic.EAddOp -> naturalAdd
+  Arithmetic.EMulOp -> naturalMul
+  Arithmetic.EPowOp -> naturalPow
+  Arithmetic.EFalse -> encodeFalse
+  Arithmetic.ETrue -> encodeTrue
+  Arithmetic.EPair -> encodePair
+  Arithmetic.EFst -> encodeFst
+  Arithmetic.ESnd -> encodeSnd
   Arithmetic.EAdd left right ->
-    Pure.EApp (Pure.EApp churchAdd (desugar left)) (desugar right)
+    Pure.EApp (Pure.EApp naturalAdd (desugar left)) (desugar right)
   Arithmetic.EMul left right ->
-    Pure.EApp (Pure.EApp churchMul (desugar left)) (desugar right)
+    Pure.EApp (Pure.EApp naturalMul (desugar left)) (desugar right)
   Arithmetic.EPow base exponent ->
-    Pure.EApp (Pure.EApp churchPow (desugar base)) (desugar exponent)
+    Pure.EApp (Pure.EApp naturalPow (desugar base)) (desugar exponent)
 
 pureName :: Arithmetic.Name -> Pure.Name
 pureName (Arithmetic.Name name) = Pure.Name name
 
 -- λt.λf.f
-churchFalse :: Pure.Exp
-churchFalse = Pure.EAbs t (Pure.EAbs f (Pure.EVar f))
+encodeFalse :: Pure.Exp
+encodeFalse = Pure.EAbs t (Pure.EAbs f (Pure.EVar f))
  where
   t = Pure.Name "t"
   f = Pure.Name "f"
 
 -- λt.λf.t
-churchTrue :: Pure.Exp
-churchTrue = Pure.EAbs t (Pure.EAbs f (Pure.EVar t))
+encodeTrue :: Pure.Exp
+encodeTrue = Pure.EAbs t (Pure.EAbs f (Pure.EVar t))
  where
   t = Pure.Name "t"
   f = Pure.Name "f"
 
 -- λa.λb.λs.s a b
-churchPair :: Pure.Exp
-churchPair = Pure.EAbs a (Pure.EAbs b (Pure.EAbs s body))
+encodePair :: Pure.Exp
+encodePair = Pure.EAbs a (Pure.EAbs b (Pure.EAbs s body))
  where
   a = Pure.Name "a"
   b = Pure.Name "b"
@@ -53,8 +53,8 @@ churchPair = Pure.EAbs a (Pure.EAbs b (Pure.EAbs s body))
   body = Pure.EApp (Pure.EApp (Pure.EVar s) (Pure.EVar a)) (Pure.EVar b)
 
 -- λp.p (λa.λb.a)
-churchFst :: Pure.Exp
-churchFst = Pure.EAbs p (Pure.EApp (Pure.EVar p) selector)
+encodeFst :: Pure.Exp
+encodeFst = Pure.EAbs p (Pure.EApp (Pure.EVar p) selector)
  where
   p = Pure.Name "p"
   a = Pure.Name "a"
@@ -62,8 +62,8 @@ churchFst = Pure.EAbs p (Pure.EApp (Pure.EVar p) selector)
   selector = Pure.EAbs a (Pure.EAbs b (Pure.EVar a))
 
 -- λp.p (λa.λb.b)
-churchSnd :: Pure.Exp
-churchSnd = Pure.EAbs p (Pure.EApp (Pure.EVar p) selector)
+encodeSnd :: Pure.Exp
+encodeSnd = Pure.EAbs p (Pure.EApp (Pure.EVar p) selector)
  where
   p = Pure.Name "p"
   a = Pure.Name "a"
@@ -76,9 +76,9 @@ churchSnd = Pure.EAbs p (Pure.EApp (Pure.EVar p) selector)
 2: λf.λx.f (f x)
 3: λf.λx.f (f (f x))
 -}
-churchNumeral :: Integer -> Pure.Exp
-churchNumeral number =
-  Pure.EAbs f (Pure.EAbs x (go number (Pure.EVar x)))
+encodeNatural :: Integer -> Pure.Exp
+encodeNatural nat =
+  Pure.EAbs f (Pure.EAbs x (go nat (Pure.EVar x)))
  where
   f = Pure.Name "f"
   x = Pure.Name "x"
@@ -86,8 +86,8 @@ churchNumeral number =
   go remaining result = go (remaining - 1) (Pure.EApp (Pure.EVar f) result)
 
 -- λm.λn.λf.λx.m f (n f x)
-churchAdd :: Pure.Exp
-churchAdd =
+naturalAdd :: Pure.Exp
+naturalAdd =
   Pure.EAbs m (Pure.EAbs n (Pure.EAbs f (Pure.EAbs x body)))
  where
   m = Pure.Name "m"
@@ -101,8 +101,8 @@ churchAdd =
       (apply (apply (Pure.EVar n) (Pure.EVar f)) (Pure.EVar x))
 
 -- λm.λn.λf.m (n f)
-churchMul :: Pure.Exp
-churchMul =
+naturalMul :: Pure.Exp
+naturalMul =
   Pure.EAbs m (Pure.EAbs n (Pure.EAbs f body))
  where
   m = Pure.Name "m"
@@ -111,8 +111,8 @@ churchMul =
   body = Pure.EApp (Pure.EVar m) (Pure.EApp (Pure.EVar n) (Pure.EVar f))
 
 -- λm.λn.n m
-churchPow :: Pure.Exp
-churchPow =
+naturalPow :: Pure.Exp
+naturalPow =
   Pure.EAbs m (Pure.EAbs n (Pure.EApp (Pure.EVar n) (Pure.EVar m)))
  where
   m = Pure.Name "m"

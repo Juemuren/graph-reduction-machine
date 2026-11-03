@@ -71,10 +71,10 @@ cabal exec -- ski-interpreter --max-steps 1000000 example.ski
 
 默认不对输出的 SKI 图进行解码。解码需要显式开启。
 
-- 用 `--decode-number` 尝试解码并输出十进制整数
+- 用 `--decode-natural` 尝试解码并输出十进制自然数
 
     ```sh
-    cabal exec -- ski-interpreter --decode-number example.ski
+    cabal exec -- ski-interpreter --decode-natural example.ski
     ```
 
 - 用 `--decode-boolean` 尝试解码并输出 `TRUE` 或 `FALSE`

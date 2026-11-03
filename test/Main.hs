@@ -51,7 +51,7 @@ checkDesugar sourcePath expectedPath = do
     else
       die
         ( sourcePath
-            ++ ": Church encoding differs from "
+            ++ ": encoding differs from "
             ++ expectedPath
             ++ "\nexpected:\n"
             ++ show expectedExpression

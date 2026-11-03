@@ -1,11 +1,12 @@
 -- | Reduce a parsed SKI graph to normal form while preserving shared nodes.
-module Interpreter (interpretSource, interpret, decodeChurchSource, decodeChurch, decodeBooleanSource, decodeBoolean) where
+module Interpreter (interpretSource, interpret, decodeNaturalSource, decodeNatural, decodeBooleanSource, decodeBoolean) where
 
 import Control.Monad (foldM, when)
 import Control.Monad.State.Strict (StateT, evalStateT, get, gets, lift, modify)
 import qualified Data.IntMap.Strict as IntMap
 import qualified Data.Map.Strict as Map
 import qualified Data.Set as Set
+import Numeric.Natural (Natural)
 import qualified Graph.Abs as Graph
 import qualified Graph.Par as Graph
 
@@ -40,12 +41,12 @@ interpret limit graph = do
   evalStateT (normalize root >> serialize root) machine
 
 -- | Apply a closed SKI term to symbolic f and x, then recognize f^n x.
-decodeChurchSource :: Int -> String -> Either String (Maybe Integer)
-decodeChurchSource limit source =
-  Graph.pGraph (Graph.myLexer source) >>= decodeChurch limit
+decodeNaturalSource :: Int -> String -> Either String (Maybe Natural)
+decodeNaturalSource limit source =
+  Graph.pGraph (Graph.myLexer source) >>= decodeNatural limit
 
-decodeChurch :: Int -> Graph.Graph -> Either String (Maybe Integer)
-decodeChurch limit graph = do
+decodeNatural :: Int -> Graph.Graph -> Either String (Maybe Natural)
+decodeNatural limit graph = do
   (initialHeap, root) <- loadGraph graph
   let machine = Machine initialHeap (IntMap.size initialHeap) 0 limit
   evalStateT
@@ -84,7 +85,7 @@ decodeBoolean limit graph = do
     machine
 
 countApplications ::
-  Address -> Address -> Address -> Integer -> Run (Maybe Integer)
+  Address -> Address -> Address -> Natural -> Run (Maybe Natural)
 countApplications function value address count = do
   actual <- resolve address
   if actual == value

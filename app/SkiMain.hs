@@ -2,7 +2,7 @@ module Main (main) where
 
 import Data.Char (toUpper)
 import Graph.Print (printTree)
-import Interpreter (decodeBooleanSource, decodeChurchSource, interpretSource)
+import Interpreter (decodeBooleanSource, decodeNaturalSource, interpretSource)
 import System.Environment (getArgs)
 import System.Exit (die, exitFailure)
 import System.IO (hPutStrLn, stderr)
@@ -16,9 +16,9 @@ main = do
   let result =
         case mode of
           Raw -> fmap printTree (interpretSource limit source)
-          Number ->
-            decodeChurchSource limit source
-              >>= maybe (Left "not a Church Number") (Right . show)
+          Natural ->
+            decodeNaturalSource limit source
+              >>= maybe (Left "not a Church Natural") (Right . show)
           Boolean ->
             decodeBooleanSource limit source
               >>= maybe (Left "not a Church Boolean") (Right . map toUpper . show)
@@ -28,15 +28,15 @@ main = do
       exitFailure
     Right output -> putStrLn output
 
-data DecodeMode = Raw | Number | Boolean deriving (Eq)
+data DecodeMode = Raw | Natural | Boolean deriving (Eq)
 
 parseArgs :: [String] -> Either String (Int, DecodeMode, Maybe FilePath)
 parseArgs = go 100000 Raw Nothing
  where
-  usage = "usage: ski-interpreter [--max-steps N] [--decode-number | --decode-boolean] [FILE]"
+  usage = "usage: ski-interpreter [--max-steps N] [--decode-natural | --decode-boolean] [FILE]"
   go limit mode path [] = Right (limit, mode, path)
-  go limit Raw path ("--decode-number" : rest) =
-    go limit Number path rest
+  go limit Raw path ("--decode-natural" : rest) =
+    go limit Natural path rest
   go limit Raw path ("--decode-boolean" : rest) =
     go limit Boolean path rest
   go _ mode path ("--max-steps" : value : rest) =

@@ -18,15 +18,15 @@ main = do
   runCases "test/cases/interpreter/errors" ".ski" ".error" (checkError 100)
   runCases "test/cases/interpreter/limit-errors" ".ski" ".error" (checkError 1)
   runCases
-    "test/cases/interpreter/decode-number-errors"
+    "test/cases/interpreter/decode-natural-errors"
     ".ski"
     ".error"
-    (checkDecodeError ["--decode-number"])
+    (checkDecodeError ["--decode-natural"])
   runCases
     "test/cases/interpreter/decode-limit-errors"
     ".ski"
     ".error"
-    (checkDecodeError ["--max-steps", "1", "--decode-number"])
+    (checkDecodeError ["--max-steps", "1", "--decode-natural"])
   runCases
     "test/cases/interpreter/decode-boolean-errors"
     ".ski"
