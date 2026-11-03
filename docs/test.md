@@ -23,7 +23,14 @@ cabal test compiler-tests
 - `test/cases/compiler/precedence` 比较输入与补全括号后的语法树
 - `test/cases/compiler/desugar` 比较带糖的 λ 表达式与脱糖的 λ 表达式
 - `test/cases/compiler/encode` 比较带内置函数的 λ 表达式与展开得到的纯 λ 表达式
-- `test/cases/compiler/compile` 比较纯 λ 表达式与编译得到的 SKI 图
+- `test/cases/compiler/reduce` 比较纯 λ 表达式与 β 和 η 规约后得到的纯 λ 表达式
+- `test/cases/compiler/reduce-no-beta` 比较禁用 β 规约后输出的纯 λ 表达式
+- `test/cases/compiler/reduce-no-eta` 比较禁用 η 规约后输出的纯 λ 表达式
+- `test/cases/compiler/reduce-no-reduce` 比较禁用所有规约后输出的纯 λ 表达式
+- `test/cases/compiler/compile` 比较纯 λ 表达式与启用 β 和 η 规约时编译得到的 SKI 图
+- `test/cases/compiler/compile-no-beta` 比较纯 λ 表达式与禁用 β 规约时编译得到的 SKI 图
+- `test/cases/compiler/compile-no-eta` 比较纯 λ 表达式与禁用 η 规约时编译得到的 SKI 图
+- `test/cases/compiler/compile-no-reduce` 比较纯 λ 表达式与禁用所有规约时编译得到的 SKI 图
 - `test/cases/compiler/errors` 比较错误信息
 
 基础测试：

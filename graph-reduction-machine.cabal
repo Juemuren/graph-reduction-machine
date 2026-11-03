@@ -76,6 +76,9 @@ test-suite compiler-tests
     , directory
     , filepath
     , graph-reduction-machine
+    , process
+  build-tool-depends:
+      graph-reduction-machine:lambda-to-graph
   default-language: Haskell2010
 
 test-suite interpreter-tests

@@ -22,21 +22,19 @@ cabal exec -- lambda-to-graph example.lambda
 
 不提供文件名时从标准输入读取。成功时结果写到标准输出；错误信息写到标准错误。
 
-默认进行完整编译。可以指定完成后停止的阶段。
+默认进行完整编译。可以指定完成后停止的阶段。比如脱糖后停止
 
-- 用 `--desugar` 在脱糖后停止
+```sh
+cabal exec -- lambda-to-graph --stop-after=desugar example.lambda
+```
 
-    ```sh
-    cabal exec -- lambda-to-graph --desugar example.lambda
-    ```
+默认执行 β 规约和 η 规约。可以指定要禁用的规约。比如禁用 β 规约：
 
-- 用 `--expand` 在展开后停止
+```sh
+cabal exec -- lambda-to-graph --disable-reduce=beta example.lambda
+```
 
-    ```sh
-    cabal exec -- lambda-to-graph --expand example.lambda
-    ```
-
-编译的完整步骤请参考 [syntax.md#表达式编译](docs/syntax.md#表达式编译)。
+编译器的所有参数和编译的完整步骤请参考 [syntax.md#表达式编译](docs/syntax.md#表达式编译)。
 
 ### 运行 SKI 图
 
@@ -54,30 +52,10 @@ cabal exec -- ski-interpreter example.ski
 cabal exec -- ski-interpreter --max-steps 1000000 example.ski
 ```
 
-默认不对输出的 SKI 图进行解码。解码需要显式开启。
+默认不对输出的 SKI 图进行解码。解码需要显式开启。比如尝试解码并输出十进制自然数
 
-- 用 `--decode-natural` 尝试解码并输出十进制自然数
+```sh
+cabal exec -- ski-interpreter --decode-natural example.ski
+```
 
-    ```sh
-    cabal exec -- ski-interpreter --decode-natural example.ski
-    ```
-
-- 用 `--decode-boolean` 尝试解码并输出 `TRUE` 或 `FALSE`
-
-    ```sh
-    cabal exec -- ski-interpreter --decode-boolean example.ski
-    ```
-
-- 用 `--decode-integer` 尝试解码并输出十进制整数
-
-    ```sh
-    cabal exec -- ski-interpreter --decode-integer example.ski
-    ```
-
-若无法识别为指定类型，则解码失败，解释器报错。
-
-解码过程也受 `--max-steps` 限制。
-
-解码选项不能同时使用。
-
-解码的详细操作请参考 [syntax.md#丘奇解码](docs/syntax.md#丘奇解码)。
+解释器的所有参数和解码的具体操作请参考 [syntax.md#丘奇解码](docs/syntax.md#丘奇解码)。
