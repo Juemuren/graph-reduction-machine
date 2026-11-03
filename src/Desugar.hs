@@ -16,6 +16,9 @@ desugar expression = case expression of
   Arithmetic.EPowOp -> churchPow
   Arithmetic.EFalse -> churchFalse
   Arithmetic.ETrue -> churchTrue
+  Arithmetic.EPair -> churchPair
+  Arithmetic.EFst -> churchFst
+  Arithmetic.ESnd -> churchSnd
   Arithmetic.EAdd left right ->
     Pure.EApp (Pure.EApp churchAdd (desugar left)) (desugar right)
   Arithmetic.EMul left right ->
@@ -39,6 +42,33 @@ churchTrue = Pure.EAbs t (Pure.EAbs f (Pure.EVar t))
  where
   t = Pure.Name "t"
   f = Pure.Name "f"
+
+-- λa.λb.λs.s a b
+churchPair :: Pure.Exp
+churchPair = Pure.EAbs a (Pure.EAbs b (Pure.EAbs s body))
+ where
+  a = Pure.Name "a"
+  b = Pure.Name "b"
+  s = Pure.Name "s"
+  body = Pure.EApp (Pure.EApp (Pure.EVar s) (Pure.EVar a)) (Pure.EVar b)
+
+-- λp.p (λa.λb.a)
+churchFst :: Pure.Exp
+churchFst = Pure.EAbs p (Pure.EApp (Pure.EVar p) selector)
+ where
+  p = Pure.Name "p"
+  a = Pure.Name "a"
+  b = Pure.Name "b"
+  selector = Pure.EAbs a (Pure.EAbs b (Pure.EVar a))
+
+-- λp.p (λa.λb.b)
+churchSnd :: Pure.Exp
+churchSnd = Pure.EAbs p (Pure.EApp (Pure.EVar p) selector)
+ where
+  p = Pure.Name "p"
+  a = Pure.Name "a"
+  b = Pure.Name "b"
+  selector = Pure.EAbs a (Pure.EAbs b (Pure.EVar b))
 
 {-
 0: λf.λx.x

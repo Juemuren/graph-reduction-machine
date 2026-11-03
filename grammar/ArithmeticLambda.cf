@@ -29,6 +29,9 @@ EMulOp. Exp5 ::= "MUL" ;
 EPowOp. Exp5 ::= "POW" ;
 EFalse. Exp5 ::= "FALSE" ;
 ETrue.  Exp5 ::= "TRUE" ;
+EPair.  Exp5 ::= "PAIR" ;
+EFst.   Exp5 ::= "FST" ;
+ESnd.   Exp5 ::= "SND" ;
 _.      Exp5 ::= "(" Exp ")" ;
 
 token Name (lower (letter | digit | '_')*) ;
