@@ -18,7 +18,7 @@ cabal test compiler-tests
 
 测试用例使用静态文件对：
 
-- `test/cases/compiler/syntax` 比较输入与补全括号后的语法树
+- `test/cases/compiler/precedence` 比较输入与补全括号后的语法树，测试运算优先级
 - `test/cases/compiler/desugar` 比较带糖的 λ 表达式与脱糖的 λ 表达式
 - `test/cases/compiler/encode` 比较带内置函数的 λ 表达式与展开得到的纯 λ 表达式
 - `test/cases/compiler/compile` 比较纯 λ 表达式与编译得到的 SKI 图

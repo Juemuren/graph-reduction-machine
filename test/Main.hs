@@ -12,7 +12,7 @@ import TestSupport (assertExpectedError, assertGraphResult, runCases)
 main :: IO ()
 main = do
   runCases "test/cases/compiler/compile" ".lambda" ".ski" checkPureGraph
-  runCases "test/cases/compiler/syntax" ".lambda" ".parsed.lambda" checkSyntax
+  runCases "test/cases/compiler/precedence" ".lambda" ".parsed.lambda" checkSyntax
   runCases
     "test/cases/compiler/desugar"
     ".lambda"
