@@ -8,7 +8,7 @@ import TestSupport (assertGraphResult, runCases)
 main :: IO ()
 main = do
   runCases "test/cases/integration/undecode" ".lambda" ".ski" checkUndecode
-  runCases "test/cases/integration/decode" ".lambda" ".decoded" checkDecoded
+  runCases "test/cases/integration/decode-number" ".lambda" ".decoded" checkDecodedNumber
   runCases "test/cases/integration/decode-boolean" ".lambda" ".decoded" checkDecodedBoolean
   putStrLn "integration tests passed"
 
@@ -22,8 +22,8 @@ checkUndecode sourcePath expectedPath = do
       (compileSource source >>= interpret 100000)
   putStrLn (sourcePath ++ ": PASS")
 
-checkDecoded :: FilePath -> FilePath -> IO ()
-checkDecoded sourcePath expectedPath = do
+checkDecodedNumber :: FilePath -> FilePath -> IO ()
+checkDecodedNumber sourcePath expectedPath = do
   source <- readFile sourcePath
   expected <- readFile expectedPath
   case compileSource source >>= decodeChurch 100000 of

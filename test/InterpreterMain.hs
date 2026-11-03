@@ -18,7 +18,7 @@ main = do
   runCases "test/cases/interpreter/errors" ".ski" ".error" (checkError 100)
   runCases "test/cases/interpreter/limit-errors" ".ski" ".error" (checkError 1)
   runCases
-    "test/cases/interpreter/decode-errors"
+    "test/cases/interpreter/decode-number-errors"
     ".ski"
     ".error"
     (checkDecodeError ["--decode-number"])

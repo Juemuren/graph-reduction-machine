@@ -16,8 +16,8 @@ extra-source-files:
   , test/cases/compiler/syntax/*.lambda
   , test/cases/integration/undecode/*.lambda
   , test/cases/integration/undecode/*.ski
-  , test/cases/integration/decode/*.lambda
-  , test/cases/integration/decode/*.decoded
+  , test/cases/integration/decode-number/*.lambda
+  , test/cases/integration/decode-number/*.decoded
   , test/cases/integration/decode-boolean/*.lambda
   , test/cases/integration/decode-boolean/*.decoded
   , test/cases/interpreter/reduce/*.ski
@@ -25,8 +25,8 @@ extra-source-files:
   , test/cases/interpreter/errors/*.error
   , test/cases/interpreter/limit-errors/*.ski
   , test/cases/interpreter/limit-errors/*.error
-  , test/cases/interpreter/decode-errors/*.ski
-  , test/cases/interpreter/decode-errors/*.error
+  , test/cases/interpreter/decode-number-errors/*.ski
+  , test/cases/interpreter/decode-number-errors/*.error
   , test/cases/interpreter/decode-limit-errors/*.ski
   , test/cases/interpreter/decode-limit-errors/*.error
   , test/cases/interpreter/decode-boolean-errors/*.ski
