@@ -4,18 +4,29 @@ entrypoints Exp;
 {-
 Precedence, from lowest to highest:
 
-- abstraction
-- addition
-- multiplication
-- unary negation
-- exponentiation
-- application
+- def
+- add
+- mul
+- neg
+- pow
+- apply
 
-Exponentiation associates to the right; addition, multiplication and application to the left.
+Right associative:
+
+- pow
+
+Left associative:
+
+- add
+- sub
+- mul
+- apply
 -}
 EAbs.   Exp  ::= "\\" Name "->" Exp ;
 _.      Exp  ::= Exp1 ;
 EAdd.   Exp1 ::= Exp1 "+" Exp2 ;
+EZAdd.  Exp1 ::= Exp1 "+z" Exp2 ;
+EZSub.  Exp1 ::= Exp1 "-z" Exp2 ;
 _.      Exp1 ::= Exp2 ;
 EMul.   Exp2 ::= Exp2 "*" Exp3 ;
 _.      Exp2 ::= Exp3 ;

@@ -26,6 +26,10 @@ desugar expression = case expression of
   Arithmetic.ESnd -> encodeSnd
   Arithmetic.EAdd left right ->
     Pure.EApp (Pure.EApp naturalAdd (desugar left)) (desugar right)
+  Arithmetic.EZAdd left right ->
+    Pure.EApp (Pure.EApp integerAdd (desugar left)) (desugar right)
+  Arithmetic.EZSub left right ->
+    Pure.EApp (Pure.EApp integerSubtract (desugar left)) (desugar right)
   Arithmetic.EMul left right ->
     Pure.EApp (Pure.EApp naturalMul (desugar left)) (desugar right)
   Arithmetic.EPow base exponent ->
