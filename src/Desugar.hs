@@ -13,6 +13,9 @@ desugarSyntax expression = case expression of
   Arithmetic.EApp function argument ->
     Arithmetic.EApp (desugarSyntax function) (desugarSyntax argument)
   Arithmetic.EAbs name body -> Arithmetic.EAbs name (desugarSyntax body)
+  Arithmetic.EFalseLit -> Arithmetic.EFalse
+  Arithmetic.ETrueLit -> Arithmetic.ETrue
+  Arithmetic.ENat 0 -> Arithmetic.EZero
   Arithmetic.EAnd left right -> binary Arithmetic.EAndOp left right
   Arithmetic.EOr left right -> binary Arithmetic.EOrOp left right
   Arithmetic.ENot value -> Arithmetic.EApp Arithmetic.ENotOp (desugarSyntax value)
@@ -39,6 +42,9 @@ desugar expression = case expression of
     Pure.EApp (desugar function) (desugar argument)
   Arithmetic.EAbs name body -> Pure.EAbs (pureName name) (desugar body)
   Arithmetic.ENat nat -> encodeNatural nat
+  Arithmetic.EZero -> encodeNatural 0
+  Arithmetic.EFalseLit -> encodeFalse
+  Arithmetic.ETrueLit -> encodeTrue
   Arithmetic.EIntPos nat -> encodeInteger nat
   Arithmetic.EIntNeg nat -> encodeInteger (negate nat)
   Arithmetic.ENegOp -> integerNegate

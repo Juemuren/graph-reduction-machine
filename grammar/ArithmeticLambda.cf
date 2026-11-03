@@ -48,7 +48,12 @@ _.       Exp6 ::= Exp7 ;
 EApp.    Exp7 ::= Exp7 Exp8 ;
 _.       Exp7 ::= Exp8 ;
 EVar.    Exp8 ::= Name ;
+-- Data syntax sugar.
+EFalseLit. Exp8 ::= "false" ;
+ETrueLit.  Exp8 ::= "true" ;
 ENat.    Exp8 ::= Integer ;
+-- Built-in functions.
+EZero.   Exp8 ::= "ZERO" ;
 ESuccOp. Exp8 ::= "SUCC" ;
 EPredOp. Exp8 ::= "PRED" ;
 EAddOp.  Exp8 ::= "ADD" ;
