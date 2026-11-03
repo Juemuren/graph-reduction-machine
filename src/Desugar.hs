@@ -11,6 +11,9 @@ desugarSyntax expression = case expression of
   Arithmetic.EApp function argument ->
     Arithmetic.EApp (desugarSyntax function) (desugarSyntax argument)
   Arithmetic.EAbs name body -> Arithmetic.EAbs name (desugarSyntax body)
+  Arithmetic.EAnd left right -> binary Arithmetic.EAndOp left right
+  Arithmetic.EOr left right -> binary Arithmetic.EOrOp left right
+  Arithmetic.ENot value -> Arithmetic.EApp Arithmetic.ENotOp (desugarSyntax value)
   Arithmetic.EAdd left right -> binary Arithmetic.EAddOp left right
   Arithmetic.EZAdd left right -> binary Arithmetic.EZAddOp left right
   Arithmetic.EZSub left right -> binary Arithmetic.EZSubOp left right
@@ -41,6 +44,9 @@ desugar expression = case expression of
   Arithmetic.EPowOp -> naturalPow
   Arithmetic.EFalse -> encodeFalse
   Arithmetic.ETrue -> encodeTrue
+  Arithmetic.EAndOp -> booleanAnd
+  Arithmetic.EOrOp -> booleanOr
+  Arithmetic.ENotOp -> booleanNot
   Arithmetic.EPair -> encodePair
   Arithmetic.EFst -> encodeFst
   Arithmetic.ESnd -> encodeSnd
@@ -55,6 +61,9 @@ desugar expression = case expression of
   Arithmetic.EPow base exponent ->
     Pure.EApp (Pure.EApp naturalPow (desugar base)) (desugar exponent)
   Arithmetic.ENeg value -> Pure.EApp integerNegate (desugar value)
+  Arithmetic.EAnd left right -> Pure.EApp (Pure.EApp booleanAnd (desugar left)) (desugar right)
+  Arithmetic.EOr left right -> Pure.EApp (Pure.EApp booleanOr (desugar left)) (desugar right)
+  Arithmetic.ENot value -> Pure.EApp booleanNot (desugar value)
 
 pureName :: Arithmetic.Name -> Pure.Name
 pureName (Arithmetic.Name name) = Pure.Name name
@@ -72,6 +81,26 @@ encodeTrue = Pure.EAbs t (Pure.EAbs f (Pure.EVar t))
  where
   t = Pure.Name "t"
   f = Pure.Name "f"
+
+-- λp.λq.p q p
+booleanAnd :: Pure.Exp
+booleanAnd = Pure.EAbs p (Pure.EAbs q (Pure.EApp (Pure.EApp (Pure.EVar p) (Pure.EVar q)) (Pure.EVar p)))
+ where
+  p = Pure.Name "p"
+  q = Pure.Name "q"
+
+-- λp.λq.p p q
+booleanOr :: Pure.Exp
+booleanOr = Pure.EAbs p (Pure.EAbs q (Pure.EApp (Pure.EApp (Pure.EVar p) (Pure.EVar p)) (Pure.EVar q)))
+ where
+  p = Pure.Name "p"
+  q = Pure.Name "q"
+
+-- λp.p FALSE TRUE
+booleanNot :: Pure.Exp
+booleanNot = Pure.EAbs p (Pure.EApp (Pure.EApp (Pure.EVar p) encodeFalse) encodeTrue)
+ where
+  p = Pure.Name "p"
 
 -- λa.λb.λs.s a b
 encodePair :: Pure.Exp

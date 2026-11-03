@@ -5,6 +5,8 @@ entrypoints Exp;
 Precedence, from lowest to highest:
 
 - def
+- or
+- and
 - add
 - mul
 - neg
@@ -18,39 +20,49 @@ Right associative:
 Left associative:
 
 - add
+- or
+- and
 - sub
 - mul
 - apply
 -}
 EAbs.   Exp  ::= "\\" Name "->" Exp ;
 _.      Exp  ::= Exp1 ;
-EAdd.   Exp1 ::= Exp1 "+" Exp2 ;
-EZAdd.  Exp1 ::= Exp1 "+z" Exp2 ;
-EZSub.  Exp1 ::= Exp1 "-z" Exp2 ;
+EOr.    Exp1 ::= Exp1 "|" Exp2 ;
 _.      Exp1 ::= Exp2 ;
-EMul.   Exp2 ::= Exp2 "*" Exp3 ;
+EAnd.   Exp2 ::= Exp2 "&" Exp3 ;
 _.      Exp2 ::= Exp3 ;
-ENeg.   Exp3 ::= "-" Exp3 ;
-EPow.   Exp3 ::= Exp4 "^" Exp3 ;
+EAdd.   Exp3 ::= Exp3 "+" Exp4 ;
+EZAdd.  Exp3 ::= Exp3 "+z" Exp4 ;
+EZSub.  Exp3 ::= Exp3 "-z" Exp4 ;
 _.      Exp3 ::= Exp4 ;
-EApp.   Exp4 ::= Exp4 Exp5 ;
+EMul.   Exp4 ::= Exp4 "*" Exp5 ;
 _.      Exp4 ::= Exp5 ;
-EVar.   Exp5 ::= Name ;
-ENat.   Exp5 ::= Integer ;
-EIntPos. Exp5 ::= "INT" "+" Integer ;
-EIntNeg. Exp5 ::= "INT" "-" Integer ;
-ENegOp. Exp5 ::= "NEG" ;
-EZAddOp. Exp5 ::= "ZADD" ;
-EZSubOp. Exp5 ::= "ZSUB" ;
-EAddOp. Exp5 ::= "ADD" ;
-EMulOp. Exp5 ::= "MUL" ;
-EPowOp. Exp5 ::= "POW" ;
-EFalse. Exp5 ::= "FALSE" ;
-ETrue.  Exp5 ::= "TRUE" ;
-EPair.  Exp5 ::= "PAIR" ;
-EFst.   Exp5 ::= "FST" ;
-ESnd.   Exp5 ::= "SND" ;
-_.      Exp5 ::= "(" Exp ")" ;
+ENeg.   Exp5 ::= "-" Exp5 ;
+ENot.   Exp5 ::= "!" Exp5 ;
+EPow.   Exp5 ::= Exp6 "^" Exp5 ;
+_.      Exp5 ::= Exp6 ;
+EApp.   Exp6 ::= Exp6 Exp7 ;
+_.      Exp6 ::= Exp7 ;
+EVar.   Exp7 ::= Name ;
+ENat.   Exp7 ::= Integer ;
+EIntPos. Exp7 ::= "INT" "+" Integer ;
+EIntNeg. Exp7 ::= "INT" "-" Integer ;
+ENegOp. Exp7 ::= "NEG" ;
+EZAddOp. Exp7 ::= "ZADD" ;
+EZSubOp. Exp7 ::= "ZSUB" ;
+EAddOp. Exp7 ::= "ADD" ;
+EMulOp. Exp7 ::= "MUL" ;
+EPowOp. Exp7 ::= "POW" ;
+EAndOp. Exp7 ::= "AND" ;
+EOrOp.  Exp7 ::= "OR" ;
+ENotOp. Exp7 ::= "NOT" ;
+EFalse. Exp7 ::= "FALSE" ;
+ETrue.  Exp7 ::= "TRUE" ;
+EPair.  Exp7 ::= "PAIR" ;
+EFst.   Exp7 ::= "FST" ;
+ESnd.   Exp7 ::= "SND" ;
+_.      Exp7 ::= "(" Exp ")" ;
 
 token Name (lower (letter | digit | '_')*) ;
 comment "--" ;
