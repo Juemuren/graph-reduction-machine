@@ -8,29 +8,10 @@ extra-source-files:
     grammar/ArithmeticLambda.cf
   , grammar/PureLambda.cf
   , grammar/Graph.cf
-  , test/cases/compiler/compile/*.lambda
-  , test/cases/compiler/compile/*.ski
-  , test/cases/compiler/desugar/*.lambda
-  , test/cases/compiler/errors/*.lambda
-  , test/cases/compiler/errors/*.error
-  , test/cases/compiler/syntax/*.lambda
-  , test/cases/integration/undecode/*.lambda
-  , test/cases/integration/undecode/*.ski
-  , test/cases/integration/decode-natural/*.lambda
-  , test/cases/integration/decode-natural/*.decoded
-  , test/cases/integration/decode-boolean/*.lambda
-  , test/cases/integration/decode-boolean/*.decoded
-  , test/cases/interpreter/reduce/*.ski
-  , test/cases/interpreter/errors/*.ski
-  , test/cases/interpreter/errors/*.error
-  , test/cases/interpreter/limit-errors/*.ski
-  , test/cases/interpreter/limit-errors/*.error
-  , test/cases/interpreter/decode-natural-errors/*.ski
-  , test/cases/interpreter/decode-natural-errors/*.error
-  , test/cases/interpreter/decode-limit-errors/*.ski
-  , test/cases/interpreter/decode-limit-errors/*.error
-  , test/cases/interpreter/decode-boolean-errors/*.ski
-  , test/cases/interpreter/decode-boolean-errors/*.error
+  , test/cases/**/*.lambda
+  , test/cases/**/*.ski
+  , test/cases/**/*.error
+  , test/cases/**/*.decoded
 
 custom-setup
   setup-depends:
