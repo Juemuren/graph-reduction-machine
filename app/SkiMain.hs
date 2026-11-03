@@ -33,7 +33,8 @@ data DecodeMode = Raw | Natural | Boolean deriving (Eq)
 parseArgs :: [String] -> Either String (Int, DecodeMode, Maybe FilePath)
 parseArgs = go 100000 Raw Nothing
  where
-  usage = "usage: ski-interpreter [--max-steps N] [--decode-natural | --decode-boolean] [FILE]"
+  usage =
+    "usage: ski-interpreter [--max-steps N] [--decode-natural | --decode-boolean] [FILE]"
   go limit mode path [] = Right (limit, mode, path)
   go limit Raw path ("--decode-natural" : rest) =
     go limit Natural path rest

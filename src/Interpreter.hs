@@ -1,14 +1,21 @@
 -- | Reduce a parsed SKI graph to normal form while preserving shared nodes.
-module Interpreter (interpretSource, interpret, decodeNaturalSource, decodeNatural, decodeBooleanSource, decodeBoolean) where
+module Interpreter (
+  interpretSource,
+  interpret,
+  decodeNaturalSource,
+  decodeNatural,
+  decodeBooleanSource,
+  decodeBoolean,
+) where
 
 import Control.Monad (foldM, when)
 import Control.Monad.State.Strict (StateT, evalStateT, get, gets, lift, modify)
 import qualified Data.IntMap.Strict as IntMap
 import qualified Data.Map.Strict as Map
 import qualified Data.Set as Set
-import Numeric.Natural (Natural)
 import qualified Graph.Abs as Graph
 import qualified Graph.Par as Graph
+import Numeric.Natural (Natural)
 
 type Address = Int
 

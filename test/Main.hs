@@ -13,7 +13,11 @@ main :: IO ()
 main = do
   runCases "test/cases/compiler/compile" ".lambda" ".ski" checkPureGraph
   runCases "test/cases/compiler/syntax" ".lambda" ".parsed.lambda" checkSyntax
-  runCases "test/cases/compiler/desugar" ".lambda" ".desugared.lambda" checkDesugar
+  runCases
+    "test/cases/compiler/desugar"
+    ".lambda"
+    ".desugared.lambda"
+    checkDesugar
   runCases "test/cases/compiler/encode" ".lambda" ".pure.lambda" checkEncode
   runCases "test/cases/compiler/errors" ".lambda" ".error" checkError
   putStrLn "compiler tests passed"

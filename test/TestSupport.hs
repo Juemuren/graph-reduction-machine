@@ -1,4 +1,10 @@
-module TestSupport (runCases, assertGraphResult, assertExpectedError, assertExpectedErrorText, normalizeGraph) where
+module TestSupport (
+  runCases,
+  assertGraphResult,
+  assertExpectedError,
+  assertExpectedErrorText,
+  normalizeGraph,
+) where
 
 import Control.Monad (when)
 import Data.List (isSuffixOf, sort)
@@ -53,11 +59,16 @@ assertExpectedErrorText :: FilePath -> FilePath -> String -> IO ()
 assertExpectedErrorText sourcePath expectedPath problem = do
   expected <- readFile expectedPath
   if not (null (normalizeError expected))
-      && normalizeError expected == normalizeError problem
+    && normalizeError expected == normalizeError problem
     then pure ()
     else
       die
-        (sourcePath ++ ": expected error " ++ show (normalizeError expected) ++ ", got " ++ show problem)
+        ( sourcePath
+            ++ ": expected error "
+            ++ show (normalizeError expected)
+            ++ ", got "
+            ++ show problem
+        )
 
 normalizeGraph :: String -> [String]
 normalizeGraph = lines . filter (/= '\r')

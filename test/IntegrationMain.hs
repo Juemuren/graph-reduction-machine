@@ -8,8 +8,16 @@ import TestSupport (assertGraphResult, runCases)
 main :: IO ()
 main = do
   runCases "test/cases/integration/undecode" ".lambda" ".ski" checkUndecode
-  runCases "test/cases/integration/decode-natural" ".lambda" ".decoded" checkDecodedNatural
-  runCases "test/cases/integration/decode-boolean" ".lambda" ".decoded" checkDecodedBoolean
+  runCases
+    "test/cases/integration/decode-natural"
+    ".lambda"
+    ".decoded"
+    checkDecodedNatural
+  runCases
+    "test/cases/integration/decode-boolean"
+    ".lambda"
+    ".decoded"
+    checkDecodedBoolean
   putStrLn "integration tests passed"
 
 checkUndecode :: FilePath -> FilePath -> IO ()
