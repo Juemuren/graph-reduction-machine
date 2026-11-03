@@ -11,6 +11,9 @@ desugar expression = case expression of
     Pure.EApp (desugar function) (desugar argument)
   Arithmetic.EAbs name body -> Pure.EAbs (pureName name) (desugar body)
   Arithmetic.ENat number -> churchNumeral number
+  Arithmetic.EAddOp -> churchAdd
+  Arithmetic.EMulOp -> churchMul
+  Arithmetic.EPowOp -> churchPow
   Arithmetic.EAdd left right ->
     Pure.EApp (Pure.EApp churchAdd (desugar left)) (desugar right)
   Arithmetic.EMul left right ->
