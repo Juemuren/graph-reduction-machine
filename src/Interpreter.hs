@@ -6,6 +6,8 @@ module Interpreter (
   decodeNatural,
   decodeBooleanSource,
   decodeBoolean,
+  decodeIntegerSource,
+  decodeInteger,
 ) where
 
 import Control.Monad (foldM, when)
@@ -56,16 +58,43 @@ decodeNatural :: Int -> Graph.Graph -> Either String (Maybe Natural)
 decodeNatural limit graph = do
   (initialHeap, root) <- loadGraph graph
   let machine = Machine initialHeap (IntMap.size initialHeap) 0 limit
+  evalStateT (decodeNaturalAt root) machine
+
+-- | Decode a Church integer represented by a pair of Church naturals.
+decodeIntegerSource :: Int -> String -> Either String (Maybe Integer)
+decodeIntegerSource limit source =
+  Graph.pGraph (Graph.myLexer source) >>= decodeInteger limit
+
+decodeInteger :: Int -> Graph.Graph -> Either String (Maybe Integer)
+decodeInteger limit graph = do
+  (initialHeap, root) <- loadGraph graph
+  let machine = Machine initialHeap (IntMap.size initialHeap) 0 limit
   evalStateT
     ( do
-        function <- allocate ProbeFunction
-        value <- allocate ProbeValue
-        appliedOnce <- allocate (App root function)
-        appliedTwice <- allocate (App appliedOnce value)
-        normalize appliedTwice
-        countApplications function value appliedTwice 0
+        selector <- allocate ProbeFunction
+        selected <- allocate (App root selector)
+        whnf selected
+        (headNode, applications) <- spine selected
+        case (headNode, applications) of
+          (ProbeFunction, [(_, positive), (_, negative)]) -> do
+            first <- decodeNaturalAt positive
+            case first of
+              Nothing -> pure Nothing
+              Just positiveValue -> do
+                second <- decodeNaturalAt negative
+                pure (fmap (\negativeValue -> toInteger positiveValue - toInteger negativeValue) second)
+          _ -> pure Nothing
     )
     machine
+
+decodeNaturalAt :: Address -> Run (Maybe Natural)
+decodeNaturalAt root = do
+  function <- allocate ProbeFunction
+  value <- allocate ProbeValue
+  appliedOnce <- allocate (App root function)
+  appliedTwice <- allocate (App appliedOnce value)
+  normalize appliedTwice
+  countApplications function value appliedTwice 0
 
 -- | Apply a closed SKI term to two distinct symbolic values and identify the selected one.
 decodeBooleanSource :: Int -> String -> Either String (Maybe Bool)

@@ -2,7 +2,7 @@ module Main (main) where
 
 import Data.Char (toUpper)
 import Graph.Print (printTree)
-import Interpreter (decodeBooleanSource, decodeNaturalSource, interpretSource)
+import Interpreter (decodeBooleanSource, decodeIntegerSource, decodeNaturalSource, interpretSource)
 import System.Environment (getArgs)
 import System.Exit (die, exitFailure)
 import System.IO (hPutStrLn, stderr)
@@ -22,24 +22,29 @@ main = do
           Boolean ->
             decodeBooleanSource limit source
               >>= maybe (Left "not a Church Boolean") (Right . map toUpper . show)
+          Integer ->
+            decodeIntegerSource limit source
+              >>= maybe (Left "not a Church Integer") (Right . show)
   case result of
     Left message -> do
       hPutStrLn stderr message
       exitFailure
     Right output -> putStrLn output
 
-data DecodeMode = Raw | Natural | Boolean deriving (Eq)
+data DecodeMode = Raw | Natural | Boolean | Integer deriving (Eq)
 
 parseArgs :: [String] -> Either String (Int, DecodeMode, Maybe FilePath)
 parseArgs = go 100000 Raw Nothing
  where
   usage =
-    "usage: ski-interpreter [--max-steps N] [--decode-natural | --decode-boolean] [FILE]"
+    "usage: ski-interpreter [--max-steps N] [--decode-natural | --decode-boolean | --decode-integer] [FILE]"
   go limit mode path [] = Right (limit, mode, path)
   go limit Raw path ("--decode-natural" : rest) =
     go limit Natural path rest
   go limit Raw path ("--decode-boolean" : rest) =
     go limit Boolean path rest
+  go limit Raw path ("--decode-integer" : rest) =
+    go limit Integer path rest
   go _ mode path ("--max-steps" : value : rest) =
     case readMaybe value of
       Just limit | limit > 0 -> go limit mode path rest

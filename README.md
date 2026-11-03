@@ -56,7 +56,7 @@ cabal exec -- lambda-to-graph example.lambda
 默认进行完整编译。可以指定完成后停止的阶段。
 
 - 用 `--desugar` 在脱糖后停止
-    
+
     ```sh
     cabal exec -- lambda-to-graph --desugar example.lambda
     ```
@@ -66,6 +66,8 @@ cabal exec -- lambda-to-graph example.lambda
     ```sh
     cabal exec -- lambda-to-graph --expand example.lambda
     ```
+
+编译的完整步骤请参考 [syntax.md#表达式编译](docs/syntax.md#表达式编译)。
 
 ### 运行 SKI 图
 
@@ -97,8 +99,16 @@ cabal exec -- ski-interpreter --max-steps 1000000 example.ski
     cabal exec -- ski-interpreter --decode-boolean example.ski
     ```
 
+- 用 `--decode-integer` 尝试解码并输出十进制整数
+
+    ```sh
+    cabal exec -- ski-interpreter --decode-integer example.ski
+    ```
+
 若无法识别为指定类型，则解码失败，解释器报错。
 
 解码过程也受 `--max-steps` 限制。
 
-解码选项不能同时使用。具体原因请参考 [syntax.md#丘奇解码](docs/syntax.md#丘奇解码)。
+解码选项不能同时使用。
+
+解码的详细操作请参考 [syntax.md#丘奇解码](docs/syntax.md#丘奇解码)。

@@ -18,20 +18,25 @@ main = do
   runCases "test/cases/interpreter/errors" ".ski" ".error" (checkError 100)
   runCases "test/cases/interpreter/limit-errors" ".ski" ".error" (checkError 1)
   runCases
-    "test/cases/interpreter/decode-natural-errors"
-    ".ski"
-    ".error"
-    (checkDecodeError ["--decode-natural"])
-  runCases
     "test/cases/interpreter/decode-limit-errors"
     ".ski"
     ".error"
     (checkDecodeError ["--max-steps", "1", "--decode-natural"])
   runCases
+    "test/cases/interpreter/decode-natural-errors"
+    ".ski"
+    ".error"
+    (checkDecodeError ["--decode-natural"])
+  runCases
     "test/cases/interpreter/decode-boolean-errors"
     ".ski"
     ".error"
     (checkDecodeError ["--decode-boolean"])
+  runCases
+    "test/cases/interpreter/decode-integer-errors"
+    ".ski"
+    ".error"
+    (checkDecodeError ["--decode-integer"])
   putStrLn "interpreter tests passed"
 
 checkResult :: Int -> FilePath -> FilePath -> IO ()
