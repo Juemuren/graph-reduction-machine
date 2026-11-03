@@ -16,6 +16,8 @@ desugarSyntax expression = case expression of
   Arithmetic.EFalseLit -> Arithmetic.EFalse
   Arithmetic.ETrueLit -> Arithmetic.ETrue
   Arithmetic.ENat 0 -> Arithmetic.EZero
+  Arithmetic.EIntPosLit nat -> Arithmetic.EIntPos nat
+  Arithmetic.EIntNegLit nat -> Arithmetic.EIntNeg nat
   Arithmetic.EAnd left right -> binary Arithmetic.EAndOp left right
   Arithmetic.EOr left right -> binary Arithmetic.EOrOp left right
   Arithmetic.ENot value -> Arithmetic.EApp Arithmetic.ENotOp (desugarSyntax value)
@@ -47,6 +49,8 @@ desugar expression = case expression of
   Arithmetic.ETrueLit -> encodeTrue
   Arithmetic.EIntPos nat -> encodeInteger nat
   Arithmetic.EIntNeg nat -> encodeInteger (negate nat)
+  Arithmetic.EIntPosLit nat -> encodeInteger nat
+  Arithmetic.EIntNegLit nat -> encodeInteger (negate nat)
   Arithmetic.ENegOp -> integerNegate
   Arithmetic.EZAddOp -> integerAdd
   Arithmetic.EZSubOp -> integerSubtract

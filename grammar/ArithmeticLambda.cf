@@ -9,9 +9,9 @@ Precedence, from lowest to highest:
 - and
 - add / sub
 - mul
-- neg / not
+- prefix (+n, -n, -z, !)
 - pow
-- succ / pred
+- postfix(z++, z--)
 - apply
 
 Right associative:
@@ -38,7 +38,9 @@ EZSub.   Exp3 ::= Exp3 "-z" Exp4 ;
 _.       Exp3 ::= Exp4 ;
 EMul.    Exp4 ::= Exp4 "*" Exp5 ;
 _.       Exp4 ::= Exp5 ;
-ENeg.    Exp5 ::= "-" Exp5 ;
+EIntPosLit. Exp5 ::= "+" Integer ;
+EIntNegLit. Exp5 ::= "-" Integer ;
+ENeg.    Exp5 ::= "-z" Exp5 ;
 ENot.    Exp5 ::= "!" Exp5 ;
 EPow.    Exp5 ::= Exp6 "^" Exp5 ;
 _.       Exp5 ::= Exp6 ;
