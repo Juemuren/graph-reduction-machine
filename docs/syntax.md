@@ -60,7 +60,7 @@
 
 运算内部仍然存在优先级，请参考对应类型的编码。
 
-所有内置函数都是函数，遵循函数应用的优先级规则。
+所有内置函数都遵循函数应用的优先级规则。可以使用括号改变解析顺序。
 
 #### 布尔值编码
 
@@ -84,7 +84,7 @@
 - `TRUE` 展开为 `\t -> \f -> t`
 - `AND` 展开为 `\p -> \q -> p q p`
 - `OR` 展开为 `\p -> \q -> p p q`
-- `NOT` 展开为 `\p -> p FALSE TRUE`，其中布尔值会继续展开为纯 λ 表达式
+- `NOT` 展开为 `\p -> p FALSE TRUE`，其中的布尔值会继续展开
 
 #### 自然数编码
 
@@ -147,12 +147,10 @@
 
 展开：
 
-- `INT +n` 展开为 `PAIR n 0`，`INT -n` 展开为 `PAIR 0 n`。其中 `n` 是自然数。`PAIR` 与自然数会继续展开为纯 λ 表达式
-- `NEG` 和 `-a` 都展开为 `(\p -> PAIR (SND p) (FST p)) a`。其中有序对及投影函数会继续展开为纯 λ 表达式
-- `ZADD a b` 和 `a +z b` 都展开为 `(\p -> \q -> PAIR (ADD (FST p) (FST q)) (ADD (SND p) (SND q))) a b`
-- `ZSUB a b` 和 `a -z b` 都展开为 `(\p -> \q -> PAIR (ADD (FST p) (SND q)) (ADD (SND p) (FST q))) a b`
-
-整数加减法的结果仍是自然数有序对，不会消去两个分量中相同的部分。以上表达式中的内置函数会继续展开为纯 λ 表达式。
+- `INT +n` 展开为 `PAIR n 0`，`INT -n` 展开为 `PAIR 0 n`。其中的自然数和内置函数会继续展开
+- `NEG` 和 `-a` 都展开为 `(\p -> PAIR (SND p) (FST p)) a`。其中的内置函数会继续展开
+- `ZADD a b` 和 `a +z b` 都展开为 `(\p -> \q -> PAIR (ADD (FST p) (FST q)) (ADD (SND p) (SND q))) a b`。其中的内置函数会继续展开
+- `ZSUB a b` 和 `a -z b` 都展开为 `(\p -> \q -> PAIR (ADD (FST p) (SND q)) (ADD (SND p) (FST q))) a b`。其中的内置函数会继续展开
 
 ### 表达式编译
 
