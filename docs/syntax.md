@@ -124,7 +124,7 @@ SUCC (SUCC ZERO)
 因此：
 
 - `ZERO` 表示零
-- `ONE` 表示一
+- `ONE` / `TWO` / `THREE` / `FOUR` / `FIVE` / `SIX` / `SEVEN` / `EIGHT` / `NINE` 分别表示一到九
 - `SUCC a` 表示自然数 `a` 的后继
 - `PRED a` 表示自然数 `a` 的前驱。零的前驱仍为零
 
