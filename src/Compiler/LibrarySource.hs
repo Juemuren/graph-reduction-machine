@@ -1,5 +1,5 @@
 -- | Embed standard-library modules when the compiler is built.
-module LibrarySource (embeddedSources) where
+module Compiler.LibrarySource (embeddedSources) where
 
 import Control.Monad (forM)
 import Data.List (sort)

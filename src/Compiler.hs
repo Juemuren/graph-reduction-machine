@@ -13,9 +13,9 @@ module Compiler (
   reduceSourceWithModules,
 ) where
 
+import Compiler.Expand (expandSource)
 import Data.List (intercalate, nub)
 import qualified Data.Map.Strict as Map
-import Expand (expandSource)
 import qualified Graph.Abs as Graph
 import qualified PureLambda.Abs as Pure
 

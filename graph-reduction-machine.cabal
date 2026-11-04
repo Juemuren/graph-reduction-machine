@@ -23,12 +23,12 @@ library
   hs-source-dirs: src
   exposed-modules:
       Compiler
-    , Expand
+    , Compiler.Expand
+    , Compiler.ModuleLoader
     , Interpreter
     , CoreLambda.Abs
     , CoreLambda.Par
     , CoreLambda.Print
-    , ModuleLoader
     , PureLambda.Abs
     , PureLambda.Par
     , PureLambda.Print
@@ -39,8 +39,8 @@ library
       CoreLambda.Lex
     , PureLambda.Lex
     , Graph.Lex
-    , LibrarySource
-    , ModuleSource
+    , Compiler.LibrarySource
+    , Compiler.ModuleSource
   build-depends:
       base >=4.16 && <5
     , array

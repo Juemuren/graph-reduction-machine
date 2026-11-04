@@ -11,6 +11,19 @@
 
 编译的完整步骤见 [syntax.md#表达式编译](syntax.md#表达式编译)。
 
+编译器目录结构为：
+
+- 命令行入口位于 `app/CompilerMain.hs`
+- 编译器实现位于 `src/Compiler.hs` 和 `src/Compiler/`
+- 自动生成的语法模块位于 `src/CoreLambda/` / `src/PureLambda/` / `src/Graph/`
+
+编译器的模块为：
+
+- `Compiler` 是编译和规约的入口
+- `Compiler.Expand` 解析模块、展开定义及内置函数
+- `Compiler.ModuleSource` 解析和校验模块结构；`Compiler.ModuleLoader` 加载导入的源码文件。
+- `Compiler.LibrarySource` 在构建时嵌入标准库源码
+
 ## 软件解释器
 
 使用 Haskell 编写 SKI 图归约解释器。

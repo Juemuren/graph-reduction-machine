@@ -1,15 +1,15 @@
 {-# LANGUAGE TemplateHaskell #-}
 
 -- | Resolve modules and expand library definitions into pure lambda calculus.
-module Expand (expand, expandSource) where
+module Compiler.Expand (expand, expandSource) where
 
+import Compiler.LibrarySource (embeddedSources)
+import Compiler.ModuleSource (Import (..), Module (..), parseModule)
 import Control.Monad (foldM, when)
 import qualified CoreLambda.Abs as Core
 import qualified CoreLambda.Print as Core
 import Data.List (intercalate)
 import qualified Data.Map.Strict as Map
-import LibrarySource (embeddedSources)
-import ModuleSource (Import (..), Module (..), parseModule)
 import qualified PureLambda.Abs as Pure
 import System.FilePath (normalise, takeDirectory, (</>))
 

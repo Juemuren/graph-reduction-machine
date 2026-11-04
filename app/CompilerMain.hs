@@ -5,10 +5,10 @@ import Compiler (
   compileSourceWithModules,
   reduceSourceWithModules,
  )
+import Compiler.Expand (expandSource)
+import Compiler.ModuleLoader (loadModuleSources)
 import Data.Maybe (fromMaybe)
-import Expand (expandSource)
 import Graph.Print (printTree)
-import ModuleLoader (loadModuleSources)
 import qualified PureLambda.Print as Pure
 import System.Environment (getArgs)
 import System.Exit (die, exitFailure)

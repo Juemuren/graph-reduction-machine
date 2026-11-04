@@ -1,5 +1,5 @@
 -- | Validate the module syntax tree produced by the BNFC parser.
-module ModuleSource (Module (..), Import (..), parseModule) where
+module Compiler.ModuleSource (Module (..), Import (..), parseModule) where
 
 import Control.Monad (when)
 import qualified CoreLambda.Abs as Core

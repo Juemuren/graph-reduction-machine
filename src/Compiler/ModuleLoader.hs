@@ -1,9 +1,9 @@
 -- | Read imported source modules relative to the importing file.
-module ModuleLoader (loadModuleSources) where
+module Compiler.ModuleLoader (loadModuleSources) where
 
+import Compiler.ModuleSource (Import (..), Module (..), parseModule)
 import Control.Exception (IOException, evaluate, try)
 import qualified Data.Map.Strict as Map
-import ModuleSource (Import (..), Module (..), parseModule)
 import System.FilePath (normalise, takeDirectory, (</>))
 
 loadModuleSources ::
