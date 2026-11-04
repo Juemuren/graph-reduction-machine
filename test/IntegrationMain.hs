@@ -41,10 +41,15 @@ main = do
     ".decoded"
     checkDecodedNatural
   runCases
-    "test/cases/integration/operation-natural"
+    "test/cases/integration/operation-natural-value"
     ".lambda"
     ".decoded"
     checkDecodedNatural
+  runCases
+    "test/cases/integration/operation-natural-compare"
+    ".lambda"
+    ".decoded"
+    checkDecodedBoolean
   runCases
     "test/cases/integration/operation-pair"
     ".lambda"
@@ -56,20 +61,25 @@ main = do
     ".decoded"
     checkDecodedBoolean
   runCases
-    "test/cases/integration/operation-integer"
+    "test/cases/integration/operation-integer-value"
     ".lambda"
     ".decoded"
     checkDecodedInteger
   runCases
-    "test/cases/integration/operation-rational"
+    "test/cases/integration/operation-integer-compare"
     ".lambda"
     ".decoded"
-    checkDecodedInteger
+    checkDecodedBoolean
   runCases
     "test/cases/integration/operation-rational-value"
     ".lambda"
     ".decoded"
     checkDecodedRational
+  runCases
+    "test/cases/integration/operation-rational-compare"
+    ".lambda"
+    ".decoded"
+    checkDecodedBoolean
   runCases
     "test/cases/integration/control-if"
     ".lambda"
