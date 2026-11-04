@@ -27,7 +27,7 @@
           "properties": {
             "input": { "$ref": "#/$defs/lambdaInput" },
             "run": { "$ref": "#/$defs/parseRun" },
-            "expect": { "$ref": "#/$defs/valueExpectation" }
+            "expect": { "$ref": "#/$defs/valueOrErrorExpectation" }
           }
         },
         {
@@ -79,7 +79,11 @@
       "required": ["language", "source"],
       "properties": {
         "language": { "const": "lambda" },
-        "source": { "type": "string" }
+        "source": { "type": "string" },
+        "modules": {
+          "type": "object",
+          "additionalProperties": { "type": "string" }
+        }
       },
       "additionalProperties": false
     },

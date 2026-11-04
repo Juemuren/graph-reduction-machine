@@ -5,9 +5,9 @@ module TestSupport (Suite (..), runSuite) where
 import Compiler (
   Reduction (..),
   compile,
-  compileSourceWith,
   compileSourceWithModules,
   reduceSource,
+  reduceSourceWithModules,
  )
 import Control.Monad (forM_, unless, void, when)
 import qualified CoreLambda.Par as Core
@@ -23,7 +23,8 @@ import Data.Aeson (
  )
 import qualified Data.ByteString.Lazy as ByteString
 import Data.JSON.JSONSchema (validate)
-import Data.List (isInfixOf, nub, sort)
+import Data.List (nub, sort)
+import qualified Data.Map.Strict as Map
 import Data.Maybe (catMaybes, fromMaybe, isJust, isNothing)
 import Data.Ratio (denominator, numerator)
 import qualified Graph.Abs as Graph
@@ -37,10 +38,9 @@ import Interpreter (
   interpret,
   interpretSource,
  )
-import ModuleLoader (loadModuleSources)
 import qualified PureLambda.Abs as Pure
 import qualified PureLambda.Par as Pure
-import System.Directory (listDirectory)
+import System.Directory (doesDirectoryExist, listDirectory)
 import System.Exit (ExitCode (..), die)
 import System.FilePath (takeExtension, (</>))
 import System.Process (readProcessWithExitCode)
@@ -51,7 +51,7 @@ newtype CaseFile = CaseFile [TestCase]
 
 data TestCase = TestCase String Input RunSpec Expected
 
-data Input = Input String String
+data Input = Input String String (Map.Map FilePath String)
 
 data RunSpec = RunSpec
   { runStage :: String
@@ -76,7 +76,10 @@ instance FromJSON TestCase where
 
 instance FromJSON Input where
   parseJSON = withObject "input" $ \object ->
-    Input <$> object .: "language" <*> object .: "source"
+    Input
+      <$> object .: "language"
+      <*> object .: "source"
+      <*> (fromMaybe Map.empty <$> object .:? "modules")
 
 instance FromJSON RunSpec where
   parseJSON = withObject "run" $ \object ->
@@ -103,8 +106,8 @@ runSuite suite = do
       root = "test/cases" </> suiteName suite
   schemaBytes <- ByteString.readFile schemaPath
   schema <- unwrap schemaPath (eitherDecode schemaBytes :: Either String Value)
-  directories <- sort <$> listDirectory root
-  paths <- concat <$> mapM (jsonFiles . (root </>)) directories
+  entries <- sort <$> listDirectory root
+  paths <- concat <$> mapM (jsonFiles . (root </>)) entries
   when (null paths) $ die ("no JSON cases in " ++ root)
   forM_ paths $ \path -> do
     bytes <- ByteString.readFile path
@@ -125,32 +128,15 @@ runSuite suite = do
       let label = path ++ ":" ++ name
       runCase suite label testCase
       putStrLn (label ++ ": PASS")
-  case suite of
-    CompilerSuite -> testModuleFile
-    _ -> pure ()
   putStrLn (suiteName suite ++ " tests passed")
  where
-  jsonFiles directory = do
-    names <- listDirectory directory
-    pure (sort [directory </> name | name <- names, takeExtension name == ".json"])
-
-testModuleFile :: IO ()
-testModuleFile = do
-  let path = "test/cases/compiler/modules/program.lambda"
-  source <- readFile path
-  modules <- loadModuleSources path source >>= unwrap path
-  graph <- unwrap path (compileSourceWithModules BetaEta modules path source)
-  decoded <- unwrap path (decodeNatural 100000 graph)
-  assertEqual path (Just 2) decoded
-  let privateImport = "@< \"./base.lambda\" (helper); @! ONE;"
-  case compileSourceWithModules BetaEta modules path privateImport of
-    Left problem | "does not export helper" `isInfixOf` problem -> pure ()
-    Left problem -> die (path ++ ": unexpected error: " ++ problem)
-    Right _ -> die (path ++ ": private name was imported")
-  case compileSourceWithModules BetaEta modules path "name = ONE" of
-    Left _ -> pure ()
-    Right _ -> die (path ++ ": definition without semicolon was accepted")
-  putStrLn (path ++ ": PASS")
+  jsonFiles path = do
+    directory <- doesDirectoryExist path
+    if directory
+      then do
+        names <- listDirectory path
+        pure (sort [path </> name | name <- names, takeExtension name == ".json"])
+      else pure [path | takeExtension path == ".json"]
 
 suiteName :: Suite -> String
 suiteName CompilerSuite = "compiler"
@@ -158,7 +144,7 @@ suiteName InterpreterSuite = "interpreter"
 suiteName IntegrationSuite = "integration"
 
 runCase :: Suite -> String -> TestCase -> IO ()
-runCase suite label (TestCase _ (Input language source) spec expected) = do
+runCase suite label (TestCase _ (Input language source modules) spec expected) = do
   reduction <- unwrap label (parseReduction (runDisableReduce spec))
   let defaultLimit =
         if suiteName suite == "interpreter" && runStage spec == "interpret"
@@ -173,19 +159,40 @@ runCase suite label (TestCase _ (Input language source) spec expected) = do
   case (suite, language, runStage spec, expected) of
     (CompilerSuite, "lambda", "parse", ExpectedValue value) ->
       assertParsed label source value
+    (CompilerSuite, "lambda", "parse", ExpectedError problem) ->
+      assertError label problem (Core.pExp (Core.myLexer source))
     (CompilerSuite, "lambda", "reduce", ExpectedValue value) -> do
-      when (isNothing (runDisableReduce spec)) $
-        assertReduced label value (reduceSource (asProgram source))
-      output <- runCompiler label (compilerOptions "reduce" spec) source
-      assertReduced label value (Pure.pExp (Pure.myLexer output))
+      if Map.null modules
+        then do
+          when (isNothing (runDisableReduce spec)) $
+            assertReduced label value (reduceSource (asProgram source))
+          output <- runCompiler label (compilerOptions "reduce" spec) source
+          assertReduced label value (Pure.pExp (Pure.myLexer output))
+        else
+          assertReduced
+            label
+            value
+            (reduceSourceWithModules reduction modules "<input>" source)
     (CompilerSuite, "lambda", "compile", ExpectedGraph graph) -> do
-      when (isNothing (runDisableReduce spec)) $ do
-        expression <- unwrap label (Pure.pExp (Pure.myLexer source))
-        void (assertGraph label graph (compile expression))
-      output <- runCompiler label (compilerOptions "compile" spec) source
-      assertEqual label (normalizeGraph graph) (normalizeGraph output)
+      if Map.null modules
+        then do
+          when (isNothing (runDisableReduce spec)) $ do
+            expression <- unwrap label (Pure.pExp (Pure.myLexer source))
+            void (assertGraph label graph (compile expression))
+          output <- runCompiler label (compilerOptions "compile" spec) source
+          assertEqual label (normalizeGraph graph) (normalizeGraph output)
+        else
+          void
+            ( assertGraph
+                label
+                graph
+                (compileSourceWithModules reduction modules "<input>" source)
+            )
     (CompilerSuite, "lambda", "compile", ExpectedError problem) ->
-      assertError label problem (compileSourceWith reduction (asProgram source))
+      assertError
+        label
+        problem
+        (compileSourceWithModules reduction modules "<input>" (asProgram source))
     (InterpreterSuite, "ski", "interpret", ExpectedGraph graph) -> do
       actual <- assertGraph label graph (interpretSource limit source)
       again <- unwrap label (interpretSource limit actual)
@@ -196,9 +203,14 @@ runCase suite label (TestCase _ (Input language source) spec expected) = do
       assertDecodeCliError label source spec limit problem
     (IntegrationSuite, "lambda", "undecode", ExpectedGraph graph) ->
       void
-        (assertGraph label graph (compileSourceWith reduction source >>= interpret limit))
+        ( assertGraph
+            label
+            graph
+            (compileSourceWithModules reduction modules "<input>" source >>= interpret limit)
+        )
     (IntegrationSuite, "lambda", "decode", _) -> do
-      graph <- unwrap label (compileSourceWith reduction source)
+      graph <-
+        unwrap label (compileSourceWithModules reduction modules "<input>" source)
       let result = decodeGraph spec limit graph
       case expected of
         ExpectedValue value -> unwrap label result >>= assertEqual label value

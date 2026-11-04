@@ -1,2 +1,0 @@
-helper = \x -> x;
-@> identity = helper;

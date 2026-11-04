@@ -1,0 +1,24 @@
+{
+  "cases": [
+    {
+      "name": "exported-definition",
+      "input": {
+        "language": "lambda",
+        "source": "@< \"./defs.lambda\" (identity); @! identity;",
+        "modules": { "defs.lambda": "@> identity = \\x -> x; helper = \\x -> x;" }
+      },
+      "run": { "stage": "reduce" },
+      "expect": { "value": "\\x -> x" }
+    },
+    {
+      "name": "multiple-exports",
+      "input": {
+        "language": "lambda",
+        "source": "@< \"./defs.lambda\" (first, second); @! first second;",
+        "modules": { "defs.lambda": "@> first = \\x -> x; @> second = \\y -> y;" }
+      },
+      "run": { "stage": "reduce" },
+      "expect": { "value": "\\y -> y" }
+    }
+  ]
+}

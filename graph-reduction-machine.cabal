@@ -11,7 +11,6 @@ extra-source-files:
   , lib/*.lambda
   , test/cases/schema.json
   , test/cases/**/*.json
-  , test/cases/compiler/modules/*.lambda
 
 custom-setup
   setup-depends:
@@ -81,6 +80,7 @@ test-suite compiler-tests
       base >=4.16 && <5
     , aeson >=2.0 && <3
     , bytestring
+    , containers
     , directory
     , filepath
     , graph-reduction-machine
@@ -99,6 +99,7 @@ test-suite interpreter-tests
       base >=4.16 && <5
     , aeson >=2.0 && <3
     , bytestring
+    , containers
     , directory
     , filepath
     , graph-reduction-machine
@@ -117,6 +118,7 @@ test-suite integration-tests
       base >=4.16 && <5
     , aeson >=2.0 && <3
     , bytestring
+    , containers
     , directory
     , filepath
     , graph-reduction-machine

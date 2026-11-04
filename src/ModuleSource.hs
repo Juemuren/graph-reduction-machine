@@ -20,8 +20,8 @@ parseModule source = do
   (imports, exports, definitions, expression) <-
     foldl collect (Right ([], [], [], Nothing)) statements
   let names = map fst definitions
-  checkUnique "definition" names
   checkUnique "export" exports
+  checkUnique "definition" names
   pure
     (Module (reverse imports) (reverse exports) (reverse definitions) expression)
  where

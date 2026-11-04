@@ -1,0 +1,10 @@
+{
+  "cases": [
+    {
+      "name": "incomplete-abstraction",
+      "input": { "language": "lambda", "source": "\\x ->\n" },
+      "run": { "stage": "parse" },
+      "expect": { "error": "syntax error at end of file" }
+    }
+  ]
+}

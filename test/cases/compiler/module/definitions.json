@@ -1,0 +1,22 @@
+{
+  "cases": [
+    {
+      "name": "local-definition",
+      "input": { "language": "lambda", "source": "identity = \\x -> x; @! identity;" },
+      "run": { "stage": "reduce" },
+      "expect": { "value": "\\x -> x" }
+    },
+    {
+      "name": "forward-definition",
+      "input": { "language": "lambda", "source": "first = second; second = \\x -> x; @! first;" },
+      "run": { "stage": "reduce" },
+      "expect": { "value": "\\x -> x" }
+    },
+    {
+      "name": "lambda-shadows-definition",
+      "input": { "language": "lambda", "source": "value = \\x -> \\y -> x; @! (\\value -> value) (\\x -> x);" },
+      "run": { "stage": "reduce" },
+      "expect": { "value": "\\x -> x" }
+    }
+  ]
+}
