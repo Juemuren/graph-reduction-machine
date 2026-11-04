@@ -1,0 +1,2 @@
+# Fibonacci(6) = 8, using the Y fixed-point combinator.
+Y (\fib -> \n -> IF (LEQ n (SUCC ZERO)) n (ADD (fib (PRED n)) (fib (PRED (PRED n))))) (SUCC (SUCC (SUCC (SUCC (SUCC (SUCC ZERO))))))

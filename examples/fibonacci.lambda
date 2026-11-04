@@ -1,0 +1,2 @@
+# Fibonacci(6) = 8; the state is (F(n), F(n+1)).
+(\n -> FST (FOR n (\p -> PAIR (SND p) (ADD (FST p) (SND p))) (PAIR ZERO (SUCC ZERO)))) (SUCC (SUCC (SUCC (SUCC (SUCC (SUCC ZERO))))))
