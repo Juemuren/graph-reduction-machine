@@ -1,8 +1,15 @@
 module Main (main) where
 
 import Data.Char (toUpper)
+import Data.Ratio (denominator, numerator)
 import Graph.Print (printTree)
-import Interpreter (decodeBooleanSource, decodeIntegerSource, decodeNaturalSource, interpretSource)
+import Interpreter (
+  decodeBooleanSource,
+  decodeIntegerSource,
+  decodeNaturalSource,
+  decodeRationalSource,
+  interpretSource,
+ )
 import System.Environment (getArgs)
 import System.Exit (die, exitFailure)
 import System.IO (hPutStrLn, stderr)
@@ -25,19 +32,25 @@ main = do
           Integer ->
             decodeIntegerSource limit source
               >>= maybe (Left "not a Church Integer") (Right . show)
+          Rational ->
+            decodeRationalSource limit source
+              >>= maybe (Left "not a Church Rational") (Right . renderRational)
   case result of
     Left message -> do
       hPutStrLn stderr message
       exitFailure
     Right output -> putStrLn output
 
-data DecodeMode = Raw | Natural | Boolean | Integer deriving (Eq)
+renderRational :: Rational -> String
+renderRational value = show (numerator value) ++ "/" ++ show (denominator value)
+
+data DecodeMode = Raw | Natural | Boolean | Integer | Rational deriving (Eq)
 
 parseArgs :: [String] -> Either String (Int, DecodeMode, Maybe FilePath)
 parseArgs = go 100000 Raw Nothing
  where
   usage =
-    "usage: ski-interpreter [--max-steps N] [--decode-natural | --decode-boolean | --decode-integer] [FILE]"
+    "usage: ski-interpreter [--max-steps N] [--decode-natural | --decode-boolean | --decode-integer | --decode-rational] [FILE]"
   go limit mode path [] = Right (limit, mode, path)
   go limit Raw path ("--decode-natural" : rest) =
     go limit Natural path rest
@@ -45,6 +58,8 @@ parseArgs = go 100000 Raw Nothing
     go limit Boolean path rest
   go limit Raw path ("--decode-integer" : rest) =
     go limit Integer path rest
+  go limit Raw path ("--decode-rational" : rest) =
+    go limit Rational path rest
   go _ mode path ("--max-steps" : value : rest) =
     case readMaybe value of
       Just limit | limit > 0 -> go limit mode path rest

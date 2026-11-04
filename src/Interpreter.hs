@@ -8,12 +8,15 @@ module Interpreter (
   decodeBoolean,
   decodeIntegerSource,
   decodeInteger,
+  decodeRationalSource,
+  decodeRational,
 ) where
 
 import Control.Monad (foldM, when)
 import Control.Monad.State.Strict (StateT, evalStateT, get, gets, lift, modify)
 import qualified Data.IntMap.Strict as IntMap
 import qualified Data.Map.Strict as Map
+import Data.Ratio ((%))
 import qualified Data.Set as Set
 import qualified Graph.Abs as Graph
 import qualified Graph.Par as Graph
@@ -69,23 +72,50 @@ decodeInteger :: Int -> Graph.Graph -> Either String (Maybe Integer)
 decodeInteger limit graph = do
   (initialHeap, root) <- loadGraph graph
   let machine = Machine initialHeap (IntMap.size initialHeap) 0 limit
-  evalStateT
-    ( do
-        selector <- allocate ProbeFunction
-        selected <- allocate (App root selector)
-        whnf selected
-        (headNode, applications) <- spine selected
-        case (headNode, applications) of
-          (ProbeFunction, [(_, positive), (_, negative)]) -> do
-            first <- decodeNaturalAt positive
-            case first of
-              Nothing -> pure Nothing
-              Just positiveValue -> do
-                second <- decodeNaturalAt negative
-                pure (fmap (\negativeValue -> toInteger positiveValue - toInteger negativeValue) second)
-          _ -> pure Nothing
-    )
-    machine
+  evalStateT (decodeIntegerAt root) machine
+
+decodeIntegerAt :: Address -> Run (Maybe Integer)
+decodeIntegerAt root = do
+  components <- decodePairAt root
+  case components of
+    Nothing -> pure Nothing
+    Just (positive, negative) -> do
+      first <- decodeNaturalAt positive
+      second <- decodeNaturalAt negative
+      pure ((\a b -> toInteger a - toInteger b) <$> first <*> second)
+
+-- | Decode a pair of Church integers as a reduced rational number.
+decodeRationalSource :: Int -> String -> Either String (Maybe Rational)
+decodeRationalSource limit source =
+  Graph.pGraph (Graph.myLexer source) >>= decodeRational limit
+
+decodeRational :: Int -> Graph.Graph -> Either String (Maybe Rational)
+decodeRational limit graph = do
+  (initialHeap, root) <- loadGraph graph
+  let machine = Machine initialHeap (IntMap.size initialHeap) 0 limit
+  evalStateT (decodeRationalAt root) machine
+
+decodeRationalAt :: Address -> Run (Maybe Rational)
+decodeRationalAt root = do
+  components <- decodePairAt root
+  case components of
+    Nothing -> pure Nothing
+    Just (numerator, denominator) -> do
+      first <- decodeIntegerAt numerator
+      second <- decodeIntegerAt denominator
+      pure $ case (first, second) of
+        (Just a, Just b) | b /= 0 -> Just (a % b)
+        _ -> Nothing
+
+decodePairAt :: Address -> Run (Maybe (Address, Address))
+decodePairAt root = do
+  selector <- allocate ProbeFunction
+  selected <- allocate (App root selector)
+  whnf selected
+  (headNode, applications) <- spine selected
+  pure $ case (headNode, applications) of
+    (ProbeFunction, [(_, first), (_, second)]) -> Just (first, second)
+    _ -> Nothing
 
 decodeNaturalAt :: Address -> Run (Maybe Natural)
 decodeNaturalAt root = do

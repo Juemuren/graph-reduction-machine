@@ -1,7 +1,14 @@
 module Main (main) where
 
 import Compiler (compileSource)
-import Interpreter (decodeBoolean, decodeInteger, decodeNatural, interpret)
+import Data.Ratio (denominator, numerator)
+import Interpreter (
+  decodeBoolean,
+  decodeInteger,
+  decodeNatural,
+  decodeRational,
+  interpret,
+ )
 import System.Exit (die)
 import TestSupport (assertGraphResult, runCases)
 
@@ -23,6 +30,11 @@ main = do
     ".lambda"
     ".decoded"
     checkDecodedInteger
+  runCases
+    "test/cases/integration/decode-rational"
+    ".lambda"
+    ".decoded"
+    checkDecodedRational
   runCases
     "test/cases/integration/operation-natural"
     ".lambda"
@@ -118,3 +130,17 @@ checkDecodedInteger sourcePath expectedPath = do
             ++ ", decoded "
             ++ show actual
         )
+
+checkDecodedRational :: FilePath -> FilePath -> IO ()
+checkDecodedRational sourcePath expectedPath = do
+  source <- readFile sourcePath
+  expected <- readFile expectedPath
+  case compileSource source >>= decodeRational 100000 of
+    Left problem -> die (sourcePath ++ ": " ++ problem)
+    Right (Just actual)
+      | show (numerator actual) ++ "/" ++ show (denominator actual)
+          == unwords (words expected) ->
+          putStrLn (sourcePath ++ ": PASS")
+    Right actual ->
+      die
+        (sourcePath ++ ": expected " ++ show expected ++ ", decoded " ++ show actual)

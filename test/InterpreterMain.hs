@@ -37,6 +37,11 @@ main = do
     ".ski"
     ".error"
     (checkDecodeError ["--decode-integer"])
+  runCases
+    "test/cases/interpreter/decode-rational-errors"
+    ".ski"
+    ".error"
+    (checkDecodeError ["--decode-rational"])
   putStrLn "interpreter tests passed"
 
 checkResult :: Int -> FilePath -> FilePath -> IO ()

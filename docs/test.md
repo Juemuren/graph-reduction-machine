@@ -57,6 +57,7 @@ cabal test interpreter-tests
 - `decode-natural-errors` 比较非自然数编码解码时的错误信息和退出码
 - `decode-boolean-errors` 比较非布尔值解码时的错误信息和退出码
 - `decode-integer-errors` 比较非整数编码解码时的错误信息和退出码
+- `decode-rational-errors` 比较无效有理数编码解码时的错误信息和退出码
 
 ## 集成测试
 
@@ -71,7 +72,7 @@ cabal test integration-tests
 测试用例使用静态文件对：
 
 - `undecode` 比较核心 λ 与经过展开、编译、规约后得到的 SKI 图
-- `decode-natural` / `decode-boolean` / `decode-integer` 分别比较核心 λ 与经过展开、编译、规约、解码后得到的十进制自然数、布尔值、十进制整数
+- `decode-natural` / `decode-boolean` / `decode-integer` / `decode-rational` 分别比较核心 λ 与经过展开、编译、规约、解码后得到的十进制自然数、布尔值、十进制整数、约分后的有理数
 - `operation-natural` /`operation-boolean` / `operation-integer` 分别验证核心 λ 在自然数、布尔值、整数中的运算。结果按对应的类型解码
 - `operation-pair` 验证有序对相关运算的结果。结果按自然数解码
 - `control-if` 验证条件控制结构的行为。结果按自然数解码
