@@ -42,6 +42,11 @@ main = do
     ".ski"
     ".error"
     (checkDecodeError ["--decode=rational"])
+  runCases
+    "test/cases/interpreter/decode-real-errors"
+    ".ski"
+    ".error"
+    (checkDecodeError ["--decode=real", "--precision-real=2"])
   putStrLn "interpreter tests passed"
 
 checkResult :: Int -> FilePath -> FilePath -> IO ()

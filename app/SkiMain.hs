@@ -9,8 +9,10 @@ import Interpreter (
   decodeIntegerSource,
   decodeNaturalSource,
   decodeRationalSource,
+  decodeRealSource,
   interpretSource,
  )
+import Numeric.Natural (Natural)
 import System.Environment (getArgs)
 import System.Exit (die, exitFailure)
 import System.IO (hPutStrLn, stderr)
@@ -36,6 +38,9 @@ main = do
           Rational ->
             decodeRationalSource limit source
               >>= maybe (Left "not a Church Rational") (Right . renderRational)
+          Real precision ->
+            decodeRealSource limit precision source
+              >>= maybe (Left "not a Church Real") (Right . renderRational)
   case result of
     Left message -> do
       hPutStrLn stderr message
@@ -45,32 +50,44 @@ main = do
 renderRational :: Rational -> String
 renderRational value = show (numerator value) ++ "/" ++ show (denominator value)
 
-data DecodeMode = Raw | Natural | Boolean | Integer | Rational deriving (Eq)
+data DecodeMode = Raw | Natural | Boolean | Integer | Rational | Real Natural
+  deriving (Eq)
 
 parseArgs :: [String] -> Either String (Int, DecodeMode, Maybe FilePath)
-parseArgs = go 100000 Raw Nothing
+parseArgs = go 100000 Raw Nothing Nothing
  where
   usage =
     unwords
       [ "usage: ski-interpreter"
       , "[--max-steps=N]"
-      , "[--decode=natural|boolean|integer|rational]"
+      , "[--decode=natural|boolean|integer|rational|real]"
+      , "[--precision-real=N]"
       , "[FILE]"
       ]
-  go limit mode path [] = Right (limit, mode, path)
-  go limit Raw path (value : rest)
+  go limit mode precision path [] = case (mode, precision) of
+    (Real _, Just index) -> Right (limit, Real index, path)
+    (Real _, Nothing) -> Right (limit, Real 0, path)
+    (_, Nothing) -> Right (limit, mode, path)
+    _ -> Left usage
+  go limit Raw precision path (value : rest)
     | Just name <- stripPrefix "--decode=" value =
         case name of
-          "natural" -> go limit Natural path rest
-          "boolean" -> go limit Boolean path rest
-          "integer" -> go limit Integer path rest
-          "rational" -> go limit Rational path rest
+          "natural" -> go limit Natural precision path rest
+          "boolean" -> go limit Boolean precision path rest
+          "integer" -> go limit Integer precision path rest
+          "rational" -> go limit Rational precision path rest
+          "real" -> go limit (Real 0) precision path rest
           _ -> Left usage
-  go _ mode path (value : rest)
+  go _ mode precision path (value : rest)
     | Just steps <- stripPrefix "--max-steps=" value =
         case readMaybe steps of
-          Just limit | limit > 0 -> go limit mode path rest
+          Just limit | limit > 0 -> go limit mode precision path rest
           _ -> Left usage
-  go limit mode Nothing (value@(first : _) : rest)
-    | first /= '-' = go limit mode (Just value) rest
-  go _ _ _ _ = Left usage
+  go limit mode Nothing path (value : rest)
+    | Just index <- stripPrefix "--precision-real=" value =
+        case readMaybe index :: Maybe Integer of
+          Just precision | precision >= 0 -> go limit mode (Just (fromInteger precision)) path rest
+          _ -> Left usage
+  go limit mode precision Nothing (value@(first : _) : rest)
+    | first /= '-' = go limit mode precision (Just value) rest
+  go _ _ _ _ _ = Left usage

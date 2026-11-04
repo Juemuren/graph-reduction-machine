@@ -10,6 +10,8 @@ module Interpreter (
   decodeInteger,
   decodeRationalSource,
   decodeRational,
+  decodeRealSource,
+  decodeReal,
 ) where
 
 import Control.Monad (foldM, when)
@@ -32,6 +34,7 @@ data Node
   | Indirect Address
   | ProbeFunction
   | ProbeValue
+  | ChurchNumeral Natural
 
 data Machine = Machine
   { heap :: IntMap.IntMap Node
@@ -106,6 +109,23 @@ decodeRationalAt root = do
       pure $ case (first, second) of
         (Just a, Just b) | b /= 0 -> Just (a % b)
         _ -> Nothing
+
+-- | Decode the rational approximation at the given natural index.
+decodeRealSource :: Int -> Natural -> String -> Either String (Maybe Rational)
+decodeRealSource limit precision source =
+  Graph.pGraph (Graph.myLexer source) >>= decodeReal limit precision
+
+decodeReal :: Int -> Natural -> Graph.Graph -> Either String (Maybe Rational)
+decodeReal limit precision graph = do
+  (initialHeap, root) <- loadGraph graph
+  let machine = Machine initialHeap (IntMap.size initialHeap) 0 limit
+  evalStateT
+    ( do
+        index <- allocate (ChurchNumeral precision)
+        approximation <- allocate (App root index)
+        decodeRationalAt approximation
+    )
+    machine
 
 decodePairAt :: Address -> Run (Maybe (Address, Address))
 decodePairAt root = do
@@ -271,6 +291,7 @@ whnf address = do
         I -> 1
         K -> 2
         S -> 3
+        ChurchNumeral _ -> 2
         _ -> 0
   if length applications < arity || arity == 0
     then pure ()
@@ -287,6 +308,13 @@ whnf address = do
           left <- allocate (App x z)
           right <- allocate (App y z)
           writeNode redex (App left right)
+        (ChurchNumeral count, [function, value]) -> do
+          when (count >= fromIntegral (stepLimit machine - steps machine)) $
+            lift (Left ("reduction exceeded step limit " ++ show (stepLimit machine)))
+          result <-
+            foldM (\argument _ -> allocate (App function argument)) value [1 .. count]
+          writeNode redex (Indirect result)
+          modify (\state -> state{steps = steps state + fromIntegral count})
         _ -> lift (Left "internal error: invalid SKI redex")
       modify (\state -> state{steps = steps state + 1})
       whnf address
@@ -337,3 +365,4 @@ serialize root = do
           Indirect _ -> lift (Left "internal error: unresolved indirection")
           ProbeFunction -> lift (Left "internal error: cannot serialize probe function")
           ProbeValue -> lift (Left "internal error: cannot serialize probe value")
+          ChurchNumeral _ -> lift (Left "internal error: cannot serialize Church numeral")

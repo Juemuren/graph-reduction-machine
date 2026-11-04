@@ -7,10 +7,12 @@ import Interpreter (
   decodeInteger,
   decodeNatural,
   decodeRational,
+  decodeReal,
   interpret,
  )
 import System.Exit (die)
 import TestSupport (assertExpectedError, assertGraphResult, runCases)
+import Text.Read (readMaybe)
 
 main :: IO ()
 main = do
@@ -119,7 +121,12 @@ main = do
     "test/cases/integration/construction-real"
     ".lambda"
     ".decoded"
-    checkConstructedReal
+    checkDecodedReal
+  runCases
+    "test/cases/integration/decode-real"
+    ".lambda"
+    ".decoded"
+    checkDecodedReal
   runCases
     "test/cases/integration/deconstruction-real"
     ".lambda"
@@ -221,14 +228,20 @@ checkDecodedRational sourcePath expectedPath = do
   checkRationalSource sourcePath expectedPath source
   putStrLn (sourcePath ++ ": PASS")
 
-checkConstructedReal :: FilePath -> FilePath -> IO ()
-checkConstructedReal sourcePath expectedPath = do
+checkDecodedReal :: FilePath -> FilePath -> IO ()
+checkDecodedReal sourcePath expectedPath = do
   source <- readFile sourcePath
-  let real = "(" ++ source ++ ")"
-  mapM_
-    (\index -> checkRationalSource sourcePath expectedPath (real ++ " " ++ index))
-    ["ZERO", "THREE"]
-  putStrLn (sourcePath ++ ": PASS")
+  expected <- words <$> readFile expectedPath
+  case expected of
+    [indexText, value] | Just index <- readMaybe indexText ->
+      case compileSource source >>= decodeReal 100000 index of
+        Left problem -> die (sourcePath ++ ": " ++ problem)
+        Right (Just actual)
+          | show (numerator actual) ++ "/" ++ show (denominator actual) == value ->
+              putStrLn (sourcePath ++ ": PASS")
+        Right actual ->
+          die (sourcePath ++ ": expected " ++ value ++ ", decoded " ++ show actual)
+    _ -> die (expectedPath ++ ": expected an index and a rational value")
 
 checkRationalSource :: FilePath -> FilePath -> String -> IO ()
 checkRationalSource sourcePath expectedPath source = do
