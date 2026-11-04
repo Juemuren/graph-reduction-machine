@@ -41,12 +41,17 @@ main = do
     ".decoded"
     checkDecodedNatural
   runCases
-    "test/cases/integration/operation-natural-value"
+    "test/cases/integration/construction-boolean"
     ".lambda"
     ".decoded"
-    checkDecodedNatural
+    checkDecodedBoolean
   runCases
-    "test/cases/integration/operation-natural-compare"
+    "test/cases/integration/operation-boolean"
+    ".lambda"
+    ".decoded"
+    checkDecodedBoolean
+  runCases
+    "test/cases/integration/construction-pair"
     ".lambda"
     ".decoded"
     checkDecodedBoolean
@@ -54,32 +59,72 @@ main = do
     "test/cases/integration/operation-pair"
     ".lambda"
     ".decoded"
+    checkDecodedBoolean
+  runCases
+    "test/cases/integration/construction-natural"
+    ".lambda"
+    ".decoded"
     checkDecodedNatural
   runCases
-    "test/cases/integration/operation-boolean"
+    "test/cases/integration/operation-natural"
+    ".lambda"
+    ".decoded"
+    checkDecodedNatural
+  runCases
+    "test/cases/integration/comparison-natural"
     ".lambda"
     ".decoded"
     checkDecodedBoolean
   runCases
-    "test/cases/integration/operation-integer-value"
+    "test/cases/integration/construction-integer"
     ".lambda"
     ".decoded"
     checkDecodedInteger
   runCases
-    "test/cases/integration/operation-integer-compare"
+    "test/cases/integration/operation-integer"
+    ".lambda"
+    ".decoded"
+    checkDecodedInteger
+  runCases
+    "test/cases/integration/comparison-integer"
     ".lambda"
     ".decoded"
     checkDecodedBoolean
   runCases
-    "test/cases/integration/operation-rational-value"
+    "test/cases/integration/deconstruction-integer"
+    ".lambda"
+    ".decoded"
+    checkDecodedNatural
+  runCases
+    "test/cases/integration/construction-rational"
     ".lambda"
     ".decoded"
     checkDecodedRational
   runCases
-    "test/cases/integration/operation-rational-compare"
+    "test/cases/integration/operation-rational"
+    ".lambda"
+    ".decoded"
+    checkDecodedRational
+  runCases
+    "test/cases/integration/comparison-rational"
     ".lambda"
     ".decoded"
     checkDecodedBoolean
+  runCases
+    "test/cases/integration/deconstruction-rational"
+    ".lambda"
+    ".decoded"
+    checkDecodedInteger
+  runCases
+    "test/cases/integration/construction-real"
+    ".lambda"
+    ".decoded"
+    checkConstructedReal
+  runCases
+    "test/cases/integration/deconstruction-real"
+    ".lambda"
+    ".decoded"
+    checkDecodedRational
   runCases
     "test/cases/integration/control-if"
     ".lambda"
@@ -173,13 +218,27 @@ checkDecodedInteger sourcePath expectedPath = do
 checkDecodedRational :: FilePath -> FilePath -> IO ()
 checkDecodedRational sourcePath expectedPath = do
   source <- readFile sourcePath
+  checkRationalSource sourcePath expectedPath source
+  putStrLn (sourcePath ++ ": PASS")
+
+checkConstructedReal :: FilePath -> FilePath -> IO ()
+checkConstructedReal sourcePath expectedPath = do
+  source <- readFile sourcePath
+  let real = "(" ++ source ++ ")"
+  mapM_
+    (\index -> checkRationalSource sourcePath expectedPath (real ++ " " ++ index))
+    ["ZERO", "THREE"]
+  putStrLn (sourcePath ++ ": PASS")
+
+checkRationalSource :: FilePath -> FilePath -> String -> IO ()
+checkRationalSource sourcePath expectedPath source = do
   expected <- readFile expectedPath
   case compileSource source >>= decodeRational 100000 of
     Left problem -> die (sourcePath ++ ": " ++ problem)
     Right (Just actual)
       | show (numerator actual) ++ "/" ++ show (denominator actual)
           == unwords (words expected) ->
-          putStrLn (sourcePath ++ ": PASS")
+          pure ()
     Right actual ->
       die
         (sourcePath ++ ": expected " ++ show expected ++ ", decoded " ++ show actual)

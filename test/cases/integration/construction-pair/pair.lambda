@@ -1,0 +1,1 @@
+(\p -> AND (EQ (FST p) TWO) (EQ (SND p) THREE)) (PAIR TWO THREE)

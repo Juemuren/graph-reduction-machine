@@ -49,10 +49,10 @@ cabal test interpreter-tests
 - `errors` 比较解释器错误信息
 - `limit-errors` 比较归约步数超限时的错误信息和退出码
 - `decode-limit-errors` 比较解码步数超限时的错误信息和退出码
-- `decode-natural-errors` 比较非自然数编码解码时的错误信息和退出码
-- `decode-boolean-errors` 比较非布尔值解码时的错误信息和退出码
-- `decode-integer-errors` 比较非整数编码解码时的错误信息和退出码
-- `decode-rational-errors` 比较无效有理数编码解码时的错误信息和退出码
+- `decode-boolean-errors` 比较布尔值解码失败时的错误信息和退出码
+- `decode-natural-errors` 比较自然数解码失败时的错误信息和退出码
+- `decode-integer-errors` 比较整数解码失败时的错误信息和退出码
+- `decode-rational-errors` 比较有理数解码失败时的错误信息和退出码
 
 ## 集成测试
 
@@ -69,11 +69,12 @@ cabal test integration-tests
 - `undecode` 比较核心 λ 与经过展开、编译、规约后得到的 SKI 图
 - `decode-natural` / `decode-boolean` / `decode-integer` / `decode-rational` 分别比较核心 λ 与经过展开、编译、规约、解码后得到的十进制自然数、布尔值、十进制整数、约分后的有理数
 - `operation` 验证内置函数的通用函数行为。结果按自然数解码
-- `operation-boolean` 验证布尔值相关的运算。结果按布尔值解码
-- `operation-pair` 验证有序对相关运算的结果。结果按自然数解码
-- `operation-natural-value` / `operation-natural-compare` 分别验证返回自然数的运算和自然数的比较；前者按自然数解码，后者按布尔值解码
-- `operation-integer-value` / `operation-integer-compare` 分别验证返回整数的运算和整数的比较；前者按整数解码，后者按布尔值解码
-- `operation-rational-value` / `operation-rational-compare` 分别验证返回有理数的运算和有理数的比较，；前者按有理数解码，后者按布尔值解码
+- `construction-boolean` / `operation-boolean` 分别验证布尔值的构造 / 布尔值相关的运算。结果按布尔值解码
+- `construction-pair` / `operation-pair` 分别验证有序对的构造 / 有序对的运算。结果按布尔值解码
+- `construction-natural` / `operation-natural` / `comparison-natural` 分别验证自然数的构造（自然数解码） / 自然数的运算（自然数解码） / 自然数的比较（布尔值解码）
+- `construction-integer` / `operation-integer` / `comparison-integer` / `deconstruction-integer` 分别验证整数的构造（整数解码） / 整数的运算（整数解码） / 整数的比较（布尔值解码） / 整数的解构（自然数解码）
+- `construction-rational` / `operation-rational` / `comparison-rational` / `deconstruction-rational` 分别验证有理数的构造（有理数解码） / 有理数的运算（有理数解码） / 有理数的比较（布尔值解码） / 有理数的解构（整数解码）
+- `construction-real` / `operation-real` / `comparison-real` / `deconstruction-real` 分别验证实数的构造（实数解码） / 实数的运算（实数解码） / 实数的比较（布尔值解码） / 实数的解构（有理数解码）
 - `control-if` 验证条件控制结构的行为。结果按自然数解码
 - `control-loop` 验证循环控制结构的行为。结果按自然数解码
 - `control-loop-limit` 验证禁用编译期规约后无限循环会超过图归约机的步数限制
