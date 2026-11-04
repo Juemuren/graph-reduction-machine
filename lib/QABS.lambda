@@ -1,1 +1,1 @@
-\q -> IF (ZLT (ZMUL (FST q) (SND q)) (INT ZERO)) (QNEG q) q
+\q -> IF (ZLT (ZMUL (FST q) (SND q)) (NTOZ ZERO)) (QNEG q) q

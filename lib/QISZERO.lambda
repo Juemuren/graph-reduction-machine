@@ -1,1 +1,1 @@
-\q -> ZEQ (FST q) (INT ZERO)
+\q -> ZEQ (FST q) (NTOZ ZERO)
