@@ -23,6 +23,7 @@ ENeq.    Exp2 ::= "NEQ" ;
 EStep.   Exp2 ::= "STEP" ;
 EDiv.    Exp2 ::= "DIV" ;
 EMod.    Exp2 ::= "MOD" ;
+EGcd.    Exp2 ::= "GCD" ;
 EFalse.  Exp2 ::= "FALSE" ;
 ETrue.   Exp2 ::= "TRUE" ;
 EAnd.    Exp2 ::= "AND" ;

@@ -26,6 +26,7 @@ expand expression = case expression of
   Core.EStep -> naturalStep
   Core.EDiv -> naturalDivide
   Core.EMod -> naturalModulo
+  Core.EGcd -> naturalGcd
   Core.EFalse -> encodeFalse
   Core.ETrue -> encodeTrue
   Core.EAnd -> booleanAnd
@@ -462,11 +463,28 @@ naturalStep =
       (Pure.EApp naturalSuccessor quotient)
       (apply2 naturalSubtract nextRemainder (Pure.EVar n))
   keepBranch = pair quotient nextRemainder
+
 naturalDivide :: Pure.Exp
 naturalDivide = divisionResult encodeFst
 
 naturalModulo :: Pure.Exp
 naturalModulo = divisionResult encodeSnd
+
+-- λm.λn.FST (WHILE (λp.NOT (ISZERO (SND p)))
+--   (λp.PAIR (SND p) (MOD (FST p) (SND p))) (PAIR m n))
+naturalGcd :: Pure.Exp
+naturalGcd = Pure.EAbs m (Pure.EAbs n (Pure.EApp encodeFst result))
+ where
+  m = Pure.Name "m"
+  n = Pure.Name "n"
+  p = Pure.Name "p"
+  current = Pure.EVar p
+  first = Pure.EApp encodeFst current
+  second = Pure.EApp encodeSnd current
+  condition = Pure.EAbs p (Pure.EApp booleanNot (Pure.EApp naturalIsZero second))
+  step = Pure.EAbs p (pair second (apply2 naturalModulo first second))
+  initial = pair (Pure.EVar m) (Pure.EVar n)
+  result = Pure.EApp (apply2 churchWhile condition step) initial
 
 -- Iterate STEP m times, then select the quotient or remainder.
 -- A zero divisor gives (0, dividend).
