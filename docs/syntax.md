@@ -127,8 +127,10 @@ SUCC (SUCC ZERO)
 - `PRED a` 表示 `a` 的前驱。零的前驱仍为零
 - `ADD a b` 表示 `a` 和 `b` 的加法
 - `SUB a b` 表示 `a` 和 `b` 的减法。减法的结果截断到零
-- `MUL a b` 表示 `a` 和 `b` 的乘法。
-- `POW a b` 表示 `a` 和 `b` 的幂运算。
+- `MUL a b` 表示 `a` 和 `b` 的乘法
+- `POW a b` 表示 `a` 和 `b` 的幂运算
+
+<!-- TODO GCD 最大公因数；MOD 取模 -->
 
 #### 有序对编码
 
@@ -146,11 +148,12 @@ SUCC (SUCC ZERO)
 
 #### 整数编码
 
-| 内置函数 | 展开式                                                         |
-| -------- | -------------------------------------------------------------- |
-| `NEG`    | `\p -> PAIR (SND p) (FST p)`                                   |
-| `ZADD`   | `\p -> \q -> PAIR (ADD (FST p) (FST q)) (ADD (SND p) (SND q))` |
-| `ZSUB`   | `\p -> \q -> PAIR (ADD (FST p) (SND q)) (ADD (SND p) (FST q))` |
+| 内置函数 | 展开式                                                                                                                 |
+| -------- | ---------------------------------------------------------------------------------------------------------------------- |
+| `NEG`    | `\p -> PAIR (SND p) (FST p)`                                                                                           |
+| `ZADD`   | `\p -> \q -> PAIR (ADD (FST p) (FST q)) (ADD (SND p) (SND q))`                                                         |
+| `ZSUB`   | `\p -> \q -> PAIR (ADD (FST p) (SND q)) (ADD (SND p) (FST q))`                                                         |
+| `ZMUL`   | `\p -> \q -> PAIR (ADD (MUL (FST p) (FST q)) (MUL (SND p) (SND q))) (ADD (MUL (FST p) (SND q)) (MUL (SND p) (FST q)))` |
 
 整数自然数有序对表示，值为第一个自然数减去第二个自然数。
 
@@ -173,8 +176,18 @@ $$
 - `NEG a` 表示整数 `a` 取负
 - `ZADD a b` 表示整数 `a` 和整数 `b` 的加法
 - `ZSUB a b` 表示整数 `a` 和整数 `b` 的减法
+- `ZMUL a b` 表示整数 `a` 和整数 `b` 的乘法
+
+<!-- TODO ABS 绝对值 -->
 
 #### 有理数编码
+
+| 内置函数 | 展开式                                                                                         |
+| -------- | ---------------------------------------------------------------------------------------------- |
+| `QADD`   | `\p -> \q -> PAIR (ZADD (ZMUL (FST p) (SND q)) (ZMUL (FST q) (SND p))) (ZMUL (SND p) (SND q))` |
+| `QSUB`   | `\p -> \q -> PAIR (ZSUB (ZMUL (FST p) (SND q)) (ZMUL (FST q) (SND p))) (ZMUL (SND p) (SND q))` |
+| `QMUL`   | `\p -> \q -> PAIR (ZMUL (FST p) (FST q)) (ZMUL (SND p) (SND q))`                               |
+| `QDIV`   | `\p -> \q -> PAIR (ZMUL (FST p) (SND q)) (ZMUL (SND p) (FST q))`                               |
 
 有理数用整数有序对表示，值为第一个整数除以第二个整数。
 
@@ -192,7 +205,14 @@ $$
 
 其中 `a` 是整数，`b` 是非零整数。
 
-<!-- TODO 有理数 -->
+有理数相关的运算：
+
+- `QADD a b` 表示有理数 `a` 和有理数 `b` 的加法
+- `QSUB a b` 表示有理数 `a` 和有理数 `b` 的减法
+- `QMUL a b` 表示有理数 `a` 和有理数 `b` 的乘法
+- `QDIV a b` 表示有理数 `a` 和非零有理数 `b` 的除法
+
+有理数运算不会自动约分。
 
 #### 条件编码
 

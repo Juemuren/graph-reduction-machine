@@ -24,6 +24,11 @@ ESnd.   Exp2 ::= "SND" ;
 ENeg.   Exp2 ::= "NEG" ;
 EZAdd.  Exp2 ::= "ZADD" ;
 EZSub.  Exp2 ::= "ZSUB" ;
+EZMul.  Exp2 ::= "ZMUL" ;
+EQAdd.  Exp2 ::= "QADD" ;
+EQSub.  Exp2 ::= "QSUB" ;
+EQMul.  Exp2 ::= "QMUL" ;
+EQDiv.  Exp2 ::= "QDIV" ;
 EIf.    Exp2 ::= "IF" ;
 _.      Exp2 ::= "(" Exp ")" ;
 

@@ -44,6 +44,11 @@ main = do
     ".decoded"
     checkDecodedInteger
   runCases
+    "test/cases/integration/operation-rational"
+    ".lambda"
+    ".decoded"
+    checkDecodedInteger
+  runCases
     "test/cases/integration/control-if"
     ".lambda"
     ".decoded"

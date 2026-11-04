@@ -27,6 +27,11 @@ expand expression = case expression of
   Core.ENeg -> integerNegate
   Core.EZAdd -> integerAdd
   Core.EZSub -> integerSubtract
+  Core.EZMul -> integerMultiply
+  Core.EQAdd -> rationalAdd
+  Core.EQSub -> rationalSubtract
+  Core.EQMul -> rationalMultiply
+  Core.EQDiv -> rationalDivide
   Core.EIf -> churchIf
 
 pureName :: Core.Name -> Pure.Name
@@ -124,6 +129,79 @@ integerAdd = integerCombine encodeFst encodeSnd
 -- λp.λq.PAIR (ADD (FST p) (SND q)) (ADD (SND p) (FST q))
 integerSubtract :: Pure.Exp
 integerSubtract = integerCombine encodeSnd encodeFst
+
+-- (a-b)(c-d) = (ac+bd)-(ad+bc)
+integerMultiply :: Pure.Exp
+integerMultiply = Pure.EAbs p (Pure.EAbs q (pair first second))
+ where
+  p = Pure.Name "p"
+  q = Pure.Name "q"
+  component selector name = Pure.EApp selector (Pure.EVar name)
+  product left right = apply2 naturalMul (component left p) (component right q)
+  first = apply2 naturalAdd (product encodeFst encodeFst) (product encodeSnd encodeSnd)
+  second = apply2 naturalAdd (product encodeFst encodeSnd) (product encodeSnd encodeFst)
+
+-- (a/b) + (c/d) = (ad+cb)/(bd)
+rationalAdd :: Pure.Exp
+rationalAdd = rationalCombine integerAdd
+
+-- (a/b) - (c/d) = (ad-cb)/(bd)
+rationalSubtract :: Pure.Exp
+rationalSubtract = rationalCombine integerSubtract
+
+rationalCombine :: Pure.Exp -> Pure.Exp
+rationalCombine combine = Pure.EAbs p (Pure.EAbs q (pair numerator denominator))
+ where
+  p = Pure.Name "p"
+  q = Pure.Name "q"
+  first name = Pure.EApp encodeFst (Pure.EVar name)
+  second name = Pure.EApp encodeSnd (Pure.EVar name)
+  numerator =
+    apply2
+      combine
+      (apply2 integerMultiply (first p) (second q))
+      (apply2 integerMultiply (first q) (second p))
+  denominator = apply2 integerMultiply (second p) (second q)
+
+-- (a/b)(c/d) = ac/bd
+rationalMultiply :: Pure.Exp
+rationalMultiply = Pure.EAbs p (Pure.EAbs q (pair numerator denominator))
+ where
+  p = Pure.Name "p"
+  q = Pure.Name "q"
+  numerator =
+    apply2
+      integerMultiply
+      (Pure.EApp encodeFst (Pure.EVar p))
+      (Pure.EApp encodeFst (Pure.EVar q))
+  denominator =
+    apply2
+      integerMultiply
+      (Pure.EApp encodeSnd (Pure.EVar p))
+      (Pure.EApp encodeSnd (Pure.EVar q))
+
+-- (a/b)/(c/d) = ad/bc; the caller must supply c /= 0.
+rationalDivide :: Pure.Exp
+rationalDivide = Pure.EAbs p (Pure.EAbs q (pair numerator denominator))
+ where
+  p = Pure.Name "p"
+  q = Pure.Name "q"
+  numerator =
+    apply2
+      integerMultiply
+      (Pure.EApp encodeFst (Pure.EVar p))
+      (Pure.EApp encodeSnd (Pure.EVar q))
+  denominator =
+    apply2
+      integerMultiply
+      (Pure.EApp encodeSnd (Pure.EVar p))
+      (Pure.EApp encodeFst (Pure.EVar q))
+
+apply2 :: Pure.Exp -> Pure.Exp -> Pure.Exp -> Pure.Exp
+apply2 function first = Pure.EApp (Pure.EApp function first)
+
+pair :: Pure.Exp -> Pure.Exp -> Pure.Exp
+pair = apply2 encodePair
 
 integerCombine :: Pure.Exp -> Pure.Exp -> Pure.Exp
 integerCombine rightFirst rightSecond =
