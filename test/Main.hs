@@ -1,9 +1,9 @@
 module Main (main) where
 
-import qualified ArithmeticLambda.Abs as Arithmetic
-import qualified ArithmeticLambda.Par as Arithmetic
 import Compiler (compile, compileSource, reduceSource)
-import Desugar (desugar, desugarSyntax)
+import qualified CoreLambda.Abs as Core
+import qualified CoreLambda.Par as Core
+import Expand (expand)
 import qualified PureLambda.Abs as Pure
 import qualified PureLambda.Par as Pure
 import System.Exit (ExitCode (ExitSuccess), die)
@@ -50,16 +50,6 @@ main = do
     ".ski"
     (checkGraphOption ["--disable-reduce=both"])
   runCases "test/cases/compiler/precedence" ".lambda" ".parsed.lambda" checkSyntax
-  runCases
-    "test/cases/compiler/desugar"
-    ".lambda"
-    ".desugared.lambda"
-    checkDesugar
-  runCases
-    "test/cases/compiler/desugar"
-    ".lambda"
-    ".desugared.lambda"
-    (checkArithmeticOption ["--stop-after=desugar"])
   runCases "test/cases/compiler/encode" ".lambda" ".pure.lambda" checkEncode
   runCases
     "test/cases/compiler/encode"
@@ -69,9 +59,9 @@ main = do
   runCases "test/cases/compiler/errors" ".lambda" ".error" checkError
   putStrLn "compiler tests passed"
 
-parseArithmetic :: FilePath -> String -> IO Arithmetic.Exp
-parseArithmetic path source =
-  case Arithmetic.pExp (Arithmetic.myLexer source) of
+parseCore :: FilePath -> String -> IO Core.Exp
+parseCore path source =
+  case Core.pExp (Core.myLexer source) of
     Left problem -> die (path ++ ": " ++ problem)
     Right expression -> pure expression
 
@@ -85,29 +75,19 @@ checkSyntax :: FilePath -> FilePath -> IO ()
 checkSyntax sourcePath expectedPath = do
   source <- readFile sourcePath
   expected <- readFile expectedPath
-  actualExpression <- parseArithmetic sourcePath source
-  expectedExpression <- parseArithmetic expectedPath expected
+  actualExpression <- parseCore sourcePath source
+  expectedExpression <- parseCore expectedPath expected
   if actualExpression == expectedExpression
     then putStrLn (sourcePath ++ ": PASS")
     else die (sourcePath ++ ": syntax tree differs from " ++ expectedPath)
-
-checkDesugar :: FilePath -> FilePath -> IO ()
-checkDesugar sourcePath expectedPath = do
-  source <- readFile sourcePath
-  expected <- readFile expectedPath
-  expression <- parseArithmetic sourcePath source
-  expectedExpression <- parseArithmetic expectedPath expected
-  if desugarSyntax expression == expectedExpression
-    then putStrLn (sourcePath ++ ": PASS")
-    else die (sourcePath ++ ": desugaring differs from " ++ expectedPath)
 
 checkEncode :: FilePath -> FilePath -> IO ()
 checkEncode sourcePath expectedPath = do
   source <- readFile sourcePath
   expected <- readFile expectedPath
-  expression <- parseArithmetic sourcePath source
+  expression <- parseCore sourcePath source
   expectedExpression <- parsePure expectedPath expected
-  let actualExpression = desugar expression
+  let actualExpression = expand expression
   if actualExpression == expectedExpression
     then putStrLn (sourcePath ++ ": PASS")
     else
@@ -140,16 +120,6 @@ checkReduce sourcePath expectedPath = do
           die (sourcePath ++ ": reduced expression differs from " ++ expectedPath)
     Right _ -> pure ()
   checkPureOption ["--stop-after=reduce"] sourcePath expectedPath
-
-checkArithmeticOption :: [String] -> FilePath -> FilePath -> IO ()
-checkArithmeticOption options sourcePath expectedPath = do
-  output <- runCompiler options sourcePath
-  expected <- readFile expectedPath
-  actualExpression <- parseArithmetic sourcePath output
-  expectedExpression <- parseArithmetic expectedPath expected
-  if actualExpression == expectedExpression
-    then putStrLn (sourcePath ++ ": PASS")
-    else die (sourcePath ++ ": output differs from " ++ expectedPath)
 
 checkPureOption :: [String] -> FilePath -> FilePath -> IO ()
 checkPureOption options sourcePath expectedPath = do

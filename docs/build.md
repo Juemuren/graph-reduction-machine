@@ -22,7 +22,7 @@ Cabal 会调用 BNFC、Alex 和 Happy，根据语法定义分别生成并编译 
 
 | 语法文件                      | 源码目录               |
 | ----------------------------- | ---------------------- |
-| `grammar/ArithmeticLambda.cf` | `src/ArithmeticLambda` |
+| `grammar/CoreLambda.cf`       | `src/CoreLambda`       |
 | `grammar/PureLambda.cf`       | `src/PureLambda`       |
 | `grammar/Graph.cf`            | `src/Graph`            |
 

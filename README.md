@@ -22,10 +22,10 @@ cabal exec -- lambda-to-graph example.lambda
 
 不提供文件名时从标准输入读取。成功时结果写到标准输出；错误信息写到标准错误。
 
-默认进行完整编译。可以指定完成后停止的阶段。比如脱糖后停止
+默认进行完整编译。可以指定完成后停止的阶段。比如在展开后停止
 
 ```sh
-cabal exec -- lambda-to-graph --stop-after=desugar example.lambda
+cabal exec -- lambda-to-graph --stop-after=expand example.lambda
 ```
 
 默认执行 β 规约和 η 规约。可以指定要禁用的规约。比如禁用 β 规约：

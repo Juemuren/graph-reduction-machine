@@ -1,1 +1,1 @@
-NEG (INT +2)
+NEG (PAIR (SUCC (SUCC (ZERO))) ZERO)

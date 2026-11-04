@@ -1,1 +1,1 @@
-ADD 1 2
+ADD (SUCC (ZERO)) (SUCC (SUCC (ZERO)))

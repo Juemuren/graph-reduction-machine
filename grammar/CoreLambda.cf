@@ -1,0 +1,31 @@
+-- Lambda expressions with Church-encoded built-ins. BNFC generates CoreLambda.*.
+entrypoints Exp;
+
+EAbs. Exp  ::= "\\" Name "->" Exp ;
+_.    Exp  ::= Exp1 ;
+EApp. Exp1 ::= Exp1 Exp2 ;
+_.    Exp1 ::= Exp2 ;
+EVar. Exp2 ::= Name ;
+EZero. Exp2 ::= "ZERO" ;
+ESucc. Exp2 ::= "SUCC" ;
+EPred. Exp2 ::= "PRED" ;
+EAdd.  Exp2 ::= "ADD" ;
+ESub.  Exp2 ::= "SUB" ;
+EMul.  Exp2 ::= "MUL" ;
+EPow.  Exp2 ::= "POW" ;
+EFalse. Exp2 ::= "FALSE" ;
+ETrue. Exp2 ::= "TRUE" ;
+EAnd.  Exp2 ::= "AND" ;
+EOr.   Exp2 ::= "OR" ;
+ENot.  Exp2 ::= "NOT" ;
+EPair. Exp2 ::= "PAIR" ;
+EFst.  Exp2 ::= "FST" ;
+ESnd.  Exp2 ::= "SND" ;
+ENeg.  Exp2 ::= "NEG" ;
+EZAdd. Exp2 ::= "ZADD" ;
+EZSub. Exp2 ::= "ZSUB" ;
+EIf.   Exp2 ::= "IF" ;
+_.     Exp2 ::= "(" Exp ")" ;
+
+token Name (lower (letter | digit | '_')*) ;
+comment "#" ;

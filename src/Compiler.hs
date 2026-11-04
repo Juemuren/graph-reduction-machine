@@ -11,9 +11,9 @@ module Compiler (
   reduceSourceWith,
 ) where
 
-import qualified ArithmeticLambda.Par as Arithmetic
+import qualified CoreLambda.Par as Core
 import Data.List (intercalate, nub)
-import Desugar (desugar)
+import Expand (expand)
 import qualified Graph.Abs as Graph
 import qualified PureLambda.Abs as Pure
 
@@ -27,7 +27,7 @@ compileSource = compileSourceWith BetaEta
 
 compileSourceWith :: Reduction -> String -> Either String Graph.Graph
 compileSourceWith reduction source =
-  Arithmetic.pExp (Arithmetic.myLexer source) >>= compileWith reduction . desugar
+  Core.pExp (Core.myLexer source) >>= compileWith reduction . expand
 
 -- | Parse and reduce one expression without translating it to SKI.
 reduceSource :: String -> Either String Pure.Exp
@@ -35,8 +35,8 @@ reduceSource = reduceSourceWith BetaEta
 
 reduceSourceWith :: Reduction -> String -> Either String Pure.Exp
 reduceSourceWith reduction source =
-  Arithmetic.pExp (Arithmetic.myLexer source)
-    >>= reduceChecked reduction . desugar
+  Core.pExp (Core.myLexer source)
+    >>= reduceChecked reduction . expand
 
 compile :: Pure.Exp -> Either String Graph.Graph
 compile = compileWith BetaEta
