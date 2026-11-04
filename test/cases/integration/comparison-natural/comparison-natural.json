@@ -1,0 +1,270 @@
+{
+  "cases": [
+    {
+      "name": "eq-different",
+      "input": {
+        "language": "lambda",
+        "source": "EQ (SUCC (ZERO)) (SUCC (SUCC (ZERO)))\n"
+      },
+      "run": {
+        "stage": "decode",
+        "type": "boolean"
+      },
+      "expect": {
+        "value": "False"
+      }
+    },
+    {
+      "name": "eq-equal",
+      "input": {
+        "language": "lambda",
+        "source": "EQ (SUCC (ZERO)) (SUCC (ZERO))\n"
+      },
+      "run": {
+        "stage": "decode",
+        "type": "boolean"
+      },
+      "expect": {
+        "value": "True"
+      }
+    },
+    {
+      "name": "geq-equal",
+      "input": {
+        "language": "lambda",
+        "source": "GEQ (SUCC ZERO) (SUCC ZERO)\n"
+      },
+      "run": {
+        "stage": "decode",
+        "type": "boolean"
+      },
+      "expect": {
+        "value": "True"
+      }
+    },
+    {
+      "name": "geq-greater",
+      "input": {
+        "language": "lambda",
+        "source": "GEQ (SUCC ZERO) (ZERO)\n"
+      },
+      "run": {
+        "stage": "decode",
+        "type": "boolean"
+      },
+      "expect": {
+        "value": "True"
+      }
+    },
+    {
+      "name": "geq-less",
+      "input": {
+        "language": "lambda",
+        "source": "GEQ (ZERO) (SUCC ZERO)\n"
+      },
+      "run": {
+        "stage": "decode",
+        "type": "boolean"
+      },
+      "expect": {
+        "value": "False"
+      }
+    },
+    {
+      "name": "gt-equal",
+      "input": {
+        "language": "lambda",
+        "source": "GT (SUCC ZERO) (SUCC ZERO)\n"
+      },
+      "run": {
+        "stage": "decode",
+        "type": "boolean"
+      },
+      "expect": {
+        "value": "False"
+      }
+    },
+    {
+      "name": "gt-greater",
+      "input": {
+        "language": "lambda",
+        "source": "GT (SUCC ZERO) (ZERO)\n"
+      },
+      "run": {
+        "stage": "decode",
+        "type": "boolean"
+      },
+      "expect": {
+        "value": "True"
+      }
+    },
+    {
+      "name": "gt-less",
+      "input": {
+        "language": "lambda",
+        "source": "GT (ZERO) (SUCC ZERO)\n"
+      },
+      "run": {
+        "stage": "decode",
+        "type": "boolean"
+      },
+      "expect": {
+        "value": "False"
+      }
+    },
+    {
+      "name": "iszero-nonzero",
+      "input": {
+        "language": "lambda",
+        "source": "ISZERO (SUCC (ZERO))\n"
+      },
+      "run": {
+        "stage": "decode",
+        "type": "boolean"
+      },
+      "expect": {
+        "value": "False"
+      }
+    },
+    {
+      "name": "iszero-zero",
+      "input": {
+        "language": "lambda",
+        "source": "ISZERO ZERO\n"
+      },
+      "run": {
+        "stage": "decode",
+        "type": "boolean"
+      },
+      "expect": {
+        "value": "True"
+      }
+    },
+    {
+      "name": "leq-equal",
+      "input": {
+        "language": "lambda",
+        "source": "LEQ (SUCC ZERO) (SUCC ZERO)\n"
+      },
+      "run": {
+        "stage": "decode",
+        "type": "boolean"
+      },
+      "expect": {
+        "value": "True"
+      }
+    },
+    {
+      "name": "leq-greater",
+      "input": {
+        "language": "lambda",
+        "source": "LEQ (SUCC (SUCC (ZERO))) (SUCC (ZERO))\n"
+      },
+      "run": {
+        "stage": "decode",
+        "type": "boolean"
+      },
+      "expect": {
+        "value": "False"
+      }
+    },
+    {
+      "name": "leq-less",
+      "input": {
+        "language": "lambda",
+        "source": "LEQ (SUCC (ZERO)) (SUCC (SUCC (ZERO)))\n"
+      },
+      "run": {
+        "stage": "decode",
+        "type": "boolean"
+      },
+      "expect": {
+        "value": "True"
+      }
+    },
+    {
+      "name": "lt-equal",
+      "input": {
+        "language": "lambda",
+        "source": "LT (SUCC ZERO) (SUCC ZERO)\n"
+      },
+      "run": {
+        "stage": "decode",
+        "type": "boolean"
+      },
+      "expect": {
+        "value": "False"
+      }
+    },
+    {
+      "name": "lt-greater",
+      "input": {
+        "language": "lambda",
+        "source": "LT (SUCC ZERO) (ZERO)\n"
+      },
+      "run": {
+        "stage": "decode",
+        "type": "boolean"
+      },
+      "expect": {
+        "value": "False"
+      }
+    },
+    {
+      "name": "lt-less",
+      "input": {
+        "language": "lambda",
+        "source": "LT (ZERO) (SUCC ZERO)\n"
+      },
+      "run": {
+        "stage": "decode",
+        "type": "boolean"
+      },
+      "expect": {
+        "value": "True"
+      }
+    },
+    {
+      "name": "neq-equal",
+      "input": {
+        "language": "lambda",
+        "source": "NEQ (SUCC ZERO) (SUCC ZERO)\n"
+      },
+      "run": {
+        "stage": "decode",
+        "type": "boolean"
+      },
+      "expect": {
+        "value": "False"
+      }
+    },
+    {
+      "name": "neq-greater",
+      "input": {
+        "language": "lambda",
+        "source": "NEQ (SUCC ZERO) (ZERO)\n"
+      },
+      "run": {
+        "stage": "decode",
+        "type": "boolean"
+      },
+      "expect": {
+        "value": "True"
+      }
+    },
+    {
+      "name": "neq-less",
+      "input": {
+        "language": "lambda",
+        "source": "NEQ (ZERO) (SUCC ZERO)\n"
+      },
+      "run": {
+        "stage": "decode",
+        "type": "boolean"
+      },
+      "expect": {
+        "value": "True"
+      }
+    }
+  ]
+}

@@ -1,0 +1,19 @@
+{
+  "cases": [
+    {
+      "name": "step-limit",
+      "input": {
+        "language": "ski",
+        "source": "#0 = #1 #2;\n#1 = I;\n#2 = I;\n"
+      },
+      "run": {
+        "stage": "decode",
+        "type": "natural",
+        "maxSteps": 1
+      },
+      "expect": {
+        "error": "reduction exceeded step limit 1"
+      }
+    }
+  ]
+}

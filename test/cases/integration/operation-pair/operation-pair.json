@@ -1,0 +1,32 @@
+{
+  "cases": [
+    {
+      "name": "fst",
+      "input": {
+        "language": "lambda",
+        "source": "EQ (FST (PAIR (SUCC (SUCC (ZERO))) (SUCC (SUCC (SUCC (SUCC (SUCC (ZERO)))))))) TWO\n"
+      },
+      "run": {
+        "stage": "decode",
+        "type": "boolean"
+      },
+      "expect": {
+        "value": "True"
+      }
+    },
+    {
+      "name": "snd",
+      "input": {
+        "language": "lambda",
+        "source": "EQ (SND (PAIR (SUCC (SUCC (ZERO))) (SUCC (SUCC (SUCC (SUCC (SUCC (ZERO)))))))) FIVE\n"
+      },
+      "run": {
+        "stage": "decode",
+        "type": "boolean"
+      },
+      "expect": {
+        "value": "True"
+      }
+    }
+  ]
+}

@@ -1,1 +1,0 @@
-(\apply -> apply (SUCC ONE)) ((\f -> \x -> f x) SUCC)

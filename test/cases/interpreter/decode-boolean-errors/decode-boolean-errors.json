@@ -1,0 +1,18 @@
+{
+  "cases": [
+    {
+      "name": "non-boolean",
+      "input": {
+        "language": "ski",
+        "source": "#0 = S;\n"
+      },
+      "run": {
+        "stage": "decode",
+        "type": "boolean"
+      },
+      "expect": {
+        "error": "not a Church Boolean"
+      }
+    }
+  ]
+}

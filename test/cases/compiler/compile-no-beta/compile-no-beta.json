@@ -1,0 +1,18 @@
+{
+  "cases": [
+    {
+      "name": "application",
+      "input": {
+        "language": "lambda",
+        "source": "(\\x -> x) (\\y -> y)\n"
+      },
+      "run": {
+        "stage": "compile",
+        "disableReduce": "beta"
+      },
+      "expect": {
+        "graph": "#0 = #1 #2;\n#1 = I;\n#2 = I;\n"
+      }
+    }
+  ]
+}

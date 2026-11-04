@@ -1,1 +1,0 @@
-IF TRUE (SUCC ZERO) ((\x -> x x) (\x -> x x))

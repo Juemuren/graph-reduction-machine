@@ -1,0 +1,30 @@
+{
+  "cases": [
+    {
+      "name": "free-variable",
+      "input": {
+        "language": "lambda",
+        "source": "\\x -> y x\n"
+      },
+      "run": {
+        "stage": "compile"
+      },
+      "expect": {
+        "error": "free variable(s): y"
+      }
+    },
+    {
+      "name": "syntax-error",
+      "input": {
+        "language": "lambda",
+        "source": "\\x ->\n"
+      },
+      "run": {
+        "stage": "compile"
+      },
+      "expect": {
+        "error": "syntax error at end of file"
+      }
+    }
+  ]
+}

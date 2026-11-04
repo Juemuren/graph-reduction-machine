@@ -1,0 +1,18 @@
+{
+  "cases": [
+    {
+      "name": "modes",
+      "input": {
+        "language": "lambda",
+        "source": "(\\x -> x) (\\f -> \\y -> f y)\n"
+      },
+      "run": {
+        "stage": "reduce",
+        "disableReduce": "both"
+      },
+      "expect": {
+        "value": "(\\x -> x) (\\f -> \\y -> f y)\n"
+      }
+    }
+  ]
+}

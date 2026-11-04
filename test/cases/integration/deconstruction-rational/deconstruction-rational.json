@@ -1,0 +1,116 @@
+{
+  "cases": [
+    {
+      "name": "qnorm-negative-denominator-denominator",
+      "input": {
+        "language": "lambda",
+        "source": "SND (QNORM (PAIR (NTOZ TWO) (NEG (NTOZ FOUR))))\n"
+      },
+      "run": {
+        "stage": "decode",
+        "type": "integer"
+      },
+      "expect": {
+        "value": "2"
+      }
+    },
+    {
+      "name": "qnorm-negative-denominator-numerator",
+      "input": {
+        "language": "lambda",
+        "source": "FST (QNORM (PAIR (NTOZ TWO) (NEG (NTOZ FOUR))))\n"
+      },
+      "run": {
+        "stage": "decode",
+        "type": "integer"
+      },
+      "expect": {
+        "value": "-1"
+      }
+    },
+    {
+      "name": "qnorm-noncanonical-denominator",
+      "input": {
+        "language": "lambda",
+        "source": "SND (QNORM (PAIR (PAIR THREE ONE) (PAIR ONE FIVE)))\n"
+      },
+      "run": {
+        "stage": "decode",
+        "type": "integer"
+      },
+      "expect": {
+        "value": "2"
+      }
+    },
+    {
+      "name": "qnorm-noncanonical-numerator",
+      "input": {
+        "language": "lambda",
+        "source": "FST (QNORM (PAIR (PAIR THREE ONE) (PAIR ONE FIVE)))\n"
+      },
+      "run": {
+        "stage": "decode",
+        "type": "integer"
+      },
+      "expect": {
+        "value": "-1"
+      }
+    },
+    {
+      "name": "qnorm-positive-denominator",
+      "input": {
+        "language": "lambda",
+        "source": "SND (QNORM (PAIR (NTOZ TWO) (NTOZ FOUR)))\n"
+      },
+      "run": {
+        "stage": "decode",
+        "type": "integer"
+      },
+      "expect": {
+        "value": "2"
+      }
+    },
+    {
+      "name": "qnorm-positive-numerator",
+      "input": {
+        "language": "lambda",
+        "source": "FST (QNORM (PAIR (NTOZ TWO) (NTOZ FOUR)))\n"
+      },
+      "run": {
+        "stage": "decode",
+        "type": "integer"
+      },
+      "expect": {
+        "value": "1"
+      }
+    },
+    {
+      "name": "qnorm-zero-denominator",
+      "input": {
+        "language": "lambda",
+        "source": "SND (QNORM (PAIR (NTOZ ZERO) (NTOZ TWO)))\n"
+      },
+      "run": {
+        "stage": "decode",
+        "type": "integer"
+      },
+      "expect": {
+        "value": "1"
+      }
+    },
+    {
+      "name": "qnorm-zero-numerator",
+      "input": {
+        "language": "lambda",
+        "source": "FST (QNORM (PAIR (NTOZ ZERO) (NTOZ TWO)))\n"
+      },
+      "run": {
+        "stage": "decode",
+        "type": "integer"
+      },
+      "expect": {
+        "value": "0"
+      }
+    }
+  ]
+}

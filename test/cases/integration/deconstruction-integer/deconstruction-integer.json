@@ -1,0 +1,88 @@
+{
+  "cases": [
+    {
+      "name": "znorm-negative-first",
+      "input": {
+        "language": "lambda",
+        "source": "FST (ZNORM (PAIR ONE THREE))\n"
+      },
+      "run": {
+        "stage": "decode",
+        "type": "natural"
+      },
+      "expect": {
+        "value": "0"
+      }
+    },
+    {
+      "name": "znorm-negative-second",
+      "input": {
+        "language": "lambda",
+        "source": "SND (ZNORM (PAIR ONE THREE))\n"
+      },
+      "run": {
+        "stage": "decode",
+        "type": "natural"
+      },
+      "expect": {
+        "value": "2"
+      }
+    },
+    {
+      "name": "znorm-positive-first",
+      "input": {
+        "language": "lambda",
+        "source": "FST (ZNORM (PAIR THREE ONE))\n"
+      },
+      "run": {
+        "stage": "decode",
+        "type": "natural"
+      },
+      "expect": {
+        "value": "2"
+      }
+    },
+    {
+      "name": "znorm-positive-second",
+      "input": {
+        "language": "lambda",
+        "source": "SND (ZNORM (PAIR THREE ONE))\n"
+      },
+      "run": {
+        "stage": "decode",
+        "type": "natural"
+      },
+      "expect": {
+        "value": "0"
+      }
+    },
+    {
+      "name": "znorm-zero-first",
+      "input": {
+        "language": "lambda",
+        "source": "FST (ZNORM (PAIR ONE ONE))\n"
+      },
+      "run": {
+        "stage": "decode",
+        "type": "natural"
+      },
+      "expect": {
+        "value": "0"
+      }
+    },
+    {
+      "name": "znorm-zero-second",
+      "input": {
+        "language": "lambda",
+        "source": "SND (ZNORM (PAIR ONE ONE))\n"
+      },
+      "run": {
+        "stage": "decode",
+        "type": "natural"
+      },
+      "expect": {
+        "value": "0"
+      }
+    }
+  ]
+}

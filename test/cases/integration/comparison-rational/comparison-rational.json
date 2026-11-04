@@ -1,0 +1,158 @@
+{
+  "cases": [
+    {
+      "name": "qeq-different",
+      "input": {
+        "language": "lambda",
+        "source": "QEQ (PAIR (NTOZ ONE) (NTOZ TWO)) (PAIR (NTOZ ONE) (NTOZ THREE))\n"
+      },
+      "run": {
+        "stage": "decode",
+        "type": "boolean"
+      },
+      "expect": {
+        "value": "False"
+      }
+    },
+    {
+      "name": "qeq-equivalent",
+      "input": {
+        "language": "lambda",
+        "source": "QEQ (PAIR (NTOZ ONE) (NTOZ TWO)) (PAIR (NTOZ TWO) (NTOZ FOUR))\n"
+      },
+      "run": {
+        "stage": "decode",
+        "type": "boolean"
+      },
+      "expect": {
+        "value": "True"
+      }
+    },
+    {
+      "name": "qgeq",
+      "input": {
+        "language": "lambda",
+        "source": "QGEQ (PAIR (NTOZ ONE) (NTOZ TWO)) (PAIR (NTOZ TWO) (NTOZ FOUR))\n"
+      },
+      "run": {
+        "stage": "decode",
+        "type": "boolean"
+      },
+      "expect": {
+        "value": "True"
+      }
+    },
+    {
+      "name": "qgt",
+      "input": {
+        "language": "lambda",
+        "source": "QGT (ZTOQ (NTOZ ONE)) (ZTOQ (NTOZ ZERO))\n"
+      },
+      "run": {
+        "stage": "decode",
+        "type": "boolean"
+      },
+      "expect": {
+        "value": "True"
+      }
+    },
+    {
+      "name": "qiszero-nonzero",
+      "input": {
+        "language": "lambda",
+        "source": "QISZERO (PAIR (NTOZ ONE) (NEG (NTOZ TWO)))\n"
+      },
+      "run": {
+        "stage": "decode",
+        "type": "boolean"
+      },
+      "expect": {
+        "value": "False"
+      }
+    },
+    {
+      "name": "qiszero-zero",
+      "input": {
+        "language": "lambda",
+        "source": "QISZERO (PAIR (NTOZ ZERO) (NEG (NTOZ TWO)))\n"
+      },
+      "run": {
+        "stage": "decode",
+        "type": "boolean"
+      },
+      "expect": {
+        "value": "True"
+      }
+    },
+    {
+      "name": "qleq-equal",
+      "input": {
+        "language": "lambda",
+        "source": "QLEQ (PAIR (NTOZ ONE) (NTOZ TWO)) (PAIR (NTOZ TWO) (NTOZ FOUR))\n"
+      },
+      "run": {
+        "stage": "decode",
+        "type": "boolean"
+      },
+      "expect": {
+        "value": "True"
+      }
+    },
+    {
+      "name": "qleq-negative-denominator",
+      "input": {
+        "language": "lambda",
+        "source": "QLEQ (ZTOQ (NTOZ ZERO)) (PAIR (NTOZ ONE) (NEG (NTOZ TWO)))\n"
+      },
+      "run": {
+        "stage": "decode",
+        "type": "boolean"
+      },
+      "expect": {
+        "value": "False"
+      }
+    },
+    {
+      "name": "qlt-equal",
+      "input": {
+        "language": "lambda",
+        "source": "QLT (PAIR (NTOZ ONE) (NTOZ TWO)) (PAIR (NTOZ TWO) (NTOZ FOUR))\n"
+      },
+      "run": {
+        "stage": "decode",
+        "type": "boolean"
+      },
+      "expect": {
+        "value": "False"
+      }
+    },
+    {
+      "name": "qlt-negative-denominator",
+      "input": {
+        "language": "lambda",
+        "source": "QLT (PAIR (NTOZ ONE) (NEG (NTOZ TWO))) (ZTOQ (NTOZ ZERO))\n"
+      },
+      "run": {
+        "stage": "decode",
+        "type": "boolean"
+      },
+      "expect": {
+        "value": "True"
+      }
+    },
+    {
+      "name": "qneq",
+      "input": {
+        "language": "lambda",
+        "source": "QNEQ (ZTOQ (NTOZ ONE)) (ZTOQ (NTOZ TWO))\n"
+      },
+      "run": {
+        "stage": "decode",
+        "type": "boolean"
+      },
+      "expect": {
+        "value": "True"
+      }
+    }
+  ]
+}

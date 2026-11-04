@@ -1,0 +1,32 @@
+{
+  "cases": [
+    {
+      "name": "two",
+      "input": {
+        "language": "lambda",
+        "source": "\\f -> \\x -> f (f x)\n"
+      },
+      "run": {
+        "stage": "decode",
+        "type": "natural"
+      },
+      "expect": {
+        "value": "2"
+      }
+    },
+    {
+      "name": "zero",
+      "input": {
+        "language": "lambda",
+        "source": "\\f -> \\x -> x\n"
+      },
+      "run": {
+        "stage": "decode",
+        "type": "natural"
+      },
+      "expect": {
+        "value": "0"
+      }
+    }
+  ]
+}

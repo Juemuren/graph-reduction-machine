@@ -1,0 +1,130 @@
+{
+  "cases": [
+    {
+      "name": "qabs-negative-denominator",
+      "input": {
+        "language": "lambda",
+        "source": "QABS (PAIR (NTOZ ONE) (NEG (NTOZ TWO)))\n"
+      },
+      "run": {
+        "stage": "decode",
+        "type": "rational"
+      },
+      "expect": {
+        "value": "1/2"
+      }
+    },
+    {
+      "name": "qabs-positive",
+      "input": {
+        "language": "lambda",
+        "source": "QABS (PAIR (NTOZ ONE) (NTOZ TWO))\n"
+      },
+      "run": {
+        "stage": "decode",
+        "type": "rational"
+      },
+      "expect": {
+        "value": "1/2"
+      }
+    },
+    {
+      "name": "qadd",
+      "input": {
+        "language": "lambda",
+        "source": "QADD (PAIR (PAIR (SUCC ZERO) ZERO) (PAIR (SUCC (SUCC ZERO)) ZERO)) (PAIR (PAIR (SUCC ZERO) ZERO) (PAIR (SUCC ZERO) ZERO))\n"
+      },
+      "run": {
+        "stage": "decode",
+        "type": "rational"
+      },
+      "expect": {
+        "value": "3/2"
+      }
+    },
+    {
+      "name": "qdiv",
+      "input": {
+        "language": "lambda",
+        "source": "QDIV (PAIR (PAIR (SUCC ZERO) ZERO) (PAIR (SUCC (SUCC ZERO)) ZERO)) (PAIR (PAIR (SUCC ZERO) ZERO) (PAIR (SUCC ZERO) ZERO))\n"
+      },
+      "run": {
+        "stage": "decode",
+        "type": "rational"
+      },
+      "expect": {
+        "value": "1/2"
+      }
+    },
+    {
+      "name": "qinv-negative-denominator",
+      "input": {
+        "language": "lambda",
+        "source": "QINV (PAIR (NTOZ ONE) (NEG (NTOZ TWO)))\n"
+      },
+      "run": {
+        "stage": "decode",
+        "type": "rational"
+      },
+      "expect": {
+        "value": "-2/1"
+      }
+    },
+    {
+      "name": "qinv-positive-denominator",
+      "input": {
+        "language": "lambda",
+        "source": "QINV (PAIR (NTOZ ONE) (NTOZ TWO))\n"
+      },
+      "run": {
+        "stage": "decode",
+        "type": "rational"
+      },
+      "expect": {
+        "value": "2/1"
+      }
+    },
+    {
+      "name": "qmul",
+      "input": {
+        "language": "lambda",
+        "source": "QMUL (PAIR (PAIR (SUCC ZERO) ZERO) (PAIR (SUCC (SUCC ZERO)) ZERO)) (PAIR (PAIR (SUCC ZERO) ZERO) (PAIR (SUCC ZERO) ZERO))\n"
+      },
+      "run": {
+        "stage": "decode",
+        "type": "rational"
+      },
+      "expect": {
+        "value": "1/2"
+      }
+    },
+    {
+      "name": "qneg",
+      "input": {
+        "language": "lambda",
+        "source": "QNEG (PAIR (NTOZ ONE) (NTOZ TWO))\n"
+      },
+      "run": {
+        "stage": "decode",
+        "type": "rational"
+      },
+      "expect": {
+        "value": "-1/2"
+      }
+    },
+    {
+      "name": "qsub",
+      "input": {
+        "language": "lambda",
+        "source": "QSUB (PAIR (PAIR (SUCC ZERO) ZERO) (PAIR (SUCC (SUCC ZERO)) ZERO)) (PAIR (PAIR (SUCC ZERO) ZERO) (PAIR (SUCC ZERO) ZERO))\n"
+      },
+      "run": {
+        "stage": "decode",
+        "type": "rational"
+      },
+      "expect": {
+        "value": "-1/2"
+      }
+    }
+  ]
+}

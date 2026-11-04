@@ -1,0 +1,18 @@
+{
+  "cases": [
+    {
+      "name": "pair",
+      "input": {
+        "language": "lambda",
+        "source": "(\\p -> AND (EQ (FST p) TWO) (EQ (SND p) THREE)) (PAIR TWO THREE)\n"
+      },
+      "run": {
+        "stage": "decode",
+        "type": "boolean"
+      },
+      "expect": {
+        "value": "True"
+      }
+    }
+  ]
+}

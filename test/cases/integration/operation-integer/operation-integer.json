@@ -1,0 +1,102 @@
+{
+  "cases": [
+    {
+      "name": "abs-mixed",
+      "input": {
+        "language": "lambda",
+        "source": "ABS (PAIR (SUCC ZERO) (SUCC (SUCC (SUCC ZERO))))\n"
+      },
+      "run": {
+        "stage": "decode",
+        "type": "integer"
+      },
+      "expect": {
+        "value": "2"
+      }
+    },
+    {
+      "name": "abs-negative",
+      "input": {
+        "language": "lambda",
+        "source": "ABS (PAIR ZERO (SUCC (SUCC (ZERO))))\n"
+      },
+      "run": {
+        "stage": "decode",
+        "type": "integer"
+      },
+      "expect": {
+        "value": "2"
+      }
+    },
+    {
+      "name": "abs-positive",
+      "input": {
+        "language": "lambda",
+        "source": "ABS (PAIR (SUCC (SUCC (ZERO))) ZERO)\n"
+      },
+      "run": {
+        "stage": "decode",
+        "type": "integer"
+      },
+      "expect": {
+        "value": "2"
+      }
+    },
+    {
+      "name": "neg",
+      "input": {
+        "language": "lambda",
+        "source": "NEG (PAIR (SUCC (SUCC (ZERO))) ZERO)\n"
+      },
+      "run": {
+        "stage": "decode",
+        "type": "integer"
+      },
+      "expect": {
+        "value": "-2"
+      }
+    },
+    {
+      "name": "zadd",
+      "input": {
+        "language": "lambda",
+        "source": "ZADD (PAIR (SUCC (SUCC (ZERO))) ZERO) (PAIR ZERO (SUCC (SUCC (SUCC (ZERO)))))\n"
+      },
+      "run": {
+        "stage": "decode",
+        "type": "integer"
+      },
+      "expect": {
+        "value": "-1"
+      }
+    },
+    {
+      "name": "zmul",
+      "input": {
+        "language": "lambda",
+        "source": "ZMUL (PAIR ZERO (SUCC ZERO)) (PAIR (SUCC (SUCC ZERO)) ZERO)\n"
+      },
+      "run": {
+        "stage": "decode",
+        "type": "integer"
+      },
+      "expect": {
+        "value": "-2"
+      }
+    },
+    {
+      "name": "zsub",
+      "input": {
+        "language": "lambda",
+        "source": "ZSUB (PAIR ZERO (SUCC (SUCC (ZERO)))) (PAIR ZERO (SUCC (SUCC (SUCC (SUCC (SUCC (ZERO)))))))\n"
+      },
+      "run": {
+        "stage": "decode",
+        "type": "integer"
+      },
+      "expect": {
+        "value": "3"
+      }
+    }
+  ]
+}

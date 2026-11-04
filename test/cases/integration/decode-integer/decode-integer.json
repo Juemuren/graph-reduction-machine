@@ -1,0 +1,46 @@
+{
+  "cases": [
+    {
+      "name": "int-neg",
+      "input": {
+        "language": "lambda",
+        "source": "PAIR ZERO (SUCC (SUCC (SUCC (SUCC (ZERO)))))\n"
+      },
+      "run": {
+        "stage": "decode",
+        "type": "integer"
+      },
+      "expect": {
+        "value": "-4"
+      }
+    },
+    {
+      "name": "int-pos",
+      "input": {
+        "language": "lambda",
+        "source": "PAIR (SUCC (SUCC (SUCC (ZERO)))) ZERO\n"
+      },
+      "run": {
+        "stage": "decode",
+        "type": "integer"
+      },
+      "expect": {
+        "value": "3"
+      }
+    },
+    {
+      "name": "zero",
+      "input": {
+        "language": "lambda",
+        "source": "PAIR ZERO (ZERO)\n"
+      },
+      "run": {
+        "stage": "decode",
+        "type": "integer"
+      },
+      "expect": {
+        "value": "0"
+      }
+    }
+  ]
+}

@@ -1,0 +1,20 @@
+{
+  "cases": [
+    {
+      "name": "infinite",
+      "input": {
+        "language": "lambda",
+        "source": "WHILE (\\x -> TRUE) SUCC ZERO\n"
+      },
+      "run": {
+        "stage": "decode",
+        "type": "natural",
+        "disableReduce": "both",
+        "maxSteps": 100
+      },
+      "expect": {
+        "error": "reduction exceeded step limit 100"
+      }
+    }
+  ]
+}

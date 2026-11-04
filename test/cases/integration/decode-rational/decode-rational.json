@@ -1,0 +1,46 @@
+{
+  "cases": [
+    {
+      "name": "half",
+      "input": {
+        "language": "lambda",
+        "source": "PAIR (PAIR (SUCC ZERO) ZERO) (PAIR (SUCC (SUCC ZERO)) ZERO)\n"
+      },
+      "run": {
+        "stage": "decode",
+        "type": "rational"
+      },
+      "expect": {
+        "value": "1/2"
+      }
+    },
+    {
+      "name": "reduced-negative",
+      "input": {
+        "language": "lambda",
+        "source": "PAIR (PAIR (SUCC (SUCC ZERO)) ZERO) (PAIR ZERO (SUCC (SUCC (SUCC (SUCC ZERO)))))\n"
+      },
+      "run": {
+        "stage": "decode",
+        "type": "rational"
+      },
+      "expect": {
+        "value": "-1/2"
+      }
+    },
+    {
+      "name": "zero",
+      "input": {
+        "language": "lambda",
+        "source": "PAIR (PAIR ZERO ZERO) (PAIR ZERO (SUCC ZERO))\n"
+      },
+      "run": {
+        "stage": "decode",
+        "type": "rational"
+      },
+      "expect": {
+        "value": "0/1"
+      }
+    }
+  ]
+}

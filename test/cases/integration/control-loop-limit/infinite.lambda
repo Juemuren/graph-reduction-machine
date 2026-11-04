@@ -1,1 +1,0 @@
-WHILE (\x -> TRUE) SUCC ZERO

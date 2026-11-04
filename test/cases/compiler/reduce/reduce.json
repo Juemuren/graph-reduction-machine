@@ -1,0 +1,95 @@
+{
+  "cases": [
+    {
+      "name": "capture",
+      "input": {
+        "language": "lambda",
+        "source": "\\y -> (\\x -> \\y -> x) (y y)\n"
+      },
+      "run": {
+        "stage": "reduce"
+      },
+      "expect": {
+        "value": "\\y -> \\y_1 -> y y\n"
+      }
+    },
+    {
+      "name": "discard-argument",
+      "input": {
+        "language": "lambda",
+        "source": "(\\x -> \\z -> z) ((\\y -> y y) (\\y -> y y))\n"
+      },
+      "run": {
+        "stage": "reduce"
+      },
+      "expect": {
+        "value": "\\z -> z\n"
+      }
+    },
+    {
+      "name": "eta-side-condition",
+      "input": {
+        "language": "lambda",
+        "source": "\\x -> x x\n"
+      },
+      "run": {
+        "stage": "reduce"
+      },
+      "expect": {
+        "value": "\\x -> x x\n"
+      }
+    },
+    {
+      "name": "eta",
+      "input": {
+        "language": "lambda",
+        "source": "\\f -> \\x -> f x\n"
+      },
+      "run": {
+        "stage": "reduce"
+      },
+      "expect": {
+        "value": "\\f -> f\n"
+      }
+    },
+    {
+      "name": "modes",
+      "input": {
+        "language": "lambda",
+        "source": "(\\x -> x) (\\f -> \\y -> f y)\n"
+      },
+      "run": {
+        "stage": "reduce"
+      },
+      "expect": {
+        "value": "\\f -> f\n"
+      }
+    },
+    {
+      "name": "shadowing",
+      "input": {
+        "language": "lambda",
+        "source": "(\\x -> \\x -> x) (\\z -> z)\n"
+      },
+      "run": {
+        "stage": "reduce"
+      },
+      "expect": {
+        "value": "\\x -> x\n"
+      }
+    },
+    {
+      "name": "under-abstraction",
+      "input": {
+        "language": "lambda",
+        "source": "\\x -> (\\y -> y) (x x)\n"
+      },
+      "run": {
+        "stage": "reduce"
+      },
+      "expect": {
+        "value": "\\x -> x x\n"
+      }
+    }
+  ]
+}

@@ -1,0 +1,158 @@
+{
+  "cases": [
+    {
+      "name": "zeq-different",
+      "input": {
+        "language": "lambda",
+        "source": "ZEQ (NTOZ ONE) (NTOZ TWO)\n"
+      },
+      "run": {
+        "stage": "decode",
+        "type": "boolean"
+      },
+      "expect": {
+        "value": "False"
+      }
+    },
+    {
+      "name": "zeq-equivalent",
+      "input": {
+        "language": "lambda",
+        "source": "ZEQ (PAIR TWO ONE) (NTOZ ONE)\n"
+      },
+      "run": {
+        "stage": "decode",
+        "type": "boolean"
+      },
+      "expect": {
+        "value": "True"
+      }
+    },
+    {
+      "name": "zgeq",
+      "input": {
+        "language": "lambda",
+        "source": "ZGEQ (NTOZ ONE) (PAIR TWO ONE)\n"
+      },
+      "run": {
+        "stage": "decode",
+        "type": "boolean"
+      },
+      "expect": {
+        "value": "True"
+      }
+    },
+    {
+      "name": "zgt",
+      "input": {
+        "language": "lambda",
+        "source": "ZGT (NTOZ TWO) (NTOZ ONE)\n"
+      },
+      "run": {
+        "stage": "decode",
+        "type": "boolean"
+      },
+      "expect": {
+        "value": "True"
+      }
+    },
+    {
+      "name": "ziszero-nonzero",
+      "input": {
+        "language": "lambda",
+        "source": "ZISZERO (PAIR TWO ONE)\n"
+      },
+      "run": {
+        "stage": "decode",
+        "type": "boolean"
+      },
+      "expect": {
+        "value": "False"
+      }
+    },
+    {
+      "name": "ziszero-zero",
+      "input": {
+        "language": "lambda",
+        "source": "ZISZERO (PAIR ONE ONE)\n"
+      },
+      "run": {
+        "stage": "decode",
+        "type": "boolean"
+      },
+      "expect": {
+        "value": "True"
+      }
+    },
+    {
+      "name": "zleq-equal",
+      "input": {
+        "language": "lambda",
+        "source": "ZLEQ (PAIR TWO ONE) (NTOZ ONE)\n"
+      },
+      "run": {
+        "stage": "decode",
+        "type": "boolean"
+      },
+      "expect": {
+        "value": "True"
+      }
+    },
+    {
+      "name": "zleq-greater",
+      "input": {
+        "language": "lambda",
+        "source": "ZLEQ (NTOZ TWO) (NTOZ ONE)\n"
+      },
+      "run": {
+        "stage": "decode",
+        "type": "boolean"
+      },
+      "expect": {
+        "value": "False"
+      }
+    },
+    {
+      "name": "zlt-equal",
+      "input": {
+        "language": "lambda",
+        "source": "ZLT (PAIR TWO ONE) (NTOZ ONE)\n"
+      },
+      "run": {
+        "stage": "decode",
+        "type": "boolean"
+      },
+      "expect": {
+        "value": "False"
+      }
+    },
+    {
+      "name": "zlt-less",
+      "input": {
+        "language": "lambda",
+        "source": "ZLT (NEG (NTOZ ONE)) (NTOZ ZERO)\n"
+      },
+      "run": {
+        "stage": "decode",
+        "type": "boolean"
+      },
+      "expect": {
+        "value": "True"
+      }
+    },
+    {
+      "name": "zneq",
+      "input": {
+        "language": "lambda",
+        "source": "ZNEQ (NTOZ ONE) (NTOZ TWO)\n"
+      },
+      "run": {
+        "stage": "decode",
+        "type": "boolean"
+      },
+      "expect": {
+        "value": "True"
+      }
+    }
+  ]
+}

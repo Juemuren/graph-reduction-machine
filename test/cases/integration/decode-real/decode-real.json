@@ -1,0 +1,34 @@
+{
+  "cases": [
+    {
+      "name": "qtor",
+      "input": {
+        "language": "lambda",
+        "source": "QTOR (PAIR (NTOZ ONE) (NTOZ TWO))\n"
+      },
+      "run": {
+        "stage": "decode",
+        "type": "real",
+        "precisionReal": 0
+      },
+      "expect": {
+        "value": "1/2"
+      }
+    },
+    {
+      "name": "sequence",
+      "input": {
+        "language": "lambda",
+        "source": "\\n -> NTOQ n\n"
+      },
+      "run": {
+        "stage": "decode",
+        "type": "real",
+        "precisionReal": 2
+      },
+      "expect": {
+        "value": "2/1"
+      }
+    }
+  ]
+}

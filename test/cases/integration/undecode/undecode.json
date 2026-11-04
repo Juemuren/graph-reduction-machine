@@ -1,0 +1,30 @@
+{
+  "cases": [
+    {
+      "name": "false",
+      "input": {
+        "language": "lambda",
+        "source": "FALSE"
+      },
+      "run": {
+        "stage": "undecode"
+      },
+      "expect": {
+        "graph": "#0 = #1 #2;\n#1 = K;\n#2 = I;\n"
+      }
+    },
+    {
+      "name": "one",
+      "input": {
+        "language": "lambda",
+        "source": "(SUCC (ZERO))\n"
+      },
+      "run": {
+        "stage": "undecode"
+      },
+      "expect": {
+        "graph": "#0 = I;\n"
+      }
+    }
+  ]
+}

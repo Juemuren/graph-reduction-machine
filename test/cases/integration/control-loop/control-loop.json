@@ -1,0 +1,88 @@
+{
+  "cases": [
+    {
+      "name": "for-repeat",
+      "input": {
+        "language": "lambda",
+        "source": "FOR (SUCC (SUCC ZERO)) SUCC ZERO\n"
+      },
+      "run": {
+        "stage": "decode",
+        "type": "natural"
+      },
+      "expect": {
+        "value": "2"
+      }
+    },
+    {
+      "name": "for-zero",
+      "input": {
+        "language": "lambda",
+        "source": "FOR ZERO SUCC (SUCC (SUCC ZERO))\n"
+      },
+      "run": {
+        "stage": "decode",
+        "type": "natural"
+      },
+      "expect": {
+        "value": "2"
+      }
+    },
+    {
+      "name": "while-false",
+      "input": {
+        "language": "lambda",
+        "source": "WHILE (\\x -> FALSE) SUCC (SUCC ZERO)\n"
+      },
+      "run": {
+        "stage": "decode",
+        "type": "natural"
+      },
+      "expect": {
+        "value": "1"
+      }
+    },
+    {
+      "name": "while-pair",
+      "input": {
+        "language": "lambda",
+        "source": "SND (WHILE (\\p -> LT (FST p) (SUCC (SUCC ZERO))) (\\p -> PAIR (SUCC (FST p)) (ADD (SND p) (FST p))) (PAIR ZERO ZERO))\n"
+      },
+      "run": {
+        "stage": "decode",
+        "type": "natural"
+      },
+      "expect": {
+        "value": "1"
+      }
+    },
+    {
+      "name": "while-repeat",
+      "input": {
+        "language": "lambda",
+        "source": "WHILE (\\x -> LT x (SUCC (SUCC ZERO))) SUCC ZERO\n"
+      },
+      "run": {
+        "stage": "decode",
+        "type": "natural"
+      },
+      "expect": {
+        "value": "2"
+      }
+    },
+    {
+      "name": "y-recursion",
+      "input": {
+        "language": "lambda",
+        "source": "Y (\\f -> \\n -> IF (ISZERO n) ZERO (SUCC (f (PRED n)))) (SUCC (SUCC ZERO))\n"
+      },
+      "run": {
+        "stage": "decode",
+        "type": "natural"
+      },
+      "expect": {
+        "value": "2"
+      }
+    }
+  ]
+}

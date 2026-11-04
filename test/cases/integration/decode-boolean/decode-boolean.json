@@ -1,0 +1,32 @@
+{
+  "cases": [
+    {
+      "name": "false",
+      "input": {
+        "language": "lambda",
+        "source": "\\t -> \\f -> f\n"
+      },
+      "run": {
+        "stage": "decode",
+        "type": "boolean"
+      },
+      "expect": {
+        "value": "False"
+      }
+    },
+    {
+      "name": "true",
+      "input": {
+        "language": "lambda",
+        "source": "\\t -> \\f -> t\n"
+      },
+      "run": {
+        "stage": "decode",
+        "type": "boolean"
+      },
+      "expect": {
+        "value": "True"
+      }
+    }
+  ]
+}

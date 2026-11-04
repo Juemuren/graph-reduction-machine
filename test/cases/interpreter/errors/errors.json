@@ -1,0 +1,60 @@
+{
+  "cases": [
+    {
+      "name": "duplicate-node",
+      "input": {
+        "language": "ski",
+        "source": "#0 = I;\n#0 = K;\n"
+      },
+      "run": {
+        "stage": "interpret",
+        "maxSteps": 100
+      },
+      "expect": {
+        "error": "duplicate node #0"
+      }
+    },
+    {
+      "name": "missing-root",
+      "input": {
+        "language": "ski",
+        "source": "#1 = I;\n"
+      },
+      "run": {
+        "stage": "interpret",
+        "maxSteps": 100
+      },
+      "expect": {
+        "error": "missing root node #0"
+      }
+    },
+    {
+      "name": "reachable-cycle",
+      "input": {
+        "language": "ski",
+        "source": "#0 = #1 #2;\n#1 = #0 #2;\n#2 = I;\n"
+      },
+      "run": {
+        "stage": "interpret",
+        "maxSteps": 100
+      },
+      "expect": {
+        "error": "cycle reachable from #0"
+      }
+    },
+    {
+      "name": "undefined-reference",
+      "input": {
+        "language": "ski",
+        "source": "#0 = #1 #2;\n#1 = I;\n"
+      },
+      "run": {
+        "stage": "interpret",
+        "maxSteps": 100
+      },
+      "expect": {
+        "error": "undefined node #2"
+      }
+    }
+  ]
+}
