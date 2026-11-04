@@ -41,6 +41,8 @@ library
     , Ski.Lex
     , Compiler.LibrarySource
     , Compiler.ModuleSource
+    , Interpreter.Church
+    , Interpreter.Machine
   build-depends:
       base >=4.16 && <5
     , array

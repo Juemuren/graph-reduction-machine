@@ -32,6 +32,18 @@
 
 软件解释器用于开发、测试和验证，并作为硬件处理器的参考实现。
 
+软件解释器目录结构为：
+
+- 命令行入口位于 `app/InterpreterMain.hs`
+- 解释器实现位于 `src/Interpreter.hs` 和 `src/Interpreter/`
+- 自动生成的语法模块位于 `src/Ski/`
+
+软件解释器的模块为：
+
+- `Interpreter` 是图规约和丘奇值解码的对外入口
+- `Interpreter.Machine` 加载 SKI 图、维护共享堆并执行图规约
+- `Interpreter.Church` 使用符号探针解码丘奇布尔值、自然数、整数、有理数和实数
+
 ## 硬件处理器
 
 使用的 FPGA 为 iCESugar。
