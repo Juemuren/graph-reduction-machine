@@ -196,10 +196,12 @@ SUCC (SUCC ZERO)
 | `SUB`    | `\m -> \n -> n PRED m`                                                                                             |
 | `MUL`    | `\m -> \n -> \f -> m (n f)`                                                                                        |
 | `POW`    | `\m -> \n -> n m`                                                                                                  |
+| `FACT`   | `\n -> SND (FOR n (\p -> PAIR (SUCC (FST p)) (MUL (SUCC (FST p)) (SND p))) (PAIR ZERO (SUCC ZERO)))`               |
 | `STEP`   | `\n -> \p -> IF (LEQ n (SUCC (SND p))) (PAIR (SUCC (FST p)) (SUB (SUCC (SND p)) n)) (PAIR (FST p) (SUCC (SND p)))` |
 | `DIV`    | `\m -> \n -> FST (IF (ISZERO n) (PAIR ZERO m) (m (STEP n) (PAIR ZERO ZERO)))`                                      |
 | `MOD`    | `\m -> \n -> SND (IF (ISZERO n) (PAIR ZERO m) (m (STEP n) (PAIR ZERO ZERO)))`                                      |
-| `GCD`    | `\m -> \n -> FST (WHILE (\p -> NOT (ISZERO (SND p))) (\p -> PAIR (SND p) (MOD (FST p) (SND p))) (PAIR m n))` |
+| `GCD`    | `\m -> \n -> FST (WHILE (\p -> NOT (ISZERO (SND p))) (\p -> PAIR (SND p) (MOD (FST p) (SND p))) (PAIR m n))`       |
+| `LCM`    | `\m -> \n -> IF (OR (ISZERO m) (ISZERO n)) ZERO (DIV (MUL m n) (GCD m n))`                                         |
 
 其中：
 
@@ -207,10 +209,12 @@ SUCC (SUCC ZERO)
 - `SUB a b` 表示自然数 `a` 和自然数 `b` 的减法。减法的结果截断到零
 - `MUL a b` 表示自然数 `a` 和自然数 `b` 的乘法
 - `POW a b` 表示自然数 `a` 和自然数 `b` 的幂运算
+- `FACT a` 表示自然数 `a` 的阶乘，`FACT ZERO` 的结果为一
 - `STEP n p` 表示对除数 `n` 和商、余数有序对 `p` 进行一次迭代，得到更新后的商、余数有序对
 - `DIV a b` 表示自然数 `a` 除以自然数 `b` 的商。除数为零时，`DIV a ZERO` 的结果为零
 - `MOD a b` 表示自然数 `a` 除以自然数 `b` 的余数。除数为零时，`MOD a ZERO` 的结果为 `a`
 - `GCD a b` 表示自然数 `a` 和自然数 `b` 的最大公因数。使用欧几里得算法，`GCD ZERO ZERO` 的结果为零
+- `LCM a b` 表示自然数 `a` 和自然数 `b` 的最小公倍数。任一参数为零时结果为零
 
 #### 整数
 
