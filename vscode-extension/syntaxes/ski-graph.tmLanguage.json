@@ -1,0 +1,18 @@
+{
+  "$schema": "https://raw.githubusercontent.com/martinring/tmlanguage/master/tmlanguage.json",
+  "name": "SKI Graph",
+  "scopeName": "source.ski-graph",
+  "patterns": [
+    { "match": "--.*$", "name": "comment.line.double-dash.ski-graph" },
+    {
+      "match": "^(\\s*)(#[0-9]+)(\\s*)(=)",
+      "captures": {
+        "2": { "name": "entity.name.label.node.ski-graph" },
+        "4": { "name": "keyword.operator.assignment.ski-graph" }
+      }
+    },
+    { "match": "#[0-9]+", "name": "variable.other.reference.ski-graph" },
+    { "match": "\\b[SKI]\\b", "name": "constant.language.combinator.ski-graph" },
+    { "match": ";", "name": "punctuation.terminator.ski-graph" }
+  ]
+}

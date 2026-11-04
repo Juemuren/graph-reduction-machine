@@ -1,0 +1,51 @@
+{
+  "$schema": "https://raw.githubusercontent.com/martinring/tmlanguage/master/tmlanguage.json",
+  "name": "Core Lambda",
+  "scopeName": "source.core-lambda",
+  "patterns": [
+    { "include": "#comments" },
+    { "include": "#strings" },
+    {
+      "match": "^(\\s*)(@>)(\\s+)([a-z][A-Za-z0-9_]*)(\\s*)(=)",
+      "captures": {
+        "2": { "name": "keyword.control.export.core-lambda" },
+        "4": { "name": "entity.name.function.definition.core-lambda" },
+        "6": { "name": "keyword.operator.assignment.core-lambda" }
+      }
+    },
+    {
+      "match": "^(\\s*)([a-z][A-Za-z0-9_]*)(\\s*)(=)",
+      "captures": {
+        "2": { "name": "entity.name.function.definition.core-lambda" },
+        "4": { "name": "keyword.operator.assignment.core-lambda" }
+      }
+    },
+    {
+      "match": "(\\\\)(\\s*)([a-z][A-Za-z0-9_]*)(\\s*)(->)",
+      "captures": {
+        "1": { "name": "keyword.operator.lambda.core-lambda" },
+        "3": { "name": "variable.parameter.core-lambda" },
+        "5": { "name": "keyword.operator.arrow.core-lambda" }
+      }
+    },
+    { "match": "@<|@>|@!", "name": "keyword.control.directive.core-lambda" },
+    { "match": "\\b[A-Z][A-Za-z0-9_]*\\b", "name": "support.function.builtin.core-lambda" },
+    { "match": "\\b[a-z][A-Za-z0-9_]*\\b", "name": "variable.other.core-lambda" },
+    { "match": "=", "name": "keyword.operator.assignment.core-lambda" },
+    { "match": "[,;()]", "name": "punctuation.core-lambda" }
+  ],
+  "repository": {
+    "comments": {
+      "match": "#.*$",
+      "name": "comment.line.number-sign.core-lambda"
+    },
+    "strings": {
+      "name": "string.quoted.double.core-lambda",
+      "begin": "\"",
+      "end": "\"",
+      "patterns": [
+        { "match": "\\\\.", "name": "constant.character.escape.core-lambda" }
+      ]
+    }
+  }
+}

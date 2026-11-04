@@ -1,0 +1,52 @@
+{
+  "name": "graph-reduction-machine-syntax",
+  "displayName": "Graph Reduction Machine Syntax",
+  "description": "Syntax highlighting for Core Lambda and SKI graph files.",
+  "version": "0.1.0",
+  "publisher": "graph-reduction-machine",
+  "engines": {
+    "vscode": "^1.80.0"
+  },
+  "categories": [
+    "Programming Languages"
+  ],
+  "files": [
+    "README.md",
+    "language-configuration/*.json",
+    "syntaxes/*.tmLanguage.json"
+  ],
+  "contributes": {
+    "languages": [
+      {
+        "id": "core-lambda",
+        "aliases": ["Core Lambda", "Lambda"],
+        "extensions": [".lambda"],
+        "configuration": "./language-configuration/core-lambda.json"
+      },
+      {
+        "id": "ski-graph",
+        "aliases": ["SKI Graph", "SKI"],
+        "extensions": [".ski"],
+        "configuration": "./language-configuration/ski-graph.json"
+      }
+    ],
+    "grammars": [
+      {
+        "language": "core-lambda",
+        "scopeName": "source.core-lambda",
+        "path": "./syntaxes/core-lambda.tmLanguage.json"
+      },
+      {
+        "language": "ski-graph",
+        "scopeName": "source.ski-graph",
+        "path": "./syntaxes/ski-graph.tmLanguage.json"
+      }
+    ]
+  },
+  "scripts": {
+    "package": "vsce package --allow-missing-repository"
+  },
+  "devDependencies": {
+    "@vscode/vsce": "^3.6.0"
+  }
+}
