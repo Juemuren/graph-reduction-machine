@@ -1,0 +1,1 @@
+CURRY (\p -> SUB (FST p) (SND p)) FIVE TWO

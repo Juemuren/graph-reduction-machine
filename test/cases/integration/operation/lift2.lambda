@@ -1,0 +1,1 @@
+LIFT2 ADD SUCC (\n -> MUL n TWO) THREE
