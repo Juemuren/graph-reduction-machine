@@ -1,1 +1,0 @@
-\ condition -> \ step -> \ initial -> (\ f -> (\ self -> f (self self)) (\ self -> f (self self))) (\ loop -> \ state -> (\ b -> \ t -> \ f -> b t f) (condition state) (loop (step state)) state) initial

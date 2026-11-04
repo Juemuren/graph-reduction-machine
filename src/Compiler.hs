@@ -27,7 +27,7 @@ compileSource = compileSourceWith BetaEta
 
 compileSourceWith :: Reduction -> String -> Either String Graph.Graph
 compileSourceWith reduction source =
-  Core.pExp (Core.myLexer source) >>= compileWith reduction . expand
+  Core.pExp (Core.myLexer source) >>= expand >>= compileWith reduction
 
 -- | Parse and reduce one expression without translating it to SKI.
 reduceSource :: String -> Either String Pure.Exp
@@ -36,7 +36,8 @@ reduceSource = reduceSourceWith BetaEta
 reduceSourceWith :: Reduction -> String -> Either String Pure.Exp
 reduceSourceWith reduction source =
   Core.pExp (Core.myLexer source)
-    >>= reduceChecked reduction . expand
+    >>= expand
+    >>= reduceChecked reduction
 
 compile :: Pure.Exp -> Either String Graph.Graph
 compile = compileWith BetaEta

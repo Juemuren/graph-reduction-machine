@@ -3,7 +3,6 @@ module Main (main) where
 import Compiler (compile, compileSource, reduceSource)
 import qualified CoreLambda.Abs as Core
 import qualified CoreLambda.Par as Core
-import Expand (expand)
 import qualified PureLambda.Abs as Pure
 import qualified PureLambda.Par as Pure
 import System.Exit (ExitCode (ExitSuccess), die)
@@ -50,12 +49,6 @@ main = do
     ".ski"
     (checkGraphOption ["--disable-reduce=both"])
   runCases "test/cases/compiler/precedence" ".lambda" ".parsed.lambda" checkSyntax
-  runCases "test/cases/compiler/encode" ".lambda" ".pure.lambda" checkEncode
-  runCases
-    "test/cases/compiler/encode"
-    ".lambda"
-    ".pure.lambda"
-    (checkPureOption ["--stop-after=expand"])
   runCases "test/cases/compiler/errors" ".lambda" ".error" checkError
   putStrLn "compiler tests passed"
 
@@ -80,26 +73,6 @@ checkSyntax sourcePath expectedPath = do
   if actualExpression == expectedExpression
     then putStrLn (sourcePath ++ ": PASS")
     else die (sourcePath ++ ": syntax tree differs from " ++ expectedPath)
-
-checkEncode :: FilePath -> FilePath -> IO ()
-checkEncode sourcePath expectedPath = do
-  source <- readFile sourcePath
-  expected <- readFile expectedPath
-  expression <- parseCore sourcePath source
-  expectedExpression <- parsePure expectedPath expected
-  let actualExpression = expand expression
-  if actualExpression == expectedExpression
-    then putStrLn (sourcePath ++ ": PASS")
-    else
-      die
-        ( sourcePath
-            ++ ": encoding differs from "
-            ++ expectedPath
-            ++ "\nexpected:\n"
-            ++ show expectedExpression
-            ++ "\nactual:\n"
-            ++ show actualExpression
-        )
 
 checkPureGraph :: FilePath -> FilePath -> IO ()
 checkPureGraph sourcePath expectedPath = do

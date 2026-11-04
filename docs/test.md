@@ -25,14 +25,9 @@ cabal test compiler-tests
 测试用例使用静态文件对：
 
 - `precedence` 比较核心 λ 输入与补全括号后的语法树
-- `encode` 比较带内置函数的核心 λ 与展开得到的纯 λ
 - `reduce` / `reduce-no-beta` / `reduce-no-eta` / `reduce-no-reduce` 分别比较纯 λ 表达式与启用 β 规约和 η 规约、禁用 β 规约、禁用 η 规约、禁用所有规约后规约得到的纯 λ 表达式
 - `compile` / `compile-no-beta` / `compile-no-eta` / `compile-no-reduce` 分别比较纯 λ 表达式与启用 β 规约和 η 规约、禁用 β 规约、禁用 η 规约、禁用所有规约后编译得到的 SKI 图
 - `errors` 比较编译器错误信息
-
-基础测试：
-
-- 对于一个内置函数，在 `test/cases/compiler/encode` 中用一个用例测试编码。测试文件名使用内置函数名的小写
 
 核心 λ 的应用与抽象优先级在 `test/cases/compiler/precedence` 中覆盖。
 

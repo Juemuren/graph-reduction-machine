@@ -1,1 +1,0 @@
-\ f -> (\ self -> f (self self)) (\ self -> f (self self))

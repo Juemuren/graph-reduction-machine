@@ -8,6 +8,7 @@ extra-source-files:
     grammar/CoreLambda.cf
   , grammar/PureLambda.cf
   , grammar/Graph.cf
+  , lib/*.lambda
   , test/cases/**/*.lambda
   , test/cases/**/*.ski
   , test/cases/**/*.error
@@ -39,11 +40,15 @@ library
       CoreLambda.Lex
     , PureLambda.Lex
     , Graph.Lex
+    , LibrarySource
   build-depends:
       base >=4.16 && <5
     , array
     , containers
+    , directory
+    , filepath
     , mtl
+    , template-haskell
   build-tool-depends:
       BNFC:bnfc >=2.9.6 && <2.10
     , alex:alex >=3.2 && <4

@@ -66,21 +66,15 @@
 
 核心 λ 的内置函数可以通过丘奇编码展开为纯 λ。
 
-丘奇编码的展开是递归的。如果展开式中仍然含有内置函数，则该内置函数会继续展开。
+核心 λ 的所有内置函数都保存在项目的 `lib/` 目录中，每个内置函数对应一个同名的 `.lambda` 文件。内置函数就定义为文件中的 λ 表达式。
+
+内置函数可引用其它内置函数，展开时递归替换。
+
+编译器在构建时读取所有内置函数，在展开时进行递归替换直到得到纯 λ。
 
 #### 布尔值
 
-| 内置函数 | 展开式               |
-| -------- | -------------------- |
-| `FALSE`  | `\t -> \f -> f`      |
-| `TRUE`   | `\t -> \f -> t`      |
-| `AND`    | `\p -> \q -> p q p`  |
-| `OR`     | `\p -> \q -> p p q`  |
-| `NOT`    | `\p -> p FALSE TRUE` |
-
-其中：
-
-- `FALSE` 表示假植
+- `FALSE` 表示假值
 - `TRUE` 表示真值
 - `AND a b` 表示布尔值 `a` 和布尔值 `b` 的与运算
 - `OR a b` 表示布尔值 `a` 和布尔值 `b` 或运算
@@ -88,32 +82,13 @@
 
 #### 条件
 
-| 内置函数 | 展开式                    |
-| -------- | ------------------------- |
-| `IF`     | `\b -> \t -> \f -> b t f` |
-
-其中：
-
 - `IF b t f` 当 `b` 为真值时选择 `t`，当 `b` 为假值时选择 `f`
 
 #### 递归
 
-| 内置函数 | 展开式                                  |
-| -------- | --------------------------------------- |
-| `Y`      | `\f -> (\x -> f (x x)) (\x -> f (x x))` |
-
-其中：
-
 - `Y f` 表示函数 `f` 的不动点，可用于定义递归函数
 
 #### 循环
-
-| 内置函数 | 展开式                                                     |
-| -------- | ---------------------------------------------------------- |
-| `FOR`    | `\n -> \s -> \i -> n s i`                                  |
-| `WHILE`  | `\c -> \s -> \i -> Y (\l -> \x -> IF (c x) (l (s x)) x) i` |
-
-其中：
 
 - `FOR n s i` 从 `i` 开始执行 `s` 共 `n` 次，返回最终状态
 - `WHILE c s i` 从 `i` 开始，在 `c` 对当前状态返回真值时执行 `s`，在返回假值时返回最终状态
@@ -122,26 +97,11 @@
 
 #### 有序对
 
-| 内置函数 | 展开式                    |
-| -------- | ------------------------- |
-| `PAIR`   | `\a -> \b -> \s -> s a b` |
-| `FST`    | `\p -> p (\a -> \b -> a)` |
-| `SND`    | `\p -> p (\a -> \b -> b)` |
-
-其中：
-
 - `PAIR a b` 表示第一个分量为 `a`、第二个分量为 `b` 的有序对
 - `FST p` 表示有序对 `p` 的第一个分量
 - `SND p` 表示有序对 `p` 的第二个分量
 
 #### 自然数
-
-| 内置函数 | 展开式                                                          |
-| -------- | --------------------------------------------------------------- |
-| `ZERO`   | `\f -> \x -> x`                                                 |
-| `ONE`    | `\f -> \x -> f x`                                               |
-| `SUCC`   | `\n -> \f -> \x -> f (n f x)`                                   |
-| `PRED`   | `\n -> \f -> \x -> n (\g -> \h -> h (g f)) (\u -> x) (\u -> u)` |
 
 自然数编码使用皮亚诺公理进行定义。
 
@@ -170,16 +130,6 @@ SUCC (SUCC ZERO)
 
 #### 自然数比较
 
-| 内置函数 | 展开式                                |
-| -------- | ------------------------------------- |
-| `ISZERO` | `\n -> n (\x -> FALSE) TRUE`          |
-| `LEQ`    | `\m -> \n -> ISZERO (SUB m n)`        |
-| `LT`     | `\m -> \n -> NOT (LEQ n m)`           |
-| `GEQ`    | `\m -> \n -> LEQ n m`                 |
-| `GT`     | `\m -> \n -> NOT (LEQ m n)`           |
-| `EQ`     | `\m -> \n -> AND (LEQ m n) (LEQ n m)` |
-| `NEQ`    | `\m -> \n -> NOT (EQ m n)`            |
-
 自然数比较函数在成立时得到真值，不成立时得到假值。
 
 其中：
@@ -194,21 +144,6 @@ SUCC (SUCC ZERO)
 
 #### 自然数运算
 
-| 内置函数 | 展开式                                                                                                             |
-| -------- | ------------------------------------------------------------------------------------------------------------------ |
-| `ADD`    | `\m -> \n -> \f -> \x -> m f (n f x)`                                                                              |
-| `SUB`    | `\m -> \n -> n PRED m`                                                                                             |
-| `MUL`    | `\m -> \n -> \f -> m (n f)`                                                                                        |
-| `POW`    | `\m -> \n -> n m`                                                                                                  |
-| `FACT`   | `\n -> SND (FOR n (\p -> PAIR (SUCC (FST p)) (MUL (SUCC (FST p)) (SND p))) (PAIR ZERO ONE))`                       |
-| `STEP`   | `\n -> \p -> IF (LEQ n (SUCC (SND p))) (PAIR (SUCC (FST p)) (SUB (SUCC (SND p)) n)) (PAIR (FST p) (SUCC (SND p)))` |
-| `DIV`    | `\m -> \n -> FST (IF (ISZERO n) (PAIR ZERO m) (m (STEP n) (PAIR ZERO ZERO)))`                                      |
-| `MOD`    | `\m -> \n -> SND (IF (ISZERO n) (PAIR ZERO m) (m (STEP n) (PAIR ZERO ZERO)))`                                      |
-| `GCD`    | `\m -> \n -> FST (WHILE (\p -> NOT (ISZERO (SND p))) (\p -> PAIR (SND p) (MOD (FST p) (SND p))) (PAIR m n))`       |
-| `LCM`    | `\m -> \n -> IF (OR (ISZERO m) (ISZERO n)) ZERO (DIV (MUL m n) (GCD m n))`                                         |
-
-其中：
-
 - `ADD a b` 表示自然数 `a` 和自然数 `b` 的加法
 - `SUB a b` 表示自然数 `a` 和自然数 `b` 的减法。减法的结果截断到零
 - `MUL a b` 表示自然数 `a` 和自然数 `b` 的乘法
@@ -221,10 +156,6 @@ SUCC (SUCC ZERO)
 - `LCM a b` 表示自然数 `a` 和自然数 `b` 的最小公倍数。任一参数为零时结果为零
 
 #### 整数
-
-| 内置函数 | 展开式              |
-| -------- | ------------------- |
-| `INT`    | `\n -> PAIR n ZERO` |
 
 整数用自然数有序对表示，值为第一个自然数减去第二个自然数。
 
@@ -248,17 +179,6 @@ $$
 
 #### 整数运算
 
-| 内置函数 | 展开式                                                                                                                 |
-| -------- | ---------------------------------------------------------------------------------------------------------------------- |
-| `NEG`    | `\p -> PAIR (SND p) (FST p)`                                                                                           |
-| `ABS`    | `\p -> PAIR (ADD (SUB (FST p) (SND p)) (SUB (SND p) (FST p))) ZERO`                                                    |
-| `ZADD`   | `\p -> \q -> PAIR (ADD (FST p) (FST q)) (ADD (SND p) (SND q))`                                                         |
-| `ZSUB`   | `\p -> \q -> PAIR (ADD (FST p) (SND q)) (ADD (SND p) (FST q))`                                                         |
-| `ZMUL`   | `\p -> \q -> PAIR (ADD (MUL (FST p) (FST q)) (MUL (SND p) (SND q))) (ADD (MUL (FST p) (SND q)) (MUL (SND p) (FST q)))` |
-| `ZNORM`  | `\p -> PAIR (SUB (FST p) (SND p)) (SUB (SND p) (FST p))`                                                               |
-
-其中：
-
 - `NEG a` 表示整数 `a` 取负
 - `ABS a` 表示整数 `a` 的绝对值
 - `ZADD a b` 表示整数 `a` 和整数 `b` 的加法
@@ -267,10 +187,6 @@ $$
 - `ZNORM a` 将整数 `a` 化简为一个分量为零的有序对。零化简为 `PAIR ZERO ZERO`
 
 #### 有理数
-
-| 内置函数 | 展开式                   |
-| -------- | ------------------------ |
-| `RAT`    | `\z -> PAIR z (INT ONE)` |
 
 有理数用整数有序对表示，值为第一个整数除以第二个整数。
 
@@ -294,41 +210,11 @@ $$
 
 #### 有理数运算
 
-| 内置函数 | 展开式                                                                                         |
-| -------- | ---------------------------------------------------------------------------------------------- |
-| `QADD`   | `\p -> \q -> PAIR (ZADD (ZMUL (FST p) (SND q)) (ZMUL (FST q) (SND p))) (ZMUL (SND p) (SND q))` |
-| `QSUB`   | `\p -> \q -> PAIR (ZSUB (ZMUL (FST p) (SND q)) (ZMUL (FST q) (SND p))) (ZMUL (SND p) (SND q))` |
-| `QMUL`   | `\p -> \q -> PAIR (ZMUL (FST p) (FST q)) (ZMUL (SND p) (SND q))`                               |
-| `QDIV`   | `\p -> \q -> PAIR (ZMUL (FST p) (SND q)) (ZMUL (SND p) (FST q))`                               |
-| `QNORM`  | 见下文                                                                                         |
-
-其中：
-
 - `QADD a b` 表示有理数 `a` 和有理数 `b` 的加法
 - `QSUB a b` 表示有理数 `a` 和有理数 `b` 的减法
 - `QMUL a b` 表示有理数 `a` 和有理数 `b` 的乘法
 - `QDIV a b` 表示有理数 `a` 和非零有理数 `b` 的除法
-- `QNORM a` 将有理数 `a` 化简为分母为正的最简分数
-
-`QNORM` 完整的展开为其丘奇编码展开式使用以下嵌套应用，其中 `a` 和 `b` 是已由 `ZNORM` 化简的分子与分母，`g` 是两者绝对值的最大公因数：
-
-```lambda
-\p ->
-  (\a -> (\b -> (\g ->
-    PAIR
-      (
-        PAIR
-        (DIV (FST (IF (ISZERO (FST b)) (NEG a) a)) g)
-        (DIV (SND (IF (ISZERO (FST b)) (NEG a) a)) g)
-      )
-      (INT (DIV (ADD (FST b) (SND b)) g)))
-    (GCD (ADD (FST a) (SND a)) (ADD (FST b) (SND b))))
-    (ZNORM (SND p)))
-    (ZNORM (FST p)
-  )
-```
-
-`QNORM` 的输入分母必须是非零整数。分子为零时，结果为 `PAIR (INT ZERO) (INT ONE)`。
+- `QNORM a` 将有理数 `a` 化简为分母为正的最简分数。`a` 的分母必须是非零整数，分子为零时结果为 `PAIR (INT ZERO) (INT ONE)`
 
 ### 表达式编译
 

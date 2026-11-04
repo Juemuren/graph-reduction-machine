@@ -1,0 +1,1 @@
+\m -> \n -> SND (IF (ISZERO n) (PAIR ZERO m) (m (STEP n) (PAIR ZERO ZERO)))

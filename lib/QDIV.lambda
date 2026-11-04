@@ -1,0 +1,1 @@
+\p -> \q -> PAIR (ZMUL (FST p) (SND q)) (ZMUL (SND p) (FST q))

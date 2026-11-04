@@ -1,0 +1,1 @@
+\p -> PAIR (ADD (SUB (FST p) (SND p)) (SUB (SND p) (FST p))) ZERO

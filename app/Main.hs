@@ -17,7 +17,7 @@ main = do
   source <- maybe getContents readFile path
   let result = case mode of
         Graph -> fmap printTree (compileSourceWith reduction source)
-        Expand -> fmap (Pure.printTree . expand) (parseSource source)
+        Expand -> fmap Pure.printTree (parseSource source >>= expand)
         Reduce -> fmap Pure.printTree (reduceSourceWith reduction source)
   case result of
     Left message -> do
@@ -34,12 +34,11 @@ parseArgs = go Nothing Nothing Nothing
  where
   usage =
     unwords
-    [
-      "usage: lambda-to-graph"
-    , "[--stop-after=expand|reduce]"
-    , "[--disable-reduce=beta|eta|both]"
-    , "[FILE]"
-    ]
+      [ "usage: lambda-to-graph"
+      , "[--stop-after=expand|reduce]"
+      , "[--disable-reduce=beta|eta|both]"
+      , "[FILE]"
+      ]
   go mode reduction path [] = Right (fromMaybe Graph mode, fromMaybe BetaEta reduction, path)
   go Nothing reduction path ("--stop-after=expand" : rest) = go (Just Expand) reduction path rest
   go Nothing reduction path ("--stop-after=reduce" : rest) = go (Just Reduce) reduction path rest
