@@ -1,6 +1,7 @@
 module Main (main) where
 
 import Data.Char (toUpper)
+import Data.List (stripPrefix)
 import Data.Ratio (denominator, numerator)
 import Graph.Print (printTree)
 import Interpreter (
@@ -50,20 +51,26 @@ parseArgs :: [String] -> Either String (Int, DecodeMode, Maybe FilePath)
 parseArgs = go 100000 Raw Nothing
  where
   usage =
-    "usage: ski-interpreter [--max-steps N] [--decode-natural | --decode-boolean | --decode-integer | --decode-rational] [FILE]"
+    unwords
+      [ "usage: ski-interpreter"
+      , "[--max-steps=N]"
+      , "[--decode=natural|boolean|integer|rational]"
+      , "[FILE]"
+      ]
   go limit mode path [] = Right (limit, mode, path)
-  go limit Raw path ("--decode-natural" : rest) =
-    go limit Natural path rest
-  go limit Raw path ("--decode-boolean" : rest) =
-    go limit Boolean path rest
-  go limit Raw path ("--decode-integer" : rest) =
-    go limit Integer path rest
-  go limit Raw path ("--decode-rational" : rest) =
-    go limit Rational path rest
-  go _ mode path ("--max-steps" : value : rest) =
-    case readMaybe value of
-      Just limit | limit > 0 -> go limit mode path rest
-      _ -> Left usage
+  go limit Raw path (value : rest)
+    | Just name <- stripPrefix "--decode=" value =
+        case name of
+          "natural" -> go limit Natural path rest
+          "boolean" -> go limit Boolean path rest
+          "integer" -> go limit Integer path rest
+          "rational" -> go limit Rational path rest
+          _ -> Left usage
+  go _ mode path (value : rest)
+    | Just steps <- stripPrefix "--max-steps=" value =
+        case readMaybe steps of
+          Just limit | limit > 0 -> go limit mode path rest
+          _ -> Left usage
   go limit mode Nothing (value@(first : _) : rest)
     | first /= '-' = go limit mode (Just value) rest
   go _ _ _ _ = Left usage

@@ -21,27 +21,27 @@ main = do
     "test/cases/interpreter/decode-limit-errors"
     ".ski"
     ".error"
-    (checkDecodeError ["--max-steps", "1", "--decode-natural"])
+    (checkDecodeError ["--max-steps=1", "--decode=natural"])
   runCases
     "test/cases/interpreter/decode-natural-errors"
     ".ski"
     ".error"
-    (checkDecodeError ["--decode-natural"])
+    (checkDecodeError ["--decode=natural"])
   runCases
     "test/cases/interpreter/decode-boolean-errors"
     ".ski"
     ".error"
-    (checkDecodeError ["--decode-boolean"])
+    (checkDecodeError ["--decode=boolean"])
   runCases
     "test/cases/interpreter/decode-integer-errors"
     ".ski"
     ".error"
-    (checkDecodeError ["--decode-integer"])
+    (checkDecodeError ["--decode=integer"])
   runCases
     "test/cases/interpreter/decode-rational-errors"
     ".ski"
     ".error"
-    (checkDecodeError ["--decode-rational"])
+    (checkDecodeError ["--decode=rational"])
   putStrLn "interpreter tests passed"
 
 checkResult :: Int -> FilePath -> FilePath -> IO ()
