@@ -1,16 +1,24 @@
 {-# LANGUAGE OverloadedStrings #-}
 
-module TestSupport (Suite (..), runSuite) where
+module TestSupport (
+  TestCase (..),
+  Input (..),
+  RunSpec (..),
+  Expected (..),
+  runSuite,
+  caseLimit,
+  parseReduction,
+  assertGraph,
+  assertError,
+  assertEqual,
+  unwrap,
+  normalizeGraph,
+  normalizeError,
+)
+where
 
-import Compiler (
-  Reduction (..),
-  compile,
-  compileSourceWithModules,
-  reduceSource,
-  reduceSourceWithModules,
- )
-import Control.Monad (forM_, unless, void, when)
-import qualified CoreLambda.Par as Core
+import Compiler (Reduction (..))
+import Control.Monad (forM_, unless, when)
 import Data.Aeson (
   FromJSON (..),
   Result (..),
@@ -25,27 +33,12 @@ import qualified Data.ByteString.Lazy as ByteString
 import Data.JSON.JSONSchema (validate)
 import Data.List (nub, sort)
 import qualified Data.Map.Strict as Map
-import Data.Maybe (catMaybes, fromMaybe, isJust, isNothing)
-import Data.Ratio (denominator, numerator)
+import Data.Maybe (catMaybes, fromMaybe, isJust)
 import qualified Graph.Abs as Graph
 import Graph.Print (printTree)
-import Interpreter (
-  decodeBoolean,
-  decodeInteger,
-  decodeNatural,
-  decodeRational,
-  decodeReal,
-  interpret,
-  interpretSource,
- )
-import qualified PureLambda.Abs as Pure
-import qualified PureLambda.Par as Pure
 import System.Directory (doesDirectoryExist, listDirectory)
-import System.Exit (ExitCode (..), die)
+import System.Exit (die)
 import System.FilePath (takeExtension, (</>))
-import System.Process (readProcessWithExitCode)
-
-data Suite = CompilerSuite | InterpreterSuite | IntegrationSuite
 
 newtype CaseFile = CaseFile [TestCase]
 
@@ -100,10 +93,10 @@ instance FromJSON Expected where
       [expected] -> pure expected
       _ -> fail "expect must contain exactly one of graph, value, or error"
 
-runSuite :: Suite -> IO ()
-runSuite suite = do
+runSuite :: String -> (String -> TestCase -> IO ()) -> IO ()
+runSuite suiteName runCase = do
   let schemaPath = "test/cases/schema.json"
-      root = "test/cases" </> suiteName suite
+      root = "test/cases" </> suiteName
   schemaBytes <- ByteString.readFile schemaPath
   schema <- unwrap schemaPath (eitherDecode schemaBytes :: Either String Value)
   entries <- sort <$> listDirectory root
@@ -126,9 +119,9 @@ runSuite suite = do
       die (path ++ ": case names must be unique")
     forM_ cases $ \testCase@(TestCase name _ _ _) -> do
       let label = path ++ ":" ++ name
-      runCase suite label testCase
+      runCase label testCase
       putStrLn (label ++ ": PASS")
-  putStrLn (suiteName suite ++ " tests passed")
+  putStrLn (suiteName ++ " tests passed")
  where
   jsonFiles path = do
     directory <- doesDirectoryExist path
@@ -138,88 +131,15 @@ runSuite suite = do
         pure (sort [path </> name | name <- names, takeExtension name == ".json"])
       else pure [path | takeExtension path == ".json"]
 
-suiteName :: Suite -> String
-suiteName CompilerSuite = "compiler"
-suiteName InterpreterSuite = "interpreter"
-suiteName IntegrationSuite = "integration"
-
-runCase :: Suite -> String -> TestCase -> IO ()
-runCase suite label (TestCase _ (Input language source modules) spec expected) = do
-  reduction <- unwrap label (parseReduction (runDisableReduce spec))
-  let defaultLimit =
-        if suiteName suite == "interpreter" && runStage spec == "interpret"
-          then 100
-          else 100000
-      limit = fromMaybe defaultLimit (runMaxSteps spec)
+caseLimit :: String -> Int -> RunSpec -> IO Int
+caseLimit label defaultLimit spec = do
+  let limit = fromMaybe defaultLimit (runMaxSteps spec)
   when (limit <= 0) $ die (label ++ ": maxSteps must be positive")
   when (maybe False (< 0) (runPrecisionReal spec)) $
     die (label ++ ": precisionReal must be nonnegative")
   when (isJust (runPrecisionReal spec) && runDecode spec /= Just "real") $
     die (label ++ ": precisionReal requires real decoding")
-  case (suite, language, runStage spec, expected) of
-    (CompilerSuite, "lambda", "parse", ExpectedValue value) ->
-      assertParsed label source value
-    (CompilerSuite, "lambda", "parse", ExpectedError problem) ->
-      assertError label problem (Core.pExp (Core.myLexer source))
-    (CompilerSuite, "lambda", "reduce", ExpectedValue value) -> do
-      if Map.null modules
-        then do
-          when (isNothing (runDisableReduce spec)) $
-            assertReduced label value (reduceSource (asProgram source))
-          output <- runCompiler label (compilerOptions "reduce" spec) source
-          assertReduced label value (Pure.pExp (Pure.myLexer output))
-        else
-          assertReduced
-            label
-            value
-            (reduceSourceWithModules reduction modules "<input>" source)
-    (CompilerSuite, "lambda", "compile", ExpectedGraph graph) -> do
-      if Map.null modules
-        then do
-          when (isNothing (runDisableReduce spec)) $ do
-            expression <- unwrap label (Pure.pExp (Pure.myLexer source))
-            void (assertGraph label graph (compile expression))
-          output <- runCompiler label (compilerOptions "compile" spec) source
-          assertEqual label (normalizeGraph graph) (normalizeGraph output)
-        else
-          void
-            ( assertGraph
-                label
-                graph
-                (compileSourceWithModules reduction modules "<input>" source)
-            )
-    (CompilerSuite, "lambda", "compile", ExpectedError problem) ->
-      assertError
-        label
-        problem
-        (compileSourceWithModules reduction modules "<input>" (asProgram source))
-    (InterpreterSuite, "ski", "interpret", ExpectedGraph graph) -> do
-      actual <- assertGraph label graph (interpretSource limit source)
-      again <- unwrap label (interpretSource limit actual)
-      assertEqual label (normalizeGraph actual) (normalizeGraph (printTree again))
-    (InterpreterSuite, "ski", "interpret", ExpectedError problem) ->
-      assertError label problem (interpretSource limit source)
-    (InterpreterSuite, "ski", "decode", ExpectedError problem) ->
-      assertDecodeCliError label source spec limit problem
-    (IntegrationSuite, "lambda", "undecode", ExpectedGraph graph) ->
-      void
-        ( assertGraph
-            label
-            graph
-            (compileSourceWithModules reduction modules "<input>" source >>= interpret limit)
-        )
-    (IntegrationSuite, "lambda", "decode", _) -> do
-      graph <-
-        unwrap label (compileSourceWithModules reduction modules "<input>" source)
-      let result = decodeGraph spec limit graph
-      case expected of
-        ExpectedValue value -> unwrap label result >>= assertEqual label value
-        ExpectedError problem ->
-          case result of
-            Left actual -> assertEqual label (normalizeError problem) (normalizeError actual)
-            Right _ -> die (label ++ ": expected error " ++ show problem)
-        _ -> die (label ++ ": decode requires value or error expectation")
-    _ -> die (label ++ ": unsupported input, run, or expect combination")
+  pure limit
 
 parseReduction :: Maybe String -> Either String Reduction
 parseReduction Nothing = Right BetaEta
@@ -227,75 +147,6 @@ parseReduction (Just "beta") = Right EtaOnly
 parseReduction (Just "eta") = Right BetaOnly
 parseReduction (Just "both") = Right NoReduction
 parseReduction (Just value) = Left ("unknown disableReduce: " ++ value)
-
-compilerOptions :: String -> RunSpec -> [String]
-compilerOptions stage spec =
-  ["--stop-after=reduce" | stage == "reduce"]
-    ++ maybe [] (\value -> ["--disable-reduce=" ++ value]) (runDisableReduce spec)
-
-runCompiler :: String -> [String] -> String -> IO String
-runCompiler label options source = do
-  let program = asProgram source
-  (status, output, problem) <-
-    readProcessWithExitCode "lambda-to-graph" options program
-  case status of
-    ExitSuccess -> pure output
-    _ -> die (label ++ ": " ++ problem)
-
-asProgram :: String -> String
-asProgram source
-  | any (`elem` ("@=;" :: String)) source = source
-  | otherwise = "@! " ++ source ++ ";"
-
-assertDecodeCliError :: String -> String -> RunSpec -> Int -> String -> IO ()
-assertDecodeCliError label source spec limit expected = do
-  decodeType <-
-    maybe (die (label ++ ": decode type is required")) pure (runDecode spec)
-  let options =
-        ["--max-steps=" ++ show limit, "--decode=" ++ decodeType]
-          ++ maybe [] (\index -> ["--precision-real=" ++ show index]) (runPrecisionReal spec)
-  (status, output, problem) <-
-    readProcessWithExitCode "ski-interpreter" options source
-  unless (status == ExitFailure 1 && null output) $
-    die
-      ( label
-          ++ ": expected exit 1 and empty stdout, got "
-          ++ show (status, output, problem)
-      )
-  assertEqual label (normalizeError expected) (normalizeError problem)
-
-decodeGraph :: RunSpec -> Int -> Graph.Graph -> Either String String
-decodeGraph spec limit graph = case runDecode spec of
-  Just "natural" -> showDecoded "Natural" show (decodeNatural limit graph)
-  Just "boolean" -> showDecoded "Boolean" show (decodeBoolean limit graph)
-  Just "integer" -> showDecoded "Integer" show (decodeInteger limit graph)
-  Just "rational" -> showDecoded "Rational" renderRational (decodeRational limit graph)
-  Just "real" -> do
-    index <- maybe (Right 0) Right (runPrecisionReal spec)
-    if index < 0
-      then Left "precisionReal must be nonnegative"
-      else
-        showDecoded "Real" renderRational (decodeReal limit (fromInteger index) graph)
-  _ -> Left "unknown or missing decode type"
- where
-  showDecoded kind render result = do
-    value <- result
-    maybe (Left ("not a Church " ++ kind)) (Right . render) value
-
-renderRational :: Rational -> String
-renderRational value = show (numerator value) ++ "/" ++ show (denominator value)
-
-assertParsed :: String -> String -> String -> IO ()
-assertParsed label source expected = do
-  actual <- unwrap label (Core.pExp (Core.myLexer source))
-  wanted <- unwrap label (Core.pExp (Core.myLexer expected))
-  assertEqual label wanted actual
-
-assertReduced :: String -> String -> Either String Pure.Exp -> IO ()
-assertReduced label expected result = do
-  actual <- unwrap label result
-  wanted <- unwrap label (Pure.pExp (Pure.myLexer expected))
-  assertEqual label wanted actual
 
 assertGraph :: String -> String -> Either String Graph.Graph -> IO String
 assertGraph label expected result = do

@@ -39,7 +39,7 @@ cabal test
 - `input`
   - `input.language` 是 `lambda` 或 `ski`
   - `input.source` 是完整源码
-  - `input.modules` 是 JSON 对象，形如 `{ "defs.lambda": "@> identity = \\x -> x;" }`
+  - `input.modules` 是 JSON 对象，形如 `{ "defs.lambda": "@> f = \\x -> x;" }`
 - `run`
   - `run.stage` 可以是 `parse` / `reduce` / `compile` / `interpret` / `undecode` / `decode`
   - `run.type` 仅用于 `decode`，可以是 `natural` / `boolean` / `integer` / `rational` / `real`

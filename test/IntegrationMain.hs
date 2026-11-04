@@ -1,6 +1,77 @@
 module Main (main) where
 
-import TestSupport (Suite (IntegrationSuite), runSuite)
+import Compiler (compileSourceWithModules)
+import Control.Monad (void)
+import Data.Ratio (denominator, numerator)
+import qualified Graph.Abs as Graph
+import Interpreter (
+  decodeBoolean,
+  decodeInteger,
+  decodeNatural,
+  decodeRational,
+  decodeReal,
+  interpret,
+ )
+import System.Exit (die)
+import TestSupport (
+  Expected (..),
+  Input (..),
+  RunSpec (..),
+  TestCase (..),
+  assertEqual,
+  assertGraph,
+  caseLimit,
+  normalizeError,
+  parseReduction,
+  runSuite,
+  unwrap,
+ )
 
 main :: IO ()
-main = runSuite IntegrationSuite
+main = runSuite "integration" runCase
+
+runCase :: String -> TestCase -> IO ()
+runCase label (TestCase _ (Input language source modules) spec expected) = do
+  reduction <- unwrap label (parseReduction (runDisableReduce spec))
+  limit <- caseLimit label 100000 spec
+  case (language, runStage spec, expected) of
+    ("lambda", "undecode", ExpectedGraph graph) ->
+      void
+        ( assertGraph
+            label
+            graph
+            (compileSourceWithModules reduction modules "<input>" source >>= interpret limit)
+        )
+    ("lambda", "decode", _) -> do
+      graph <-
+        unwrap label (compileSourceWithModules reduction modules "<input>" source)
+      let result = decodeGraph spec limit graph
+      case expected of
+        ExpectedValue value -> unwrap label result >>= assertEqual label value
+        ExpectedError problem ->
+          case result of
+            Left actual -> assertEqual label (normalizeError problem) (normalizeError actual)
+            Right _ -> die (label ++ ": expected error " ++ show problem)
+        _ -> die (label ++ ": decode requires value or error expectation")
+    _ -> die (label ++ ": unsupported input, run, or expect combination")
+
+decodeGraph :: RunSpec -> Int -> Graph.Graph -> Either String String
+decodeGraph spec limit graph = case runDecode spec of
+  Just "natural" -> showDecoded "Natural" show (decodeNatural limit graph)
+  Just "boolean" -> showDecoded "Boolean" show (decodeBoolean limit graph)
+  Just "integer" -> showDecoded "Integer" show (decodeInteger limit graph)
+  Just "rational" -> showDecoded "Rational" renderRational (decodeRational limit graph)
+  Just "real" -> do
+    index <- maybe (Right 0) Right (runPrecisionReal spec)
+    if index < 0
+      then Left "precisionReal must be nonnegative"
+      else
+        showDecoded "Real" renderRational (decodeReal limit (fromInteger index) graph)
+  _ -> Left "unknown or missing decode type"
+ where
+  showDecoded kind render result = do
+    value <- result
+    maybe (Left ("not a Church " ++ kind)) (Right . render) value
+
+renderRational :: Rational -> String
+renderRational value = show (numerator value) ++ "/" ++ show (denominator value)

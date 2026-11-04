@@ -57,7 +57,7 @@ library
 
 executable lambda-to-graph
   hs-source-dirs: app
-  main-is: Main.hs
+  main-is: CompilerMain.hs
   build-depends:
       base >=4.16 && <5
     , graph-reduction-machine
@@ -65,7 +65,7 @@ executable lambda-to-graph
 
 executable ski-interpreter
   hs-source-dirs: app
-  main-is: SkiMain.hs
+  main-is: InterpreterMain.hs
   build-depends:
       base >=4.16 && <5
     , graph-reduction-machine
@@ -74,7 +74,7 @@ executable ski-interpreter
 test-suite compiler-tests
   type: exitcode-stdio-1.0
   hs-source-dirs: test
-  main-is: Main.hs
+  main-is: CompilerMain.hs
   other-modules: TestSupport
   build-depends:
       base >=4.16 && <5
