@@ -15,7 +15,7 @@
 
 - 命令行入口位于 `app/CompilerMain.hs`
 - 编译器实现位于 `src/Compiler.hs` 和 `src/Compiler/`
-- 自动生成的语法模块位于 `src/CoreLambda/` / `src/PureLambda/` / `src/Graph/`
+- 自动生成的语法模块位于 `src/CoreLambda/` / `src/PureLambda/` / `src/Ski/`
 
 编译器的模块为：
 

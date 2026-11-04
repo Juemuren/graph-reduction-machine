@@ -7,7 +7,7 @@
 | 编译器输入的 JavaScript 子集 | 尚未定义语法                              |
 | 带内置函数的核心 λ           | [CoreLambda.cf](../grammar/CoreLambda.cf) |
 | 内置函数展开后的纯 λ         | [PureLambda.cf](../grammar/PureLambda.cf) |
-| 图归约机输入的 SKI 图        | [Graph.cf](../grammar/Graph.cf)           |
+| 图归约机输入的 SKI 图        | [Ski.cf](../grammar/Ski.cf)               |
 
 编译流程为：
 

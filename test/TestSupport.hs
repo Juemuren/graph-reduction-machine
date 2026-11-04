@@ -34,8 +34,8 @@ import Data.JSON.JSONSchema (validate)
 import Data.List (nub, sort)
 import qualified Data.Map.Strict as Map
 import Data.Maybe (catMaybes, fromMaybe, isJust)
-import qualified Graph.Abs as Graph
-import Graph.Print (printTree)
+import qualified Ski.Abs as Graph
+import Ski.Print (printTree)
 import System.Directory (doesDirectoryExist, listDirectory)
 import System.Exit (die)
 import System.FilePath (takeExtension, (</>))

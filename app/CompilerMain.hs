@@ -8,8 +8,8 @@ import Compiler (
 import Compiler.Expand (expandSource)
 import Compiler.ModuleLoader (loadModuleSources)
 import Data.Maybe (fromMaybe)
-import Graph.Print (printTree)
 import qualified PureLambda.Print as Pure
+import Ski.Print (printTree)
 import System.Environment (getArgs)
 import System.Exit (die, exitFailure)
 import System.IO (hPutStrLn, stderr)

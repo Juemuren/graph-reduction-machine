@@ -1,8 +1,8 @@
 module Main (main) where
 
 import Control.Monad (unless)
-import Graph.Print (printTree)
 import Interpreter (interpretSource)
+import Ski.Print (printTree)
 import System.Exit (ExitCode (..), die)
 import System.Process (readProcessWithExitCode)
 import TestSupport (

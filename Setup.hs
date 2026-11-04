@@ -12,6 +12,6 @@ main =
           withCurrentDirectory "src" $ do
             callProcess "bnfc" ["--haskell", "-d", "../grammar/CoreLambda.cf"]
             callProcess "bnfc" ["--haskell", "-d", "../grammar/PureLambda.cf"]
-            callProcess "bnfc" ["--haskell", "-d", "../grammar/Graph.cf"]
+            callProcess "bnfc" ["--haskell", "-d", "../grammar/Ski.cf"]
           preBuild simpleUserHooks args flags
       }

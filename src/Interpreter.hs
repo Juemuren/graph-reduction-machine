@@ -20,9 +20,9 @@ import qualified Data.IntMap.Strict as IntMap
 import qualified Data.Map.Strict as Map
 import Data.Ratio ((%))
 import qualified Data.Set as Set
-import qualified Graph.Abs as Graph
-import qualified Graph.Par as Graph
 import Numeric.Natural (Natural)
+import qualified Ski.Abs as Graph
+import qualified Ski.Par as Graph
 
 type Address = Int
 

@@ -3,7 +3,6 @@ module Main (main) where
 import Data.Char (toUpper)
 import Data.List (stripPrefix)
 import Data.Ratio (denominator, numerator)
-import Graph.Print (printTree)
 import Interpreter (
   decodeBooleanSource,
   decodeIntegerSource,
@@ -13,6 +12,7 @@ import Interpreter (
   interpretSource,
  )
 import Numeric.Natural (Natural)
+import Ski.Print (printTree)
 import System.Environment (getArgs)
 import System.Exit (die, exitFailure)
 import System.IO (hPutStrLn, stderr)

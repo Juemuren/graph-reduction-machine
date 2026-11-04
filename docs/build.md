@@ -24,7 +24,7 @@ Cabal 会调用 BNFC、Alex 和 Happy，根据语法定义分别生成并编译 
 | ----------------------------- | ---------------------- |
 | `grammar/CoreLambda.cf`       | `src/CoreLambda`       |
 | `grammar/PureLambda.cf`       | `src/PureLambda`       |
-| `grammar/Graph.cf`            | `src/Graph`            |
+| `grammar/Ski.cf`              | `src/Ski`              |
 
 ## 构建编译器
 

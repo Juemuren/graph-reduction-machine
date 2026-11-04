@@ -7,7 +7,7 @@ category: Compilers/Interpreters
 extra-source-files:
     grammar/CoreLambda.cf
   , grammar/PureLambda.cf
-  , grammar/Graph.cf
+  , grammar/Ski.cf
   , lib/*.lambda
   , test/cases/schema.json
   , test/cases/**/*.json
@@ -32,13 +32,13 @@ library
     , PureLambda.Abs
     , PureLambda.Par
     , PureLambda.Print
-    , Graph.Abs
-    , Graph.Par
-    , Graph.Print
+    , Ski.Abs
+    , Ski.Par
+    , Ski.Print
   other-modules:
       CoreLambda.Lex
     , PureLambda.Lex
-    , Graph.Lex
+    , Ski.Lex
     , Compiler.LibrarySource
     , Compiler.ModuleSource
   build-depends:

@@ -3,7 +3,6 @@ module Main (main) where
 import Compiler (compileSourceWithModules)
 import Control.Monad (void)
 import Data.Ratio (denominator, numerator)
-import qualified Graph.Abs as Graph
 import Interpreter (
   decodeBoolean,
   decodeInteger,
@@ -12,6 +11,7 @@ import Interpreter (
   decodeReal,
   interpret,
  )
+import qualified Ski.Abs as Graph
 import System.Exit (die)
 import TestSupport (
   Expected (..),

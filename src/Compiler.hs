@@ -16,8 +16,8 @@ module Compiler (
 import Compiler.Expand (expandSource)
 import Data.List (intercalate, nub)
 import qualified Data.Map.Strict as Map
-import qualified Graph.Abs as Graph
 import qualified PureLambda.Abs as Pure
+import qualified Ski.Abs as Graph
 
 data Term = Var Pure.Name | S | K | I | App Term Term
 
