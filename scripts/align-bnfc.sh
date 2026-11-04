@@ -19,7 +19,7 @@ esac
 
 script_dir=$(CDPATH='' cd -- "$(dirname -- "$0")" && pwd)
 project_dir=$(CDPATH='' cd -- "$script_dir/.." && pwd)
-grammar_file=$project_dir/grammar/ArithmeticLambda.cf
+grammar_file=$project_dir/grammar/CoreLambda.cf
 
 mkdir -p "$project_dir/.tmp"
 candidate=$(mktemp "$project_dir/.tmp/align-bnfc.XXXXXX")
