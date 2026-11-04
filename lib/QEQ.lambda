@@ -1,0 +1,1 @@
+\p -> \q -> ZEQ (ZMUL (FST p) (SND q)) (ZMUL (FST q) (SND p))

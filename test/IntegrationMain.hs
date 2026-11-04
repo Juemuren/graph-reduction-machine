@@ -66,6 +66,11 @@ main = do
     ".decoded"
     checkDecodedInteger
   runCases
+    "test/cases/integration/operation-rational-value"
+    ".lambda"
+    ".decoded"
+    checkDecodedRational
+  runCases
     "test/cases/integration/control-if"
     ".lambda"
     ".decoded"

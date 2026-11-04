@@ -1,0 +1,1 @@
+\q -> ZEQ (FST q) (INT ZERO)

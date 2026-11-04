@@ -69,8 +69,11 @@ cabal test integration-tests
 - `undecode` 比较核心 λ 与经过展开、编译、规约后得到的 SKI 图
 - `decode-natural` / `decode-boolean` / `decode-integer` / `decode-rational` 分别比较核心 λ 与经过展开、编译、规约、解码后得到的十进制自然数、布尔值、十进制整数、约分后的有理数
 - `operation` 验证内置函数的通用函数行为。结果按自然数解码
-- `operation-natural` /`operation-boolean` / `operation-integer` 分别验证核心 λ 在自然数、布尔值、整数中的运算。结果按对应的类型解码
+- `operation-boolean` 验证布尔值相关的运算。结果按布尔值解码
 - `operation-pair` 验证有序对相关运算的结果。结果按自然数解码
+- `operation-natural-value` / `operation-natural-compare` 分别验证返回自然数的运算和自然数的比较；前者按自然数解码，后者按布尔值解码
+- `operation-integer-value` / `operation-integer-compare` 分别验证返回整数的运算和整数的比较；前者按整数解码，后者按布尔值解码
+- `operation-rational-value` / `operation-rational-compare` 分别验证返回有理数的运算和有理数的比较，；前者按有理数解码，后者按布尔值解码
 - `control-if` 验证条件控制结构的行为。结果按自然数解码
 - `control-loop` 验证循环控制结构的行为。结果按自然数解码
 - `control-loop-limit` 验证禁用编译期规约后无限循环会超过图归约机的步数限制

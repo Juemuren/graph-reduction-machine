@@ -1,0 +1,1 @@
+\p -> \q -> EQ (ADD (FST p) (SND q)) (ADD (FST q) (SND p))
