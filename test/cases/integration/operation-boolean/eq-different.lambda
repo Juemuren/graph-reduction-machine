@@ -1,0 +1,1 @@
+EQ (SUCC (ZERO)) (SUCC (SUCC (ZERO)))

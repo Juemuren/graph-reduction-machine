@@ -16,6 +16,12 @@ expand expression = case expression of
   Core.ESub -> naturalSubtract
   Core.EMul -> naturalMul
   Core.EPow -> naturalPow
+  Core.EIsZero -> naturalIsZero
+  Core.ELeq -> naturalLeq
+  Core.EEq -> naturalEqual
+  Core.EStep -> naturalStep
+  Core.EDiv -> naturalDivide
+  Core.EMod -> naturalModulo
   Core.EFalse -> encodeFalse
   Core.ETrue -> encodeTrue
   Core.EAnd -> booleanAnd
@@ -25,6 +31,7 @@ expand expression = case expression of
   Core.EFst -> encodeFst
   Core.ESnd -> encodeSnd
   Core.ENeg -> integerNegate
+  Core.EZAbs -> integerAbsolute
   Core.EZAdd -> integerAdd
   Core.EZSub -> integerSubtract
   Core.EZMul -> integerMultiply
@@ -121,6 +128,19 @@ integerNegate = Pure.EAbs p body
   first = Pure.EApp encodeSnd (Pure.EVar p)
   second = Pure.EApp encodeFst (Pure.EVar p)
   body = Pure.EApp (Pure.EApp encodePair first) second
+
+-- λp.PAIR (ADD (SUB (FST p) (SND p)) (SUB (SND p) (FST p))) ZERO
+integerAbsolute :: Pure.Exp
+integerAbsolute = Pure.EAbs p (pair magnitude (encodeNatural 0))
+ where
+  p = Pure.Name "p"
+  first = Pure.EApp encodeFst (Pure.EVar p)
+  second = Pure.EApp encodeSnd (Pure.EVar p)
+  magnitude =
+    apply2
+      naturalAdd
+      (apply2 naturalSubtract first second)
+      (apply2 naturalSubtract second first)
 
 -- λp.λq.PAIR (ADD (FST p) (FST q)) (ADD (SND p) (SND q))
 integerAdd :: Pure.Exp
@@ -311,3 +331,68 @@ naturalPow =
  where
   m = Pure.Name "m"
   n = Pure.Name "n"
+
+-- λn.n (λx.FALSE) TRUE
+naturalIsZero :: Pure.Exp
+naturalIsZero = Pure.EAbs n (apply2 (Pure.EVar n) (Pure.EAbs x encodeFalse) encodeTrue)
+ where
+  n = Pure.Name "n"
+  x = Pure.Name "x"
+
+-- λm.λn.ISZERO (SUB m n)
+naturalLeq :: Pure.Exp
+naturalLeq = Pure.EAbs m (Pure.EAbs n (Pure.EApp naturalIsZero difference))
+ where
+  m = Pure.Name "m"
+  n = Pure.Name "n"
+  difference = apply2 naturalSubtract (Pure.EVar m) (Pure.EVar n)
+
+-- λm.λn.AND (LEQ m n) (LEQ n m)
+naturalEqual :: Pure.Exp
+naturalEqual = Pure.EAbs m (Pure.EAbs n (apply2 booleanAnd left right))
+ where
+  m = Pure.Name "m"
+  n = Pure.Name "n"
+  left = apply2 naturalLeq (Pure.EVar m) (Pure.EVar n)
+  right = apply2 naturalLeq (Pure.EVar n) (Pure.EVar m)
+
+-- Advance (quotient, remainder) by one unit of the dividend.
+naturalStep :: Pure.Exp
+naturalStep =
+  Pure.EAbs
+    n
+    ( Pure.EAbs
+        state
+        (Pure.EApp (apply2 churchIf canSubtract subtractBranch) keepBranch)
+    )
+ where
+  n = Pure.Name "n"
+  state = Pure.Name "state"
+  current = Pure.EVar state
+  quotient = Pure.EApp encodeFst current
+  remainder = Pure.EApp encodeSnd current
+  nextRemainder = Pure.EApp naturalSuccessor remainder
+  canSubtract = apply2 naturalLeq (Pure.EVar n) nextRemainder
+  subtractBranch =
+    pair
+      (Pure.EApp naturalSuccessor quotient)
+      (apply2 naturalSubtract nextRemainder (Pure.EVar n))
+  keepBranch = pair quotient nextRemainder
+naturalDivide :: Pure.Exp
+naturalDivide = divisionResult encodeFst
+
+naturalModulo :: Pure.Exp
+naturalModulo = divisionResult encodeSnd
+
+-- Iterate STEP m times, then select the quotient or remainder.
+-- A zero divisor gives (0, dividend).
+divisionResult :: Pure.Exp -> Pure.Exp
+divisionResult selector = Pure.EAbs m (Pure.EAbs n (Pure.EApp selector selected))
+ where
+  m = Pure.Name "m"
+  n = Pure.Name "n"
+  step = Pure.EApp naturalStep (Pure.EVar n)
+  result = apply2 (Pure.EVar m) step (pair (encodeNatural 0) (encodeNatural 0))
+  zeroDivisor = Pure.EApp naturalIsZero (Pure.EVar n)
+  onZero = pair (encodeNatural 0) (Pure.EVar m)
+  selected = Pure.EApp (apply2 churchIf zeroDivisor onZero) result

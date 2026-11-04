@@ -1,0 +1,1 @@
+LEQ (SUCC (SUCC (ZERO))) (SUCC (ZERO))
