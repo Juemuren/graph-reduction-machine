@@ -24,7 +24,27 @@ main = do
     ".decoded"
     checkDecodedInteger
   runCases
-    "test/cases/integration/if"
+    "test/cases/integration/operation-natural"
+    ".lambda"
+    ".decoded"
+    checkDecodedNatural
+  runCases
+    "test/cases/integration/operation-pair"
+    ".lambda"
+    ".decoded"
+    checkDecodedNatural
+  runCases
+    "test/cases/integration/operation-boolean"
+    ".lambda"
+    ".decoded"
+    checkDecodedBoolean
+  runCases
+    "test/cases/integration/operation-integer"
+    ".lambda"
+    ".decoded"
+    checkDecodedInteger
+  runCases
+    "test/cases/integration/control-if"
     ".lambda"
     ".decoded"
     checkDecodedNatural
