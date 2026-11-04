@@ -18,7 +18,11 @@ expand expression = case expression of
   Core.EPow -> naturalPow
   Core.EIsZero -> naturalIsZero
   Core.ELeq -> naturalLeq
+  Core.ELt -> naturalLess
+  Core.EGeq -> naturalGeq
+  Core.EGt -> naturalGreater
   Core.EEq -> naturalEqual
+  Core.ENeq -> naturalNotEqual
   Core.EStep -> naturalStep
   Core.EDiv -> naturalDivide
   Core.EMod -> naturalModulo
@@ -347,6 +351,29 @@ naturalLeq = Pure.EAbs m (Pure.EAbs n (Pure.EApp naturalIsZero difference))
   n = Pure.Name "n"
   difference = apply2 naturalSubtract (Pure.EVar m) (Pure.EVar n)
 
+-- λm.λn.NOT (LEQ n m)
+naturalLess :: Pure.Exp
+naturalLess = Pure.EAbs m (Pure.EAbs n (Pure.EApp booleanNot reversed))
+ where
+  m = Pure.Name "m"
+  n = Pure.Name "n"
+  reversed = apply2 naturalLeq (Pure.EVar n) (Pure.EVar m)
+
+-- λm.λn.LEQ n m
+naturalGeq :: Pure.Exp
+naturalGeq = Pure.EAbs m (Pure.EAbs n (apply2 naturalLeq (Pure.EVar n) (Pure.EVar m)))
+ where
+  m = Pure.Name "m"
+  n = Pure.Name "n"
+
+-- λm.λn.NOT (LEQ m n)
+naturalGreater :: Pure.Exp
+naturalGreater = Pure.EAbs m (Pure.EAbs n (Pure.EApp booleanNot comparison))
+ where
+  m = Pure.Name "m"
+  n = Pure.Name "n"
+  comparison = apply2 naturalLeq (Pure.EVar m) (Pure.EVar n)
+
 -- λm.λn.AND (LEQ m n) (LEQ n m)
 naturalEqual :: Pure.Exp
 naturalEqual = Pure.EAbs m (Pure.EAbs n (apply2 booleanAnd left right))
@@ -355,6 +382,14 @@ naturalEqual = Pure.EAbs m (Pure.EAbs n (apply2 booleanAnd left right))
   n = Pure.Name "n"
   left = apply2 naturalLeq (Pure.EVar m) (Pure.EVar n)
   right = apply2 naturalLeq (Pure.EVar n) (Pure.EVar m)
+
+-- λm.λn.NOT (EQ m n)
+naturalNotEqual :: Pure.Exp
+naturalNotEqual = Pure.EAbs m (Pure.EAbs n (Pure.EApp booleanNot comparison))
+ where
+  m = Pure.Name "m"
+  n = Pure.Name "n"
+  comparison = apply2 naturalEqual (Pure.EVar m) (Pure.EVar n)
 
 -- Advance (quotient, remainder) by one unit of the dividend.
 naturalStep :: Pure.Exp
