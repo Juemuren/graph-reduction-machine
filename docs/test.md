@@ -34,7 +34,7 @@ cabal test compiler-tests
 
 基础测试：
 
-- 对于一个新增的内置函数，在 `test/cases/compiler/encode` 中增加一个编码测试。测试文件名使用内置函数名的小写
+- 对于一个内置函数，在 `test/cases/compiler/encode` 中用一个用例测试编码。测试文件名使用内置函数名的小写
 
 核心 λ 的应用与抽象优先级在 `test/cases/compiler/precedence` 中覆盖。
 
@@ -72,8 +72,10 @@ cabal test integration-tests
 - `test/cases/integration/decode-natural` 比较核心 λ 经过展开、编译、规约、解码后得到的十进制自然数
 - `test/cases/integration/decode-boolean` 比较核心 λ 经过展开、编译、规约、解码后得到的布尔值
 - `test/cases/integration/decode-integer` 比较核心 λ 经过展开、编译、规约、解码后得到的整数
+- `test/cases/integration/if` 验证条件选择的真、假分支，以及未选中分支不会求值；当前用自然数结果检查行为
 
 基础测试：
 
-- 对于一个新增的数据类型，在 `test/cases/integration/decode-*` 中增加一个解码测试。如果数据类型中有无穷多的值，则只测试典型值的解码。测试文件名使用内置函数名的小写；数字使用英文小写
-- 对于一个新增的运算，在 `test/cases/integration/decode-*` 中增加一个解码测试，测试文件名使用内置函数名的小写
+- 对于一个数据类型，在 `test/cases/integration/decode-*` 中用一个或多个用例测试解码。如果数据类型中有无穷多的值，则只测试典型值的解码。测试文件名使用内置函数名的小写；数字使用英文小写
+- 对于一个运算，在 `test/cases/integration/operation-*` 中用一个用例测试结果。测试文件名使用内置函数名的小写
+- 对于一个控制结构，在 `test/cases/integration/control-*` 中用一个用例或多个用例测试行为。测试文件名使用内置函数名的小写

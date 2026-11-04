@@ -23,6 +23,11 @@ main = do
     ".lambda"
     ".decoded"
     checkDecodedInteger
+  runCases
+    "test/cases/integration/if"
+    ".lambda"
+    ".decoded"
+    checkDecodedNatural
   putStrLn "integration tests passed"
 
 checkUndecode :: FilePath -> FilePath -> IO ()
@@ -88,4 +93,3 @@ checkDecodedInteger sourcePath expectedPath = do
             ++ ", decoded "
             ++ show actual
         )
-
