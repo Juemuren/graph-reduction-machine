@@ -1,18 +1,22 @@
 {
   "name": "graph-reduction-machine-syntax",
   "displayName": "Graph Reduction Machine Syntax",
-  "description": "Syntax highlighting for Core Lambda and SKI graph files.",
-  "version": "0.1.0",
+  "description": "Syntax highlighting for Core Lambda and SKI graphs, with SKI node completion and hover.",
+  "version": "0.2.0",
   "publisher": "graph-reduction-machine",
   "engines": {
-    "vscode": "^1.80.0"
+    "vscode": "^1.82.0"
   },
+  "main": "./out/client/extension.js",
+  "activationEvents": [""],
   "categories": [
     "Programming Languages"
   ],
   "files": [
     "README.md",
     "language-configuration/*.json",
+    "out/client/*.js",
+    "out/server/*.js",
     "syntaxes/*.tmLanguage.json"
   ],
   "contributes": {
@@ -44,9 +48,20 @@
     ]
   },
   "scripts": {
+    "build": "tsc --noEmit -p tsconfig.json && esbuild client/extension.ts server/server.ts --bundle --platform=node --format=cjs --outdir=out --external:vscode",
+    "prepackage": "npm run build",
     "package": "vsce package --allow-missing-repository"
   },
+  "dependencies": {
+    "vscode-languageclient": "^9.0.1",
+    "vscode-languageserver": "^9.0.1",
+    "vscode-languageserver-textdocument": "^1.0.11"
+  },
   "devDependencies": {
-    "@vscode/vsce": "^3.6.0"
+    "@types/node": "^20.17.0",
+    "@types/vscode": "^1.82.0",
+    "@vscode/vsce": "^3.6.0",
+    "esbuild": "^0.25.0",
+    "typescript": "^5.9.3"
   }
 }
