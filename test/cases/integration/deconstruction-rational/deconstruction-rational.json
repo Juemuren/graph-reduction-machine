@@ -4,7 +4,7 @@
       "name": "qnorm-negative-denominator-denominator",
       "input": {
         "language": "lambda",
-        "source": "SND (QNORM (PAIR (NTOZ TWO) (NEG (NTOZ FOUR))))\n"
+        "source": "SND (QNORM (PAIR (NTOZ TWO) (ZNEG (NTOZ FOUR))))\n"
       },
       "run": {
         "stage": "decode",
@@ -18,7 +18,7 @@
       "name": "qnorm-negative-denominator-numerator",
       "input": {
         "language": "lambda",
-        "source": "FST (QNORM (PAIR (NTOZ TWO) (NEG (NTOZ FOUR))))\n"
+        "source": "FST (QNORM (PAIR (NTOZ TWO) (ZNEG (NTOZ FOUR))))\n"
       },
       "run": {
         "stage": "decode",

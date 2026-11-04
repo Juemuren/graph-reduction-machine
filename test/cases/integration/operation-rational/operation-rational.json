@@ -4,7 +4,7 @@
       "name": "qabs-negative-denominator",
       "input": {
         "language": "lambda",
-        "source": "QABS (PAIR (NTOZ ONE) (NEG (NTOZ TWO)))\n"
+        "source": "QABS (PAIR (NTOZ ONE) (ZNEG (NTOZ TWO)))\n"
       },
       "run": {
         "stage": "decode",
@@ -60,7 +60,7 @@
       "name": "qinv-negative-denominator",
       "input": {
         "language": "lambda",
-        "source": "QINV (PAIR (NTOZ ONE) (NEG (NTOZ TWO)))\n"
+        "source": "QINV (PAIR (NTOZ ONE) (ZNEG (NTOZ TWO)))\n"
       },
       "run": {
         "stage": "decode",

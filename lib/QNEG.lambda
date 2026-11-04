@@ -1,1 +1,1 @@
-\q -> PAIR (NEG (FST q)) (SND q)
+\q -> PAIR (ZNEG (FST q)) (SND q)

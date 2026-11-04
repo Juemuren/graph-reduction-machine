@@ -1,10 +1,10 @@
 {
   "cases": [
     {
-      "name": "abs-mixed",
+      "name": "zabs-mixed",
       "input": {
         "language": "lambda",
-        "source": "ABS (PAIR (SUCC ZERO) (SUCC (SUCC (SUCC ZERO))))\n"
+        "source": "ZABS (PAIR (SUCC ZERO) (SUCC (SUCC (SUCC ZERO))))\n"
       },
       "run": {
         "stage": "decode",
@@ -15,10 +15,10 @@
       }
     },
     {
-      "name": "abs-negative",
+      "name": "zabs-negative",
       "input": {
         "language": "lambda",
-        "source": "ABS (PAIR ZERO (SUCC (SUCC (ZERO))))\n"
+        "source": "ZABS (PAIR ZERO (SUCC (SUCC (ZERO))))\n"
       },
       "run": {
         "stage": "decode",
@@ -29,10 +29,10 @@
       }
     },
     {
-      "name": "abs-positive",
+      "name": "zabs-positive",
       "input": {
         "language": "lambda",
-        "source": "ABS (PAIR (SUCC (SUCC (ZERO))) ZERO)\n"
+        "source": "ZABS (PAIR (SUCC (SUCC (ZERO))) ZERO)\n"
       },
       "run": {
         "stage": "decode",
@@ -43,10 +43,10 @@
       }
     },
     {
-      "name": "neg",
+      "name": "zneg",
       "input": {
         "language": "lambda",
-        "source": "NEG (PAIR (SUCC (SUCC (ZERO))) ZERO)\n"
+        "source": "ZNEG (PAIR (SUCC (SUCC (ZERO))) ZERO)\n"
       },
       "run": {
         "stage": "decode",

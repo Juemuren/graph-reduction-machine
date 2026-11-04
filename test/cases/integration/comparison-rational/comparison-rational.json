@@ -60,7 +60,7 @@
       "name": "qiszero-nonzero",
       "input": {
         "language": "lambda",
-        "source": "QISZERO (PAIR (NTOZ ONE) (NEG (NTOZ TWO)))\n"
+        "source": "QISZERO (PAIR (NTOZ ONE) (ZNEG (NTOZ TWO)))\n"
       },
       "run": {
         "stage": "decode",
@@ -74,7 +74,7 @@
       "name": "qiszero-zero",
       "input": {
         "language": "lambda",
-        "source": "QISZERO (PAIR (NTOZ ZERO) (NEG (NTOZ TWO)))\n"
+        "source": "QISZERO (PAIR (NTOZ ZERO) (ZNEG (NTOZ TWO)))\n"
       },
       "run": {
         "stage": "decode",
@@ -102,7 +102,7 @@
       "name": "qleq-negative-denominator",
       "input": {
         "language": "lambda",
-        "source": "QLEQ (ZTOQ (NTOZ ZERO)) (PAIR (NTOZ ONE) (NEG (NTOZ TWO)))\n"
+        "source": "QLEQ (ZTOQ (NTOZ ZERO)) (PAIR (NTOZ ONE) (ZNEG (NTOZ TWO)))\n"
       },
       "run": {
         "stage": "decode",
@@ -130,7 +130,7 @@
       "name": "qlt-negative-denominator",
       "input": {
         "language": "lambda",
-        "source": "QLT (PAIR (NTOZ ONE) (NEG (NTOZ TWO))) (ZTOQ (NTOZ ZERO))\n"
+        "source": "QLT (PAIR (NTOZ ONE) (ZNEG (NTOZ TWO))) (ZTOQ (NTOZ ZERO))\n"
       },
       "run": {
         "stage": "decode",

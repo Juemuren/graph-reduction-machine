@@ -4,8 +4,8 @@
       (\g ->
         PAIR
           (PAIR
-            (DIV (FST (IF (ISZERO (FST b)) (NEG a) a)) g)
-            (DIV (SND (IF (ISZERO (FST b)) (NEG a) a)) g))
+            (DIV (FST (IF (ISZERO (FST b)) (ZNEG a) a)) g)
+            (DIV (SND (IF (ISZERO (FST b)) (ZNEG a) a)) g))
           (NTOZ (DIV (ADD (FST b) (SND b)) g)))
       (GCD (ADD (FST a) (SND a)) (ADD (FST b) (SND b))))
     (ZNORM (SND p)))

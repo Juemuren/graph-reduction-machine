@@ -130,7 +130,7 @@
       "name": "zlt-less",
       "input": {
         "language": "lambda",
-        "source": "ZLT (NEG (NTOZ ONE)) (NTOZ ZERO)\n"
+        "source": "ZLT (ZNEG (NTOZ ONE)) (NTOZ ZERO)\n"
       },
       "run": {
         "stage": "decode",

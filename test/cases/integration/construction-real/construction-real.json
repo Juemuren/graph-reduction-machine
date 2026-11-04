@@ -34,7 +34,7 @@
       "name": "ztor",
       "input": {
         "language": "lambda",
-        "source": "ZTOR (NEG (NTOZ TWO))\n"
+        "source": "ZTOR (ZNEG (NTOZ TWO))\n"
       },
       "run": {
         "stage": "decode",
