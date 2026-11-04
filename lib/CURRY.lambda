@@ -1,1 +1,0 @@
-@> CURRY = \f -> \x -> \y -> f (PAIR x y);

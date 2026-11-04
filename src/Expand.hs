@@ -3,7 +3,7 @@
 -- | Resolve modules and expand library definitions into pure lambda calculus.
 module Expand (expand, expandSource) where
 
-import Control.Monad (when)
+import Control.Monad (foldM, when)
 import qualified CoreLambda.Abs as Core
 import qualified CoreLambda.Print as Core
 import Data.List (intercalate)
@@ -18,6 +18,18 @@ sources =
   Map.fromList
     [(normalise ("lib" </> path), source) | (path, source) <- $(embeddedSources)]
 
+standardIndex :: Either String (Map.Map String FilePath)
+standardIndex = foldM addModule Map.empty (Map.toList sources)
+ where
+  addModule index (path, source) = do
+    parsed <- case parseModule source of
+      Left problem -> Left (path ++ ": " ++ problem)
+      Right result -> Right result
+    foldM (addExport path) index (moduleExports parsed)
+  addExport path index name
+    | Map.member name index = Left ("duplicate standard library export: " ++ name)
+    | otherwise = Right (Map.insert name path index)
+
 -- | Keep the expression API available to callers that already have an AST.
 expand :: Core.Exp -> Either String Pure.Exp
 expand expression = expandSource Map.empty "<input>" ("@! " ++ Core.printTree expression ++ ";")
@@ -28,11 +40,12 @@ expandSource ::
 expandSource external path source = do
   let file = normalise path
       allSources = Map.insert file source (Map.union external sources)
+  library <- standardIndex
   parsed <- parseModule source
   body <-
     maybe (Left "module has no final expression") Right (moduleExpression parsed)
   validateImports allSources file parsed
-  go allSources file [] [] body
+  go library allSources file [] [] body
 
 parsedModule :: Map.Map FilePath String -> FilePath -> Either String Module
 parsedModule allSources file = do
@@ -67,12 +80,13 @@ validateImports allSources file parsed = do
     | otherwise = Left (file ++ ": " ++ target ++ " does not export " ++ name)
 
 resolve ::
+  Map.Map String FilePath ->
   Map.Map FilePath String ->
   FilePath ->
   [(FilePath, String)] ->
   String ->
   Either String Pure.Exp
-resolve allSources file stack name = do
+resolve library allSources file stack name = do
   let key = (file, name)
   when (key `elem` stack) $
     Left
@@ -81,7 +95,7 @@ resolve allSources file stack name = do
   validateImports allSources file parsed
   case lookup name (moduleDefinitions parsed) of
     Just body -> do
-      result <- go allSources file (key : stack) [] body
+      result <- go library allSources file (key : stack) [] body
       case freeVariables [] result of
         [] -> Right result
         names ->
@@ -89,36 +103,39 @@ resolve allSources file stack name = do
     Nothing -> Left (file ++ ": undefined name: " ++ name)
 
 go ::
+  Map.Map String FilePath ->
   Map.Map FilePath String ->
   FilePath ->
   [(FilePath, String)] ->
   [String] ->
   Core.Exp ->
   Either String Pure.Exp
-go allSources file stack bound expression = case expression of
+go library allSources file stack bound expression = case expression of
   Core.EVar (Core.Name name)
     | name `elem` bound -> Right (Pure.EVar (Pure.Name name))
     | otherwise -> do
         definition <- lookupName allSources file name
         case definition of
           Nothing -> Right (Pure.EVar (Pure.Name name))
-          Just target -> resolve allSources target stack name
+          Just target -> resolve library allSources target stack name
   Core.EApp function argument ->
     Pure.EApp
-      <$> go allSources file stack bound function
-      <*> go allSources file stack bound argument
+      <$> go library allSources file stack bound function
+      <*> go library allSources file stack bound argument
   Core.EAbs (Core.Name name) body ->
-    Pure.EAbs (Pure.Name name) <$> go allSources file stack (name : bound) body
+    Pure.EAbs (Pure.Name name)
+      <$> go library allSources file stack (name : bound) body
   Core.EBuiltin (Core.Builtin name) -> do
     imported <- lookupName allSources file name
     case imported of
-      Just target -> resolve allSources target stack name
+      Just target -> resolve library allSources target stack name
       Nothing -> do
-        let target = normalise ("lib" </> (name ++ ".lambda"))
-        standard <- parsedModule allSources target
-        if name `elem` moduleExports standard
-          then resolve allSources target stack name
-          else Left ("standard library does not export " ++ name)
+        target <-
+          maybe
+            (Left ("standard library does not export " ++ name))
+            Right
+            (Map.lookup name library)
+        resolve library allSources target stack name
 
 lookupName ::
   Map.Map FilePath String -> FilePath -> String -> Either String (Maybe FilePath)

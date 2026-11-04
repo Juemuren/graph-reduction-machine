@@ -1,0 +1,5 @@
+# real
+
+@> NTOR = \n -> QTOR (NTOQ n);
+@> ZTOR = \z -> QTOR (ZTOQ z);
+@> QTOR = \q -> \n -> q;

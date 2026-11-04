@@ -1,0 +1,6 @@
+# pairs
+
+@> PAIR = \a -> \b -> \s -> s a b;
+
+@> FST = \p -> p (\a -> \b -> a);
+@> SND = \p -> p (\a -> \b -> b);

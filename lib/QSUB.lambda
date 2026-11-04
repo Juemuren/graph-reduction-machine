@@ -1,1 +1,0 @@
-@> QSUB = \p -> \q -> PAIR (ZSUB (ZMUL (FST p) (SND q)) (ZMUL (FST q) (SND p))) (ZMUL (SND p) (SND q));

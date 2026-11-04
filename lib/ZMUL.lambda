@@ -1,1 +1,0 @@
-@> ZMUL = \p -> \q -> PAIR (ADD (MUL (FST p) (FST q)) (MUL (SND p) (SND q))) (ADD (MUL (FST p) (SND q)) (MUL (SND p) (FST q)));

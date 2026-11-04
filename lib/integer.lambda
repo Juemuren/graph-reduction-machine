@@ -1,0 +1,18 @@
+# integer
+
+@> NTOZ = \n -> PAIR n ZERO;
+
+@> ZADD = \p -> \q -> PAIR (ADD (FST p) (FST q)) (ADD (SND p) (SND q));
+@> ZSUB = \p -> \q -> PAIR (ADD (FST p) (SND q)) (ADD (SND p) (FST q));
+@> ZMUL = \p -> \q -> PAIR (ADD (MUL (FST p) (FST q)) (MUL (SND p) (SND q))) (ADD (MUL (FST p) (SND q)) (MUL (SND p) (FST q)));
+@> ZNEG = \p -> PAIR (SND p) (FST p);
+@> ZABS = \p -> PAIR (ADD (SUB (FST p) (SND p)) (SUB (SND p) (FST p))) ZERO;
+@> ZNORM = \p -> PAIR (SUB (FST p) (SND p)) (SUB (SND p) (FST p));
+
+@> ZISZERO = \z -> EQ (FST z) (SND z);
+@> ZEQ = \p -> \q -> EQ (ADD (FST p) (SND q)) (ADD (FST q) (SND p));
+@> ZNEQ = \p -> \q -> NOT (ZEQ p q);
+@> ZLT = \p -> \q -> LT (ADD (FST p) (SND q)) (ADD (FST q) (SND p));
+@> ZLEQ = \p -> \q -> LEQ (ADD (FST p) (SND q)) (ADD (FST q) (SND p));
+@> ZGT = \p -> \q -> ZLT q p;
+@> ZGEQ = \p -> \q -> ZLEQ q p;

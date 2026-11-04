@@ -1,2 +1,0 @@
-@< "./division.lambda" (divMod);
-@> DIV = \m -> \n -> FST (divMod m n);

@@ -1,1 +1,0 @@
-@> QISZERO = \q -> ZEQ (FST q) (NTOZ ZERO);

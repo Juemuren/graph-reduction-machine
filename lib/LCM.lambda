@@ -1,1 +1,0 @@
-@> LCM = \m -> \n -> IF (OR (ISZERO m) (ISZERO n)) ZERO (DIV (MUL m n) (GCD m n));

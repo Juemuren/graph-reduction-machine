@@ -1,0 +1,12 @@
+# higher-order
+
+@> ID = \x -> x;
+@> COMPOSE = \f -> \g -> \x -> f (g x);
+@> CONST = \x -> \y -> x;
+
+@> FLIP = \f -> \x -> \y -> f y x;
+
+@> CURRY = \f -> \x -> \y -> f (PAIR x y);
+@> UNCURRY = \f -> \p -> f (FST p) (SND p);
+
+@> LIFT2 = \f -> \a -> \b -> \n -> f (a n) (b n);

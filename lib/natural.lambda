@@ -1,0 +1,37 @@
+# natural
+
+@> ZERO = \f -> \x -> x;
+@> ONE = \f -> \x -> f x;
+@> TWO = SUCC ONE;
+@> THREE = SUCC TWO;
+@> FOUR = SUCC THREE;
+@> FIVE = SUCC FOUR;
+@> SIX = SUCC FIVE;
+@> SEVEN = SUCC SIX;
+@> EIGHT = SUCC SEVEN;
+@> NINE = SUCC EIGHT;
+
+@> SUCC = \n -> \f -> \x -> f (n f x);
+@> PRED = \n -> \f -> \x -> n (\g -> \h -> h (g f)) (\u -> x) (\u -> u);
+@> ADD = \m -> \n -> \f -> \x -> m f (n f x);
+@> SUB = \m -> \n -> n PRED m;
+@> MUL = \m -> \n -> \f -> m (n f);
+@> POW = \m -> \n -> n m;
+@> FACT = \n -> SND (FOR n (\p -> PAIR (SUCC (FST p)) (MUL (SUCC (FST p)) (SND p))) (PAIR ZERO ONE));
+
+# Division helpers
+divStep = \n -> \p -> IF (LEQ n (SUCC (SND p))) (PAIR (SUCC (FST p)) (SUB (SUCC (SND p)) n)) (PAIR (FST p) (SUCC (SND p)));
+divMod = \m -> \n -> IF (ISZERO n) (PAIR ZERO m) (m (divStep n) (PAIR ZERO ZERO));
+@> DIV = \m -> \n -> FST (divMod m n);
+@> MOD = \m -> \n -> SND (divMod m n);
+
+@> GCD = \m -> \n -> FST (WHILE (\p -> NOT (ISZERO (SND p))) (\p -> PAIR (SND p) (MOD (FST p) (SND p))) (PAIR m n));
+@> LCM = \m -> \n -> IF (OR (ISZERO m) (ISZERO n)) ZERO (DIV (MUL m n) (GCD m n));
+
+@> ISZERO = \n -> n (\x -> FALSE) TRUE;
+@> EQ = \m -> \n -> AND (LEQ m n) (LEQ n m);
+@> NEQ = \m -> \n -> NOT (EQ m n);
+@> LT = \m -> \n -> NOT (LEQ n m);
+@> LEQ = \m -> \n -> ISZERO (SUB m n);
+@> GT = \m -> \n -> NOT (LEQ m n);
+@> GEQ = \m -> \n -> LEQ n m;

@@ -1,0 +1,8 @@
+# control
+
+@> IF = \b -> \t -> \f -> b t f;
+
+@> Y = \f -> (\x -> f (x x)) (\x -> f (x x));
+
+@> FOR = \n -> \s -> \i -> n s i;
+@> WHILE = \c -> \s -> \i -> Y (\l -> \x -> IF (c x) (l (s x)) x) i;

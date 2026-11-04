@@ -1,1 +1,0 @@
-@> ZNEQ = \p -> \q -> NOT (ZEQ p q);

@@ -1,1 +1,0 @@
-@> QLT = \p -> \q -> IF (ZLT (ZMUL (SND p) (SND q)) (NTOZ ZERO)) (ZGT (ZMUL (FST p) (SND q)) (ZMUL (FST q) (SND p))) (ZLT (ZMUL (FST p) (SND q)) (ZMUL (FST q) (SND p)));

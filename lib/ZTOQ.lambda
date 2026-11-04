@@ -1,1 +1,0 @@
-@> ZTOQ = \z -> PAIR z (NTOZ ONE);

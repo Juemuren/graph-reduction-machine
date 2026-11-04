@@ -17,7 +17,7 @@
       "name": "private-name-hidden",
       "input": {
         "language": "lambda",
-        "source": "@< \"lib/division.lambda\" (divMod); @! step TWO (PAIR ZERO ZERO);"
+        "source": "@< \"lib/natural.lambda\" (DIV); @! step TWO (PAIR ZERO ZERO);"
       },
       "run": {
         "stage": "compile"

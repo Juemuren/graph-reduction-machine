@@ -1,1 +1,0 @@
-@> QABS = \q -> IF (ZLT (ZMUL (FST q) (SND q)) (NTOZ ZERO)) (QNEG q) q;

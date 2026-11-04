@@ -1,0 +1,33 @@
+# rational
+
+@> NTOQ = \n -> ZTOQ (NTOZ n);
+@> ZTOQ = \z -> PAIR z (NTOZ ONE);
+
+@> QADD = \p -> \q -> PAIR (ZADD (ZMUL (FST p) (SND q)) (ZMUL (FST q) (SND p))) (ZMUL (SND p) (SND q));
+@> QSUB = \p -> \q -> PAIR (ZSUB (ZMUL (FST p) (SND q)) (ZMUL (FST q) (SND p))) (ZMUL (SND p) (SND q));
+@> QMUL = \p -> \q -> PAIR (ZMUL (FST p) (FST q)) (ZMUL (SND p) (SND q));
+@> QDIV = \p -> \q -> PAIR (ZMUL (FST p) (SND q)) (ZMUL (SND p) (FST q));
+@> QNEG = \q -> PAIR (ZNEG (FST q)) (SND q);
+@> QABS = \q -> IF (ZLT (ZMUL (FST q) (SND q)) (NTOZ ZERO)) (QNEG q) q;
+@> QINV = \q -> PAIR (SND q) (FST q);
+
+@> QNORM = \p ->
+  (\a ->
+    (\b ->
+      (\g ->
+        PAIR
+          (PAIR
+            (DIV (FST (IF (ISZERO (FST b)) (ZNEG a) a)) g)
+            (DIV (SND (IF (ISZERO (FST b)) (ZNEG a) a)) g))
+          (NTOZ (DIV (ADD (FST b) (SND b)) g)))
+      (GCD (ADD (FST a) (SND a)) (ADD (FST b) (SND b))))
+    (ZNORM (SND p)))
+  (ZNORM (FST p));
+
+@> QISZERO = \q -> ZEQ (FST q) (NTOZ ZERO);
+@> QEQ = \p -> \q -> ZEQ (ZMUL (FST p) (SND q)) (ZMUL (FST q) (SND p));
+@> QNEQ = \p -> \q -> NOT (QEQ p q);
+@> QLT = \p -> \q -> IF (ZLT (ZMUL (SND p) (SND q)) (NTOZ ZERO)) (ZGT (ZMUL (FST p) (SND q)) (ZMUL (FST q) (SND p))) (ZLT (ZMUL (FST p) (SND q)) (ZMUL (FST q) (SND p)));
+@> QLEQ = \p -> \q -> IF (ZLT (ZMUL (SND p) (SND q)) (NTOZ ZERO)) (ZGEQ (ZMUL (FST p) (SND q)) (ZMUL (FST q) (SND p))) (ZLEQ (ZMUL (FST p) (SND q)) (ZMUL (FST q) (SND p)));
+@> QGT = \p -> \q -> QLT q p;
+@> QGEQ = \p -> \q -> QLEQ q p;

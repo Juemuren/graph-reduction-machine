@@ -46,7 +46,7 @@
       "name": "import-export",
       "input": {
         "language": "lambda",
-        "source": "@< \"lib/division.lambda\" (divMod); @! FST (divMod FIVE TWO);"
+        "source": "@< \"lib/natural.lambda\" (DIV); @! DIV FIVE TWO;"
       },
       "run": {
         "stage": "decode",
@@ -54,6 +54,20 @@
       },
       "expect": {
         "value": "2"
+      }
+    },
+    {
+      "name": "multiple-exports-from-one-module",
+      "input": {
+        "language": "lambda",
+        "source": "@< \"lib/natural.lambda\" (ADD, TWO); @! ADD TWO ONE;"
+      },
+      "run": {
+        "stage": "decode",
+        "type": "natural"
+      },
+      "expect": {
+        "value": "3"
       }
     }
   ]

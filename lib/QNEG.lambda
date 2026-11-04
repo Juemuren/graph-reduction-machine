@@ -1,1 +1,0 @@
-@> QNEG = \q -> PAIR (ZNEG (FST q)) (SND q);

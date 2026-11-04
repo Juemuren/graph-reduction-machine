@@ -1,1 +1,0 @@
-@> FACT = \n -> SND (FOR n (\p -> PAIR (SUCC (FST p)) (MUL (SUCC (FST p)) (SND p))) (PAIR ZERO ONE));

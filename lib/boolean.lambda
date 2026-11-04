@@ -1,0 +1,8 @@
+# boolean
+
+@> FALSE = \t -> \f -> f;
+@> TRUE = \t -> \f -> t;
+
+@> AND = \p -> \q -> p q p;
+@> OR = \p -> \q -> p p q;
+@> NOT = \p -> p FALSE TRUE;

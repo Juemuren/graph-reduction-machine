@@ -1,3 +1,4 @@
 # Fibonacci(6) = 8
 # Using FOR loop
-(\n -> FST (FOR n (\p -> PAIR (SND p) (ADD (FST p) (SND p))) (PAIR ZERO ONE))) SIX
+
+@! (\n -> FST (FOR n (\p -> PAIR (SND p) (ADD (FST p) (SND p))) (PAIR ZERO ONE))) SIX;

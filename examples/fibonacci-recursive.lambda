@@ -1,3 +1,4 @@
 # Fibonacci(6) = 8
 # Using the Y fixed-point combinator
-Y (\fib -> \n -> IF (LEQ n ONE) n (ADD (fib (PRED n)) (fib (PRED (PRED n))))) SIX
+
+@! Y (\fib -> \n -> IF (LEQ n ONE) n (ADD (fib (PRED n)) (fib (PRED (PRED n))))) SIX;
