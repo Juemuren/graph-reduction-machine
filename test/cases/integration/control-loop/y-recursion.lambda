@@ -1,0 +1,1 @@
+Y (\f -> \n -> IF (ISZERO n) ZERO (SUCC (f (PRED n)))) (SUCC (SUCC ZERO))

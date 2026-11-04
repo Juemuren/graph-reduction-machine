@@ -44,6 +44,9 @@ expand expression = case expression of
   Core.EQMul -> rationalMultiply
   Core.EQDiv -> rationalDivide
   Core.EIf -> churchIf
+  Core.EY -> fixedPoint
+  Core.EFor -> churchFor
+  Core.EWhile -> churchWhile
 
 pureName :: Core.Name -> Pure.Name
 pureName (Core.Name name) = Pure.Name name
@@ -56,6 +59,52 @@ churchIf = Pure.EAbs b (Pure.EAbs t (Pure.EAbs f body))
   t = Pure.Name "t"
   f = Pure.Name "f"
   body = Pure.EApp (Pure.EApp (Pure.EVar b) (Pure.EVar t)) (Pure.EVar f)
+
+-- λn.λstep.λinitial.n step initial
+churchFor :: Pure.Exp
+churchFor =
+  Pure.EAbs
+    n
+    ( Pure.EAbs
+        step
+        (Pure.EAbs initial (apply2 (Pure.EVar n) (Pure.EVar step) (Pure.EVar initial)))
+    )
+ where
+  n = Pure.Name "n"
+  step = Pure.Name "step"
+  initial = Pure.Name "initial"
+
+-- λcondition.λstep.λinitial.Y (λloop.λstate.IF (condition state) (loop (step state)) state) initial
+churchWhile :: Pure.Exp
+churchWhile =
+  Pure.EAbs
+    condition
+    ( Pure.EAbs
+        step
+        ( Pure.EAbs
+            initial
+            (Pure.EApp (Pure.EApp fixedPoint loopBody) (Pure.EVar initial))
+        )
+    )
+ where
+  condition = Pure.Name "condition"
+  step = Pure.Name "step"
+  initial = Pure.Name "initial"
+  loop = Pure.Name "loop"
+  state = Pure.Name "state"
+  current = Pure.EVar state
+  test = Pure.EApp (Pure.EVar condition) current
+  next = Pure.EApp (Pure.EVar loop) (Pure.EApp (Pure.EVar step) current)
+  loopBody =
+    Pure.EAbs loop (Pure.EAbs state (Pure.EApp (apply2 churchIf test next) current))
+
+-- Y = λf.(λx.f (x x)) (λx.f (x x))
+fixedPoint :: Pure.Exp
+fixedPoint = Pure.EAbs f (Pure.EApp self self)
+ where
+  f = Pure.Name "f"
+  x = Pure.Name "self"
+  self = Pure.EAbs x (Pure.EApp (Pure.EVar f) (Pure.EApp (Pure.EVar x) (Pure.EVar x)))
 
 -- λt.λf.f
 encodeFalse :: Pure.Exp

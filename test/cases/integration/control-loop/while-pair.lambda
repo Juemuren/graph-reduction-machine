@@ -1,0 +1,1 @@
+SND (WHILE (\p -> LT (FST p) (SUCC (SUCC ZERO))) (\p -> PAIR (SUCC (FST p)) (ADD (SND p) (FST p))) (PAIR ZERO ZERO))

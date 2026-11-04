@@ -76,6 +76,8 @@ cabal test integration-tests
 - `operation-natural` /`operation-boolean` / `operation-integer` 分别验证核心 λ 在自然数、布尔值、整数中的运算。结果按对应的类型解码
 - `operation-pair` 验证有序对相关运算的结果。结果按自然数解码
 - `control-if` 验证条件控制结构的行为。结果按自然数解码
+- `control-loop` 验证循环控制结构的行为。结果按自然数解码
+- `control-loop-limit` 验证禁用编译期规约后无限循环会超过图归约机的步数限制
 
 基础测试：
 

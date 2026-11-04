@@ -1,6 +1,6 @@
 module Main (main) where
 
-import Compiler (compileSource)
+import Compiler (Reduction (NoReduction), compileSource, compileSourceWith)
 import Data.Ratio (denominator, numerator)
 import Interpreter (
   decodeBoolean,
@@ -10,7 +10,7 @@ import Interpreter (
   interpret,
  )
 import System.Exit (die)
-import TestSupport (assertGraphResult, runCases)
+import TestSupport (assertExpectedError, assertGraphResult, runCases)
 
 main :: IO ()
 main = do
@@ -65,7 +65,26 @@ main = do
     ".lambda"
     ".decoded"
     checkDecodedNatural
+  runCases
+    "test/cases/integration/control-loop"
+    ".lambda"
+    ".decoded"
+    checkDecodedNatural
+  runCases
+    "test/cases/integration/control-loop-limit"
+    ".lambda"
+    ".error"
+    checkLoopLimit
   putStrLn "integration tests passed"
+
+checkLoopLimit :: FilePath -> FilePath -> IO ()
+checkLoopLimit sourcePath expectedPath = do
+  source <- readFile sourcePath
+  assertExpectedError
+    sourcePath
+    expectedPath
+    (compileSourceWith NoReduction source >>= decodeNatural 100)
+  putStrLn (sourcePath ++ ": PASS")
 
 checkUndecode :: FilePath -> FilePath -> IO ()
 checkUndecode sourcePath expectedPath = do
