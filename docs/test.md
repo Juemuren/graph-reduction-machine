@@ -50,6 +50,8 @@ cabal test
   - `expect.graph` 按图的输出行比较
   - `expect.error` 比较错误消息
 
+完整字段及允许的组合见 [JSON Schema](../test/cases/schema.json)。
+
 ## 用例组织
 
 所有测试用例放置在 `test/cases` 目录下。

@@ -5,8 +5,9 @@ module TestSupport (Suite (..), runSuite) where
 import Compiler (Reduction (..), compile, compileSourceWith, reduceSource)
 import Control.Monad (forM_, unless, void, when)
 import qualified CoreLambda.Par as Core
-import Data.Aeson (FromJSON (..), eitherDecode, withObject, (.:), (.:?))
+import Data.Aeson (FromJSON (..), Result (..), Value, eitherDecode, fromJSON, withObject, (.:), (.:?))
 import qualified Data.ByteString.Lazy as ByteString
+import Data.JSON.JSONSchema (validate)
 import Data.List (nub, sort)
 import Data.Maybe (catMaybes, fromMaybe, isJust, isNothing)
 import Data.Ratio (denominator, numerator)
@@ -82,13 +83,22 @@ instance FromJSON Expected where
 
 runSuite :: Suite -> IO ()
 runSuite suite = do
-  let root = "test/cases" </> suiteName suite
+  let schemaPath = "test/cases/schema.json"
+      root = "test/cases" </> suiteName suite
+  schemaBytes <- ByteString.readFile schemaPath
+  schema <- unwrap schemaPath (eitherDecode schemaBytes :: Either String Value)
   directories <- sort <$> listDirectory root
   paths <- concat <$> mapM (jsonFiles . (root </>)) directories
   when (null paths) $ die ("no JSON cases in " ++ root)
   forM_ paths $ \path -> do
     bytes <- ByteString.readFile path
-    CaseFile cases <- unwrap path (eitherDecode bytes)
+    fixture <- unwrap path (eitherDecode bytes :: Either String Value)
+    case validate schema fixture of
+      Left problems -> die (path ++ ": JSON Schema validation failed:\n" ++ unlines (map show problems))
+      Right () -> pure ()
+    CaseFile cases <- case fromJSON fixture of
+      Error problem -> die (path ++ ": " ++ problem)
+      Success result -> pure result
     when (null cases) $ die (path ++ ": empty cases array")
     let names = [name | TestCase name _ _ _ <- cases]
     when (length names /= length (nub names)) $
