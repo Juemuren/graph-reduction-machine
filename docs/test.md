@@ -68,6 +68,7 @@ cabal test integration-tests
 
 - `undecode` 比较核心 λ 与经过展开、编译、规约后得到的 SKI 图
 - `decode-natural` / `decode-boolean` / `decode-integer` / `decode-rational` 分别比较核心 λ 与经过展开、编译、规约、解码后得到的十进制自然数、布尔值、十进制整数、约分后的有理数
+- `operation` 验证内置函数的通用函数行为。结果按自然数解码
 - `operation-natural` /`operation-boolean` / `operation-integer` 分别验证核心 λ 在自然数、布尔值、整数中的运算。结果按对应的类型解码
 - `operation-pair` 验证有序对相关运算的结果。结果按自然数解码
 - `control-if` 验证条件控制结构的行为。结果按自然数解码

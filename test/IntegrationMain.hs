@@ -36,6 +36,11 @@ main = do
     ".decoded"
     checkDecodedRational
   runCases
+    "test/cases/integration/operation"
+    ".lambda"
+    ".decoded"
+    checkDecodedNatural
+  runCases
     "test/cases/integration/operation-natural"
     ".lambda"
     ".decoded"
