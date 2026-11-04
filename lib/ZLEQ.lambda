@@ -1,1 +1,1 @@
-\p -> \q -> LEQ (ADD (FST p) (SND q)) (ADD (FST q) (SND p))
+@> ZLEQ = \p -> \q -> LEQ (ADD (FST p) (SND q)) (ADD (FST q) (SND p));

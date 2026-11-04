@@ -5,15 +5,17 @@ module Compiler (
   compileWith,
   compileSource,
   compileSourceWith,
+  compileSourceWithModules,
   reduce,
   reduceWith,
   reduceSource,
   reduceSourceWith,
+  reduceSourceWithModules,
 ) where
 
-import qualified CoreLambda.Par as Core
 import Data.List (intercalate, nub)
-import Expand (expand)
+import qualified Data.Map.Strict as Map
+import Expand (expandSource)
 import qualified Graph.Abs as Graph
 import qualified PureLambda.Abs as Pure
 
@@ -26,18 +28,34 @@ compileSource :: String -> Either String Graph.Graph
 compileSource = compileSourceWith BetaEta
 
 compileSourceWith :: Reduction -> String -> Either String Graph.Graph
-compileSourceWith reduction source =
-  Core.pExp (Core.myLexer source) >>= expand >>= compileWith reduction
+compileSourceWith reduction =
+  compileSourceWithModules reduction Map.empty "<input>"
+
+compileSourceWithModules ::
+  Reduction ->
+  Map.Map FilePath String ->
+  FilePath ->
+  String ->
+  Either String Graph.Graph
+compileSourceWithModules reduction modules path source =
+  expandSource modules path source >>= compileWith reduction
 
 -- | Parse and reduce one expression without translating it to SKI.
 reduceSource :: String -> Either String Pure.Exp
 reduceSource = reduceSourceWith BetaEta
 
 reduceSourceWith :: Reduction -> String -> Either String Pure.Exp
-reduceSourceWith reduction source =
-  Core.pExp (Core.myLexer source)
-    >>= expand
-    >>= reduceChecked reduction
+reduceSourceWith reduction =
+  reduceSourceWithModules reduction Map.empty "<input>"
+
+reduceSourceWithModules ::
+  Reduction ->
+  Map.Map FilePath String ->
+  FilePath ->
+  String ->
+  Either String Pure.Exp
+reduceSourceWithModules reduction modules path source =
+  expandSource modules path source >>= reduceChecked reduction
 
 compile :: Pure.Exp -> Either String Graph.Graph
 compile = compileWith BetaEta

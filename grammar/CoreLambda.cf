@@ -1,116 +1,25 @@
--- Lambda expressions with Church-encoded built-ins. BNFC generates CoreLambda.*.
-entrypoints Exp;
+-- Lambda expressions and modules. BNFC generates CoreLambda.*.
+entrypoints Exp, Program;
 
-EAbs.     Exp  ::= "\\" Name "->" Exp ;
-_.        Exp  ::= Exp1 ;
-EApp.     Exp1 ::= Exp1 Exp2 ;
-_.        Exp1 ::= Exp2 ;
-EVar.     Exp2 ::= Name ;
+PModule.     Program   ::= [Statement] ;
+SImport.     Statement ::= "@<" String "(" [NameRef] ")" ";" ;
+SExport.     Statement ::= "@>" NameRef "=" Exp ";" ;
+SDefinition. Statement ::= NameRef "=" Exp ";" ;
+SEntry.      Statement ::= "@!" Exp ";" ;
+terminator Statement "" ;
+separator NameRef "," ;
 
--- High Order Function
-EId.      Exp2 ::= "ID" ;
-ECompose. Exp2 ::= "COMPOSE" ;
-EConst.   Exp2 ::= "CONST" ;
-EFlip.    Exp2 ::= "FLIP" ;
-ECurry.   Exp2 ::= "CURRY" ;
-EUncurry. Exp2 ::= "UNCURRY" ;
-ELift2.   Exp2 ::= "LIFT2" ;
+NVariable.   NameRef   ::= Name ;
+NBuiltin.    NameRef   ::= Builtin ;
 
--- Boolean
-EFalse.   Exp2 ::= "FALSE" ;
-ETrue.    Exp2 ::= "TRUE" ;
-EAnd.     Exp2 ::= "AND" ;
-EOr.      Exp2 ::= "OR" ;
-ENot.     Exp2 ::= "NOT" ;
-
--- Pair
-EPair.    Exp2 ::= "PAIR" ;
-EFst.     Exp2 ::= "FST" ;
-ESnd.     Exp2 ::= "SND" ;
-
--- Natural
-EZero.    Exp2 ::= "ZERO" ;
-EOne.     Exp2 ::= "ONE" ;
-ETwo.     Exp2 ::= "TWO" ;
-EThree.   Exp2 ::= "THREE" ;
-EFour.    Exp2 ::= "FOUR" ;
-EFive.    Exp2 ::= "FIVE" ;
-ESix.     Exp2 ::= "SIX" ;
-ESeven.   Exp2 ::= "SEVEN" ;
-EEight.   Exp2 ::= "EIGHT" ;
-ENine.    Exp2 ::= "NINE" ;
-ESucc.    Exp2 ::= "SUCC" ;
-EPred.    Exp2 ::= "PRED" ;
--- Natural Operation
-EAdd.     Exp2 ::= "ADD" ;
-ESub.     Exp2 ::= "SUB" ;
-EMul.     Exp2 ::= "MUL" ;
-EPow.     Exp2 ::= "POW" ;
-EFact.    Exp2 ::= "FACT" ;
-EStep.    Exp2 ::= "STEP" ; -- TODO 删去 STEP
-EDiv.     Exp2 ::= "DIV" ;
-EMod.     Exp2 ::= "MOD" ;
-EGcd.     Exp2 ::= "GCD" ;
-ELcm.     Exp2 ::= "LCM" ;
--- Natural Comparison
-EIsZero.  Exp2 ::= "ISZERO" ;
-EEq.      Exp2 ::= "EQ" ;
-ENeq.     Exp2 ::= "NEQ" ;
-ELt.      Exp2 ::= "LT" ;
-ELeq.     Exp2 ::= "LEQ" ;
-EGt.      Exp2 ::= "GT" ;
-EGeq.     Exp2 ::= "GEQ" ;
-
--- Integer
-ENToZ.    Exp2 ::= "NTOZ" ;
--- Integer Operation
-EZAdd.    Exp2 ::= "ZADD" ;
-EZSub.    Exp2 ::= "ZSUB" ;
-EZMul.    Exp2 ::= "ZMUL" ;
-EZNeg.    Exp2 ::= "ZNEG" ;
-EZAbs.    Exp2 ::= "ZABS" ;
-EZNorm.   Exp2 ::= "ZNORM" ;
--- Integer Comparison
-EZIsZero. Exp2 ::= "ZISZERO" ;
-EZEq.     Exp2 ::= "ZEQ" ;
-EZNeq.    Exp2 ::= "ZNEQ" ;
-EZLt.     Exp2 ::= "ZLT" ;
-EZLeq.    Exp2 ::= "ZLEQ" ;
-EZGt.     Exp2 ::= "ZGT" ;
-EZGeq.    Exp2 ::= "ZGEQ" ;
-
--- Rational
-ENToQ.    Exp2 ::= "NTOQ" ;
-EZToQ.    Exp2 ::= "ZTOQ" ;
--- Rational Operation
-EQAdd.    Exp2 ::= "QADD" ;
-EQSub.    Exp2 ::= "QSUB" ;
-EQMul.    Exp2 ::= "QMUL" ;
-EQDiv.    Exp2 ::= "QDIV" ;
-EQNeg.    Exp2 ::= "QNEG" ;
-EQAbs.    Exp2 ::= "QABS" ;
-EQInv.    Exp2 ::= "QINV" ;
-EQNorm.   Exp2 ::= "QNORM" ;
--- Rational Comparison
-EQIsZero. Exp2 ::= "QISZERO" ;
-EQEq.     Exp2 ::= "QEQ" ;
-EQNeq.    Exp2 ::= "QNEQ" ;
-EQLt.     Exp2 ::= "QLT" ;
-EQLeq.    Exp2 ::= "QLEQ" ;
-EQGt.     Exp2 ::= "QGT" ;
-EQGeq.    Exp2 ::= "QGEQ" ;
-
--- Real
-ENToR.    Exp2 ::= "NTOR" ;
-EZToR.    Exp2 ::= "ZTOR" ;
-EQToR.    Exp2 ::= "QTOR" ;
-
--- Control
-EIf.      Exp2 ::= "IF" ;
-EY.       Exp2 ::= "Y" ;
-EFor.     Exp2 ::= "FOR" ;
-EWhile.   Exp2 ::= "WHILE" ;
-_.        Exp2 ::= "(" Exp ")" ;
+EAbs.        Exp       ::= "\\" Name "->" Exp ;
+_.           Exp       ::= Exp1 ;
+EApp.        Exp1      ::= Exp1 Exp2 ;
+_.           Exp1      ::= Exp2 ;
+EVar.        Exp2      ::= Name ;
+EBuiltin.    Exp2      ::= Builtin ;
+_.           Exp2      ::= "(" Exp ")" ;
 
 token Name (lower (letter | digit | '_')*) ;
+token Builtin (upper (letter | digit | '_')*) ;
 comment "#" ;

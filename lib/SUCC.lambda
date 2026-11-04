@@ -1,1 +1,1 @@
-\n -> \f -> \x -> f (n f x)
+@> SUCC = \n -> \f -> \x -> f (n f x);

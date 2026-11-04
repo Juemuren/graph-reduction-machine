@@ -1,1 +1,1 @@
-\m -> \n -> NOT (LEQ n m)
+@> LT = \m -> \n -> NOT (LEQ n m);

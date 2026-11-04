@@ -1,1 +1,1 @@
-\m -> \n -> NOT (LEQ m n)
+@> GT = \m -> \n -> NOT (LEQ m n);

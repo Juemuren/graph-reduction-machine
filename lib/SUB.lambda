@@ -1,1 +1,1 @@
-\m -> \n -> n PRED m
+@> SUB = \m -> \n -> n PRED m;

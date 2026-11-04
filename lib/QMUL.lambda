@@ -1,1 +1,1 @@
-\p -> \q -> PAIR (ZMUL (FST p) (FST q)) (ZMUL (SND p) (SND q))
+@> QMUL = \p -> \q -> PAIR (ZMUL (FST p) (FST q)) (ZMUL (SND p) (SND q));

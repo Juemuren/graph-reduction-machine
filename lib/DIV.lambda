@@ -1,1 +1,2 @@
-\m -> \n -> FST (IF (ISZERO n) (PAIR ZERO m) (m (STEP n) (PAIR ZERO ZERO)))
+@< "./division.lambda" (divMod);
+@> DIV = \m -> \n -> FST (divMod m n);

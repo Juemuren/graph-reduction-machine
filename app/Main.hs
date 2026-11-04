@@ -1,10 +1,14 @@
 module Main (main) where
 
-import Compiler (Reduction (..), compileSourceWith, reduceSourceWith)
-import qualified CoreLambda.Par as Core
+import Compiler (
+  Reduction (..),
+  compileSourceWithModules,
+  reduceSourceWithModules,
+ )
 import Data.Maybe (fromMaybe)
-import Expand (expand)
+import Expand (expandSource)
 import Graph.Print (printTree)
+import ModuleLoader (loadModuleSources)
 import qualified PureLambda.Print as Pure
 import System.Environment (getArgs)
 import System.Exit (die, exitFailure)
@@ -15,10 +19,17 @@ main = do
   args <- getArgs
   (mode, reduction, path) <- either die pure (parseArgs args)
   source <- maybe getContents readFile path
+  modules <-
+    loadModuleSources (fromMaybe "<input>" path) source >>= either die pure
+  let sourcePath = fromMaybe "<input>" path
   let result = case mode of
-        Graph -> fmap printTree (compileSourceWith reduction source)
-        Expand -> fmap Pure.printTree (parseSource source >>= expand)
-        Reduce -> fmap Pure.printTree (reduceSourceWith reduction source)
+        Graph ->
+          fmap printTree (compileSourceWithModules reduction modules sourcePath source)
+        Expand -> fmap Pure.printTree (expandSource modules sourcePath source)
+        Reduce ->
+          fmap
+            Pure.printTree
+            (reduceSourceWithModules reduction modules sourcePath source)
   case result of
     Left message -> do
       hPutStrLn stderr ("lambda-to-graph: " ++ message)
@@ -26,8 +37,6 @@ main = do
     Right output -> putStrLn output
 
 data Mode = Graph | Expand | Reduce
-
-parseSource source = Core.pExp (Core.myLexer source)
 
 parseArgs :: [String] -> Either String (Mode, Reduction, Maybe FilePath)
 parseArgs = go Nothing Nothing Nothing

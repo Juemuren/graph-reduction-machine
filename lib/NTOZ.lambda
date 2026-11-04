@@ -1,1 +1,1 @@
-\n -> PAIR n ZERO
+@> NTOZ = \n -> PAIR n ZERO;

@@ -1,0 +1,3 @@
+
+step = \n -> \p -> IF (LEQ n (SUCC (SND p))) (PAIR (SUCC (FST p)) (SUB (SUCC (SND p)) n)) (PAIR (FST p) (SUCC (SND p)));
+@> divMod = \m -> \n -> IF (ISZERO n) (PAIR ZERO m) (m (step n) (PAIR ZERO ZERO));

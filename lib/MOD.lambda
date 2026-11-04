@@ -1,1 +1,2 @@
-\m -> \n -> SND (IF (ISZERO n) (PAIR ZERO m) (m (STEP n) (PAIR ZERO ZERO)))
+@< "./division.lambda" (divMod);
+@> MOD = \m -> \n -> SND (divMod m n);

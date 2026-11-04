@@ -4,7 +4,7 @@
       "name": "ntor",
       "input": {
         "language": "lambda",
-        "source": "NTOR THREE FIVE\n"
+        "source": "@! NTOR THREE FIVE;\n"
       },
       "run": {
         "stage": "decode",
@@ -18,7 +18,7 @@
       "name": "qtor",
       "input": {
         "language": "lambda",
-        "source": "QTOR (PAIR (NTOZ ONE) (NTOZ TWO)) THREE\n"
+        "source": "@! QTOR (PAIR (NTOZ ONE) (NTOZ TWO)) THREE;\n"
       },
       "run": {
         "stage": "decode",
@@ -32,7 +32,7 @@
       "name": "ztor",
       "input": {
         "language": "lambda",
-        "source": "ZTOR (ZNEG (NTOZ TWO)) TWO\n"
+        "source": "@! ZTOR (ZNEG (NTOZ TWO)) TWO;\n"
       },
       "run": {
         "stage": "decode",

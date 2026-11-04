@@ -4,7 +4,7 @@
       "name": "ntoz",
       "input": {
         "language": "lambda",
-        "source": "NTOZ (SUCC (SUCC ZERO))\n"
+        "source": "@! NTOZ (SUCC (SUCC ZERO));\n"
       },
       "run": {
         "stage": "decode",

@@ -4,7 +4,7 @@
       "name": "ntoq",
       "input": {
         "language": "lambda",
-        "source": "NTOQ TWO\n"
+        "source": "@! NTOQ TWO;\n"
       },
       "run": {
         "stage": "decode",
@@ -18,7 +18,7 @@
       "name": "ztoq",
       "input": {
         "language": "lambda",
-        "source": "ZTOQ (NTOZ (SUCC (SUCC ZERO)))\n"
+        "source": "@! ZTOQ (NTOZ (SUCC (SUCC ZERO)));\n"
       },
       "run": {
         "stage": "decode",

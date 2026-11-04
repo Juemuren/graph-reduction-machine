@@ -1,1 +1,1 @@
-\z -> QTOR (ZTOQ z)
+@> ZTOR = \z -> QTOR (ZTOQ z);

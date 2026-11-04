@@ -1,1 +1,1 @@
-\p -> \q -> PAIR (ADD (FST p) (FST q)) (ADD (SND p) (SND q))
+@> ZADD = \p -> \q -> PAIR (ADD (FST p) (FST q)) (ADD (SND p) (SND q));

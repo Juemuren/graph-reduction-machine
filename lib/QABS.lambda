@@ -1,1 +1,1 @@
-\q -> IF (ZLT (ZMUL (FST q) (SND q)) (NTOZ ZERO)) (QNEG q) q
+@> QABS = \q -> IF (ZLT (ZMUL (FST q) (SND q)) (NTOZ ZERO)) (QNEG q) q;

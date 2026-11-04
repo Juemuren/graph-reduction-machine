@@ -1,1 +1,1 @@
-\z -> EQ (FST z) (SND z)
+@> ZISZERO = \z -> EQ (FST z) (SND z);

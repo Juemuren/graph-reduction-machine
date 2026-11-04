@@ -1,1 +1,0 @@
-\n -> \p -> IF (LEQ n (SUCC (SND p))) (PAIR (SUCC (FST p)) (SUB (SUCC (SND p)) n)) (PAIR (FST p) (SUCC (SND p)))

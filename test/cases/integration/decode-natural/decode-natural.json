@@ -4,7 +4,7 @@
       "name": "two",
       "input": {
         "language": "lambda",
-        "source": "\\f -> \\x -> f (f x)\n"
+        "source": "@! \\f -> \\x -> f (f x);\n"
       },
       "run": {
         "stage": "decode",
@@ -18,7 +18,7 @@
       "name": "zero",
       "input": {
         "language": "lambda",
-        "source": "\\f -> \\x -> x\n"
+        "source": "@! \\f -> \\x -> x;\n"
       },
       "run": {
         "stage": "decode",

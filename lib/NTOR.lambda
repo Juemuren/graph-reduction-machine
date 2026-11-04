@@ -1,1 +1,1 @@
-\n -> QTOR (NTOQ n)
+@> NTOR = \n -> QTOR (NTOQ n);

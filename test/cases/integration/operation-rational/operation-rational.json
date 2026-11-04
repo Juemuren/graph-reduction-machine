@@ -4,7 +4,7 @@
       "name": "qabs-negative-denominator",
       "input": {
         "language": "lambda",
-        "source": "QABS (PAIR (NTOZ ONE) (ZNEG (NTOZ TWO)))\n"
+        "source": "@! QABS (PAIR (NTOZ ONE) (ZNEG (NTOZ TWO)));\n"
       },
       "run": {
         "stage": "decode",
@@ -18,7 +18,7 @@
       "name": "qabs-positive",
       "input": {
         "language": "lambda",
-        "source": "QABS (PAIR (NTOZ ONE) (NTOZ TWO))\n"
+        "source": "@! QABS (PAIR (NTOZ ONE) (NTOZ TWO));\n"
       },
       "run": {
         "stage": "decode",
@@ -32,7 +32,7 @@
       "name": "qadd",
       "input": {
         "language": "lambda",
-        "source": "QADD (PAIR (PAIR (SUCC ZERO) ZERO) (PAIR (SUCC (SUCC ZERO)) ZERO)) (PAIR (PAIR (SUCC ZERO) ZERO) (PAIR (SUCC ZERO) ZERO))\n"
+        "source": "@! QADD (PAIR (PAIR (SUCC ZERO) ZERO) (PAIR (SUCC (SUCC ZERO)) ZERO)) (PAIR (PAIR (SUCC ZERO) ZERO) (PAIR (SUCC ZERO) ZERO));\n"
       },
       "run": {
         "stage": "decode",
@@ -46,7 +46,7 @@
       "name": "qdiv",
       "input": {
         "language": "lambda",
-        "source": "QDIV (PAIR (PAIR (SUCC ZERO) ZERO) (PAIR (SUCC (SUCC ZERO)) ZERO)) (PAIR (PAIR (SUCC ZERO) ZERO) (PAIR (SUCC ZERO) ZERO))\n"
+        "source": "@! QDIV (PAIR (PAIR (SUCC ZERO) ZERO) (PAIR (SUCC (SUCC ZERO)) ZERO)) (PAIR (PAIR (SUCC ZERO) ZERO) (PAIR (SUCC ZERO) ZERO));\n"
       },
       "run": {
         "stage": "decode",
@@ -60,7 +60,7 @@
       "name": "qinv-negative-denominator",
       "input": {
         "language": "lambda",
-        "source": "QINV (PAIR (NTOZ ONE) (ZNEG (NTOZ TWO)))\n"
+        "source": "@! QINV (PAIR (NTOZ ONE) (ZNEG (NTOZ TWO)));\n"
       },
       "run": {
         "stage": "decode",
@@ -74,7 +74,7 @@
       "name": "qinv-positive-denominator",
       "input": {
         "language": "lambda",
-        "source": "QINV (PAIR (NTOZ ONE) (NTOZ TWO))\n"
+        "source": "@! QINV (PAIR (NTOZ ONE) (NTOZ TWO));\n"
       },
       "run": {
         "stage": "decode",
@@ -88,7 +88,7 @@
       "name": "qmul",
       "input": {
         "language": "lambda",
-        "source": "QMUL (PAIR (PAIR (SUCC ZERO) ZERO) (PAIR (SUCC (SUCC ZERO)) ZERO)) (PAIR (PAIR (SUCC ZERO) ZERO) (PAIR (SUCC ZERO) ZERO))\n"
+        "source": "@! QMUL (PAIR (PAIR (SUCC ZERO) ZERO) (PAIR (SUCC (SUCC ZERO)) ZERO)) (PAIR (PAIR (SUCC ZERO) ZERO) (PAIR (SUCC ZERO) ZERO));\n"
       },
       "run": {
         "stage": "decode",
@@ -102,7 +102,7 @@
       "name": "qneg",
       "input": {
         "language": "lambda",
-        "source": "QNEG (PAIR (NTOZ ONE) (NTOZ TWO))\n"
+        "source": "@! QNEG (PAIR (NTOZ ONE) (NTOZ TWO));\n"
       },
       "run": {
         "stage": "decode",
@@ -116,7 +116,7 @@
       "name": "qsub",
       "input": {
         "language": "lambda",
-        "source": "QSUB (PAIR (PAIR (SUCC ZERO) ZERO) (PAIR (SUCC (SUCC ZERO)) ZERO)) (PAIR (PAIR (SUCC ZERO) ZERO) (PAIR (SUCC ZERO) ZERO))\n"
+        "source": "@! QSUB (PAIR (PAIR (SUCC ZERO) ZERO) (PAIR (SUCC (SUCC ZERO)) ZERO)) (PAIR (PAIR (SUCC ZERO) ZERO) (PAIR (SUCC ZERO) ZERO));\n"
       },
       "run": {
         "stage": "decode",

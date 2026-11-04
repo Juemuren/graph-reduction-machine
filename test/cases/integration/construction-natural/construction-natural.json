@@ -4,7 +4,7 @@
       "name": "eight",
       "input": {
         "language": "lambda",
-        "source": "EIGHT\n"
+        "source": "@! EIGHT;\n"
       },
       "run": {
         "stage": "decode",
@@ -18,7 +18,7 @@
       "name": "five",
       "input": {
         "language": "lambda",
-        "source": "FIVE\n"
+        "source": "@! FIVE;\n"
       },
       "run": {
         "stage": "decode",
@@ -32,7 +32,7 @@
       "name": "four",
       "input": {
         "language": "lambda",
-        "source": "FOUR\n"
+        "source": "@! FOUR;\n"
       },
       "run": {
         "stage": "decode",
@@ -46,7 +46,7 @@
       "name": "nine",
       "input": {
         "language": "lambda",
-        "source": "NINE\n"
+        "source": "@! NINE;\n"
       },
       "run": {
         "stage": "decode",
@@ -60,7 +60,7 @@
       "name": "one",
       "input": {
         "language": "lambda",
-        "source": "ONE\n"
+        "source": "@! ONE;\n"
       },
       "run": {
         "stage": "decode",
@@ -74,7 +74,7 @@
       "name": "seven",
       "input": {
         "language": "lambda",
-        "source": "SEVEN\n"
+        "source": "@! SEVEN;\n"
       },
       "run": {
         "stage": "decode",
@@ -88,7 +88,7 @@
       "name": "six",
       "input": {
         "language": "lambda",
-        "source": "SIX\n"
+        "source": "@! SIX;\n"
       },
       "run": {
         "stage": "decode",
@@ -102,7 +102,7 @@
       "name": "succ",
       "input": {
         "language": "lambda",
-        "source": "SUCC (SUCC (SUCC (ZERO)))\n"
+        "source": "@! SUCC (SUCC (SUCC (ZERO)));\n"
       },
       "run": {
         "stage": "decode",
@@ -116,7 +116,7 @@
       "name": "three",
       "input": {
         "language": "lambda",
-        "source": "THREE\n"
+        "source": "@! THREE;\n"
       },
       "run": {
         "stage": "decode",
@@ -130,7 +130,7 @@
       "name": "two",
       "input": {
         "language": "lambda",
-        "source": "TWO\n"
+        "source": "@! TWO;\n"
       },
       "run": {
         "stage": "decode",
@@ -144,7 +144,7 @@
       "name": "zero",
       "input": {
         "language": "lambda",
-        "source": "ZERO\n"
+        "source": "@! ZERO;\n"
       },
       "run": {
         "stage": "decode",

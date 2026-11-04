@@ -4,7 +4,7 @@
       "name": "eq-different",
       "input": {
         "language": "lambda",
-        "source": "EQ (SUCC (ZERO)) (SUCC (SUCC (ZERO)))\n"
+        "source": "@! EQ (SUCC (ZERO)) (SUCC (SUCC (ZERO)));\n"
       },
       "run": {
         "stage": "decode",
@@ -18,7 +18,7 @@
       "name": "eq-equal",
       "input": {
         "language": "lambda",
-        "source": "EQ (SUCC (ZERO)) (SUCC (ZERO))\n"
+        "source": "@! EQ (SUCC (ZERO)) (SUCC (ZERO));\n"
       },
       "run": {
         "stage": "decode",
@@ -32,7 +32,7 @@
       "name": "geq-equal",
       "input": {
         "language": "lambda",
-        "source": "GEQ (SUCC ZERO) (SUCC ZERO)\n"
+        "source": "@! GEQ (SUCC ZERO) (SUCC ZERO);\n"
       },
       "run": {
         "stage": "decode",
@@ -46,7 +46,7 @@
       "name": "geq-greater",
       "input": {
         "language": "lambda",
-        "source": "GEQ (SUCC ZERO) (ZERO)\n"
+        "source": "@! GEQ (SUCC ZERO) (ZERO);\n"
       },
       "run": {
         "stage": "decode",
@@ -60,7 +60,7 @@
       "name": "geq-less",
       "input": {
         "language": "lambda",
-        "source": "GEQ (ZERO) (SUCC ZERO)\n"
+        "source": "@! GEQ (ZERO) (SUCC ZERO);\n"
       },
       "run": {
         "stage": "decode",
@@ -74,7 +74,7 @@
       "name": "gt-equal",
       "input": {
         "language": "lambda",
-        "source": "GT (SUCC ZERO) (SUCC ZERO)\n"
+        "source": "@! GT (SUCC ZERO) (SUCC ZERO);\n"
       },
       "run": {
         "stage": "decode",
@@ -88,7 +88,7 @@
       "name": "gt-greater",
       "input": {
         "language": "lambda",
-        "source": "GT (SUCC ZERO) (ZERO)\n"
+        "source": "@! GT (SUCC ZERO) (ZERO);\n"
       },
       "run": {
         "stage": "decode",
@@ -102,7 +102,7 @@
       "name": "gt-less",
       "input": {
         "language": "lambda",
-        "source": "GT (ZERO) (SUCC ZERO)\n"
+        "source": "@! GT (ZERO) (SUCC ZERO);\n"
       },
       "run": {
         "stage": "decode",
@@ -116,7 +116,7 @@
       "name": "iszero-nonzero",
       "input": {
         "language": "lambda",
-        "source": "ISZERO (SUCC (ZERO))\n"
+        "source": "@! ISZERO (SUCC (ZERO));\n"
       },
       "run": {
         "stage": "decode",
@@ -130,7 +130,7 @@
       "name": "iszero-zero",
       "input": {
         "language": "lambda",
-        "source": "ISZERO ZERO\n"
+        "source": "@! ISZERO ZERO;\n"
       },
       "run": {
         "stage": "decode",
@@ -144,7 +144,7 @@
       "name": "leq-equal",
       "input": {
         "language": "lambda",
-        "source": "LEQ (SUCC ZERO) (SUCC ZERO)\n"
+        "source": "@! LEQ (SUCC ZERO) (SUCC ZERO);\n"
       },
       "run": {
         "stage": "decode",
@@ -158,7 +158,7 @@
       "name": "leq-greater",
       "input": {
         "language": "lambda",
-        "source": "LEQ (SUCC (SUCC (ZERO))) (SUCC (ZERO))\n"
+        "source": "@! LEQ (SUCC (SUCC (ZERO))) (SUCC (ZERO));\n"
       },
       "run": {
         "stage": "decode",
@@ -172,7 +172,7 @@
       "name": "leq-less",
       "input": {
         "language": "lambda",
-        "source": "LEQ (SUCC (ZERO)) (SUCC (SUCC (ZERO)))\n"
+        "source": "@! LEQ (SUCC (ZERO)) (SUCC (SUCC (ZERO)));\n"
       },
       "run": {
         "stage": "decode",
@@ -186,7 +186,7 @@
       "name": "lt-equal",
       "input": {
         "language": "lambda",
-        "source": "LT (SUCC ZERO) (SUCC ZERO)\n"
+        "source": "@! LT (SUCC ZERO) (SUCC ZERO);\n"
       },
       "run": {
         "stage": "decode",
@@ -200,7 +200,7 @@
       "name": "lt-greater",
       "input": {
         "language": "lambda",
-        "source": "LT (SUCC ZERO) (ZERO)\n"
+        "source": "@! LT (SUCC ZERO) (ZERO);\n"
       },
       "run": {
         "stage": "decode",
@@ -214,7 +214,7 @@
       "name": "lt-less",
       "input": {
         "language": "lambda",
-        "source": "LT (ZERO) (SUCC ZERO)\n"
+        "source": "@! LT (ZERO) (SUCC ZERO);\n"
       },
       "run": {
         "stage": "decode",
@@ -228,7 +228,7 @@
       "name": "neq-equal",
       "input": {
         "language": "lambda",
-        "source": "NEQ (SUCC ZERO) (SUCC ZERO)\n"
+        "source": "@! NEQ (SUCC ZERO) (SUCC ZERO);\n"
       },
       "run": {
         "stage": "decode",
@@ -242,7 +242,7 @@
       "name": "neq-greater",
       "input": {
         "language": "lambda",
-        "source": "NEQ (SUCC ZERO) (ZERO)\n"
+        "source": "@! NEQ (SUCC ZERO) (ZERO);\n"
       },
       "run": {
         "stage": "decode",
@@ -256,7 +256,7 @@
       "name": "neq-less",
       "input": {
         "language": "lambda",
-        "source": "NEQ (ZERO) (SUCC ZERO)\n"
+        "source": "@! NEQ (ZERO) (SUCC ZERO);\n"
       },
       "run": {
         "stage": "decode",

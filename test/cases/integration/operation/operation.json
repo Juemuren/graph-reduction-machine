@@ -4,7 +4,7 @@
       "name": "compose",
       "input": {
         "language": "lambda",
-        "source": "COMPOSE SUCC (MUL TWO) THREE\n"
+        "source": "@! COMPOSE SUCC (MUL TWO) THREE;\n"
       },
       "run": {
         "stage": "decode",
@@ -18,7 +18,7 @@
       "name": "const",
       "input": {
         "language": "lambda",
-        "source": "CONST TWO THREE\n"
+        "source": "@! CONST TWO THREE;\n"
       },
       "run": {
         "stage": "decode",
@@ -32,7 +32,7 @@
       "name": "curry",
       "input": {
         "language": "lambda",
-        "source": "CURRY (\\p -> SUB (FST p) (SND p)) FIVE TWO\n"
+        "source": "@! CURRY (\\p -> SUB (FST p) (SND p)) FIVE TWO;\n"
       },
       "run": {
         "stage": "decode",
@@ -46,7 +46,7 @@
       "name": "flip",
       "input": {
         "language": "lambda",
-        "source": "FLIP SUB TWO FIVE\n"
+        "source": "@! FLIP SUB TWO FIVE;\n"
       },
       "run": {
         "stage": "decode",
@@ -60,7 +60,7 @@
       "name": "function-argument",
       "input": {
         "language": "lambda",
-        "source": "(\\apply -> apply SUCC ONE) (\\f -> \\x -> f x)\n"
+        "source": "@! (\\apply -> apply SUCC ONE) (\\f -> \\x -> f x);\n"
       },
       "run": {
         "stage": "decode",
@@ -74,7 +74,7 @@
       "name": "function-result",
       "input": {
         "language": "lambda",
-        "source": "(\\make -> (make ONE) (SUCC ONE)) (\\x -> \\y -> ADD x y)\n"
+        "source": "@! (\\make -> (make ONE) (SUCC ONE)) (\\x -> \\y -> ADD x y);\n"
       },
       "run": {
         "stage": "decode",
@@ -88,7 +88,7 @@
       "name": "id",
       "input": {
         "language": "lambda",
-        "source": "ID TWO\n"
+        "source": "@! ID TWO;\n"
       },
       "run": {
         "stage": "decode",
@@ -102,7 +102,7 @@
       "name": "lift2",
       "input": {
         "language": "lambda",
-        "source": "LIFT2 ADD SUCC (\\n -> MUL n TWO) THREE\n"
+        "source": "@! LIFT2 ADD SUCC (\\n -> MUL n TWO) THREE;\n"
       },
       "run": {
         "stage": "decode",
@@ -116,7 +116,7 @@
       "name": "partial-application",
       "input": {
         "language": "lambda",
-        "source": "(\\apply -> apply (SUCC ONE)) ((\\f -> \\x -> f x) SUCC)\n"
+        "source": "@! (\\apply -> apply (SUCC ONE)) ((\\f -> \\x -> f x) SUCC);\n"
       },
       "run": {
         "stage": "decode",
@@ -130,7 +130,7 @@
       "name": "uncurry",
       "input": {
         "language": "lambda",
-        "source": "UNCURRY SUB (PAIR FIVE TWO)\n"
+        "source": "@! UNCURRY SUB (PAIR FIVE TWO);\n"
       },
       "run": {
         "stage": "decode",

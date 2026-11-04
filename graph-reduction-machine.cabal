@@ -11,6 +11,7 @@ extra-source-files:
   , lib/*.lambda
   , test/cases/schema.json
   , test/cases/**/*.json
+  , test/cases/compiler/modules/*.lambda
 
 custom-setup
   setup-depends:
@@ -28,6 +29,7 @@ library
     , CoreLambda.Abs
     , CoreLambda.Par
     , CoreLambda.Print
+    , ModuleLoader
     , PureLambda.Abs
     , PureLambda.Par
     , PureLambda.Print
@@ -39,6 +41,7 @@ library
     , PureLambda.Lex
     , Graph.Lex
     , LibrarySource
+    , ModuleSource
   build-depends:
       base >=4.16 && <5
     , array

@@ -1,0 +1,60 @@
+{
+  "cases": [
+    {
+      "name": "local-definition",
+      "input": {
+        "language": "lambda",
+        "source": "identity = \\x -> x; @! identity TWO;"
+      },
+      "run": {
+        "stage": "decode",
+        "type": "natural"
+      },
+      "expect": {
+        "value": "2"
+      }
+    },
+    {
+      "name": "forward-definition",
+      "input": {
+        "language": "lambda",
+        "source": "first = second; second = THREE; @! first;"
+      },
+      "run": {
+        "stage": "decode",
+        "type": "natural"
+      },
+      "expect": {
+        "value": "3"
+      }
+    },
+    {
+      "name": "lambda-shadows-definition",
+      "input": {
+        "language": "lambda",
+        "source": "x = ONE; @! (\\x -> x) TWO;"
+      },
+      "run": {
+        "stage": "decode",
+        "type": "natural"
+      },
+      "expect": {
+        "value": "2"
+      }
+    },
+    {
+      "name": "import-export",
+      "input": {
+        "language": "lambda",
+        "source": "@< \"lib/division.lambda\" (divMod); @! FST (divMod FIVE TWO);"
+      },
+      "run": {
+        "stage": "decode",
+        "type": "natural"
+      },
+      "expect": {
+        "value": "2"
+      }
+    }
+  ]
+}

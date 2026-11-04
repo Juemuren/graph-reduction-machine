@@ -1,1 +1,1 @@
-\m -> \n -> ISZERO (SUB m n)
+@> LEQ = \m -> \n -> ISZERO (SUB m n);

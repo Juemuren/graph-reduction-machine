@@ -1,1 +1,1 @@
-\p -> \q -> ZLEQ q p
+@> ZGEQ = \p -> \q -> ZLEQ q p;

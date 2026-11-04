@@ -1,1 +1,1 @@
-\p -> \q -> NOT (QEQ p q)
+@> QNEQ = \p -> \q -> NOT (QEQ p q);

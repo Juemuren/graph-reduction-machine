@@ -2,13 +2,28 @@
 
 module TestSupport (Suite (..), runSuite) where
 
-import Compiler (Reduction (..), compile, compileSourceWith, reduceSource)
+import Compiler (
+  Reduction (..),
+  compile,
+  compileSourceWith,
+  compileSourceWithModules,
+  reduceSource,
+ )
 import Control.Monad (forM_, unless, void, when)
 import qualified CoreLambda.Par as Core
-import Data.Aeson (FromJSON (..), Result (..), Value, eitherDecode, fromJSON, withObject, (.:), (.:?))
+import Data.Aeson (
+  FromJSON (..),
+  Result (..),
+  Value,
+  eitherDecode,
+  fromJSON,
+  withObject,
+  (.:),
+  (.:?),
+ )
 import qualified Data.ByteString.Lazy as ByteString
 import Data.JSON.JSONSchema (validate)
-import Data.List (nub, sort)
+import Data.List (isInfixOf, nub, sort)
 import Data.Maybe (catMaybes, fromMaybe, isJust, isNothing)
 import Data.Ratio (denominator, numerator)
 import qualified Graph.Abs as Graph
@@ -22,6 +37,7 @@ import Interpreter (
   interpret,
   interpretSource,
  )
+import ModuleLoader (loadModuleSources)
 import qualified PureLambda.Abs as Pure
 import qualified PureLambda.Par as Pure
 import System.Directory (listDirectory)
@@ -94,7 +110,9 @@ runSuite suite = do
     bytes <- ByteString.readFile path
     fixture <- unwrap path (eitherDecode bytes :: Either String Value)
     case validate schema fixture of
-      Left problems -> die (path ++ ": JSON Schema validation failed:\n" ++ unlines (map show problems))
+      Left problems ->
+        die
+          (path ++ ": JSON Schema validation failed:\n" ++ unlines (map show problems))
       Right () -> pure ()
     CaseFile cases <- case fromJSON fixture of
       Error problem -> die (path ++ ": " ++ problem)
@@ -107,11 +125,32 @@ runSuite suite = do
       let label = path ++ ":" ++ name
       runCase suite label testCase
       putStrLn (label ++ ": PASS")
+  case suite of
+    CompilerSuite -> testModuleFile
+    _ -> pure ()
   putStrLn (suiteName suite ++ " tests passed")
  where
   jsonFiles directory = do
     names <- listDirectory directory
     pure (sort [directory </> name | name <- names, takeExtension name == ".json"])
+
+testModuleFile :: IO ()
+testModuleFile = do
+  let path = "test/cases/compiler/modules/program.lambda"
+  source <- readFile path
+  modules <- loadModuleSources path source >>= unwrap path
+  graph <- unwrap path (compileSourceWithModules BetaEta modules path source)
+  decoded <- unwrap path (decodeNatural 100000 graph)
+  assertEqual path (Just 2) decoded
+  let privateImport = "@< \"./base.lambda\" (helper); @! ONE;"
+  case compileSourceWithModules BetaEta modules path privateImport of
+    Left problem | "does not export helper" `isInfixOf` problem -> pure ()
+    Left problem -> die (path ++ ": unexpected error: " ++ problem)
+    Right _ -> die (path ++ ": private name was imported")
+  case compileSourceWithModules BetaEta modules path "name = ONE" of
+    Left _ -> pure ()
+    Right _ -> die (path ++ ": definition without semicolon was accepted")
+  putStrLn (path ++ ": PASS")
 
 suiteName :: Suite -> String
 suiteName CompilerSuite = "compiler"
@@ -136,7 +175,7 @@ runCase suite label (TestCase _ (Input language source) spec expected) = do
       assertParsed label source value
     (CompilerSuite, "lambda", "reduce", ExpectedValue value) -> do
       when (isNothing (runDisableReduce spec)) $
-        assertReduced label value (reduceSource source)
+        assertReduced label value (reduceSource (asProgram source))
       output <- runCompiler label (compilerOptions "reduce" spec) source
       assertReduced label value (Pure.pExp (Pure.myLexer output))
     (CompilerSuite, "lambda", "compile", ExpectedGraph graph) -> do
@@ -146,7 +185,7 @@ runCase suite label (TestCase _ (Input language source) spec expected) = do
       output <- runCompiler label (compilerOptions "compile" spec) source
       assertEqual label (normalizeGraph graph) (normalizeGraph output)
     (CompilerSuite, "lambda", "compile", ExpectedError problem) ->
-      assertError label problem (compileSourceWith reduction source)
+      assertError label problem (compileSourceWith reduction (asProgram source))
     (InterpreterSuite, "ski", "interpret", ExpectedGraph graph) -> do
       actual <- assertGraph label graph (interpretSource limit source)
       again <- unwrap label (interpretSource limit actual)
@@ -184,11 +223,17 @@ compilerOptions stage spec =
 
 runCompiler :: String -> [String] -> String -> IO String
 runCompiler label options source = do
+  let program = asProgram source
   (status, output, problem) <-
-    readProcessWithExitCode "lambda-to-graph" options source
+    readProcessWithExitCode "lambda-to-graph" options program
   case status of
     ExitSuccess -> pure output
     _ -> die (label ++ ": " ++ problem)
+
+asProgram :: String -> String
+asProgram source
+  | any (`elem` ("@=;" :: String)) source = source
+  | otherwise = "@! " ++ source ++ ";"
 
 assertDecodeCliError :: String -> String -> RunSpec -> Int -> String -> IO ()
 assertDecodeCliError label source spec limit expected = do

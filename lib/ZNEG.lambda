@@ -1,1 +1,1 @@
-\p -> PAIR (SND p) (FST p)
+@> ZNEG = \p -> PAIR (SND p) (FST p);

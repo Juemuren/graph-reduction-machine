@@ -1,1 +1,1 @@
-\n -> ZTOQ (NTOZ n)
+@> NTOQ = \n -> ZTOQ (NTOZ n);

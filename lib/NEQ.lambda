@@ -1,1 +1,1 @@
-\m -> \n -> NOT (EQ m n)
+@> NEQ = \m -> \n -> NOT (EQ m n);

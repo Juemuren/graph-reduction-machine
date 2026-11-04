@@ -4,7 +4,7 @@
       "name": "false",
       "input": {
         "language": "lambda",
-        "source": "IF FALSE (SUCC ZERO) ZERO\n"
+        "source": "@! IF FALSE (SUCC ZERO) ZERO;\n"
       },
       "run": {
         "stage": "decode",
@@ -18,7 +18,7 @@
       "name": "true",
       "input": {
         "language": "lambda",
-        "source": "IF TRUE (SUCC ZERO) ((\\x -> x x) (\\x -> x x))\n"
+        "source": "@! IF TRUE (SUCC ZERO) ((\\x -> x x) (\\x -> x x));\n"
       },
       "run": {
         "stage": "decode",

@@ -1,1 +1,1 @@
-\p -> \q -> IF (ZLT (ZMUL (SND p) (SND q)) (NTOZ ZERO)) (ZGEQ (ZMUL (FST p) (SND q)) (ZMUL (FST q) (SND p))) (ZLEQ (ZMUL (FST p) (SND q)) (ZMUL (FST q) (SND p)))
+@> QLEQ = \p -> \q -> IF (ZLT (ZMUL (SND p) (SND q)) (NTOZ ZERO)) (ZGEQ (ZMUL (FST p) (SND q)) (ZMUL (FST q) (SND p))) (ZLEQ (ZMUL (FST p) (SND q)) (ZMUL (FST q) (SND p)));

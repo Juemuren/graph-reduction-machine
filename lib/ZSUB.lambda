@@ -1,1 +1,1 @@
-\p -> \q -> PAIR (ADD (FST p) (SND q)) (ADD (SND p) (FST q))
+@> ZSUB = \p -> \q -> PAIR (ADD (FST p) (SND q)) (ADD (SND p) (FST q));

@@ -1,1 +1,1 @@
-\p -> PAIR (SUB (FST p) (SND p)) (SUB (SND p) (FST p))
+@> ZNORM = \p -> PAIR (SUB (FST p) (SND p)) (SUB (SND p) (FST p));

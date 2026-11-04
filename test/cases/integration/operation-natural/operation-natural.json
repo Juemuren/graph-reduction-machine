@@ -4,7 +4,7 @@
       "name": "add",
       "input": {
         "language": "lambda",
-        "source": "ADD (SUCC (ZERO)) (SUCC (SUCC (ZERO)))\n"
+        "source": "@! ADD (SUCC (ZERO)) (SUCC (SUCC (ZERO)));\n"
       },
       "run": {
         "stage": "decode",
@@ -18,7 +18,7 @@
       "name": "div-less",
       "input": {
         "language": "lambda",
-        "source": "DIV (SUCC (ZERO)) (SUCC (SUCC (ZERO)))\n"
+        "source": "@! DIV (SUCC (ZERO)) (SUCC (SUCC (ZERO)));\n"
       },
       "run": {
         "stage": "decode",
@@ -32,7 +32,7 @@
       "name": "div-zero",
       "input": {
         "language": "lambda",
-        "source": "DIV (SUCC (SUCC (ZERO))) ZERO\n"
+        "source": "@! DIV (SUCC (SUCC (ZERO))) ZERO;\n"
       },
       "run": {
         "stage": "decode",
@@ -46,7 +46,7 @@
       "name": "div",
       "input": {
         "language": "lambda",
-        "source": "DIV (SUCC (SUCC (SUCC (ZERO)))) (SUCC (SUCC (ZERO)))\n"
+        "source": "@! DIV (SUCC (SUCC (SUCC (ZERO)))) (SUCC (SUCC (ZERO)));\n"
       },
       "run": {
         "stage": "decode",
@@ -60,7 +60,7 @@
       "name": "fact-one",
       "input": {
         "language": "lambda",
-        "source": "FACT (SUCC (ZERO))\n"
+        "source": "@! FACT (SUCC (ZERO));\n"
       },
       "run": {
         "stage": "decode",
@@ -74,7 +74,7 @@
       "name": "fact-three",
       "input": {
         "language": "lambda",
-        "source": "FACT (SUCC (SUCC (SUCC (ZERO))))\n"
+        "source": "@! FACT (SUCC (SUCC (SUCC (ZERO))));\n"
       },
       "run": {
         "stage": "decode",
@@ -88,7 +88,7 @@
       "name": "fact-zero",
       "input": {
         "language": "lambda",
-        "source": "FACT (ZERO)\n"
+        "source": "@! FACT (ZERO);\n"
       },
       "run": {
         "stage": "decode",
@@ -102,7 +102,7 @@
       "name": "gcd-coprime",
       "input": {
         "language": "lambda",
-        "source": "GCD (SUCC (SUCC (ZERO))) (SUCC (SUCC (SUCC (ZERO))))\n"
+        "source": "@! GCD (SUCC (SUCC (ZERO))) (SUCC (SUCC (SUCC (ZERO))));\n"
       },
       "run": {
         "stage": "decode",
@@ -116,7 +116,7 @@
       "name": "gcd-divides",
       "input": {
         "language": "lambda",
-        "source": "GCD (SUCC (SUCC (SUCC (SUCC (ZERO))))) (SUCC (SUCC (ZERO)))\n"
+        "source": "@! GCD (SUCC (SUCC (SUCC (SUCC (ZERO))))) (SUCC (SUCC (ZERO)));\n"
       },
       "run": {
         "stage": "decode",
@@ -130,7 +130,7 @@
       "name": "gcd-reversed",
       "input": {
         "language": "lambda",
-        "source": "GCD (SUCC (SUCC (ZERO))) (SUCC (SUCC (SUCC (SUCC (ZERO)))))\n"
+        "source": "@! GCD (SUCC (SUCC (ZERO))) (SUCC (SUCC (SUCC (SUCC (ZERO)))));\n"
       },
       "run": {
         "stage": "decode",
@@ -144,7 +144,7 @@
       "name": "gcd-zero-both",
       "input": {
         "language": "lambda",
-        "source": "GCD (ZERO) (ZERO)\n"
+        "source": "@! GCD (ZERO) (ZERO);\n"
       },
       "run": {
         "stage": "decode",
@@ -158,7 +158,7 @@
       "name": "gcd-zero-first",
       "input": {
         "language": "lambda",
-        "source": "GCD (ZERO) (SUCC (SUCC (SUCC (ZERO))))\n"
+        "source": "@! GCD (ZERO) (SUCC (SUCC (SUCC (ZERO))));\n"
       },
       "run": {
         "stage": "decode",
@@ -172,7 +172,7 @@
       "name": "gcd-zero-second",
       "input": {
         "language": "lambda",
-        "source": "GCD (SUCC (SUCC (SUCC (ZERO)))) (ZERO)\n"
+        "source": "@! GCD (SUCC (SUCC (SUCC (ZERO)))) (ZERO);\n"
       },
       "run": {
         "stage": "decode",
@@ -186,7 +186,7 @@
       "name": "lcm-coprime",
       "input": {
         "language": "lambda",
-        "source": "LCM (SUCC (SUCC (ZERO))) (SUCC (SUCC (SUCC (ZERO))))\n"
+        "source": "@! LCM (SUCC (SUCC (ZERO))) (SUCC (SUCC (SUCC (ZERO))));\n"
       },
       "run": {
         "stage": "decode",
@@ -200,7 +200,7 @@
       "name": "lcm-divides",
       "input": {
         "language": "lambda",
-        "source": "LCM (SUCC (SUCC (ZERO))) (SUCC (SUCC (SUCC (SUCC (ZERO)))))\n"
+        "source": "@! LCM (SUCC (SUCC (ZERO))) (SUCC (SUCC (SUCC (SUCC (ZERO)))));\n"
       },
       "run": {
         "stage": "decode",
@@ -214,7 +214,7 @@
       "name": "lcm-reversed",
       "input": {
         "language": "lambda",
-        "source": "LCM (SUCC (SUCC (SUCC (SUCC (ZERO))))) (SUCC (SUCC (ZERO)))\n"
+        "source": "@! LCM (SUCC (SUCC (SUCC (SUCC (ZERO))))) (SUCC (SUCC (ZERO)));\n"
       },
       "run": {
         "stage": "decode",
@@ -228,7 +228,7 @@
       "name": "lcm-zero-both",
       "input": {
         "language": "lambda",
-        "source": "LCM ZERO ZERO\n"
+        "source": "@! LCM ZERO ZERO;\n"
       },
       "run": {
         "stage": "decode",
@@ -242,7 +242,7 @@
       "name": "lcm-zero-first",
       "input": {
         "language": "lambda",
-        "source": "LCM ZERO (SUCC (SUCC (SUCC (ZERO))))\n"
+        "source": "@! LCM ZERO (SUCC (SUCC (SUCC (ZERO))));\n"
       },
       "run": {
         "stage": "decode",
@@ -256,7 +256,7 @@
       "name": "lcm-zero-second",
       "input": {
         "language": "lambda",
-        "source": "LCM (SUCC (SUCC (SUCC (ZERO)))) ZERO\n"
+        "source": "@! LCM (SUCC (SUCC (SUCC (ZERO)))) ZERO;\n"
       },
       "run": {
         "stage": "decode",
@@ -270,7 +270,7 @@
       "name": "mod-exact",
       "input": {
         "language": "lambda",
-        "source": "MOD (SUCC (SUCC (ZERO))) (SUCC (ZERO))\n"
+        "source": "@! MOD (SUCC (SUCC (ZERO))) (SUCC (ZERO));\n"
       },
       "run": {
         "stage": "decode",
@@ -284,7 +284,7 @@
       "name": "mod-less",
       "input": {
         "language": "lambda",
-        "source": "MOD (SUCC ZERO) (SUCC (SUCC ZERO))\n"
+        "source": "@! MOD (SUCC ZERO) (SUCC (SUCC ZERO));\n"
       },
       "run": {
         "stage": "decode",
@@ -298,7 +298,7 @@
       "name": "mod-zero",
       "input": {
         "language": "lambda",
-        "source": "MOD (SUCC (SUCC (ZERO))) ZERO\n"
+        "source": "@! MOD (SUCC (SUCC (ZERO))) ZERO;\n"
       },
       "run": {
         "stage": "decode",
@@ -312,7 +312,7 @@
       "name": "mod",
       "input": {
         "language": "lambda",
-        "source": "MOD (SUCC (SUCC (SUCC (ZERO)))) (SUCC (SUCC (ZERO)))\n"
+        "source": "@! MOD (SUCC (SUCC (SUCC (ZERO)))) (SUCC (SUCC (ZERO)));\n"
       },
       "run": {
         "stage": "decode",
@@ -326,7 +326,7 @@
       "name": "mul",
       "input": {
         "language": "lambda",
-        "source": "MUL (SUCC (SUCC (ZERO))) (SUCC (SUCC (SUCC (ZERO))))\n"
+        "source": "@! MUL (SUCC (SUCC (ZERO))) (SUCC (SUCC (SUCC (ZERO))));\n"
       },
       "run": {
         "stage": "decode",
@@ -340,7 +340,7 @@
       "name": "pow",
       "input": {
         "language": "lambda",
-        "source": "POW (SUCC (SUCC (ZERO))) (SUCC (SUCC (SUCC (ZERO))))\n"
+        "source": "@! POW (SUCC (SUCC (ZERO))) (SUCC (SUCC (SUCC (ZERO))));\n"
       },
       "run": {
         "stage": "decode",
@@ -354,49 +354,7 @@
       "name": "pred",
       "input": {
         "language": "lambda",
-        "source": "PRED (ZERO)\n"
-      },
-      "run": {
-        "stage": "decode",
-        "type": "natural"
-      },
-      "expect": {
-        "value": "0"
-      }
-    },
-    {
-      "name": "step-carry",
-      "input": {
-        "language": "lambda",
-        "source": "SND (STEP TWO (PAIR ZERO ZERO))\n"
-      },
-      "run": {
-        "stage": "decode",
-        "type": "natural"
-      },
-      "expect": {
-        "value": "1"
-      }
-    },
-    {
-      "name": "step-quotient",
-      "input": {
-        "language": "lambda",
-        "source": "FST (STEP TWO (PAIR ZERO ONE))\n"
-      },
-      "run": {
-        "stage": "decode",
-        "type": "natural"
-      },
-      "expect": {
-        "value": "1"
-      }
-    },
-    {
-      "name": "step-remainder",
-      "input": {
-        "language": "lambda",
-        "source": "SND (STEP TWO (PAIR ZERO ONE))\n"
+        "source": "@! PRED (ZERO);\n"
       },
       "run": {
         "stage": "decode",
@@ -410,7 +368,7 @@
       "name": "sub",
       "input": {
         "language": "lambda",
-        "source": "SUB (SUCC (SUCC (ZERO))) (SUCC (SUCC (SUCC (SUCC (SUCC (ZERO))))))\n"
+        "source": "@! SUB (SUCC (SUCC (ZERO))) (SUCC (SUCC (SUCC (SUCC (SUCC (ZERO))))));\n"
       },
       "run": {
         "stage": "decode",

@@ -1,0 +1,2 @@
+@< "./base.lambda" (identity);
+@! identity TWO;

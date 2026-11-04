@@ -1,4 +1,4 @@
-\p ->
+@> QNORM = \p ->
   (\a ->
     (\b ->
       (\g ->
@@ -9,4 +9,4 @@
           (NTOZ (DIV (ADD (FST b) (SND b)) g)))
       (GCD (ADD (FST a) (SND a)) (ADD (FST b) (SND b))))
     (ZNORM (SND p)))
-  (ZNORM (FST p))
+  (ZNORM (FST p));

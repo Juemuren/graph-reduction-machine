@@ -1,1 +1,1 @@
-\f -> \p -> f (FST p) (SND p)
+@> UNCURRY = \f -> \p -> f (FST p) (SND p);

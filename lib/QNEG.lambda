@@ -1,1 +1,1 @@
-\q -> PAIR (ZNEG (FST q)) (SND q)
+@> QNEG = \q -> PAIR (ZNEG (FST q)) (SND q);

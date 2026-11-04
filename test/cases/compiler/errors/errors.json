@@ -14,6 +14,84 @@
       }
     },
     {
+      "name": "private-name-hidden",
+      "input": {
+        "language": "lambda",
+        "source": "@< \"lib/division.lambda\" (divMod); @! step TWO (PAIR ZERO ZERO);"
+      },
+      "run": {
+        "stage": "compile"
+      },
+      "expect": {
+        "error": "free variable(s): step"
+      }
+    },
+    {
+      "name": "cyclic-definitions",
+      "input": {
+        "language": "lambda",
+        "source": "a = b; b = a; @! a;"
+      },
+      "run": {
+        "stage": "compile"
+      },
+      "expect": {
+        "error": "cyclic definition: a -> b -> a"
+      }
+    },
+    {
+      "name": "missing-entry",
+      "input": {
+        "language": "lambda",
+        "source": "x = ONE;"
+      },
+      "run": {
+        "stage": "compile"
+      },
+      "expect": {
+        "error": "module has no final expression"
+      }
+    },
+    {
+      "name": "duplicate-definition",
+      "input": {
+        "language": "lambda",
+        "source": "x = ONE; x = TWO; @! x;"
+      },
+      "run": {
+        "stage": "compile"
+      },
+      "expect": {
+        "error": "duplicate definition: x"
+      }
+    },
+    {
+      "name": "duplicate-entry",
+      "input": {
+        "language": "lambda",
+        "source": "@! ONE; @! TWO;"
+      },
+      "run": {
+        "stage": "compile"
+      },
+      "expect": {
+        "error": "duplicate program entry"
+      }
+    },
+    {
+      "name": "entry-must-be-last",
+      "input": {
+        "language": "lambda",
+        "source": "@! ONE; x = TWO;"
+      },
+      "run": {
+        "stage": "compile"
+      },
+      "expect": {
+        "error": "program entry must be last"
+      }
+    },
+    {
       "name": "syntax-error",
       "input": {
         "language": "lambda",
@@ -23,7 +101,7 @@
         "stage": "compile"
       },
       "expect": {
-        "error": "syntax error at end of file"
+        "error": "syntax error at line 2, column 1 before `;'"
       }
     }
   ]

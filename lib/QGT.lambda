@@ -1,1 +1,1 @@
-\p -> \q -> QLT q p
+@> QGT = \p -> \q -> QLT q p;

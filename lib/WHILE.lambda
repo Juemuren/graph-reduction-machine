@@ -1,1 +1,1 @@
-\c -> \s -> \i -> Y (\l -> \x -> IF (c x) (l (s x)) x) i
+@> WHILE = \c -> \s -> \i -> Y (\l -> \x -> IF (c x) (l (s x)) x) i;

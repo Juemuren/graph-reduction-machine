@@ -4,7 +4,7 @@
       "name": "int-neg",
       "input": {
         "language": "lambda",
-        "source": "PAIR ZERO (SUCC (SUCC (SUCC (SUCC (ZERO)))))\n"
+        "source": "@! PAIR ZERO (SUCC (SUCC (SUCC (SUCC (ZERO)))));\n"
       },
       "run": {
         "stage": "decode",
@@ -18,7 +18,7 @@
       "name": "int-pos",
       "input": {
         "language": "lambda",
-        "source": "PAIR (SUCC (SUCC (SUCC (ZERO)))) ZERO\n"
+        "source": "@! PAIR (SUCC (SUCC (SUCC (ZERO)))) ZERO;\n"
       },
       "run": {
         "stage": "decode",
@@ -32,7 +32,7 @@
       "name": "zero",
       "input": {
         "language": "lambda",
-        "source": "PAIR ZERO (ZERO)\n"
+        "source": "@! PAIR ZERO (ZERO);\n"
       },
       "run": {
         "stage": "decode",

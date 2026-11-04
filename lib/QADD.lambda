@@ -1,1 +1,1 @@
-\p -> \q -> PAIR (ZADD (ZMUL (FST p) (SND q)) (ZMUL (FST q) (SND p))) (ZMUL (SND p) (SND q))
+@> QADD = \p -> \q -> PAIR (ZADD (ZMUL (FST p) (SND q)) (ZMUL (FST q) (SND p))) (ZMUL (SND p) (SND q));

@@ -4,7 +4,7 @@
       "name": "zabs-mixed",
       "input": {
         "language": "lambda",
-        "source": "ZABS (PAIR (SUCC ZERO) (SUCC (SUCC (SUCC ZERO))))\n"
+        "source": "@! ZABS (PAIR (SUCC ZERO) (SUCC (SUCC (SUCC ZERO))));\n"
       },
       "run": {
         "stage": "decode",
@@ -18,7 +18,7 @@
       "name": "zabs-negative",
       "input": {
         "language": "lambda",
-        "source": "ZABS (PAIR ZERO (SUCC (SUCC (ZERO))))\n"
+        "source": "@! ZABS (PAIR ZERO (SUCC (SUCC (ZERO))));\n"
       },
       "run": {
         "stage": "decode",
@@ -32,7 +32,7 @@
       "name": "zabs-positive",
       "input": {
         "language": "lambda",
-        "source": "ZABS (PAIR (SUCC (SUCC (ZERO))) ZERO)\n"
+        "source": "@! ZABS (PAIR (SUCC (SUCC (ZERO))) ZERO);\n"
       },
       "run": {
         "stage": "decode",
@@ -46,7 +46,7 @@
       "name": "zneg",
       "input": {
         "language": "lambda",
-        "source": "ZNEG (PAIR (SUCC (SUCC (ZERO))) ZERO)\n"
+        "source": "@! ZNEG (PAIR (SUCC (SUCC (ZERO))) ZERO);\n"
       },
       "run": {
         "stage": "decode",
@@ -60,7 +60,7 @@
       "name": "zadd",
       "input": {
         "language": "lambda",
-        "source": "ZADD (PAIR (SUCC (SUCC (ZERO))) ZERO) (PAIR ZERO (SUCC (SUCC (SUCC (ZERO)))))\n"
+        "source": "@! ZADD (PAIR (SUCC (SUCC (ZERO))) ZERO) (PAIR ZERO (SUCC (SUCC (SUCC (ZERO)))));\n"
       },
       "run": {
         "stage": "decode",
@@ -74,7 +74,7 @@
       "name": "zmul",
       "input": {
         "language": "lambda",
-        "source": "ZMUL (PAIR ZERO (SUCC ZERO)) (PAIR (SUCC (SUCC ZERO)) ZERO)\n"
+        "source": "@! ZMUL (PAIR ZERO (SUCC ZERO)) (PAIR (SUCC (SUCC ZERO)) ZERO);\n"
       },
       "run": {
         "stage": "decode",
@@ -88,7 +88,7 @@
       "name": "zsub",
       "input": {
         "language": "lambda",
-        "source": "ZSUB (PAIR ZERO (SUCC (SUCC (ZERO)))) (PAIR ZERO (SUCC (SUCC (SUCC (SUCC (SUCC (ZERO)))))))\n"
+        "source": "@! ZSUB (PAIR ZERO (SUCC (SUCC (ZERO)))) (PAIR ZERO (SUCC (SUCC (SUCC (SUCC (SUCC (ZERO)))))));\n"
       },
       "run": {
         "stage": "decode",

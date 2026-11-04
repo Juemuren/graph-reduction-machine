@@ -4,7 +4,7 @@
       "name": "and",
       "input": {
         "language": "lambda",
-        "source": "AND TRUE FALSE\n"
+        "source": "@! AND TRUE FALSE;\n"
       },
       "run": {
         "stage": "decode",
@@ -18,7 +18,7 @@
       "name": "not",
       "input": {
         "language": "lambda",
-        "source": "NOT FALSE\n"
+        "source": "@! NOT FALSE;\n"
       },
       "run": {
         "stage": "decode",
@@ -32,7 +32,7 @@
       "name": "or",
       "input": {
         "language": "lambda",
-        "source": "OR FALSE TRUE\n"
+        "source": "@! OR FALSE TRUE;\n"
       },
       "run": {
         "stage": "decode",

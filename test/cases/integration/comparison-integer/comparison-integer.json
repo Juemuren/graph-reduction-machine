@@ -4,7 +4,7 @@
       "name": "zeq-different",
       "input": {
         "language": "lambda",
-        "source": "ZEQ (NTOZ ONE) (NTOZ TWO)\n"
+        "source": "@! ZEQ (NTOZ ONE) (NTOZ TWO);\n"
       },
       "run": {
         "stage": "decode",
@@ -18,7 +18,7 @@
       "name": "zeq-equivalent",
       "input": {
         "language": "lambda",
-        "source": "ZEQ (PAIR TWO ONE) (NTOZ ONE)\n"
+        "source": "@! ZEQ (PAIR TWO ONE) (NTOZ ONE);\n"
       },
       "run": {
         "stage": "decode",
@@ -32,7 +32,7 @@
       "name": "zgeq",
       "input": {
         "language": "lambda",
-        "source": "ZGEQ (NTOZ ONE) (PAIR TWO ONE)\n"
+        "source": "@! ZGEQ (NTOZ ONE) (PAIR TWO ONE);\n"
       },
       "run": {
         "stage": "decode",
@@ -46,7 +46,7 @@
       "name": "zgt",
       "input": {
         "language": "lambda",
-        "source": "ZGT (NTOZ TWO) (NTOZ ONE)\n"
+        "source": "@! ZGT (NTOZ TWO) (NTOZ ONE);\n"
       },
       "run": {
         "stage": "decode",
@@ -60,7 +60,7 @@
       "name": "ziszero-nonzero",
       "input": {
         "language": "lambda",
-        "source": "ZISZERO (PAIR TWO ONE)\n"
+        "source": "@! ZISZERO (PAIR TWO ONE);\n"
       },
       "run": {
         "stage": "decode",
@@ -74,7 +74,7 @@
       "name": "ziszero-zero",
       "input": {
         "language": "lambda",
-        "source": "ZISZERO (PAIR ONE ONE)\n"
+        "source": "@! ZISZERO (PAIR ONE ONE);\n"
       },
       "run": {
         "stage": "decode",
@@ -88,7 +88,7 @@
       "name": "zleq-equal",
       "input": {
         "language": "lambda",
-        "source": "ZLEQ (PAIR TWO ONE) (NTOZ ONE)\n"
+        "source": "@! ZLEQ (PAIR TWO ONE) (NTOZ ONE);\n"
       },
       "run": {
         "stage": "decode",
@@ -102,7 +102,7 @@
       "name": "zleq-greater",
       "input": {
         "language": "lambda",
-        "source": "ZLEQ (NTOZ TWO) (NTOZ ONE)\n"
+        "source": "@! ZLEQ (NTOZ TWO) (NTOZ ONE);\n"
       },
       "run": {
         "stage": "decode",
@@ -116,7 +116,7 @@
       "name": "zlt-equal",
       "input": {
         "language": "lambda",
-        "source": "ZLT (PAIR TWO ONE) (NTOZ ONE)\n"
+        "source": "@! ZLT (PAIR TWO ONE) (NTOZ ONE);\n"
       },
       "run": {
         "stage": "decode",
@@ -130,7 +130,7 @@
       "name": "zlt-less",
       "input": {
         "language": "lambda",
-        "source": "ZLT (ZNEG (NTOZ ONE)) (NTOZ ZERO)\n"
+        "source": "@! ZLT (ZNEG (NTOZ ONE)) (NTOZ ZERO);\n"
       },
       "run": {
         "stage": "decode",
@@ -144,7 +144,7 @@
       "name": "zneq",
       "input": {
         "language": "lambda",
-        "source": "ZNEQ (NTOZ ONE) (NTOZ TWO)\n"
+        "source": "@! ZNEQ (NTOZ ONE) (NTOZ TWO);\n"
       },
       "run": {
         "stage": "decode",

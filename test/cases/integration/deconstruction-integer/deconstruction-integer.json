@@ -4,7 +4,7 @@
       "name": "znorm-negative-first",
       "input": {
         "language": "lambda",
-        "source": "FST (ZNORM (PAIR ONE THREE))\n"
+        "source": "@! FST (ZNORM (PAIR ONE THREE));\n"
       },
       "run": {
         "stage": "decode",
@@ -18,7 +18,7 @@
       "name": "znorm-negative-second",
       "input": {
         "language": "lambda",
-        "source": "SND (ZNORM (PAIR ONE THREE))\n"
+        "source": "@! SND (ZNORM (PAIR ONE THREE));\n"
       },
       "run": {
         "stage": "decode",
@@ -32,7 +32,7 @@
       "name": "znorm-positive-first",
       "input": {
         "language": "lambda",
-        "source": "FST (ZNORM (PAIR THREE ONE))\n"
+        "source": "@! FST (ZNORM (PAIR THREE ONE));\n"
       },
       "run": {
         "stage": "decode",
@@ -46,7 +46,7 @@
       "name": "znorm-positive-second",
       "input": {
         "language": "lambda",
-        "source": "SND (ZNORM (PAIR THREE ONE))\n"
+        "source": "@! SND (ZNORM (PAIR THREE ONE));\n"
       },
       "run": {
         "stage": "decode",
@@ -60,7 +60,7 @@
       "name": "znorm-zero-first",
       "input": {
         "language": "lambda",
-        "source": "FST (ZNORM (PAIR ONE ONE))\n"
+        "source": "@! FST (ZNORM (PAIR ONE ONE));\n"
       },
       "run": {
         "stage": "decode",
@@ -74,7 +74,7 @@
       "name": "znorm-zero-second",
       "input": {
         "language": "lambda",
-        "source": "SND (ZNORM (PAIR ONE ONE))\n"
+        "source": "@! SND (ZNORM (PAIR ONE ONE));\n"
       },
       "run": {
         "stage": "decode",

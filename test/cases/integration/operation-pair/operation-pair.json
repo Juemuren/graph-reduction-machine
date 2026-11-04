@@ -4,7 +4,7 @@
       "name": "fst",
       "input": {
         "language": "lambda",
-        "source": "EQ (FST (PAIR (SUCC (SUCC (ZERO))) (SUCC (SUCC (SUCC (SUCC (SUCC (ZERO)))))))) TWO\n"
+        "source": "@! EQ (FST (PAIR (SUCC (SUCC (ZERO))) (SUCC (SUCC (SUCC (SUCC (SUCC (ZERO)))))))) TWO;\n"
       },
       "run": {
         "stage": "decode",
@@ -18,7 +18,7 @@
       "name": "snd",
       "input": {
         "language": "lambda",
-        "source": "EQ (SND (PAIR (SUCC (SUCC (ZERO))) (SUCC (SUCC (SUCC (SUCC (SUCC (ZERO)))))))) FIVE\n"
+        "source": "@! EQ (SND (PAIR (SUCC (SUCC (ZERO))) (SUCC (SUCC (SUCC (SUCC (SUCC (ZERO)))))))) FIVE;\n"
       },
       "run": {
         "stage": "decode",

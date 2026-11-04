@@ -1,1 +1,1 @@
-\p -> \q -> ZLT q p
+@> ZGT = \p -> \q -> ZLT q p;

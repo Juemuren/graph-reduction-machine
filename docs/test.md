@@ -19,7 +19,7 @@ cabal test
       "name": "sequence-at-two",
       "input": {
         "language": "lambda",
-        "source": "\\n -> NTOQ n"
+        "source": "@! \\n -> NTOQ n;"
       },
       "run": {
         "stage": "decode",

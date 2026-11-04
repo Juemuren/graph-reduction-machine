@@ -1,1 +1,1 @@
-\m -> \n -> FST (WHILE (\p -> NOT (ISZERO (SND p))) (\p -> PAIR (SND p) (MOD (FST p) (SND p))) (PAIR m n))
+@> GCD = \m -> \n -> FST (WHILE (\p -> NOT (ISZERO (SND p))) (\p -> PAIR (SND p) (MOD (FST p) (SND p))) (PAIR m n));
