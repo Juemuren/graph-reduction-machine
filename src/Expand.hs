@@ -10,6 +10,7 @@ expand expression = case expression of
   Core.EApp function argument -> Pure.EApp (expand function) (expand argument)
   Core.EAbs name body -> Pure.EAbs (pureName name) (expand body)
   Core.EZero -> encodeNatural 0
+  Core.EOne -> encodeNatural 1
   Core.ESucc -> naturalSuccessor
   Core.EPred -> naturalPredecessor
   Core.EAdd -> naturalAdd
@@ -37,11 +38,15 @@ expand expression = case expression of
   Core.EPair -> encodePair
   Core.EFst -> encodeFst
   Core.ESnd -> encodeSnd
+  Core.EInt -> integerFromNatural
   Core.ENeg -> integerNegate
   Core.EZAbs -> integerAbsolute
+  Core.EZNorm -> integerNormalize
   Core.EZAdd -> integerAdd
   Core.EZSub -> integerSubtract
   Core.EZMul -> integerMultiply
+  Core.ERat -> rationalFromInteger
+  Core.EQNorm -> rationalNormalize
   Core.EQAdd -> rationalAdd
   Core.EQSub -> rationalSubtract
   Core.EQMul -> rationalMultiply
@@ -176,6 +181,12 @@ encodeSnd = Pure.EAbs p (Pure.EApp (Pure.EVar p) selector)
   b = Pure.Name "b"
   selector = Pure.EAbs a (Pure.EAbs b (Pure.EVar b))
 
+-- λn.PAIR n ZERO
+integerFromNatural :: Pure.Exp
+integerFromNatural = Pure.EAbs n (pair (Pure.EVar n) (encodeNatural 0))
+ where
+  n = Pure.Name "n"
+
 -- λp.PAIR (SND p) (FST p)
 integerNegate :: Pure.Exp
 integerNegate = Pure.EAbs p body
@@ -198,6 +209,16 @@ integerAbsolute = Pure.EAbs p (pair magnitude (encodeNatural 0))
       (apply2 naturalSubtract first second)
       (apply2 naturalSubtract second first)
 
+-- λp.PAIR (SUB (FST p) (SND p)) (SUB (SND p) (FST p))
+integerNormalize :: Pure.Exp
+integerNormalize = Pure.EAbs p (pair positive negative)
+ where
+  p = Pure.Name "p"
+  first = Pure.EApp encodeFst (Pure.EVar p)
+  second = Pure.EApp encodeSnd (Pure.EVar p)
+  positive = apply2 naturalSubtract first second
+  negative = apply2 naturalSubtract second first
+
 -- λp.λq.PAIR (ADD (FST p) (FST q)) (ADD (SND p) (SND q))
 integerAdd :: Pure.Exp
 integerAdd = integerCombine encodeFst encodeSnd
@@ -216,6 +237,47 @@ integerMultiply = Pure.EAbs p (Pure.EAbs q (pair first second))
   product left right = apply2 naturalMul (component left p) (component right q)
   first = apply2 naturalAdd (product encodeFst encodeFst) (product encodeSnd encodeSnd)
   second = apply2 naturalAdd (product encodeFst encodeSnd) (product encodeSnd encodeFst)
+
+-- λz.PAIR z (INT ONE)
+rationalFromInteger :: Pure.Exp
+rationalFromInteger = Pure.EAbs z (pair (Pure.EVar z) one)
+ where
+  z = Pure.Name "z"
+  one = Pure.EApp integerFromNatural (encodeNatural 1)
+
+-- Normalize both integers, move the denominator's sign to the numerator,
+-- then divide both magnitudes by their greatest common divisor.
+-- The denominator must represent a nonzero integer.
+rationalNormalize :: Pure.Exp
+rationalNormalize =
+  Pure.EAbs
+    p
+    ( bind
+        a
+        normalizedNumerator
+        (bind b normalizedDenominator (bind g divisor result))
+    )
+ where
+  p = Pure.Name "p"
+  a = Pure.Name "a"
+  b = Pure.Name "b"
+  g = Pure.Name "g"
+  bind name value body = Pure.EApp (Pure.EAbs name body) value
+  normalizedNumerator = Pure.EApp integerNormalize (Pure.EApp encodeFst (Pure.EVar p))
+  normalizedDenominator = Pure.EApp integerNormalize (Pure.EApp encodeSnd (Pure.EVar p))
+  first = Pure.EApp encodeFst
+  second = Pure.EApp encodeSnd
+  magnitude value = apply2 naturalAdd (first value) (second value)
+  divisor = apply2 naturalGcd (magnitude (Pure.EVar a)) (magnitude (Pure.EVar b))
+  negativeDenominator = Pure.EApp naturalIsZero (first (Pure.EVar b))
+  signedNumerator =
+    Pure.EApp
+      (apply2 churchIf negativeDenominator (Pure.EApp integerNegate (Pure.EVar a)))
+      (Pure.EVar a)
+  numerator = pair (quotient (first signedNumerator)) (quotient (second signedNumerator))
+  denominator = Pure.EApp integerFromNatural (quotient (magnitude (Pure.EVar b)))
+  quotient value = apply2 naturalDivide value (Pure.EVar g)
+  result = pair numerator denominator
 
 -- (a/b) + (c/d) = (ad+cb)/(bd)
 rationalAdd :: Pure.Exp

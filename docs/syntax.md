@@ -139,6 +139,7 @@
 | 内置函数 | 展开式                                                          |
 | -------- | --------------------------------------------------------------- |
 | `ZERO`   | `\f -> \x -> x`                                                 |
+| `ONE`    | `\f -> \x -> f x`                                               |
 | `SUCC`   | `\n -> \f -> \x -> f (n f x)`                                   |
 | `PRED`   | `\n -> \f -> \x -> n (\g -> \h -> h (g f)) (\u -> x) (\u -> u)` |
 
@@ -158,9 +159,12 @@ SUCC (SUCC ZERO)
 
 以此类推。
 
-其中：
+<!-- TODO 考虑语法糖 -->
+
+因此：
 
 - `ZERO` 表示零
+- `ONE` 表示一
 - `SUCC a` 表示自然数 `a` 的后继
 - `PRED a` 表示自然数 `a` 的前驱。零的前驱仍为零
 
@@ -196,7 +200,7 @@ SUCC (SUCC ZERO)
 | `SUB`    | `\m -> \n -> n PRED m`                                                                                             |
 | `MUL`    | `\m -> \n -> \f -> m (n f)`                                                                                        |
 | `POW`    | `\m -> \n -> n m`                                                                                                  |
-| `FACT`   | `\n -> SND (FOR n (\p -> PAIR (SUCC (FST p)) (MUL (SUCC (FST p)) (SND p))) (PAIR ZERO (SUCC ZERO)))`               |
+| `FACT`   | `\n -> SND (FOR n (\p -> PAIR (SUCC (FST p)) (MUL (SUCC (FST p)) (SND p))) (PAIR ZERO ONE))`                       |
 | `STEP`   | `\n -> \p -> IF (LEQ n (SUCC (SND p))) (PAIR (SUCC (FST p)) (SUB (SUCC (SND p)) n)) (PAIR (FST p) (SUCC (SND p)))` |
 | `DIV`    | `\m -> \n -> FST (IF (ISZERO n) (PAIR ZERO m) (m (STEP n) (PAIR ZERO ZERO)))`                                      |
 | `MOD`    | `\m -> \n -> SND (IF (ISZERO n) (PAIR ZERO m) (m (STEP n) (PAIR ZERO ZERO)))`                                      |
@@ -218,6 +222,10 @@ SUCC (SUCC ZERO)
 
 #### 整数
 
+| 内置函数 | 展开式              |
+| -------- | ------------------- |
+| `INT`    | `\n -> PAIR n ZERO` |
+
 整数用自然数有序对表示，值为第一个自然数减去第二个自然数。
 
 即整数表示为
@@ -234,6 +242,10 @@ $$
 
 其中 `a` 和 `b` 都是自然数。
 
+因此：
+
+- `INT n` 将自然数 `n` 构造为整数
+
 #### 整数运算
 
 | 内置函数 | 展开式                                                                                                                 |
@@ -243,6 +255,7 @@ $$
 | `ZADD`   | `\p -> \q -> PAIR (ADD (FST p) (FST q)) (ADD (SND p) (SND q))`                                                         |
 | `ZSUB`   | `\p -> \q -> PAIR (ADD (FST p) (SND q)) (ADD (SND p) (FST q))`                                                         |
 | `ZMUL`   | `\p -> \q -> PAIR (ADD (MUL (FST p) (FST q)) (MUL (SND p) (SND q))) (ADD (MUL (FST p) (SND q)) (MUL (SND p) (FST q)))` |
+| `ZNORM`  | `\p -> PAIR (SUB (FST p) (SND p)) (SUB (SND p) (FST p))`                                                               |
 
 其中：
 
@@ -251,8 +264,13 @@ $$
 - `ZADD a b` 表示整数 `a` 和整数 `b` 的加法
 - `ZSUB a b` 表示整数 `a` 和整数 `b` 的减法
 - `ZMUL a b` 表示整数 `a` 和整数 `b` 的乘法
+- `ZNORM a` 将整数 `a` 化简为一个分量为零的有序对。零化简为 `PAIR ZERO ZERO`
 
 #### 有理数
+
+| 内置函数 | 展开式                   |
+| -------- | ------------------------ |
+| `RAT`    | `\z -> PAIR z (INT ONE)` |
 
 有理数用整数有序对表示，值为第一个整数除以第二个整数。
 
@@ -270,6 +288,10 @@ $$
 
 其中 `a` 是整数，`b` 是非零整数。
 
+因此：
+
+- `RAT z` 将整数 `z` 构造为有理数
+
 #### 有理数运算
 
 | 内置函数 | 展开式                                                                                         |
@@ -278,6 +300,7 @@ $$
 | `QSUB`   | `\p -> \q -> PAIR (ZSUB (ZMUL (FST p) (SND q)) (ZMUL (FST q) (SND p))) (ZMUL (SND p) (SND q))` |
 | `QMUL`   | `\p -> \q -> PAIR (ZMUL (FST p) (FST q)) (ZMUL (SND p) (SND q))`                               |
 | `QDIV`   | `\p -> \q -> PAIR (ZMUL (FST p) (SND q)) (ZMUL (SND p) (FST q))`                               |
+| `QNORM`  | 见下文                                                                                         |
 
 其中：
 
@@ -285,8 +308,27 @@ $$
 - `QSUB a b` 表示有理数 `a` 和有理数 `b` 的减法
 - `QMUL a b` 表示有理数 `a` 和有理数 `b` 的乘法
 - `QDIV a b` 表示有理数 `a` 和非零有理数 `b` 的除法
+- `QNORM a` 将有理数 `a` 化简为分母为正的最简分数
 
-有理数运算不会自动约分。
+`QNORM` 完整的展开为其丘奇编码展开式使用以下嵌套应用，其中 `a` 和 `b` 是已由 `ZNORM` 化简的分子与分母，`g` 是两者绝对值的最大公因数：
+
+```lambda
+\p ->
+  (\a -> (\b -> (\g ->
+    PAIR
+      (
+        PAIR
+        (DIV (FST (IF (ISZERO (FST b)) (NEG a) a)) g)
+        (DIV (SND (IF (ISZERO (FST b)) (NEG a) a)) g)
+      )
+      (INT (DIV (ADD (FST b) (SND b)) g)))
+    (GCD (ADD (FST a) (SND a)) (ADD (FST b) (SND b))))
+    (ZNORM (SND p)))
+    (ZNORM (FST p)
+  )
+```
+
+`QNORM` 的输入分母必须是非零整数。分子为零时，结果为 `PAIR (INT ZERO) (INT ONE)`。
 
 ### 表达式编译
 
