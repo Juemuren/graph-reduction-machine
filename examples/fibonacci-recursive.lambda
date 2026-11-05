@@ -1,4 +1,13 @@
 # Fibonacci(6) = 8
-# Using the Y fixed-point combinator
+# Using recursive
 
-@! Y (\fib -> \n -> IF (LEQ n ONE) n (ADD (fib (PRED n)) (fib (PRED (PRED n))))) SIX;
+fib = FIX (\fib -> \n ->
+    IF (LEQ n ONE)
+    n
+    (ADD
+        (fib (PRED n))
+        (fib (PRED (PRED n)))
+    )
+);
+
+@! fib SIX;

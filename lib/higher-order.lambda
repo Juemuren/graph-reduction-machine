@@ -8,5 +8,3 @@
 
 @> CURRY = \f -> \x -> \y -> f (PAIR x y);
 @> UNCURRY = \f -> \p -> f (FST p) (SND p);
-
-@> LIFT2 = \f -> \a -> \b -> \n -> f (a n) (b n);

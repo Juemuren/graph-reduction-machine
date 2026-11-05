@@ -1,0 +1,19 @@
+# Fibonacci(6) = 8
+# Using loop
+
+step = \p -> PAIR
+    (SND p)
+    (ADD
+        (FST p)
+        (SND p)
+    );
+
+init = PAIR ZERO ONE;
+
+fib = \n -> FST (
+    FOR n
+    step
+    init
+);
+
+@! fib SIX;

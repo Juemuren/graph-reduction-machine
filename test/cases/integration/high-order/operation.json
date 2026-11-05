@@ -99,20 +99,6 @@
       }
     },
     {
-      "name": "lift2",
-      "input": {
-        "language": "lambda",
-        "source": "@! LIFT2 ADD SUCC (\\n -> MUL n TWO) THREE;\n"
-      },
-      "run": {
-        "stage": "decode",
-        "type": "natural"
-      },
-      "expect": {
-        "value": "10"
-      }
-    },
-    {
       "name": "partial-application",
       "input": {
         "language": "lambda",
