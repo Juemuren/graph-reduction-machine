@@ -23,14 +23,9 @@
 
 使用 Haskell 编写语言服务器。
 
-语言服务器分为两个部分：
+语言服务的完整功能见 [lsp.md#功能](lsp.md#功能)。
 
-- 核心 λ 的语言服务器
-- SKI 图的语言服务器
-
-语言服务器的输入和输出都是 JSON。
-
-编译器的目录结构为：
+语言服务器的目录结构为：
 
 - 命令行入口位于 `app/LanguageServerMain.hs`
 - 模块入口位于 `src/LanguageServer.hs`
@@ -38,9 +33,9 @@
 
 语言服务器的模块拆分为：
 
-- `LanguageServer` 语言服务模块入口
-- `LanguageServer.Lambda` 核心 λ 的语言服务
-- `LanguageServer.Ski` SKI 图的语言服务
+- `LanguageServer`：配置并启动 `lsp` 服务，注册核心 λ 与 SKI 图的请求处理函数，获取文档内容，并协调导入文件的读取
+- `LanguageServer.Lambda`：核心 λ 的词法与语法分析、名称解析、补全、悬停和导入导出信息
+- `LanguageServer.Ski`：SKI 图的词法与语法分析、节点补全和悬停
 
 ## 编译器
 
@@ -58,7 +53,8 @@
 
 - `Compiler` 是编译和规约的入口
 - `Compiler.Expand` 解析模块、展开定义及内置函数
-- `Compiler.ModuleSource` 解析和校验模块结构；`Compiler.ModuleLoader` 加载导入的源码文件。
+- `Compiler.ModuleSource` 解析和校验模块结构
+- `Compiler.ModuleLoader` 加载导入的源码文件
 - `Compiler.LibrarySource` 在构建时嵌入标准库源码
 
 ## 解释器
