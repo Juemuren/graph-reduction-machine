@@ -48,7 +48,18 @@ runLanguageServer =
       , doInitialize = \env _ -> pure $ Right env
       , staticHandlers = const handlers
       , interpretHandler = \env -> Iso (runLspT env) liftIO
-      , options = defaultOptions
+      , options =
+          defaultOptions
+            { optTextDocumentSync =
+                Just
+                  ( LSP.TextDocumentSyncOptions
+                      (Just True)
+                      (Just LSP.TextDocumentSyncKind_Incremental)
+                      Nothing
+                      Nothing
+                      Nothing
+                  )
+            }
       }
 
 handlers :: Handlers (LspM ())
@@ -56,6 +67,9 @@ handlers =
   mconcat
     [ notificationHandler SMethod_Initialized $ \_ -> pure ()
     , notificationHandler SMethod_WorkspaceDidChangeConfiguration $ \_ -> pure ()
+    , notificationHandler SMethod_TextDocumentDidOpen $ \_ -> pure ()
+    , notificationHandler SMethod_TextDocumentDidChange $ \_ -> pure ()
+    , notificationHandler SMethod_TextDocumentDidClose $ \_ -> pure ()
     , requestHandler SMethod_TextDocumentCompletion $ \(TRequestMessage _ _ _ params) respond -> do
         items <- withDocument (toJSON params) $ \language source _ ->
           pure $ case language of
