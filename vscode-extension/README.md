@@ -33,3 +33,13 @@ npm ci
 npm run package
 code --install-extension graph-reduction-machine-syntax-0.3.0.vsix
 ```
+
+## 测试
+
+在本目录运行：
+
+```sh
+npm test
+```
+
+测试只检查核心 λ 与 SKI 图的补全和悬停功能。

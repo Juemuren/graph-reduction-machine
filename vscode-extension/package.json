@@ -3,6 +3,7 @@
   "displayName": "Graph Reduction Machine Syntax",
   "description": "Syntax highlighting, completion, and hover for Core Lambda and SKI graphs.",
   "version": "0.3.0",
+  "license": "MIT",
   "publisher": "graph-reduction-machine",
   "engines": {
     "vscode": "^1.82.0"
@@ -14,6 +15,7 @@
   ],
   "files": [
     "README.md",
+    "LICENSE.md",
     "language-configuration/*.json",
     "out/client/*.js",
     "out/server/*.js",
@@ -50,7 +52,9 @@
   "scripts": {
     "build": "tsc --noEmit -p tsconfig.json && esbuild client/extension.ts server/server.ts --bundle --platform=node --format=cjs --outdir=out --external:vscode",
     "prepackage": "npm run build",
-    "package": "vsce package --allow-missing-repository"
+    "package": "vsce package --allow-missing-repository",
+    "pretest": "npm run build",
+    "test": "node --test test/lsp.test.js"
   },
   "dependencies": {
     "vscode-languageclient": "^9.0.1",
@@ -62,6 +66,7 @@
     "@types/vscode": "^1.82.0",
     "@vscode/vsce": "^3.6.0",
     "esbuild": "^0.25.0",
-    "typescript": "^5.9.3"
+    "typescript": "^5.9.3",
+    "vscode-jsonrpc": "^8.2.0"
   }
 }
