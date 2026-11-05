@@ -7,7 +7,7 @@ test('SKI completes defined nodes and hovers their definitions', { timeout: 5000
     assert.deepEqual(initialization.capabilities.completionProvider.triggerCharacters, ['#']);
     assert.equal(initialization.capabilities.hoverProvider, true);
 
-    const { uri, text } = await loadFixture('ski-lsp-test.ski');
+    const { uri, text } = await loadFixture('ski/ski-lsp-test.ski');
     open(connection, uri, 'ski-graph', text);
     const items = await complete(connection, uri, 4, 6);
     assert.deepEqual(

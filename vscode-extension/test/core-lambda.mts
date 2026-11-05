@@ -6,7 +6,7 @@ test('Core Lambda completes visible names and explains definitions and imports',
   timeout: 5000,
 }, async () => {
   await withServer(async (connection) => {
-    const { uri, text } = await loadFixture('lambda-lsp-test.lambda');
+    const { uri, text } = await loadFixture('lambda/lambda-lsp-test.lambda');
     const lines = text.split(/\r?\n/);
     open(connection, uri, 'core-lambda', text);
 
@@ -29,7 +29,7 @@ test('Core Lambda completes visible names and explains definitions and imports',
     assert.equal(await hoverText(connection, uri, 5, lines[5].lastIndexOf('name')), '参数 name');
     assert.equal(await hover(connection, uri, 7, lines[7].indexOf('name')), null);
 
-    const { text: changedText } = await loadFixture('lambda-lsp-changed.lambda');
+    const { text: changedText } = await loadFixture('lambda/lambda-lsp-changed.lambda');
     const changed = changedText.split(/\r?\n/);
     connection.sendNotification('textDocument/didChange', {
       textDocument: { uri, version: 2 },
