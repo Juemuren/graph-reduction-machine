@@ -1,21 +1,31 @@
-const assert = require('node:assert/strict');
-const { spawn } = require('node:child_process');
-const path = require('node:path');
-const { test } = require('node:test');
-const {
-  createMessageConnection,
-  StreamMessageReader,
-  StreamMessageWriter,
-} = require('vscode-jsonrpc/node');
+import assert from 'node:assert/strict';
+import { spawn } from 'node:child_process';
+import { test } from 'node:test';
+import { fileURLToPath } from 'node:url';
+import type { MessageConnection } from 'vscode-jsonrpc';
+import jsonrpc from 'vscode-jsonrpc/node.js';
 
-const serverPath = path.join(__dirname, '..', 'out', 'server', 'server.js');
+const { createMessageConnection, StreamMessageReader, StreamMessageWriter } = jsonrpc;
 
-async function withServer(run) {
+const serverPath = fileURLToPath(new URL('../out/server/server.js', import.meta.url));
+
+type Initialization = {
+  capabilities: {
+    completionProvider: { triggerCharacters: string[] };
+    hoverProvider: boolean;
+  };
+};
+type Completion = { label: string; textEdit?: unknown };
+type Hover = { contents: { value: string } };
+
+async function withServer(
+  run: (connection: MessageConnection, initialization: Initialization) => Promise<void>,
+): Promise<void> {
   const server = spawn(process.execPath, [serverPath, '--stdio'], {
     stdio: ['pipe', 'pipe', 'pipe'],
   });
   let stderr = '';
-  server.stderr.setEncoding('utf8').on('data', (chunk) => {
+  server.stderr.setEncoding('utf8').on('data', (chunk: string) => {
     stderr += chunk;
   });
   const connection = createMessageConnection(
@@ -24,7 +34,7 @@ async function withServer(run) {
   );
   connection.listen();
   try {
-    const initialization = await connection.sendRequest('initialize', {
+    const initialization = await connection.sendRequest<Initialization>('initialize', {
       processId: process.pid,
       rootUri: null,
       capabilities: {},
@@ -32,7 +42,7 @@ async function withServer(run) {
     connection.sendNotification('initialized', {});
     await run(connection, initialization);
   } catch (error) {
-    if (stderr) error.message += `\nLanguage server stderr:\n${stderr}`;
+    if (stderr && error instanceof Error) error.message += `\nLanguage server stderr:\n${stderr}`;
     throw error;
   } finally {
     connection.dispose();
@@ -40,21 +50,40 @@ async function withServer(run) {
   }
 }
 
-function open(connection, uri, languageId, text) {
+async function hoverText(
+  connection: MessageConnection,
+  uri: string,
+  line: number,
+  character: number,
+): Promise<string | null> {
+  return (await hover(connection, uri, line, character))?.contents.value ?? null;
+}
+
+function open(connection: MessageConnection, uri: string, languageId: string, text: string): void {
   connection.sendNotification('textDocument/didOpen', {
     textDocument: { uri, languageId, version: 1, text },
   });
 }
 
-function complete(connection, uri, line, character) {
-  return connection.sendRequest('textDocument/completion', {
+function complete(
+  connection: MessageConnection,
+  uri: string,
+  line: number,
+  character: number,
+): Promise<Completion[]> {
+  return connection.sendRequest<Completion[]>('textDocument/completion', {
     textDocument: { uri },
     position: { line, character },
   });
 }
 
-function hover(connection, uri, line, character) {
-  return connection.sendRequest('textDocument/hover', {
+function hover(
+  connection: MessageConnection,
+  uri: string,
+  line: number,
+  character: number,
+): Promise<Hover | null> {
+  return connection.sendRequest<Hover | null>('textDocument/hover', {
     textDocument: { uri },
     position: { line, character },
   });
@@ -76,7 +105,7 @@ test('SKI completes defined nodes and hovers their definitions', { timeout: 5000
       range: { start: { line: 4, character: 5 }, end: { line: 4, character: 6 } },
       newText: '#1',
     });
-    assert.match((await hover(connection, uri, 0, 6)).contents.value, /#1 = I/);
+    assert.match((await hoverText(connection, uri, 0, 6)) ?? '', /#1 = I/);
     assert.equal(await hover(connection, uri, 3, 4), null);
   });
 });
@@ -98,7 +127,7 @@ test('Core Lambda completes visible names and explains definitions and imports',
     ];
     open(connection, uri, 'core-lambda', lines.join('\n'));
 
-    const labels = async (line, character) =>
+    const labels = async (line: number, character: number) =>
       (await complete(connection, uri, line, character)).map((item) => item.label);
     assert.ok((await labels(2, lines[2].indexOf('la;') + 2)).includes('later'));
     assert.ok((await labels(3, lines[3].indexOf('rem') + 3)).includes('remote'));
@@ -107,17 +136,14 @@ test('Core Lambda completes visible names and explains definitions and imports',
     assert.deepEqual(await labels(6, lines[6].indexOf('ID') + 2), []);
 
     assert.match(
-      (await hover(connection, uri, 3, lines[3].indexOf('name'))).contents.value,
+      (await hoverText(connection, uri, 3, lines[3].indexOf('name'))) ?? '',
       /name = \\x -> x;/,
     );
     assert.match(
-      (await hover(connection, uri, 3, lines[3].indexOf('remote'))).contents.value,
+      (await hoverText(connection, uri, 3, lines[3].indexOf('remote'))) ?? '',
       /\.\/defs\.lambda/,
     );
-    assert.equal(
-      (await hover(connection, uri, 5, lines[5].lastIndexOf('name'))).contents.value,
-      '参数 name',
-    );
+    assert.equal(await hoverText(connection, uri, 5, lines[5].lastIndexOf('name')), '参数 name');
     assert.equal(await hover(connection, uri, 7, lines[7].indexOf('name')), null);
 
     const changed = lines.slice();

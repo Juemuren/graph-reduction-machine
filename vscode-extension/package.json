@@ -60,14 +60,15 @@
     ]
   },
   "scripts": {
-    "build": "tsc --noEmit -p tsconfig.json && esbuild client/extension.ts server/server.ts --bundle --platform=node --format=cjs --outdir=out --external:vscode",
+    "build": "node build.mjs",
+    "typecheck": "tsc --noEmit -p tsconfig.json",
     "format": "biome format --write .",
     "lint": "biome lint .",
     "check": "biome check .",
-    "prepackage": "npm run build",
+    "prepackage": "npm run typecheck && npm run build",
     "package": "vsce package --allow-missing-repository",
-    "pretest": "npm run build",
-    "test": "node --test test/lsp.test.js"
+    "pretest": "npm run typecheck && npm run build",
+    "test": "node --test test/lsp.test.mts"
   },
   "dependencies": {
     "vscode-languageclient": "^9.0.1",
@@ -80,7 +81,7 @@
     "@types/vscode": "^1.82.0",
     "@vscode/vsce": "^3.6.0",
     "esbuild": "^0.25.0",
-    "typescript": "^5.9.3",
+    "typescript": "^7.0.2",
     "vscode-jsonrpc": "^8.2.0"
   }
 }

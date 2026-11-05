@@ -49,6 +49,8 @@ npm test
 在本目录运行：
 
 ```sh
+# 类型检查
+npm run typecheck
 # 格式化
 npm run format
 # 静态检查

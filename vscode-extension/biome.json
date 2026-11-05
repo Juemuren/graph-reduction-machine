@@ -3,6 +3,7 @@
   "files": {
     "includes": [
       "biome.json",
+      "build.mjs",
       "package.json",
       "tsconfig.json",
       "client/**",
