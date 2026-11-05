@@ -8,23 +8,15 @@
 cabal build
 ```
 
-## 构建解析器
+## 构建的组织结构
 
-解析器不支持单独构建
+项目能够构建的可执行文件包含：
 
-```sh
-cabal build
-```
+- 编译器
+- 解释器
+- 语言服务器
 
-Cabal 会调用 BNFC、Alex 和 Happy，根据语法定义分别生成并编译 Haskell 解析器。生成的源码不需要进行手工修改，也不提交仓库。
-
-其中各语法源码生成的源码分别位于
-
-| 语法文件                      | 源码目录               |
-| ----------------------------- | ---------------------- |
-| `grammar/CoreLambda.cf`       | `src/CoreLambda`       |
-| `grammar/PureLambda.cf`       | `src/PureLambda`       |
-| `grammar/Ski.cf`              | `src/Ski`              |
+解析器不单独提供可执行文件。运行任意构建前，[Setup.hs](../Setup.hs) 会调用 `bnfc` 生成解析器的源码。
 
 ## 构建编译器
 
@@ -42,7 +34,15 @@ cabal build exe:lambda-to-graph
 cabal build exe:ski-interpreter
 ```
 
-## 构建处理器
+## 构建语言服务器
+
+构建语言服务器及其依赖
+
+```sh
+cabal build exe:graph-reduction-machine-lsp
+```
+
+<!-- TODO ## 构建处理器
 
 首先在项目中安装安装 Clash
 
@@ -51,4 +51,4 @@ cabal build clash-ghc
 cabal exec -- clash --version
 ```
 
-<!-- TODO 处理器 -->
+-->

@@ -8,6 +8,16 @@
 cabal test
 ```
 
+## 测试的组织结构
+
+所有测试用例放置在 `test/cases` 目录下。
+
+各子目录及其测试内容分别为：
+
+- `compiler`：编译器测试
+- `interpreter`：解释器测试
+- `integration`：集成测试
+
 ## 用例格式
 
 所有测试用例使用 JSON 文件，示例为
@@ -52,16 +62,6 @@ cabal test
   - `expect.error` 比较错误消息
 
 完整字段及允许的组合见 [JSON Schema](../test/cases/schema.json)。
-
-## 用例组织
-
-所有测试用例放置在 `test/cases` 目录下。
-
-各子目录的测试内容分别为：
-
-- `compiler`：编译器测试
-- `interpreter`：解释器测试
-- `integration`：集成测试
 
 ## 编译器测试
 
