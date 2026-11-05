@@ -26,7 +26,22 @@
 
 ## 安装
 
-在本目录运行：
+先在仓库根目录安装语言服务器：
+
+```sh
+cabal install exe:graph-reduction-machine-lsp
+```
+
+然后重启 VS Code 编辑器，确保 `graph-reduction-machine-lsp` 位于 VS Code 集成终端的 `PATH` 中：
+
+```sh
+# bash
+which graph-reduction-machine-lsp
+# pwsh
+gcm graph-reduction-machine-lsp
+```
+
+最后在本目录打包并安装编辑器扩展：
 
 ```sh
 npm ci
@@ -36,13 +51,11 @@ code --install-extension graph-reduction-machine-syntax-0.3.0.vsix
 
 ## 测试
 
-在本目录运行：
+在仓库根目录运行：
 
 ```sh
-npm test
+cabal test language-server-tests
 ```
-
-测试只检查核心 λ 与 SKI 图的补全和悬停功能。
 
 ## 代码质量
 

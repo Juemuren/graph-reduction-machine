@@ -1,18 +1,13 @@
-import * as path from 'node:path';
 import type * as vscode from 'vscode';
-import { LanguageClient, TransportKind } from 'vscode-languageclient/node';
+import { LanguageClient } from 'vscode-languageclient/node';
 
 let client: LanguageClient | undefined;
 
-export async function activate(context: vscode.ExtensionContext): Promise<void> {
-  const module = context.asAbsolutePath(path.join('out', 'server', 'server.js'));
+export async function activate(_context: vscode.ExtensionContext): Promise<void> {
   client = new LanguageClient(
     'graphReductionMachine',
     'Graph Reduction Machine Language Server',
-    {
-      run: { module, transport: TransportKind.ipc },
-      debug: { module, transport: TransportKind.ipc },
-    },
+    { command: 'graph-reduction-machine-lsp' },
     {
       documentSelector: [
         { scheme: 'file', language: 'core-lambda' },

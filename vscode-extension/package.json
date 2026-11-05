@@ -18,7 +18,6 @@
     "LICENSE.md",
     "language-configuration/*.json",
     "out/client/*.js",
-    "out/server/*.js",
     "syntaxes/*.tmLanguage.json"
   ],
   "contributes": {
@@ -66,9 +65,7 @@
     "lint": "biome lint .",
     "check": "biome check .",
     "prepackage": "npm run typecheck && npm run build",
-    "package": "vsce package --allow-missing-repository",
-    "pretest": "npm run typecheck && npm run build",
-    "test": "node --test test/lsp.test.mts"
+    "package": "vsce package --allow-missing-repository"
   },
   "dependencies": {
     "vscode-languageclient": "^9.0.1",

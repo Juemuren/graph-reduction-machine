@@ -11,6 +11,8 @@ extra-source-files:
   , lib/*.lambda
   , test/cases/schema.json
   , test/cases/**/*.json
+  , test/cases/lsp/*.lambda
+  , test/cases/lsp/*.ski
 
 custom-setup
   setup-depends:
@@ -26,6 +28,9 @@ library
     , Compiler.Expand
     , Compiler.ModuleLoader
     , Interpreter
+    , LanguageServer
+    , LanguageServer.Lambda
+    , LanguageServer.Ski
     , CoreLambda.Abs
     , CoreLambda.Par
     , CoreLambda.Print
@@ -43,13 +48,18 @@ library
     , Compiler.ModuleSource
     , Interpreter.Church
     , Interpreter.Machine
+    , LanguageServer.Common
   build-depends:
       base >=4.16 && <5
     , array
+    , aeson >=2.0 && <3
     , containers
     , directory
     , filepath
     , mtl
+    , lsp >=2.8 && <2.9
+    , lsp-types
+    , text
     , template-haskell
   build-tool-depends:
       BNFC:bnfc >=2.9.6 && <2.10
@@ -68,6 +78,14 @@ executable lambda-to-graph
 executable ski-interpreter
   hs-source-dirs: app
   main-is: InterpreterMain.hs
+  build-depends:
+      base >=4.16 && <5
+    , graph-reduction-machine
+  default-language: Haskell2010
+
+executable graph-reduction-machine-lsp
+  hs-source-dirs: app
+  main-is: LanguageServerMain.hs
   build-depends:
       base >=4.16 && <5
     , graph-reduction-machine
@@ -126,4 +144,20 @@ test-suite integration-tests
     , graph-reduction-machine
     , jsonschema >=0.3 && <0.4
     , process
+  default-language: Haskell2010
+
+test-suite language-server-tests
+  type: exitcode-stdio-1.0
+  hs-source-dirs: test
+  main-is: LanguageServerMain.hs
+  build-depends:
+      base >=4.16 && <5
+    , aeson >=2.0 && <3
+    , directory
+    , graph-reduction-machine
+    , lsp-test >=0.18 && <0.19
+    , lsp-types
+    , text
+  build-tool-depends:
+      graph-reduction-machine:graph-reduction-machine-lsp
   default-language: Haskell2010
