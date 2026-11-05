@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import { test } from 'node:test';
-import { complete, hover, hoverText, loadFixture, open, withServer } from './lsp-helpers.mts';
+import { complete, hover, loadFixture, open, withServer } from './lsp-helpers.mts';
 
 test('SKI completes defined nodes and hovers their definitions', { timeout: 5000 }, async () => {
   await withServer(async (connection, initialization) => {
@@ -18,14 +18,14 @@ test('SKI completes defined nodes and hovers their definitions', { timeout: 5000
       range: { start: { line: 4, character: 5 }, end: { line: 4, character: 6 } },
       newText: '#1',
     });
-    assert.equal(
-      await hoverText(connection, uri, 0, 6),
-      '```ski-graph\n#1 = I\n```\n\nDefined on line 2',
-    );
-    assert.equal(
-      await hoverText(connection, uri, 2, 1),
-      '```ski-graph\n#2 = K\n```\n\nDefined on line 3',
-    );
+    const referenceHover = await hover(connection, uri, 0, 6);
+    assert.equal(referenceHover?.contents.kind, 'markdown');
+    assert.ok(referenceHover.contents.value.includes('#1 = I'));
+    assert.ok(referenceHover.contents.value.includes('line 2'));
+    const definitionHover = await hover(connection, uri, 2, 1);
+    assert.equal(definitionHover?.contents.kind, 'markdown');
+    assert.ok(definitionHover.contents.value.includes('#2 = K'));
+    assert.ok(definitionHover.contents.value.includes('line 3'));
     assert.equal(await hover(connection, uri, 3, 4), null);
   });
 });

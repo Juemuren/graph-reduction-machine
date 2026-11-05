@@ -15,7 +15,7 @@ type Initialization = {
   };
 };
 type Completion = { label: string; textEdit?: unknown };
-type Hover = { contents: { value: string } };
+type Hover = { contents: { kind: string; value: string } };
 
 export async function loadFixture(name: string): Promise<{ uri: string; text: string }> {
   const url = new URL(`./fixtures/${name}`, import.meta.url);

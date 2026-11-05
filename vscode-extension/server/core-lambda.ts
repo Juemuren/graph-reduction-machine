@@ -194,6 +194,35 @@ export function completeCoreLambda(document: TextDocument, position: Position): 
   return items;
 }
 
+function hoverTemplate(
+  description: string,
+  line: number,
+  kind: Declaration['kind'] | 'parameter',
+): string {
+  switch (kind) {
+    case 'definition':
+      return `
+~~~core-lambda
+${description}
+~~~
+
+Defined on line ${line}
+`;
+    case 'import':
+      return `
+${description}
+
+Imported on line ${line}
+`;
+    case 'parameter':
+      return `
+${description}
+
+Defined on line ${line}
+`;
+  }
+}
+
 export function hoverCoreLambda(document: TextDocument, position: Position): Hover | null {
   const offset = document.offsetAt(position);
   const analysis = analyze(document);
@@ -222,10 +251,11 @@ export function hoverCoreLambda(document: TextDocument, position: Position): Hov
     ownDeclaration?.token ?? resolvedParameter?.token ?? resolvedDeclaration?.token;
   if (!definitionToken) return null;
   const line = document.positionAt(definitionToken.start).line + 1;
-  const location =
-    resolvedDeclaration?.kind === 'import' && !resolvedParameter ? 'Imported' : 'Defined';
+  const kind =
+    ownDeclaration?.kind ?? (resolvedParameter ? 'parameter' : resolvedDeclaration?.kind);
+  if (!kind) return null;
   return {
-    contents: { kind: MarkupKind.PlainText, value: `${description}\n${location} on line ${line}` },
+    contents: { kind: MarkupKind.Markdown, value: hoverTemplate(description, line, kind) },
     range: { start: document.positionAt(token.start), end: document.positionAt(token.end) },
   };
 }

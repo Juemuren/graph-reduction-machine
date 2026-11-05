@@ -54,6 +54,16 @@ export function completeSki(document: TextDocument, position: Position): Complet
   }));
 }
 
+function hoverTemplate(text: string, line: number): string {
+  return `
+~~~ski-graph
+${text}
+~~~
+
+Defined on line ${line}
+`;
+}
+
 export function hoverSki(document: TextDocument, position: Position): Hover | null {
   const lines = linesOf(document);
   const line = codeBeforeComment(lines[position.line] ?? '');
@@ -67,7 +77,7 @@ export function hoverSki(document: TextDocument, position: Position): Hover | nu
       return {
         contents: {
           kind: MarkupKind.Markdown,
-          value: `\`\`\`ski-graph\n${definition.text}\n\`\`\`\n\nDefined on line ${definition.line}`,
+          value: hoverTemplate(definition.text, definition.line),
         },
         range: {
           start: { line: position.line, character: start },
