@@ -79,16 +79,16 @@ cabal test compiler-tests
   - `precedence.json` 验证两个核心 λ 表达式解析后是否相同
   - `errors.json` 验证解析错误
 - `expand` 验证两个核心 λ 表达式展开后是否相同（暂无用例）
-- `reduce/` 验证规约得到的纯 λ 表达式
-  - `default.json` 启用 β 规约和 η 规约
-  - `no-beta.json` 禁用 β 规约
-  - `no-eta.json` 禁用 η 规约
-  - `no-reduce.json` 禁用所有规约
+- `reduce/` 验证归约得到的纯 λ 表达式
+  - `default.json` 启用 β 归约和 η 归约
+  - `no-beta.json` 禁用 β 归约
+  - `no-eta.json` 禁用 η 归约
+  - `no-reduce.json` 禁用所有归约
 - `compile/` 验证编译得到的 SKI 图
-  - `default.json` 启用 β 规约和 η 规约
-  - `no-beta.json` 禁用 β 规约
-  - `no-eta.json` 禁用 η 规约
-  - `no-reduce.json` 禁用所有规约
+  - `default.json` 启用 β 归约和 η 归约
+  - `no-beta.json` 禁用 β 归约
+  - `no-eta.json` 禁用 η 归约
+  - `no-reduce.json` 禁用所有归约
   - `errors.json` 验证编译错误
 - `module/`
   - `definitions.json` 验证定义行为
@@ -111,13 +111,13 @@ cabal test interpreter-tests
   - `normal.json` 验证 SKI 图与归约后的 SKI 图是否相同
   - `errors.json` 验证归约错误
 - `limit/`
-  - `reduce.json` 验证规约的步数限制
+  - `reduce.json` 验证归约的步数限制
   - `decode.json` 验证解码的步数限制
 - `decode/*-errors.json` 验证各类型解码失败时的错误行为
 
 ## 集成测试
 
-从核心 λ 到规约后 SKI 图的集成测试
+从核心 λ 到归约后 SKI 图的集成测试
 
 ```sh
 cabal test integration-tests

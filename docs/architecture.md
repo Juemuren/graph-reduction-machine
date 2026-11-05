@@ -41,7 +41,7 @@
 
 使用 Haskell 编写核心 λ 编译器。
 
-编译的完整步骤见 [syntax.md#表达式编译](syntax.md#表达式编译)。
+编译的完整流程见 [compiler.md#编译流程](compiler.md#编译流程)。
 
 编译器的目录结构为：
 
@@ -51,7 +51,7 @@
 
 编译器的模块拆分为：
 
-- `Compiler` 是编译和规约的入口
+- `Compiler` 是编译和归约的入口
 - `Compiler.Expand` 解析模块、展开定义及内置函数
 - `Compiler.ModuleSource` 解析和校验模块结构
 - `Compiler.ModuleLoader` 加载导入的源码文件
@@ -61,10 +61,7 @@
 
 使用 Haskell 编写 SKI 图解释器。
 
-解释器会进行规约和解码：
-
-- 规约的完整步骤见 [syntax.md#图规约](syntax.md#图规约)
-- 解码的完整步骤见 [syntax.md#丘奇解码](syntax.md#丘奇解码)
+解释的完整流程见 [interpreter.md#解释流程](interpreter.md#解释流程)。
 
 解释器的目录结构为：
 
@@ -74,9 +71,9 @@
 
 解释器的模块拆分为：
 
-- `Interpreter` 是图规约和丘奇值解码的对外入口
-- `Interpreter.Machine` 加载 SKI 图、维护共享堆并执行图规约
-- `Interpreter.Church` 使用符号探针解码丘奇布尔值、自然数、整数、有理数和实数
+- `Interpreter` 是图归约和解码的对外入口
+- `Interpreter.Machine` 加载 SKI 图、维护共享堆并执行图归约
+- `Interpreter.Church` 使用符号探针解码布尔值、自然数、整数、有理数和实数
 
 <!--TODO ## 处理器
 

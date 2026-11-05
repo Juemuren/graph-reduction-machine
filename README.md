@@ -28,13 +28,13 @@ cabal exec -- lambda-to-graph example.lambda
 cabal exec -- lambda-to-graph --stop-after=expand example.lambda
 ```
 
-默认执行 β 规约和 η 规约。可用 `--disable-reduce` 指定要禁用的规约。比如禁用 β 规约
+默认执行 β 归约和 η 归约。可用 `--disable-reduce` 指定要禁用的归约。比如禁用 β 归约
 
 ```sh
 cabal exec -- lambda-to-graph --disable-reduce=beta example.lambda
 ```
 
-编译器的所有参数和编译的完整步骤请参考 [syntax.md#表达式编译](docs/syntax.md#表达式编译)。
+编译器的所有参数请参考 [compiler.md#编译器选项](docs/compiler.md#编译器选项)。
 
 ### 运行 SKI 图
 
@@ -46,7 +46,7 @@ cabal exec -- ski-interpreter example.ski
 
 不提供文件名时从标准输入读取。成功时结果写到标准输出；错误信息写到标准错误。
 
-默认最多进行 100000 次归约。规约次数超过限制会报错。可用 `--max-steps` 调整规约限制
+默认最多进行 `100000` 次归约。归约次数超过限制会报错。可用 `--max-steps` 调整归约限制
 
 ```sh
 cabal exec -- ski-interpreter --max-steps=1000000 example.ski
@@ -58,4 +58,4 @@ cabal exec -- ski-interpreter --max-steps=1000000 example.ski
 cabal exec -- ski-interpreter --decode=natural example.ski
 ```
 
-解释器的所有参数和解码的具体操作请参考 [syntax.md#丘奇解码](docs/syntax.md#丘奇解码)。
+解释器的所有参数请参考 [interpreter.md#解释器选项](docs/interpreter.md#解释器选项)。
