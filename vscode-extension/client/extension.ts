@@ -7,10 +7,17 @@ let client: LanguageClient | undefined;
 export async function activate(context: vscode.ExtensionContext): Promise<void> {
   const module = context.asAbsolutePath(path.join('out', 'server', 'server.js'));
   client = new LanguageClient(
-    'skiGraph',
-    'SKI Graph Language Server',
+    'graphReductionMachine',
+    'Graph Reduction Machine Language Server',
     { run: { module, transport: TransportKind.ipc }, debug: { module, transport: TransportKind.ipc } },
-    { documentSelector: [{ scheme: 'file', language: 'ski-graph' }, { scheme: 'untitled', language: 'ski-graph' }] }
+    {
+      documentSelector: [
+        { scheme: 'file', language: 'core-lambda' },
+        { scheme: 'untitled', language: 'core-lambda' },
+        { scheme: 'file', language: 'ski-graph' },
+        { scheme: 'untitled', language: 'ski-graph' }
+      ]
+    }
   );
   await client.start();
 }

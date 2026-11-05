@@ -1,14 +1,14 @@
 {
   "name": "graph-reduction-machine-syntax",
   "displayName": "Graph Reduction Machine Syntax",
-  "description": "Syntax highlighting for Core Lambda and SKI graphs, with SKI node completion and hover.",
-  "version": "0.2.0",
+  "description": "Syntax highlighting, completion, and hover for Core Lambda and SKI graphs.",
+  "version": "0.3.0",
   "publisher": "graph-reduction-machine",
   "engines": {
     "vscode": "^1.82.0"
   },
   "main": "./out/client/extension.js",
-  "activationEvents": [""],
+  "activationEvents": [ ],
   "categories": [
     "Programming Languages"
   ],

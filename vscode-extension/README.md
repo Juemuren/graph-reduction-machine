@@ -6,15 +6,17 @@
 
 ### 核心 λ
 
-语法定义见 [grammar/CoreLambda.cf](../grammar/CoreLambda.cf)。
+语法定义见 `grammar/CoreLambda.cf`。
 
 文件扩展名为 `.lambda`。提供的功能包括
 
 - 语法高亮：支持模块指令、定义、λ 抽象、内置函数、字符串和 `#` 注释
+- 自动补全：提示当前文件的定义、导入的名称，以及当前函数体内可见的参数；暂不提示内置函数
+- 悬停文档：显示当前文件中名称的定义，或显示导入该名称的路径
 
 ### SKI 图
 
-语法定义见 [grammar/Ski.cf](../grammar/Ski.cf)。
+语法定义见 `grammar/Ski.cf`。
 
 文件扩展名为 `.ski`。提供的功能包括
 
@@ -29,5 +31,5 @@
 ```sh
 npm ci
 npm run package
-code --install-extension *.vsix
+code --install-extension graph-reduction-machine-syntax-0.3.0.vsix
 ```

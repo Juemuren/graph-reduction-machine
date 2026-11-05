@@ -9,6 +9,7 @@ import {
   TextDocuments
 } from 'vscode-languageserver/node';
 import { TextDocument } from 'vscode-languageserver-textdocument';
+import { completeCoreLambda, hoverCoreLambda } from './core-lambda';
 
 const connection = createConnection(ProposedFeatures.all);
 const documents = new TextDocuments(TextDocument);
@@ -46,6 +47,9 @@ connection.onCompletion(({ textDocument, position }): CompletionItem[] => {
   const document = documents.get(textDocument.uri);
   if (!document) return [];
 
+  if (document.languageId === 'core-lambda') return completeCoreLambda(document, position);
+  if (document.languageId !== 'ski-graph') return [];
+
   const lines = linesOf(document);
   const line = codeBeforeComment(lines[position.line] ?? '');
   if (position.character > line.length) return [];
@@ -69,6 +73,9 @@ connection.onCompletion(({ textDocument, position }): CompletionItem[] => {
 connection.onHover(({ textDocument, position }): Hover | null => {
   const document = documents.get(textDocument.uri);
   if (!document) return null;
+
+  if (document.languageId === 'core-lambda') return hoverCoreLambda(document, position);
+  if (document.languageId !== 'ski-graph') return null;
 
   const lines = linesOf(document);
   const line = codeBeforeComment(lines[position.line] ?? '');
