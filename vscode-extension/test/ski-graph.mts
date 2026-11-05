@@ -18,7 +18,14 @@ test('SKI completes defined nodes and hovers their definitions', { timeout: 5000
       range: { start: { line: 4, character: 5 }, end: { line: 4, character: 6 } },
       newText: '#1',
     });
-    assert.match((await hoverText(connection, uri, 0, 6)) ?? '', /#1 = I/);
+    assert.equal(
+      await hoverText(connection, uri, 0, 6),
+      '```ski-graph\n#1 = I\n```\n\nDefined on line 2',
+    );
+    assert.equal(
+      await hoverText(connection, uri, 2, 1),
+      '```ski-graph\n#2 = K\n```\n\nDefined on line 3',
+    );
     assert.equal(await hover(connection, uri, 3, 4), null);
   });
 });

@@ -18,15 +18,26 @@ test('Core Lambda completes visible names and explains definitions and imports',
     assert.ok(!(await labels(4, lines[4].indexOf('b;') + 1)).includes('bar'));
     assert.deepEqual(await labels(6, lines[6].indexOf('ID') + 2), []);
 
-    assert.match(
-      (await hoverText(connection, uri, 3, lines[3].indexOf('name'))) ?? '',
-      /name = \\x -> x;/,
+    assert.equal(
+      await hoverText(connection, uri, 3, lines[3].indexOf('name')),
+      'name = \\x -> x;\nDefined on line 2',
     );
-    assert.match(
-      (await hoverText(connection, uri, 3, lines[3].indexOf('remote'))) ?? '',
-      /\.\/defs\.lambda/,
+    assert.equal(
+      await hoverText(connection, uri, 3, lines[3].indexOf('remote')),
+      'Imported remote from "./defs.lambda"\nImported on line 1',
     );
-    assert.equal(await hoverText(connection, uri, 5, lines[5].lastIndexOf('name')), '参数 name');
+    assert.equal(
+      await hoverText(connection, uri, 3, lines[3].indexOf('later')),
+      'later = \\bar -> name (remote b);\nDefined on line 4',
+    );
+    assert.equal(
+      await hoverText(connection, uri, 3, lines[3].indexOf('bar')),
+      'Parameter bar\nDefined on line 4',
+    );
+    assert.equal(
+      await hoverText(connection, uri, 5, lines[5].lastIndexOf('name')),
+      'Parameter name\nDefined on line 6',
+    );
     assert.equal(await hover(connection, uri, 7, lines[7].indexOf('name')), null);
 
     const { text: changedText } = await loadFixture('lambda/lambda-lsp-changed.lambda');

@@ -84,7 +84,7 @@ function analyze(document: TextDocument): Analysis {
             declarations.push({
               name: token.text,
               token,
-              description: `从 ${path.text} 导入 ${token.text}`,
+              description: `Imported ${token.text} from ${path.text}`,
               kind: 'import',
             });
           }
@@ -189,7 +189,7 @@ export function completeCoreLambda(document: TextDocument, position: Position): 
     });
   }
   for (const parameter of activeParameters(analysis.parameters, offset))
-    add(parameter.name, '参数');
+    add(parameter.name, 'Parameter');
   for (const declaration of analysis.declarations) add(declaration.name, declaration.description);
   return items;
 }
@@ -212,12 +212,20 @@ export function hoverCoreLambda(document: TextDocument, position: Position): Hov
     (item) => item.name === token.text,
   );
   const declaration = analysis.declarations.find((item) => item.name === token.text);
+  const resolvedDeclaration = ownDeclaration ?? declaration;
+  const resolvedParameter = ownParameter ?? parameter;
   const description =
     ownDeclaration?.description ??
-    (ownParameter || parameter ? `参数 ${token.text}` : declaration?.description);
+    (resolvedParameter ? `Parameter ${token.text}` : resolvedDeclaration?.description);
   if (!description) return null;
+  const definitionToken =
+    ownDeclaration?.token ?? resolvedParameter?.token ?? resolvedDeclaration?.token;
+  if (!definitionToken) return null;
+  const line = document.positionAt(definitionToken.start).line + 1;
+  const location =
+    resolvedDeclaration?.kind === 'import' && !resolvedParameter ? 'Imported' : 'Defined';
   return {
-    contents: { kind: MarkupKind.PlainText, value: description },
+    contents: { kind: MarkupKind.PlainText, value: `${description}\n${location} on line ${line}` },
     range: { start: document.positionAt(token.start), end: document.positionAt(token.end) },
   };
 }

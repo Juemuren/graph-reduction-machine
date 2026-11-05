@@ -11,13 +11,18 @@ function linesOf(document: TextDocument): string[] {
   return document.getText().split(/\r\n|\r|\n/);
 }
 
-function definitions(lines: string[]): Map<string, string> {
-  const nodes = new Map<string, string>();
-  for (const line of lines) {
+type Definition = { text: string; line: number };
+
+function definitions(lines: string[]): Map<string, Definition> {
+  const nodes = new Map<string, Definition>();
+  for (const [index, line] of lines.entries()) {
     const code = line.split('--', 1)[0].trim();
     const match = /^(#[0-9]+)\s*=\s*(#[0-9]+\s+#[0-9]+|[SKI])\s*;?$/.exec(code);
     if (match && !nodes.has(match[1])) {
-      nodes.set(match[1], `${match[1]} = ${match[2].replace(/\s+/g, ' ')}`);
+      nodes.set(match[1], {
+        text: `${match[1]} = ${match[2].replace(/\s+/g, ' ')}`,
+        line: index + 1,
+      });
     }
   }
   return nodes;
@@ -44,7 +49,7 @@ export function completeSki(document: TextDocument, position: Position): Complet
   return [...definitions(lines).entries()].map(([label, definition]) => ({
     label,
     kind: CompletionItemKind.Reference,
-    detail: definition,
+    detail: definition.text,
     textEdit: { range, newText: label },
   }));
 }
@@ -60,7 +65,10 @@ export function hoverSki(document: TextDocument, position: Position): Hover | nu
       const definition = nodes.get(match[0]);
       if (!definition) return null;
       return {
-        contents: { kind: MarkupKind.Markdown, value: `\`\`\`ski-graph\n${definition}\n\`\`\`` },
+        contents: {
+          kind: MarkupKind.Markdown,
+          value: `\`\`\`ski-graph\n${definition.text}\n\`\`\`\n\nDefined on line ${definition.line}`,
+        },
         range: {
           start: { line: position.line, character: start },
           end: { line: position.line, character: end },
