@@ -3,6 +3,8 @@
     "target": "ES2022",
     "module": "Preserve",
     "moduleResolution": "Bundler",
+    "noEmit": true,
+    "allowImportingTsExtensions": true,
     "rootDir": ".",
     "outDir": "out",
     "strict": true,

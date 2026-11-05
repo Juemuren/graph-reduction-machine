@@ -61,7 +61,7 @@
   },
   "scripts": {
     "build": "node build.mjs",
-    "typecheck": "tsc --noEmit -p tsconfig.json",
+    "typecheck": "tsc -p tsconfig.json",
     "format": "biome format --write .",
     "lint": "biome lint .",
     "check": "biome check .",
