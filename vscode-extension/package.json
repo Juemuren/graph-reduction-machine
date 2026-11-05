@@ -9,7 +9,7 @@
     "vscode": "^1.82.0"
   },
   "main": "./out/client/extension.js",
-  "activationEvents": [ ],
+  "activationEvents": [],
   "categories": [
     "Programming Languages"
   ],
@@ -25,14 +25,24 @@
     "languages": [
       {
         "id": "core-lambda",
-        "aliases": ["Core Lambda", "Lambda"],
-        "extensions": [".lambda"],
+        "aliases": [
+          "Core Lambda",
+          "Lambda"
+        ],
+        "extensions": [
+          ".lambda"
+        ],
         "configuration": "./language-configuration/core-lambda.json"
       },
       {
         "id": "ski-graph",
-        "aliases": ["SKI Graph", "SKI"],
-        "extensions": [".ski"],
+        "aliases": [
+          "SKI Graph",
+          "SKI"
+        ],
+        "extensions": [
+          ".ski"
+        ],
         "configuration": "./language-configuration/ski-graph.json"
       }
     ],
@@ -51,6 +61,9 @@
   },
   "scripts": {
     "build": "tsc --noEmit -p tsconfig.json && esbuild client/extension.ts server/server.ts --bundle --platform=node --format=cjs --outdir=out --external:vscode",
+    "format": "biome format --write .",
+    "lint": "biome lint .",
+    "check": "biome check .",
     "prepackage": "npm run build",
     "package": "vsce package --allow-missing-repository",
     "pretest": "npm run build",
@@ -62,6 +75,7 @@
     "vscode-languageserver-textdocument": "^1.0.11"
   },
   "devDependencies": {
+    "@biomejs/biome": "2.6.5",
     "@types/node": "^20.17.0",
     "@types/vscode": "^1.82.0",
     "@vscode/vsce": "^3.6.0",

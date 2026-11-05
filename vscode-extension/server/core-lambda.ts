@@ -1,9 +1,20 @@
-import { CompletionItem, CompletionItemKind, Hover, MarkupKind, Position } from 'vscode-languageserver/node';
-import { TextDocument } from 'vscode-languageserver-textdocument';
+import {
+  type CompletionItem,
+  CompletionItemKind,
+  type Hover,
+  MarkupKind,
+  type Position,
+} from 'vscode-languageserver/node';
+import type { TextDocument } from 'vscode-languageserver-textdocument';
 
 type Token = { kind: 'name' | 'string' | 'symbol'; text: string; start: number; end: number };
 type Span = { start: number; end: number };
-type Declaration = { name: string; token: Token; description: string; kind: 'definition' | 'import' };
+type Declaration = {
+  name: string;
+  token: Token;
+  description: string;
+  kind: 'definition' | 'import';
+};
 type Parameter = { name: string; token: Token; bodyStart: number; bodyEnd: number };
 type Analysis = {
   tokens: Token[];
@@ -65,12 +76,17 @@ function analyze(document: TextDocument): Analysis {
     const first = statementTokens[0];
     if (first.text === '@<') {
       const path = statementTokens[1];
-      const open = statementTokens.findIndex(token => token.text === '(');
+      const open = statementTokens.findIndex((token) => token.text === '(');
       const close = statementTokens.findIndex((token, index) => index > open && token.text === ')');
       if (path?.kind === 'string' && open >= 0 && close > open) {
         for (const token of statementTokens.slice(open + 1, close)) {
           if (token.kind === 'name') {
-            declarations.push({ name: token.text, token, description: `从 ${path.text} 导入 ${token.text}`, kind: 'import' });
+            declarations.push({
+              name: token.text,
+              token,
+              description: `从 ${path.text} 导入 ${token.text}`,
+              kind: 'import',
+            });
           }
         }
       }
@@ -85,7 +101,7 @@ function analyze(document: TextDocument): Analysis {
         name: head.text,
         token: head,
         description: source.slice(first.start, end).trim(),
-        kind: 'definition'
+        kind: 'definition',
       });
       expressions.push({ start: equals.end, end: expressionEnd });
     } else if (first.text === '@!') {
@@ -105,12 +121,20 @@ function analyze(document: TextDocument): Analysis {
 
   const parameters: Parameter[] = [];
   for (const expression of expressions) {
-    const expressionTokens = tokens.filter(token => expression.start <= token.start && token.start < expression.end);
+    const expressionTokens = tokens.filter(
+      (token) => expression.start <= token.start && token.start < expression.end,
+    );
     for (let index = 0; index + 2 < expressionTokens.length; index++) {
       const slash = expressionTokens[index];
       const name = expressionTokens[index + 1];
       const arrow = expressionTokens[index + 2];
-      if (slash.text !== '\\' || name.kind !== 'name' || !/^[a-z]/.test(name.text) || arrow.text !== '->') continue;
+      if (
+        slash.text !== '\\' ||
+        name.kind !== 'name' ||
+        !/^[a-z]/.test(name.text) ||
+        arrow.text !== '->'
+      )
+        continue;
 
       let depth = 0;
       let bodyEnd = expression.end;
@@ -133,7 +157,7 @@ function analyze(document: TextDocument): Analysis {
 
 function activeParameters(parameters: Parameter[], offset: number): Parameter[] {
   return parameters
-    .filter(parameter => parameter.bodyStart <= offset && offset <= parameter.bodyEnd)
+    .filter((parameter) => parameter.bodyStart <= offset && offset <= parameter.bodyEnd)
     .sort((left, right) => right.token.start - left.token.start);
 }
 
@@ -141,8 +165,8 @@ export function completeCoreLambda(document: TextDocument, position: Position): 
   const source = document.getText();
   const offset = document.offsetAt(position);
   const analysis = analyze(document);
-  if (analysis.excluded.some(span => span.start <= offset && offset < span.end)) return [];
-  if (!analysis.expressions.some(span => span.start <= offset && offset <= span.end)) return [];
+  if (analysis.excluded.some((span) => span.start <= offset && offset < span.end)) return [];
+  if (!analysis.expressions.some((span) => span.start <= offset && offset <= span.end)) return [];
 
   let start = offset;
   let end = offset;
@@ -157,9 +181,15 @@ export function completeCoreLambda(document: TextDocument, position: Position): 
   function add(name: string, description: string): void {
     if (seen.has(name) || !name.startsWith(prefix)) return;
     seen.add(name);
-    items.push({ label: name, kind: CompletionItemKind.Variable, detail: description, textEdit: { range, newText: name } });
+    items.push({
+      label: name,
+      kind: CompletionItemKind.Variable,
+      detail: description,
+      textEdit: { range, newText: name },
+    });
   }
-  for (const parameter of activeParameters(analysis.parameters, offset)) add(parameter.name, '参数');
+  for (const parameter of activeParameters(analysis.parameters, offset))
+    add(parameter.name, '参数');
   for (const declaration of analysis.declarations) add(declaration.name, declaration.description);
   return items;
 }
@@ -167,17 +197,27 @@ export function completeCoreLambda(document: TextDocument, position: Position): 
 export function hoverCoreLambda(document: TextDocument, position: Position): Hover | null {
   const offset = document.offsetAt(position);
   const analysis = analyze(document);
-  const token = analysis.tokens.find(candidate => candidate.kind === 'name' && candidate.start <= offset && offset < candidate.end);
+  const token = analysis.tokens.find(
+    (candidate) => candidate.kind === 'name' && candidate.start <= offset && offset < candidate.end,
+  );
   if (!token) return null;
 
-  const ownDeclaration = analysis.declarations.find(declaration => declaration.token.start === token.start);
-  const ownParameter = analysis.parameters.find(parameter => parameter.token.start === token.start);
-  const parameter = activeParameters(analysis.parameters, token.start).find(item => item.name === token.text);
-  const declaration = analysis.declarations.find(item => item.name === token.text);
-  const description = ownDeclaration?.description ?? (ownParameter || parameter ? `参数 ${token.text}` : declaration?.description);
+  const ownDeclaration = analysis.declarations.find(
+    (declaration) => declaration.token.start === token.start,
+  );
+  const ownParameter = analysis.parameters.find(
+    (parameter) => parameter.token.start === token.start,
+  );
+  const parameter = activeParameters(analysis.parameters, token.start).find(
+    (item) => item.name === token.text,
+  );
+  const declaration = analysis.declarations.find((item) => item.name === token.text);
+  const description =
+    ownDeclaration?.description ??
+    (ownParameter || parameter ? `参数 ${token.text}` : declaration?.description);
   if (!description) return null;
   return {
     contents: { kind: MarkupKind.PlainText, value: description },
-    range: { start: document.positionAt(token.start), end: document.positionAt(token.end) }
+    range: { start: document.positionAt(token.start), end: document.positionAt(token.end) },
   };
 }

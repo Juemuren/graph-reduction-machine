@@ -1,12 +1,12 @@
 import {
-  CompletionItem,
+  type CompletionItem,
   CompletionItemKind,
   createConnection,
-  Hover,
+  type Hover,
   MarkupKind,
   ProposedFeatures,
   TextDocumentSyncKind,
-  TextDocuments
+  TextDocuments,
 } from 'vscode-languageserver/node';
 import { TextDocument } from 'vscode-languageserver-textdocument';
 import { completeCoreLambda, hoverCoreLambda } from './core-lambda';
@@ -18,8 +18,8 @@ connection.onInitialize(() => ({
   capabilities: {
     textDocumentSync: TextDocumentSyncKind.Incremental,
     completionProvider: { triggerCharacters: ['#'] },
-    hoverProvider: true
-  }
+    hoverProvider: true,
+  },
 }));
 
 function linesOf(document: TextDocument): string[] {
@@ -60,13 +60,13 @@ connection.onCompletion(({ textDocument, position }): CompletionItem[] => {
   const suffix = /^[0-9]*/.exec(line.slice(position.character))?.[0] ?? '';
   const range = {
     start: { line: position.line, character: position.character - prefix[0].length },
-    end: { line: position.line, character: position.character + suffix.length }
+    end: { line: position.line, character: position.character + suffix.length },
   };
   return [...definitions(lines).entries()].map(([label, definition]) => ({
     label,
     kind: CompletionItemKind.Reference,
     detail: definition,
-    textEdit: { range, newText: label }
+    textEdit: { range, newText: label },
   }));
 });
 
@@ -88,7 +88,10 @@ connection.onHover(({ textDocument, position }): Hover | null => {
       if (!definition) return null;
       return {
         contents: { kind: MarkupKind.Markdown, value: `\`\`\`ski-graph\n${definition}\n\`\`\`` },
-        range: { start: { line: position.line, character: start }, end: { line: position.line, character: end } }
+        range: {
+          start: { line: position.line, character: start },
+          end: { line: position.line, character: end },
+        },
       };
     }
   }

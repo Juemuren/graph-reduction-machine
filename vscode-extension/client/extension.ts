@@ -9,15 +9,18 @@ export async function activate(context: vscode.ExtensionContext): Promise<void> 
   client = new LanguageClient(
     'graphReductionMachine',
     'Graph Reduction Machine Language Server',
-    { run: { module, transport: TransportKind.ipc }, debug: { module, transport: TransportKind.ipc } },
+    {
+      run: { module, transport: TransportKind.ipc },
+      debug: { module, transport: TransportKind.ipc },
+    },
     {
       documentSelector: [
         { scheme: 'file', language: 'core-lambda' },
         { scheme: 'untitled', language: 'core-lambda' },
         { scheme: 'file', language: 'ski-graph' },
-        { scheme: 'untitled', language: 'ski-graph' }
-      ]
-    }
+        { scheme: 'untitled', language: 'ski-graph' },
+      ],
+    },
   );
   await client.start();
 }

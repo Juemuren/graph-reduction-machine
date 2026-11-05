@@ -43,3 +43,16 @@ npm test
 ```
 
 测试只检查核心 λ 与 SKI 图的补全和悬停功能。
+
+## 代码质量
+
+在本目录运行：
+
+```sh
+# 格式化
+npm run format
+# 静态检查
+npm run lint
+# 格式化 + 静态检查
+npm run check
+```
