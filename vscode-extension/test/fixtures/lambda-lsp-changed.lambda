@@ -1,0 +1,9 @@
+@< "./defs.lambda" (remote, EXTERNAL);
+name = \x -> x;
+forward = la;
+later = \bar -> name (remote b);
+after = b;
+shadow = \name -> name;
+@! added;
+# fake = name
+added = I;

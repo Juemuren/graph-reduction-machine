@@ -1,5 +1,6 @@
 import assert from 'node:assert/strict';
 import { spawn } from 'node:child_process';
+import { readFile } from 'node:fs/promises';
 import { test } from 'node:test';
 import { fileURLToPath } from 'node:url';
 import type { MessageConnection } from 'vscode-jsonrpc';
@@ -8,6 +9,11 @@ import jsonrpc from 'vscode-jsonrpc/node.js';
 const { createMessageConnection, StreamMessageReader, StreamMessageWriter } = jsonrpc;
 
 const serverPath = fileURLToPath(new URL('../out/server/server.js', import.meta.url));
+
+async function loadFixture(name: string): Promise<{ uri: string; text: string }> {
+  const url = new URL(`./fixtures/${name}`, import.meta.url);
+  return { uri: url.href, text: await readFile(url, 'utf8') };
+}
 
 type Initialization = {
   capabilities: {
@@ -94,8 +100,8 @@ test('SKI completes defined nodes and hovers their definitions', { timeout: 5000
     assert.deepEqual(initialization.capabilities.completionProvider.triggerCharacters, ['#']);
     assert.equal(initialization.capabilities.hoverProvider, true);
 
-    const uri = 'file:///ski-lsp-test.ski';
-    open(connection, uri, 'ski-graph', '#0 = #1 #2;\n#1 = I;\n#2 = K;\n-- #9 = S;\n#3 = #');
+    const { uri, text } = await loadFixture('ski-lsp-test.ski');
+    open(connection, uri, 'ski-graph', text);
     const items = await complete(connection, uri, 4, 6);
     assert.deepEqual(
       items.map((item) => item.label),
@@ -114,18 +120,9 @@ test('Core Lambda completes visible names and explains definitions and imports',
   timeout: 5000,
 }, async () => {
   await withServer(async (connection) => {
-    const uri = 'file:///lambda-lsp-test.lambda';
-    const lines = [
-      '@< "./defs.lambda" (remote, EXTERNAL);',
-      'name = \\x -> x;',
-      'forward = la;',
-      'later = \\bar -> name (remote b);',
-      'after = b;',
-      'shadow = \\name -> name;',
-      '@! ID;',
-      '# fake = name',
-    ];
-    open(connection, uri, 'core-lambda', lines.join('\n'));
+    const { uri, text } = await loadFixture('lambda-lsp-test.lambda');
+    const lines = text.split(/\r?\n/);
+    open(connection, uri, 'core-lambda', text);
 
     const labels = async (line: number, character: number) =>
       (await complete(connection, uri, line, character)).map((item) => item.label);
@@ -146,12 +143,11 @@ test('Core Lambda completes visible names and explains definitions and imports',
     assert.equal(await hoverText(connection, uri, 5, lines[5].lastIndexOf('name')), '参数 name');
     assert.equal(await hover(connection, uri, 7, lines[7].indexOf('name')), null);
 
-    const changed = lines.slice();
-    changed[6] = '@! added;';
-    changed.push('added = I;');
+    const { text: changedText } = await loadFixture('lambda-lsp-changed.lambda');
+    const changed = changedText.split(/\r?\n/);
     connection.sendNotification('textDocument/didChange', {
       textDocument: { uri, version: 2 },
-      contentChanges: [{ text: changed.join('\n') }],
+      contentChanges: [{ text: changedText }],
     });
     assert.ok((await labels(6, changed[6].indexOf('added') + 2)).includes('added'));
   });
