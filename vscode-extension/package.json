@@ -8,7 +8,7 @@
   "engines": {
     "vscode": "^1.82.0"
   },
-  "main": "./out/client/extension.js",
+  "main": "./out/extension.js",
   "activationEvents": [],
   "categories": [
     "Programming Languages"
@@ -17,7 +17,7 @@
     "README.md",
     "LICENSE.md",
     "language-configuration/*.json",
-    "out/client/*.js",
+    "out/extension.js",
     "syntaxes/*.tmLanguage.json"
   ],
   "contributes": {
@@ -68,9 +68,7 @@
     "package": "vsce package --allow-missing-repository"
   },
   "dependencies": {
-    "vscode-languageclient": "^9.0.1",
-    "vscode-languageserver": "^9.0.1",
-    "vscode-languageserver-textdocument": "^1.0.11"
+    "vscode-languageclient": "^9.0.1"
   },
   "devDependencies": {
     "@biomejs/biome": "2.6.5",

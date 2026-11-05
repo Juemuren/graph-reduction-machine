@@ -54,7 +54,9 @@ runLanguageServer =
 handlers :: Handlers (LspM ())
 handlers =
   mconcat
-    [ requestHandler SMethod_TextDocumentCompletion $ \(TRequestMessage _ _ _ params) respond -> do
+    [ notificationHandler SMethod_Initialized $ \_ -> pure ()
+    , notificationHandler SMethod_WorkspaceDidChangeConfiguration $ \_ -> pure ()
+    , requestHandler SMethod_TextDocumentCompletion $ \(TRequestMessage _ _ _ params) respond -> do
         items <- withDocument (toJSON params) $ \language source _ ->
           pure $ case language of
             "core-lambda" -> coreCompletions source (positionOf (toJSON params))

@@ -11,6 +11,7 @@
 文件扩展名为 `.lambda`。提供的功能包括
 
 - 语法高亮：支持模块指令、定义、λ 抽象、内置函数、字符串和 `#` 注释
+- 语义高亮：支持区分定义和参数并分别高亮
 - 补全：提示当前文件的定义、导入的名称，以及当前函数体内可见的参数；暂不提示内置函数
 - 悬停：显示当前文件中名称的定义，或显示导入该名称的路径
 
@@ -48,6 +49,8 @@ npm ci
 npm run package
 code --install-extension graph-reduction-machine-syntax-0.3.0.vsix
 ```
+
+如果在 `PATH` 中找不到 `graph-reduction-machine-lsp`，那么扩展只提供语法高亮功能。
 
 ## 测试
 
