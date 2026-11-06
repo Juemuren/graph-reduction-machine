@@ -5,6 +5,8 @@ module LanguageServer.Common (
   Completion (..),
   Hover (..),
   Token (..),
+  Symbol (..),
+  tokenAt,
   slice,
   positionAt,
   offsetAt,
@@ -19,7 +21,9 @@ data Range = Range {rangeStart :: Position, rangeEnd :: Position}
   deriving (Eq, Show)
 data Completion = Completion
   { completionLabel :: String
-  , completionDetail :: String
+  , completionKind :: Int
+  , completionDetail :: Maybe String
+  , completionDocumentation :: Maybe String
   , completionRange :: Range
   }
   deriving (Eq, Show)
@@ -28,6 +32,26 @@ data Hover = Hover {hoverText :: String, hoverRange :: Range}
 
 data Token = Token {tokenText :: String, tokenStart :: Int, tokenEnd :: Int}
   deriving (Eq, Show)
+
+data Symbol = Symbol
+  { symbolSelection :: Range
+  , symbolDefinition :: Range
+  , symbolOccurrences :: [Range]
+  , symbolImported :: Bool
+  }
+  deriving (Eq, Show)
+
+-- Prefer the token under the cursor, then the token immediately before it.
+-- Editors commonly request navigation or rename with the caret after a name.
+tokenAt :: (Token -> Bool) -> [Token] -> Int -> Maybe Token
+tokenAt wanted tokens offset =
+  case filter
+    (\token -> wanted token && tokenStart token <= offset && offset < tokenEnd token)
+    tokens of
+    token : _ -> Just token
+    [] -> case filter (\token -> wanted token && tokenEnd token == offset) tokens of
+      token : _ -> Just token
+      [] -> Nothing
 slice :: Int -> Int -> String -> String
 slice start end = take (end - start) . drop start
 

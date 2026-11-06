@@ -1,5 +1,12 @@
 -- | SKI graph editor analysis using the interpreter's BNFC lexer and parser.
-module LanguageServer.Ski (skiCompletions, skiHover) where
+module LanguageServer.Ski (
+  skiCompletions,
+  skiHover,
+  skiSymbolAt,
+  skiDocumentSymbols,
+  skiDiagnostics,
+  skiCanRename,
+) where
 
 import Data.Char (isDigit)
 import Data.List (find, isPrefixOf)
@@ -16,11 +23,10 @@ skiTokensOf source =
 skiDefinitions :: String -> [(Token, String)]
 skiDefinitions source =
   [ (name, trim (slice (tokenStart name) end source))
-  | (tokens, end, terminated) <- statements source (skiTokensOf source)
-  , terminated
-  , name : _ <- [tokens]
+  | (tokens, end, _) <- statements source (skiTokensOf source)
+  , name : equals : _ <- [tokens]
   , isNodeId (tokenText name)
-  , Right _ <- [Ski.pGraph (Ski.myLexer (slice (tokenStart name) end source))]
+  , tokenText equals == "="
   ]
 
 isNodeId :: String -> Bool
@@ -45,7 +51,12 @@ skiCompletions source position =
         || "--" `isPrefixOf` dropWhile (/= '-') line
         then []
         else
-          [ Completion (tokenText token) description range
+          [ Completion
+              (tokenText token)
+              6
+              Nothing
+              (Just ("```ski-graph\n" ++ description ++ "\n```"))
+              range
           | (token, description) <- unique definitions
           ]
  where
@@ -58,12 +69,7 @@ skiCompletions source position =
 skiHover :: String -> Position -> Maybe Hover
 skiHover source position = do
   let offset = offsetAt source position
-  token <-
-    find
-      ( \item ->
-          isNodeId (tokenText item) && tokenStart item <= offset && offset < tokenEnd item
-      )
-      (skiTokensOf source)
+  token <- tokenAt (isNodeId . tokenText) (skiTokensOf source) offset
   (definition, description) <-
     find ((== tokenText token) . tokenText . fst) (skiDefinitions source)
   let line = positionLine (positionAt source (tokenStart definition)) + 1
@@ -72,3 +78,70 @@ skiHover source position = do
         ("~~~ski-graph\n" ++ description ++ "\n~~~\n\nDefined on line " ++ show line)
         (tokenRange source token)
     )
+
+skiSymbolAt :: String -> Position -> Maybe Symbol
+skiSymbolAt source position = do
+  let offset = offsetAt source position
+      tokens = skiTokensOf source
+  token <- tokenAt (isNodeId . tokenText) tokens offset
+  (definition, _) <-
+    find ((== tokenText token) . tokenText . fst) (skiDefinitions source)
+  pure $
+    Symbol
+      (tokenRange source token)
+      (tokenRange source definition)
+      [tokenRange source item | item <- tokens, tokenText item == tokenText token]
+      False
+
+skiCanRename :: String -> Position -> String -> Bool
+skiCanRename source position newName = case skiSymbolAt source position of
+  Nothing -> False
+  Just symbol ->
+    let current =
+          [ tokenText token
+          | (token, _) <- skiDefinitions source
+          , tokenRange source token == symbolDefinition symbol
+          ]
+     in (current /= ["#0"] || newName == "#0")
+          && all
+            ( \(token, _) ->
+                tokenText token /= newName || tokenRange source token == symbolDefinition symbol
+            )
+            (skiDefinitions source)
+
+skiDocumentSymbols :: String -> [(String, Range)]
+skiDocumentSymbols source =
+  [ (tokenText token, tokenRange source token)
+  | (token, _) <- skiDefinitions source
+  ]
+
+skiDiagnostics :: String -> [(Range, String)]
+skiDiagnostics source = syntaxProblems ++ duplicateProblems ++ missingProblems ++ rootProblem
+ where
+  tokens = skiTokensOf source
+  definitions = skiDefinitions source
+  names = map (tokenText . fst) definitions
+  syntaxProblems =
+    [ (tokenRange source first, "Invalid SKI node definition")
+    | (part, end, terminated) <- statements source tokens
+    , terminated
+    , first : _ <- [part]
+    , Left _ <- [Ski.pGraph (Ski.myLexer (slice (tokenStart first) end source))]
+    ]
+  duplicateProblems =
+    [ (tokenRange source token, "Duplicate node: " ++ tokenText token)
+    | (index, (token, _)) <- zip [0 :: Int ..] definitions
+    , tokenText token `elem` take index names
+    ]
+  missingProblems =
+    [ (tokenRange source token, "Undefined node: " ++ tokenText token)
+    | token <- tokens
+    , isNodeId (tokenText token)
+    , tokenText token `notElem` names
+    ]
+  rootProblem =
+    [ (tokenRange source token, "Missing root node #0")
+    | not (null definitions)
+    , "#0" `notElem` names
+    , (token, _) <- take 1 definitions
+    ]
