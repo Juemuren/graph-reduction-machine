@@ -1,6 +1,51 @@
 {
   "cases": [
     {
+      "name": "rpow-zero",
+      "input": {
+        "language": "lambda",
+        "source": "@! RPOW (NTOR ZERO) ZERO;\n"
+      },
+      "run": {
+        "stage": "decode",
+        "type": "real",
+        "precisionReal": 2
+      },
+      "expect": {
+        "value": "1/1"
+      }
+    },
+    {
+      "name": "rpow-negative",
+      "input": {
+        "language": "lambda",
+        "source": "@! RPOW (ZTOR (ZNEG (NTOZ TWO))) THREE;\n"
+      },
+      "run": {
+        "stage": "decode",
+        "type": "real",
+        "precisionReal": 1
+      },
+      "expect": {
+        "value": "-8/1"
+      }
+    },
+    {
+      "name": "rpow-sequence",
+      "input": {
+        "language": "lambda",
+        "source": "@! RPOW (\\n -> NTOQ (SUCC n)) TWO;\n"
+      },
+      "run": {
+        "stage": "decode",
+        "type": "real",
+        "precisionReal": 2
+      },
+      "expect": {
+        "value": "9/1"
+      }
+    },
+    {
       "name": "radd",
       "input": {
         "language": "lambda",

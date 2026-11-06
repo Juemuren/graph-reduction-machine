@@ -7,6 +7,7 @@
 @> RADD = \a -> \b -> \n -> QADD (a n) (b n);
 @> RSUB = \a -> \b -> \n -> QSUB (a n) (b n);
 @> RMUL = \a -> \b -> \n -> QMUL (a n) (b n);
+@> RPOW = \a -> \m -> \n -> QPOW (a n) m;
 @> RDIV = \a -> \b -> \n ->
     IF (QISZERO (b n))
         (NTOQ ZERO)

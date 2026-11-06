@@ -1,6 +1,48 @@
 {
   "cases": [
     {
+      "name": "qpow-zero",
+      "input": {
+        "language": "lambda",
+        "source": "@! QPOW (NTOQ ZERO) ZERO;\n"
+      },
+      "run": {
+        "stage": "decode",
+        "type": "rational"
+      },
+      "expect": {
+        "value": "1/1"
+      }
+    },
+    {
+      "name": "qpow-negative-odd",
+      "input": {
+        "language": "lambda",
+        "source": "@! QPOW (PAIR (ZNEG (NTOZ ONE)) (NTOZ TWO)) THREE;\n"
+      },
+      "run": {
+        "stage": "decode",
+        "type": "rational"
+      },
+      "expect": {
+        "value": "-1/8"
+      }
+    },
+    {
+      "name": "qpow-negative-even",
+      "input": {
+        "language": "lambda",
+        "source": "@! QPOW (PAIR (NTOZ ONE) (ZNEG (NTOZ TWO))) TWO;\n"
+      },
+      "run": {
+        "stage": "decode",
+        "type": "rational"
+      },
+      "expect": {
+        "value": "1/4"
+      }
+    },
+    {
       "name": "qmax-first",
       "input": {
         "language": "lambda",

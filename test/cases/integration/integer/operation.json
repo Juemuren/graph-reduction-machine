@@ -1,6 +1,48 @@
 {
   "cases": [
     {
+      "name": "zpow-zero",
+      "input": {
+        "language": "lambda",
+        "source": "@! ZPOW (NTOZ ZERO) ZERO;\n"
+      },
+      "run": {
+        "stage": "decode",
+        "type": "integer"
+      },
+      "expect": {
+        "value": "1"
+      }
+    },
+    {
+      "name": "zpow-negative-odd",
+      "input": {
+        "language": "lambda",
+        "source": "@! ZPOW (PAIR ONE THREE) THREE;\n"
+      },
+      "run": {
+        "stage": "decode",
+        "type": "integer"
+      },
+      "expect": {
+        "value": "-8"
+      }
+    },
+    {
+      "name": "zpow-negative-even",
+      "input": {
+        "language": "lambda",
+        "source": "@! ZPOW (ZNEG (NTOZ TWO)) TWO;\n"
+      },
+      "run": {
+        "stage": "decode",
+        "type": "integer"
+      },
+      "expect": {
+        "value": "4"
+      }
+    },
+    {
       "name": "zmax-first",
       "input": {
         "language": "lambda",

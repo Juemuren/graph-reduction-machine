@@ -18,6 +18,7 @@
         (ADD
             (MUL (FST p) (SND q))
             (MUL (SND p) (FST q)));
+@> ZPOW = \p -> \n -> n (ZMUL p) (NTOZ ONE);
 
 @> ZNEG = \p -> PAIR (SND p) (FST p);
 @> ZABS = \p ->

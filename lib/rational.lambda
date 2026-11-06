@@ -19,6 +19,7 @@
     PAIR
         (ZMUL (FST p) (FST q))
         (ZMUL (SND p) (SND q));
+@> QPOW = \p -> \n -> n (QMUL p) (NTOQ ONE);
 @> QDIV = \p -> \q ->
     PAIR
         (ZMUL (FST p) (SND q))
