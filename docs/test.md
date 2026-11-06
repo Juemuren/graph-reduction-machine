@@ -153,4 +153,4 @@ cabal test integration-tests
 cabal test language-server-tests
 ```
 
-语言服务测试使用 `lsp-test` 启动真实语言服务器进程。
+语言服务测试的完整说明见 [lsp.md#测试](lsp.md#测试)。
