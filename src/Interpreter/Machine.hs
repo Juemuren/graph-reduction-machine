@@ -137,49 +137,55 @@ allocate node = do
 
 -- Applications and arguments are ordered from the head outwards.
 spine :: Address -> Run (Node, [(Address, Address)])
-spine address = go address []
+spine address = spineWith address []
+
+spineWith :: Address -> [(Address, Address)] -> Run (Node, [(Address, Address)])
+spineWith = go
  where
   go current applications = do
     actual <- resolve current
-    node <- readNode actual
+    node <- gets ((IntMap.! actual) . heap)
     case node of
       App function argument -> go function ((actual, argument) : applications)
       _ -> pure (node, applications)
 
 whnf :: Address -> Run ()
-whnf address = do
-  (headNode, applications) <- spine address
-  let arity = case headNode of
-        I -> 1
-        K -> 2
-        S -> 3
-        ChurchNumeral _ -> 2
-        _ -> 0
-  if length applications < arity || arity == 0
-    then pure ()
-    else do
-      machine <- get
-      when (steps machine >= stepLimit machine) $
-        lift (Left ("reduction exceeded step limit " ++ show (stepLimit machine)))
-      let (redex, _) = applications !! (arity - 1)
-          arguments = map snd (take arity applications)
-      case (headNode, arguments) of
-        (I, [x]) -> writeNode redex (Indirect x)
-        (K, [x, _]) -> writeNode redex (Indirect x)
-        (S, [x, y, z]) -> do
-          left <- allocate (App x z)
-          right <- allocate (App y z)
-          writeNode redex (App left right)
-        (ChurchNumeral count, [function, value]) -> do
-          when (count >= fromIntegral (stepLimit machine - steps machine)) $
-            lift (Left ("reduction exceeded step limit " ++ show (stepLimit machine)))
-          result <-
-            foldM (\argument _ -> allocate (App function argument)) value [1 .. count]
-          writeNode redex (Indirect result)
-          modify (\state -> state{steps = steps state + fromIntegral count})
-        _ -> lift (Left "internal error: invalid SKI redex")
-      modify (\state -> state{steps = steps state + 1})
-      whnf address
+whnf address = go address []
+ where
+  go current outer = do
+    (headNode, applications) <- spineWith current outer
+    let arity = case headNode of
+          I -> 1
+          K -> 2
+          S -> 3
+          ChurchNumeral _ -> 2
+          _ -> 0
+    if length applications < arity || arity == 0
+      then pure ()
+      else do
+        machine <- get
+        when (steps machine >= stepLimit machine) $
+          lift (Left ("reduction exceeded step limit " ++ show (stepLimit machine)))
+        let (redex, _) = applications !! (arity - 1)
+            arguments = map snd (take arity applications)
+        case (headNode, arguments) of
+          (I, [x]) -> writeNode redex (Indirect x)
+          (K, [x, _]) -> writeNode redex (Indirect x)
+          (S, [x, y, z]) -> do
+            left <- allocate (App x z)
+            right <- allocate (App y z)
+            writeNode redex (App left right)
+          (ChurchNumeral count, [function, value]) -> do
+            when (count >= fromIntegral (stepLimit machine - steps machine)) $
+              lift (Left ("reduction exceeded step limit " ++ show (stepLimit machine)))
+            result <-
+              foldM (\argument _ -> allocate (App function argument)) value [1 .. count]
+            writeNode redex (Indirect result)
+            modify (\state -> state{steps = steps state + fromIntegral count})
+          _ -> lift (Left "internal error: invalid SKI redex")
+        modify (\state -> state{steps = steps state + 1})
+        -- The outer applications are unchanged by rewriting this redex.
+        go redex (drop arity applications)
 
 normalize :: Address -> Run ()
 normalize address = do
