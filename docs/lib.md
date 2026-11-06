@@ -201,6 +201,7 @@ $$
 - `QSUB a b` 表示有理数 `a` 和有理数 `b` 的减法
 - `QMUL a b` 表示有理数 `a` 和有理数 `b` 的乘法
 - `QPOW a n` 表示有理数 `a` 的自然数 `n` 次幂
+- `QLOG a b` 返回以有理数 `a` 为底、有理数 `b` 为真数的柯西序列。第 `n` 项为 $\frac1{2^n}\max\Set{k\in\mathbb N | a^k\leq b^{2^n}}$
 - `QDIV a b` 表示有理数 `a` 和非零有理数 `b` 的除法
 - `QNEG a` 表示有理数 `a` 取负
 - `QABS a` 表示有理数 `a` 的绝对值

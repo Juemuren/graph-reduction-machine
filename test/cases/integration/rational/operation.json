@@ -1,6 +1,86 @@
 {
   "cases": [
     {
+      "name": "qlog-exact",
+      "input": {
+        "language": "lambda",
+        "source": "@! QLOG (NTOQ TWO) (NTOQ EIGHT);\n"
+      },
+      "run": {
+        "stage": "decode",
+        "type": "real",
+        "precisionReal": 1,
+        "maxSteps": 1000000
+      },
+      "expect": {
+        "value": "3/1"
+      }
+    },
+    {
+      "name": "qlog-fractional-zero",
+      "input": {
+        "language": "lambda",
+        "source": "@! QLOG (NTOQ TWO) (NTOQ THREE);\n"
+      },
+      "run": {
+        "stage": "decode",
+        "type": "real",
+        "precisionReal": 0,
+        "maxSteps": 1000000
+      },
+      "expect": {
+        "value": "1/1"
+      }
+    },
+    {
+      "name": "qlog-fractional",
+      "input": {
+        "language": "lambda",
+        "source": "@! QLOG (NTOQ TWO) (NTOQ THREE);\n"
+      },
+      "run": {
+        "stage": "decode",
+        "type": "real",
+        "precisionReal": 1,
+        "maxSteps": 1000000
+      },
+      "expect": {
+        "value": "3/2"
+      }
+    },
+    {
+      "name": "qlog-base-below-one",
+      "input": {
+        "language": "lambda",
+        "source": "@! QLOG (PAIR (NTOZ ONE) (NTOZ TWO)) (NTOQ TWO);\n"
+      },
+      "run": {
+        "stage": "decode",
+        "type": "real",
+        "precisionReal": 0,
+        "maxSteps": 1000000
+      },
+      "expect": {
+        "value": "-1/1"
+      }
+    },
+    {
+      "name": "qlog-number-below-one",
+      "input": {
+        "language": "lambda",
+        "source": "@! QLOG (NTOQ TWO) (PAIR (NTOZ ONE) (NTOZ TWO));\n"
+      },
+      "run": {
+        "stage": "decode",
+        "type": "real",
+        "precisionReal": 0,
+        "maxSteps": 1000000
+      },
+      "expect": {
+        "value": "-1/1"
+      }
+    },
+    {
       "name": "qpow-zero",
       "input": {
         "language": "lambda",

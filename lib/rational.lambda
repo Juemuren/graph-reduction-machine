@@ -32,6 +32,47 @@
         q;
 @> QINV = \q -> PAIR (SND q) (FST q);
 
+# binary logarithm digit extraction
+qLogFractionStep = \base -> \state ->
+    (\square ->
+        IF (QGEQ square base)
+            (PAIR
+                (SUCC (MUL TWO (FST state)))
+                (QDIV square base))
+            (PAIR
+                (MUL TWO (FST state))
+                square))
+    (QMUL (SND state) (SND state));
+qLogPositive = \base -> \number -> \precision ->
+    (\whole ->
+        (\fraction ->
+            QADD
+                (NTOQ (FST whole))
+                (QDIV
+                    (NTOQ (FST fraction))
+                    (NTOQ (POW TWO precision))))
+        (precision (qLogFractionStep base)
+            (PAIR ZERO (SND whole))))
+    (WHILE
+        (\state -> QGEQ (SND state) base)
+        (\state ->
+            PAIR
+                (SUCC (FST state))
+                (QDIV (SND state) base))
+        (PAIR ZERO number));
+@> QLOG = \base -> \number -> \precision ->
+    (\inverse_base -> \inverse_number ->
+        (\result ->
+            IF (IF inverse_base (NOT inverse_number) inverse_number)
+                (QNEG result)
+                result)
+        (qLogPositive
+            (IF inverse_base (QINV base) base)
+            (IF inverse_number (QINV number) number)
+            precision))
+    (QLT base (NTOQ ONE))
+    (QLT number (NTOQ ONE));
+
 @> QMAX = \p -> \q -> IF (QGEQ p q) p q;
 @> QMIN = \p -> \q -> IF (QLEQ p q) p q;
 
