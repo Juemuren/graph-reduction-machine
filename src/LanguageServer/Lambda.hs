@@ -268,7 +268,10 @@ coreHover source position = do
               )
               range
           )
-      Nothing -> Hover . declarationHover source <$> declaration <*> pure range
+      Nothing ->
+        case declaration of
+          Just value -> Just (Hover (declarationHover source value) range)
+          Nothing -> Hover <$> standardLibraryHover (tokenText token) <*> pure range
 
 coreImportAt :: String -> Position -> Maybe (FilePath, String, Range)
 coreImportAt source position = do
@@ -473,6 +476,21 @@ standardLibraryDeclarations =
 
 standardLibraryNames :: [String]
 standardLibraryNames = map declarationName standardLibraryDeclarations
+
+standardLibraryHover :: String -> Maybe String
+standardLibraryHover name = do
+  declaration <- find ((== name) . declarationName) standardLibraryDeclarations
+  path <- declarationPath declaration
+  source <- lookup path standardLibrarySources
+  let line =
+        positionLine (positionAt source (tokenStart (declarationToken declaration))) + 1
+  pure $
+    "~~~core-lambda\n"
+      ++ declarationDescription declaration
+      ++ "\n~~~\n\nDefined in "
+      ++ path
+      ++ " on line "
+      ++ show line
 
 coreSignatureHelp :: String -> Position -> Maybe (String, [String], Int)
 coreSignatureHelp source position = do

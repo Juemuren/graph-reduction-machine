@@ -55,6 +55,14 @@ main = do
     assert "parameter scope" (not (hasLabel "bar" outside))
     importedHover <- getHover core (Position 3 25)
     assert "import hover" (maybe False (contains "remote" . show) importedHover)
+    standardHover <- getHover core (Position 6 4)
+    assert
+      "standard library hover"
+      ( maybe
+          False
+          (\hover -> contains "@> ID =" (show hover) && contains "lib" (show hover))
+          standardHover
+      )
     shadowHover <- getHover core (Position 5 19)
     assert
       "parameter shadow"
@@ -137,6 +145,15 @@ main = do
       ( any
           (\item -> hasLabel "SUCC" [item] && field "detail" item == Just (String "x"))
           libraryItems
+      )
+    changeDoc libraryCompletion [change "SUCC = \\x -> x;\n@! SUCC;"]
+    localHover <- getHover libraryCompletion (Position 1 5)
+    assert
+      "local hover takes precedence over standard library"
+      ( maybe
+          False
+          (\hover -> contains "SUCC =" (show hover) && not (contains "lib" (show hover)))
+          localHover
       )
     standardDoc <-
       createDoc "test/cases/lsp/standard.lambda" "core-lambda" "@! SU"
