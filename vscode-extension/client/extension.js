@@ -1,9 +1,8 @@
-import type * as vscode from 'vscode';
 import { LanguageClient } from 'vscode-languageclient/node';
 
-let client: LanguageClient | undefined;
+let client;
 
-export async function activate(_context: vscode.ExtensionContext): Promise<void> {
+export async function activate() {
   client = new LanguageClient(
     'graphReductionMachine',
     'Graph Reduction Machine Language Server',
@@ -20,7 +19,7 @@ export async function activate(_context: vscode.ExtensionContext): Promise<void>
   await client.start();
 }
 
-export async function deactivate(): Promise<void> {
+export async function deactivate() {
   await client?.dispose();
   client = undefined;
 }

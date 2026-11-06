@@ -57,26 +57,3 @@ code --install-extension graph-reduction-machine-syntax-0.3.0.vsix
 ```
 
 如果在 `PATH` 中找不到 `graph-reduction-machine-lsp`，那么扩展只提供语法高亮功能。
-
-## 测试
-
-在仓库根目录运行：
-
-```sh
-cabal test language-server-tests
-```
-
-## 代码质量
-
-在本目录运行：
-
-```sh
-# 类型检查
-npm run typecheck
-# 格式化
-npm run format
-# 静态检查
-npm run lint
-# 格式化 + 静态检查
-npm run check
-```

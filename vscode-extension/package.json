@@ -68,23 +68,14 @@
   },
   "scripts": {
     "build": "node build.mjs",
-    "typecheck": "tsc -p tsconfig.json",
-    "format": "biome format --write .",
-    "lint": "biome lint .",
-    "check": "biome check .",
-    "prepackage": "npm run typecheck && npm run build",
+    "prepackage": "npm run build",
     "package": "vsce package --allow-missing-repository"
   },
   "dependencies": {
     "vscode-languageclient": "^9.0.1"
   },
   "devDependencies": {
-    "@biomejs/biome": "2.6.5",
-    "@types/node": "^20.17.0",
-    "@types/vscode": "^1.82.0",
     "@vscode/vsce": "^4.1.0",
-    "esbuild": "^0.25.0",
-    "typescript": "^7.0.2",
-    "vscode-jsonrpc": "^8.2.0"
+    "esbuild": "^0.25.0"
   }
 }
