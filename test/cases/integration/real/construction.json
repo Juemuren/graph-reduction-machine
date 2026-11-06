@@ -1,6 +1,36 @@
 {
   "cases": [
     {
+      "name": "e-zero",
+      "input": {
+        "language": "lambda",
+        "source": "@! E;\n"
+      },
+      "run": {
+        "stage": "decode",
+        "type": "real",
+        "precisionReal": 0
+      },
+      "expect": {
+        "value": "1/1"
+      }
+    },
+    {
+      "name": "e-two",
+      "input": {
+        "language": "lambda",
+        "source": "@! E;\n"
+      },
+      "run": {
+        "stage": "decode",
+        "type": "real",
+        "precisionReal": 2
+      },
+      "expect": {
+        "value": "5/2"
+      }
+    },
+    {
       "name": "ntor",
       "input": {
         "language": "lambda",

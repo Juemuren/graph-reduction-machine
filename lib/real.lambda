@@ -4,6 +4,21 @@
 @> ZTOR = \z -> QTOR (ZTOQ z);
 @> QTOR = \q -> \n -> q;
 
+# e
+eStep = \state ->
+    (\term ->
+        PAIR
+            (SUCC (FST state))
+            (PAIR
+                term
+                (QADD (SND (SND state)) term)))
+    (QDIV
+        (FST (SND state))
+        (NTOQ (SUCC (FST state))));
+@> E = \n ->
+    SND (SND (FOR n eStep
+        (PAIR ZERO (PAIR (NTOQ ONE) (NTOQ ONE)))));
+
 @> RADD = \a -> \b -> \n -> QADD (a n) (b n);
 @> RSUB = \a -> \b -> \n -> QSUB (a n) (b n);
 @> RMUL = \a -> \b -> \n -> QMUL (a n) (b n);
