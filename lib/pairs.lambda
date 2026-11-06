@@ -1,4 +1,4 @@
-# pairs
+# Pairs
 
 @> PAIR = \a -> \b -> \s -> s a b;
 

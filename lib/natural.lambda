@@ -1,4 +1,4 @@
-# natural
+# Natural
 
 @> ZERO = \f -> \x -> x;
 @> ONE = \f -> \x -> f x;
@@ -17,16 +17,41 @@
 @> SUB = \m -> \n -> n PRED m;
 @> MUL = \m -> \n -> \f -> m (n f);
 @> POW = \m -> \n -> n m;
-@> FACT = \n -> SND (FOR n (\p -> PAIR (SUCC (FST p)) (MUL (SUCC (FST p)) (SND p))) (PAIR ZERO ONE));
+@> FACT = \n ->
+    SND (FOR n
+        (\count_product ->
+            PAIR
+                (SUCC (FST count_product))
+                (MUL (SUCC (FST count_product)) (SND count_product)))
+        (PAIR ZERO ONE));
 
-# Division helpers
-divStep = \n -> \p -> IF (LEQ n (SUCC (SND p))) (PAIR (SUCC (FST p)) (SUB (SUCC (SND p)) n)) (PAIR (FST p) (SUCC (SND p)));
-divMod = \m -> \n -> IF (ISZERO n) (PAIR ZERO m) (m (divStep n) (PAIR ZERO ZERO));
+# Division
+divModStep = \divisor -> \quotient_remainder ->
+    IF (LEQ divisor (SUCC (SND quotient_remainder)))
+        (PAIR
+            (SUCC (FST quotient_remainder))
+            (SUB (SUCC (SND quotient_remainder)) divisor)
+        )
+        (PAIR
+            (FST quotient_remainder)
+            (SUCC (SND quotient_remainder))
+        );
+divMod = \m -> \n ->
+    IF (ISZERO n)
+        (PAIR ZERO m)
+        (m (divModStep n) (PAIR ZERO ZERO));
 @> DIV = \m -> \n -> FST (divMod m n);
 @> MOD = \m -> \n -> SND (divMod m n);
 
-@> GCD = \m -> \n -> FST (WHILE (\p -> NOT (ISZERO (SND p))) (\p -> PAIR (SND p) (MOD (FST p) (SND p))) (PAIR m n));
-@> LCM = \m -> \n -> IF (OR (ISZERO m) (ISZERO n)) ZERO (DIV (MUL m n) (GCD m n));
+@> GCD = \m -> \n ->
+    FST (WHILE
+        (\pair -> NOT (ISZERO (SND pair)))
+        (\pair -> PAIR (SND pair) (MOD (FST pair) (SND pair)))
+        (PAIR m n));
+@> LCM = \m -> \n ->
+    IF (OR (ISZERO m) (ISZERO n))
+        ZERO
+        (DIV (MUL m n) (GCD m n));
 
 @> ISZERO = \n -> n (\x -> FALSE) TRUE;
 @> EQ = \m -> \n -> AND (LEQ m n) (LEQ n m);

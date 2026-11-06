@@ -83,6 +83,34 @@
       "expect": {
         "value": "2"
       }
+    },
+    {
+      "name": "z-constant",
+      "input": {
+        "language": "lambda",
+        "source": "@! Z (\\self -> \\n -> TWO) ZERO;\n"
+      },
+      "run": {
+        "stage": "decode",
+        "type": "natural"
+      },
+      "expect": {
+        "value": "2"
+      }
+    },
+    {
+      "name": "z-recursion",
+      "input": {
+        "language": "lambda",
+        "source": "@! Z (\\self -> \\n -> IF (ISZERO n) ZERO (SUCC (self (PRED n)))) TWO;\n"
+      },
+      "run": {
+        "stage": "decode",
+        "type": "natural"
+      },
+      "expect": {
+        "value": "2"
+      }
     }
   ]
 }

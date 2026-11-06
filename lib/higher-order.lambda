@@ -1,4 +1,4 @@
-# higher-order
+# Higher-order functions
 
 @> ID = \x -> x;
 @> COMPOSE = \f -> \g -> \x -> f (g x);

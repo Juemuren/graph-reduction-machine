@@ -1,4 +1,4 @@
-# combinator
+# Combinators
 
 @> I = \x -> x;
 @> K = \x -> \y -> x;
@@ -16,7 +16,7 @@
     (\x -> f (x x))
     (\x -> f (x x));
 @> Z = \f ->
-    (\x -> \f ->(\v -> x x v))
-    (\x -> \f -> (\v -> x x v));
+    (\x -> f (\v -> x x v))
+    (\x -> f (\v -> x x v));
 @> A = \x -> \f -> f (x x f);
 @> THETA = A A;
