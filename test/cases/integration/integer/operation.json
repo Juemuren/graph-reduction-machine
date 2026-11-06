@@ -1,6 +1,34 @@
 {
   "cases": [
     {
+      "name": "zlog-exact",
+      "input": {
+        "language": "lambda",
+        "source": "@! ZLOG (NTOZ TWO) (NTOZ EIGHT);\n"
+      },
+      "run": {
+        "stage": "decode",
+        "type": "integer"
+      },
+      "expect": {
+        "value": "3"
+      }
+    },
+    {
+      "name": "zlog-nonnormal",
+      "input": {
+        "language": "lambda",
+        "source": "@! ZLOG (PAIR FIVE THREE) (PAIR NINE TWO);\n"
+      },
+      "run": {
+        "stage": "decode",
+        "type": "integer"
+      },
+      "expect": {
+        "value": "2"
+      }
+    },
+    {
       "name": "zdiv-positive",
       "input": {
         "language": "lambda",

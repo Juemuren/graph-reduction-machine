@@ -34,6 +34,8 @@
             (DIV a b))
         (FST (ZABS p)) (FST (ZABS q)));
 @> ZMOD = \p -> \q -> ZSUB p (ZMUL (ZDIV p q) q);
+@> ZLOG = \base -> \number ->
+    NTOZ (LOG (FST (ZNORM base)) (FST (ZNORM number)));
 
 @> ZNEG = \p -> PAIR (SND p) (FST p);
 @> ZABS = \p ->

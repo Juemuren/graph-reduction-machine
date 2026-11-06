@@ -1,6 +1,48 @@
 {
   "cases": [
     {
+      "name": "log-exact",
+      "input": {
+        "language": "lambda",
+        "source": "@! LOG TWO EIGHT;\n"
+      },
+      "run": {
+        "stage": "decode",
+        "type": "natural"
+      },
+      "expect": {
+        "value": "3"
+      }
+    },
+    {
+      "name": "log-nonpower",
+      "input": {
+        "language": "lambda",
+        "source": "@! LOG TWO NINE;\n"
+      },
+      "run": {
+        "stage": "decode",
+        "type": "natural"
+      },
+      "expect": {
+        "value": "3"
+      }
+    },
+    {
+      "name": "log-less",
+      "input": {
+        "language": "lambda",
+        "source": "@! LOG THREE TWO;\n"
+      },
+      "run": {
+        "stage": "decode",
+        "type": "natural"
+      },
+      "expect": {
+        "value": "0"
+      }
+    },
+    {
       "name": "max-first",
       "input": {
         "language": "lambda",
