@@ -14,6 +14,7 @@ module LanguageServer.Lambda (
   coreCanRename,
 ) where
 
+import Compiler.Expand (standardLibrarySources)
 import Control.Monad (guard)
 import qualified CoreLambda.Lex as CoreLex
 import qualified CoreLambda.Par as Core
@@ -182,6 +183,7 @@ coreCompletions source position =
         | parameter <- activeParameters (coreParameters analysis) offset
         ]
           ++ [completionFor declaration | declaration <- coreDeclarations analysis]
+          ++ [completionFor declaration | declaration <- standardLibraryDeclarations]
       visible =
         any
           ( \expression -> expressionStart expression <= offset && offset <= expressionEnd expression
@@ -198,13 +200,23 @@ coreCompletions source position =
           ]
  where
   completionFor declaration = case declarationPath declaration of
-    Just path -> (declarationName declaration, 6, Just ("from " ++ path), Nothing)
+    Just path
+      | not (declarationExported declaration) ->
+          (declarationName declaration, 6, Just ("from " ++ path), Nothing)
     Nothing ->
       let parameters = functionParameters (declarationDescription declaration)
        in ( declarationName declaration
           , if null parameters then 6 else 3
           , if null parameters then Nothing else Just (unwords parameters)
           , Just ("```core-lambda\n" ++ declarationDescription declaration ++ "\n```")
+          )
+    Just path ->
+      let parameters = functionParameters (declarationDescription declaration)
+       in ( declarationName declaration
+          , if null parameters then 6 else 3
+          , if null parameters then Nothing else Just (unwords parameters)
+          , Just
+              ("```core-lambda\n" ++ declarationDescription declaration ++ "\n```\n\n" ++ path)
           )
   namePart character = isAlphaNum character || character == '_'
   unique = go []
@@ -436,7 +448,7 @@ coreDiagnostics source = syntaxProblems ++ duplicateProblems ++ unknownProblems
     [ (tokenRange source token, "Undefined name: " ++ tokenText token)
     | token <- coreTokens analysis
     , case tokenText token of
-        first : _ -> isAsciiLower first
+        first : _ -> isAsciiLower first || isAsciiUpper first
         _ -> False
     , any
         ( \expression ->
@@ -445,7 +457,22 @@ coreDiagnostics source = syntaxProblems ++ duplicateProblems ++ unknownProblems
         )
         (coreExpressions analysis)
     , isNothing (resolveToken analysis token)
+    , tokenText token `notElem` standardLibraryNames
     ]
+
+standardLibraryDeclarations :: [Declaration]
+standardLibraryDeclarations =
+  [ declaration{declarationPath = Just path}
+  | (path, source) <- standardLibrarySources
+  , declaration <- coreDeclarations (analyzeCore source)
+  , declarationExported declaration
+  , case declarationName declaration of
+      first : _ -> isAsciiUpper first
+      _ -> False
+  ]
+
+standardLibraryNames :: [String]
+standardLibraryNames = map declarationName standardLibraryDeclarations
 
 coreSignatureHelp :: String -> Position -> Maybe (String, [String], Int)
 coreSignatureHelp source position = do

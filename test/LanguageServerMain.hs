@@ -132,6 +132,37 @@ main = do
     assert
       "local completion in expression"
       (hasLabel "SUCC" libraryItems)
+    assert
+      "local definition takes precedence over standard library"
+      ( any
+          (\item -> hasLabel "SUCC" [item] && field "detail" item == Just (String "x"))
+          libraryItems
+      )
+    standardDoc <-
+      createDoc "test/cases/lsp/standard.lambda" "core-lambda" "@! SU"
+    standardItems <- getCompletions standardDoc (Position 0 5)
+    assert "standard library completion" (hasLabel "SUCC" standardItems)
+    assert
+      "standard library parameters"
+      ( any
+          (\item -> hasLabel "SUCC" [item] && field "detail" item == Just (String "n f x"))
+          standardItems
+      )
+    resolvedStandard <- getAndResolveCompletions standardDoc (Position 0 5)
+    assert
+      "standard library definition"
+      ( any
+          (\item -> hasLabel "SUCC" [item] && contains "@> SUCC =" (show item))
+          resolvedStandard
+      )
+    changeDoc standardDoc [change "@! SUCC;"]
+    standardIssues <- waitForDiagnostics
+    assert "standard library name has no diagnostic" (null standardIssues)
+    changeDoc standardDoc [change "@! NOT_EXPORTED;"]
+    missingBuiltinIssues <- waitForDiagnostics
+    assert
+      "unknown builtin diagnostic"
+      (any (contains "Undefined name: NOT_EXPORTED" . show) missingBuiltinIssues)
     topLevel <-
       createDoc
         "test/cases/lsp/top-level.lambda"

@@ -1,7 +1,7 @@
 {-# LANGUAGE TemplateHaskell #-}
 
 -- | Resolve modules and expand library definitions into pure lambda calculus.
-module Compiler.Expand (expand, expandSource) where
+module Compiler.Expand (expand, expandSource, standardLibrarySources) where
 
 import Compiler.LibrarySource (embeddedSources)
 import Compiler.ModuleSource (Import (..), Module (..), parseModule)
@@ -17,6 +17,10 @@ sources :: Map.Map FilePath String
 sources =
   Map.fromList
     [(normalise ("lib" </> path), source) | (path, source) <- $(embeddedSources)]
+
+-- | The same embedded source files used to resolve builtins during compilation.
+standardLibrarySources :: [(FilePath, String)]
+standardLibrarySources = Map.toList sources
 
 standardIndex :: Either String (Map.Map String FilePath)
 standardIndex = foldM addModule Map.empty (Map.toList sources)
