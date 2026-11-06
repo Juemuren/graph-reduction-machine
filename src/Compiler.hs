@@ -16,6 +16,8 @@ module Compiler (
 import Compiler.Expand (expandSource)
 import Data.List (intercalate, nub)
 import qualified Data.Map.Strict as Map
+import Data.Maybe (fromMaybe)
+import qualified Data.Set as Set
 import qualified PureLambda.Abs as Pure
 import qualified Ski.Abs as Graph
 
@@ -71,72 +73,120 @@ reduceChecked reduction expression =
     [] -> Right (reduceWith reduction expression)
     names -> Left ("free variable(s): " ++ intercalate ", " (map nameText names))
 
+type Environment = [(Pure.Name, Value)]
+
+data Value
+  = Closure Pure.Name Pure.Exp Environment (Set.Set Pure.Name)
+  | Neutral Pure.Name [Value] (Set.Set Pure.Name)
+  | -- The result is a shared thunk; free-name checks inspect the source without forcing it.
+    Delayed Pure.Exp Environment Value
+
+reduceWith :: Reduction -> Pure.Exp -> Pure.Exp
+reduceWith reduction expression = case reduction of
+  BetaEta -> reduceEta (quote reduction (evalValue [] expression))
+  BetaOnly -> quote reduction (evalValue [] expression)
+  EtaOnly -> reduceEta expression
+  NoReduction -> expression
+
+evalValue :: Environment -> Pure.Exp -> Value
+evalValue environment expression = case expression of
+  Pure.EVar name -> fromMaybe (neutral name) (lookup name environment)
+  Pure.EAbs name body ->
+    Closure name body environment (capturedNames name body environment)
+  Pure.EApp function argument ->
+    apply (evalValue environment function) (delay environment argument)
+
+delay :: Environment -> Pure.Exp -> Value
+delay environment expression = Delayed expression environment (evalValue environment expression)
+
+force :: Value -> Value
+force value = case value of
+  Delayed _ _ result -> force result
+  _ -> value
+
+apply :: Value -> Value -> Value
+apply value argument = case force value of
+  Closure name body environment _ -> evalValue ((name, argument) : environment) body
+  Neutral name arguments names ->
+    Neutral name (argument : arguments) (Set.union names (support argument))
+  Delayed{} -> error "apply: unresolved delayed value"
+
+neutral :: Pure.Name -> Value
+neutral name = Neutral name [] (Set.singleton name)
+
+support :: Value -> Set.Set Pure.Name
+support value = case value of
+  Closure _ _ _ names -> names
+  Neutral _ _ names -> names
+  -- A discarded argument can diverge, so capture checks must not evaluate it.
+  Delayed expression environment _ -> freeNames (freeVariables [] expression) environment
+
+capturedNames :: Pure.Name -> Pure.Exp -> Environment -> Set.Set Pure.Name
+capturedNames bound body = freeNames (freeVariables [bound] body)
+
+freeNames :: [Pure.Name] -> Environment -> Set.Set Pure.Name
+freeNames names environment =
+  Set.unions
+    [ maybe (Set.singleton name) support (lookup name environment)
+    | name <- Set.toList (Set.fromList names)
+    ]
+
+quote :: Reduction -> Value -> Pure.Exp
+quote reduction value = case force value of
+  Closure name body environment names ->
+    case etaContract reduction name body of
+      Just contracted -> quote reduction (evalValue environment contracted)
+      Nothing ->
+        let binder =
+              if Set.member name names
+                then freshName name (allNames body ++ Set.toList names)
+                else name
+         in Pure.EAbs
+              binder
+              (quote reduction (evalValue ((name, neutral binder) : environment) body))
+  Neutral name arguments _ ->
+    foldl Pure.EApp (Pure.EVar name) (map (quote reduction) (reverse arguments))
+  Delayed{} -> error "quote: unresolved delayed value"
+
 -- | Reduce to beta-eta normal form, including inside abstractions.
 reduce :: Pure.Exp -> Pure.Exp
 reduce = reduceWith BetaEta
 
-reduceWith :: Reduction -> Pure.Exp -> Pure.Exp
-reduceWith reduction expression = case expression of
+reduceEta :: Pure.Exp -> Pure.Exp
+reduceEta expression = case expression of
   Pure.EVar _ -> expression
   Pure.EAbs name body ->
-    case etaContract reduction name body of
-      Just contracted -> reduceWith reduction contracted
+    case etaContract EtaOnly name body of
+      Just contracted -> reduceEta contracted
       Nothing ->
-        let normalized = reduceWith reduction body
-         in case etaContract reduction name normalized of
+        let normalized = reduceEta body
+         in case etaContract EtaOnly name normalized of
               Just contracted -> contracted
               Nothing -> Pure.EAbs name normalized
-  Pure.EApp function argument
-    | reduction == EtaOnly || reduction == NoReduction ->
-        Pure.EApp (reduceWith reduction function) (reduceWith reduction argument)
-    | otherwise ->
-        case reduceHead function of
-          Pure.EAbs name body -> reduceWith reduction (substitute name argument body)
-          headForm ->
-            Pure.EApp (reduceWith reduction headForm) (reduceWith reduction argument)
+  Pure.EApp function argument ->
+    Pure.EApp (reduceEta function) (reduceEta argument)
 
 etaContract :: Reduction -> Pure.Name -> Pure.Exp -> Maybe Pure.Exp
 etaContract reduction name body
   | reduction == BetaOnly || reduction == NoReduction = Nothing
   | otherwise = case body of
       Pure.EApp function (Pure.EVar argument)
-        | argument == name && name `notElem` freeVariables [] function -> Just function
+        | argument == name && not (occursFree name function) -> Just function
       _ -> Nothing
 
--- Find the next outermost redex without reducing arguments or abstraction bodies.
-reduceHead :: Pure.Exp -> Pure.Exp
-reduceHead expression = case expression of
-  Pure.EApp function argument ->
-    case reduceHead function of
-      Pure.EAbs name body -> reduceHead (substitute name argument body)
-      headForm -> Pure.EApp headForm argument
-  _ -> expression
-
--- Capture-avoiding substitution of an expression for a free variable.
-substitute :: Pure.Name -> Pure.Exp -> Pure.Exp -> Pure.Exp
-substitute target replacement expression = case expression of
-  Pure.EVar name
-    | name == target -> replacement
-    | otherwise -> expression
-  Pure.EApp function argument ->
-    Pure.EApp
-      (substitute target replacement function)
-      (substitute target replacement argument)
-  Pure.EAbs name body
-    | name == target -> expression
-    | target `notElem` freeVariables [] body -> expression
-    | name `notElem` freeVariables [] replacement ->
-        Pure.EAbs name (substitute target replacement body)
-    | otherwise ->
-        let fresh = freshName name (allNames body ++ allNames replacement ++ [target])
-            renamed = substitute name (Pure.EVar fresh) body
-         in Pure.EAbs fresh (substitute target replacement renamed)
+occursFree :: Pure.Name -> Pure.Exp -> Bool
+occursFree target expression = case expression of
+  Pure.EVar name -> name == target
+  Pure.EApp function argument -> occursFree target function || occursFree target argument
+  Pure.EAbs name body -> name /= target && occursFree target body
 
 allNames :: Pure.Exp -> [Pure.Name]
-allNames expression = case expression of
-  Pure.EVar name -> [name]
-  Pure.EApp function argument -> allNames function ++ allNames argument
-  Pure.EAbs name body -> name : allNames body
+allNames expression = go expression []
+ where
+  go term rest = case term of
+    Pure.EVar name -> name : rest
+    Pure.EApp function argument -> go function (go argument rest)
+    Pure.EAbs name body -> name : go body rest
 
 freshName :: Pure.Name -> [Pure.Name] -> Pure.Name
 freshName (Pure.Name base) used = go (1 :: Int)
@@ -149,13 +199,14 @@ nameText :: Pure.Name -> String
 nameText (Pure.Name name) = name
 
 freeVariables :: [Pure.Name] -> Pure.Exp -> [Pure.Name]
-freeVariables bound expression = case expression of
-  Pure.EVar name
-    | name `elem` bound -> []
-    | otherwise -> [name]
-  Pure.EApp function argument ->
-    freeVariables bound function ++ freeVariables bound argument
-  Pure.EAbs name body -> freeVariables (name : bound) body
+freeVariables bound expression = go bound expression []
+ where
+  go scope term rest = case term of
+    Pure.EVar name
+      | name `elem` scope -> rest
+      | otherwise -> name : rest
+    Pure.EApp function argument -> go scope function (go scope argument rest)
+    Pure.EAbs name body -> go (name : scope) body rest
 
 toTerm :: Pure.Exp -> Term
 toTerm expression = case expression of

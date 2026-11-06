@@ -27,6 +27,19 @@
       }
     },
     {
+      "name": "discard-argument-under-abstraction",
+      "input": {
+        "language": "lambda",
+        "source": "(\\x -> \\y -> (\\z -> y) x) ((\\w -> w w) (\\w -> w w))\n"
+      },
+      "run": {
+        "stage": "reduce"
+      },
+      "expect": {
+        "value": "\\y -> y\n"
+      }
+    },
+    {
       "name": "eta-side-condition",
       "input": {
         "language": "lambda",
@@ -63,6 +76,19 @@
       },
       "expect": {
         "value": "\\f -> f\n"
+      }
+    },
+    {
+      "name": "multiple-head-applications",
+      "input": {
+        "language": "lambda",
+        "source": "(\\x -> x) (\\y -> y) (\\z -> z)\n"
+      },
+      "run": {
+        "stage": "reduce"
+      },
+      "expect": {
+        "value": "\\z -> z\n"
       }
     },
     {
