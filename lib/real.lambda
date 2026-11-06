@@ -23,6 +23,7 @@ eStep = \state ->
 @> RSUB = \a -> \b -> \n -> QSUB (a n) (b n);
 @> RMUL = \a -> \b -> \n -> QMUL (a n) (b n);
 @> RPOW = \a -> \m -> \n -> QPOW (a n) m;
+@> RLOG = \base -> \number -> \n -> QLOG (base n) (number n) n;
 @> RDIV = \a -> \b -> \n ->
     IF (QISZERO (b n))
         (NTOQ ZERO)

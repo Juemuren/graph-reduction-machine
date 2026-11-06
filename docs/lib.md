@@ -201,7 +201,7 @@ $$
 - `QSUB a b` 表示有理数 `a` 和有理数 `b` 的减法
 - `QMUL a b` 表示有理数 `a` 和有理数 `b` 的乘法
 - `QPOW a n` 表示有理数 `a` 的自然数 `n` 次幂
-- `QLOG a b` 返回以有理数 `a` 为底、有理数 `b` 为真数的柯西序列。第 `n` 项为 $\frac1{2^n}\max\Set{k\in\mathbb N | a^k\leq b^{2^n}}$
+- `QLOG a b` 返回以有理数 `a` 为底、有理数 `b` 为真数的对数。结果是有理数序列，第 `n` 项为 $\frac1{2^n}\max\Set{k\in\mathbb N | a^k\leq b^{2^n}}$。要求 `a` 大于零、`a` 不等于一且 `b` 大于零
 - `QDIV a b` 表示有理数 `a` 和非零有理数 `b` 的除法
 - `QNEG a` 表示有理数 `a` 取负
 - `QABS a` 表示有理数 `a` 的绝对值
@@ -263,6 +263,7 @@ $$
 - `RSUB a b` 表示实数 `a` 和实数 `b` 的减法
 - `RMUL a b` 表示实数 `a` 和实数 `b` 的乘法
 - `RPOW a n` 表示实数 `a` 的自然数 `n` 次幂
+- `RLOG a b` 返回以实数 `a` 为底、实数 `b` 为真数的对数。第 `n` 项为 `QLOG (a n) (b n) n`。要求 `a` 大于零、`a` 不等于一且 `b` 大于零
 - `RDIV a b` 表示实数 `a` 除以非零实数 `b`
 - `RNEG a` 表示实数 `a` 取负
 - `RABS a` 表示实数 `a` 的绝对值

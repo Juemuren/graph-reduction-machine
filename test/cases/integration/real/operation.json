@@ -1,6 +1,57 @@
 {
   "cases": [
     {
+      "name": "rlog-exact",
+      "input": {
+        "language": "lambda",
+        "source": "@! RLOG (NTOR TWO) (NTOR EIGHT);\n"
+      },
+      "run": {
+        "stage": "decode",
+        "type": "real",
+        "precisionReal": 0,
+        "maxSteps": 1000000,
+        "disableReduce": "beta"
+      },
+      "expect": {
+        "value": "3/1"
+      }
+    },
+    {
+      "name": "rlog-fractional",
+      "input": {
+        "language": "lambda",
+        "source": "@! RLOG (NTOR TWO) (NTOR THREE);\n"
+      },
+      "run": {
+        "stage": "decode",
+        "type": "real",
+        "precisionReal": 1,
+        "maxSteps": 1000000,
+        "disableReduce": "beta"
+      },
+      "expect": {
+        "value": "3/2"
+      }
+    },
+    {
+      "name": "rlog-sequence",
+      "input": {
+        "language": "lambda",
+        "source": "@! RLOG (NTOR TWO) (\\n -> NTOQ (SUCC (SUCC n)));\n"
+      },
+      "run": {
+        "stage": "decode",
+        "type": "real",
+        "precisionReal": 1,
+        "maxSteps": 1000000,
+        "disableReduce": "beta"
+      },
+      "expect": {
+        "value": "3/2"
+      }
+    },
+    {
       "name": "rpow-zero",
       "input": {
         "language": "lambda",
