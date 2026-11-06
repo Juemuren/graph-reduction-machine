@@ -4,126 +4,126 @@
       "name": "compose",
       "input": {
         "language": "lambda",
-        "source": "@! COMPOSE SUCC (MUL TWO) THREE;\n"
+        "source": "@! COMPOSE NOT NOT TRUE;\n"
       },
       "run": {
         "stage": "decode",
-        "type": "natural"
+        "type": "boolean"
       },
       "expect": {
-        "value": "7"
+        "value": "True"
       }
     },
     {
       "name": "const",
       "input": {
         "language": "lambda",
-        "source": "@! CONST TWO THREE;\n"
+        "source": "@! CONST TRUE FALSE;\n"
       },
       "run": {
         "stage": "decode",
-        "type": "natural"
+        "type": "boolean"
       },
       "expect": {
-        "value": "2"
+        "value": "True"
       }
     },
     {
       "name": "curry",
       "input": {
         "language": "lambda",
-        "source": "@! CURRY (\\p -> SUB (FST p) (SND p)) FIVE TWO;\n"
+        "source": "@! CURRY (\\p -> AND (FST p) (SND p)) TRUE FALSE;\n"
       },
       "run": {
         "stage": "decode",
-        "type": "natural"
+        "type": "boolean"
       },
       "expect": {
-        "value": "3"
+        "value": "False"
       }
     },
     {
       "name": "flip",
       "input": {
         "language": "lambda",
-        "source": "@! FLIP SUB TWO FIVE;\n"
+        "source": "@! FLIP CONST FALSE TRUE;\n"
       },
       "run": {
         "stage": "decode",
-        "type": "natural"
+        "type": "boolean"
       },
       "expect": {
-        "value": "3"
+        "value": "True"
       }
     },
     {
       "name": "function-argument",
       "input": {
         "language": "lambda",
-        "source": "@! (\\apply -> apply SUCC ONE) (\\f -> \\x -> f x);\n"
+        "source": "@! (\\apply -> apply NOT FALSE) (\\f -> \\x -> f x);\n"
       },
       "run": {
         "stage": "decode",
-        "type": "natural"
+        "type": "boolean"
       },
       "expect": {
-        "value": "2"
+        "value": "True"
       }
     },
     {
       "name": "function-result",
       "input": {
         "language": "lambda",
-        "source": "@! (\\make -> (make ONE) (SUCC ONE)) (\\x -> \\y -> ADD x y);\n"
+        "source": "@! (\\make -> (make TRUE) FALSE) (\\x -> \\y -> AND x (NOT y));\n"
       },
       "run": {
         "stage": "decode",
-        "type": "natural"
+        "type": "boolean"
       },
       "expect": {
-        "value": "3"
+        "value": "True"
       }
     },
     {
       "name": "id",
       "input": {
         "language": "lambda",
-        "source": "@! ID TWO;\n"
+        "source": "@! ID TRUE;\n"
       },
       "run": {
         "stage": "decode",
-        "type": "natural"
+        "type": "boolean"
       },
       "expect": {
-        "value": "2"
+        "value": "True"
       }
     },
     {
       "name": "partial-application",
       "input": {
         "language": "lambda",
-        "source": "@! (\\apply -> apply (SUCC ONE)) ((\\f -> \\x -> f x) SUCC);\n"
+        "source": "@! (\\apply -> apply FALSE) ((\\f -> \\x -> f x) NOT);\n"
       },
       "run": {
         "stage": "decode",
-        "type": "natural"
+        "type": "boolean"
       },
       "expect": {
-        "value": "3"
+        "value": "True"
       }
     },
     {
       "name": "uncurry",
       "input": {
         "language": "lambda",
-        "source": "@! UNCURRY SUB (PAIR FIVE TWO);\n"
+        "source": "@! UNCURRY (\\x -> \\y -> AND x (NOT y)) (PAIR TRUE FALSE);\n"
       },
       "run": {
         "stage": "decode",
-        "type": "natural"
+        "type": "boolean"
       },
       "expect": {
-        "value": "3"
+        "value": "True"
       }
     }
   ]

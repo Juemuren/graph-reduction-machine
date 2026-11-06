@@ -4,11 +4,11 @@
       "name": "infinite",
       "input": {
         "language": "lambda",
-        "source": "@! WHILE (\\x -> TRUE) SUCC ZERO;\n"
+        "source": "@! WHILE (\\x -> TRUE) NOT FALSE;\n"
       },
       "run": {
         "stage": "decode",
-        "type": "natural",
+        "type": "boolean",
         "disableReduce": "both",
         "maxSteps": 100
       },
