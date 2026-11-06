@@ -1,6 +1,188 @@
 {
   "cases": [
     {
+      "name": "zdiv-positive",
+      "input": {
+        "language": "lambda",
+        "source": "@! ZDIV (NTOZ SEVEN) (NTOZ THREE);\n"
+      },
+      "run": {
+        "stage": "decode",
+        "type": "integer"
+      },
+      "expect": {
+        "value": "2"
+      }
+    },
+    {
+      "name": "zdiv-negative-dividend",
+      "input": {
+        "language": "lambda",
+        "source": "@! ZDIV (ZNEG (NTOZ SEVEN)) (NTOZ THREE);\n"
+      },
+      "run": {
+        "stage": "decode",
+        "type": "integer"
+      },
+      "expect": {
+        "value": "-3"
+      }
+    },
+    {
+      "name": "zdiv-negative-divisor",
+      "input": {
+        "language": "lambda",
+        "source": "@! ZDIV (NTOZ SEVEN) (ZNEG (NTOZ THREE));\n"
+      },
+      "run": {
+        "stage": "decode",
+        "type": "integer"
+      },
+      "expect": {
+        "value": "-3"
+      }
+    },
+    {
+      "name": "zdiv-both-negative",
+      "input": {
+        "language": "lambda",
+        "source": "@! ZDIV (ZNEG (NTOZ SEVEN)) (ZNEG (NTOZ THREE));\n"
+      },
+      "run": {
+        "stage": "decode",
+        "type": "integer"
+      },
+      "expect": {
+        "value": "2"
+      }
+    },
+    {
+      "name": "zdiv-exact",
+      "input": {
+        "language": "lambda",
+        "source": "@! ZDIV (ZNEG (NTOZ SIX)) (NTOZ THREE);\n"
+      },
+      "run": {
+        "stage": "decode",
+        "type": "integer"
+      },
+      "expect": {
+        "value": "-2"
+      }
+    },
+    {
+      "name": "zdiv-zero-divisor",
+      "input": {
+        "language": "lambda",
+        "source": "@! ZDIV (NTOZ SEVEN) (PAIR THREE THREE);\n"
+      },
+      "run": {
+        "stage": "decode",
+        "type": "integer"
+      },
+      "expect": {
+        "value": "0"
+      }
+    },
+    {
+      "name": "zmod-positive",
+      "input": {
+        "language": "lambda",
+        "source": "@! ZMOD (NTOZ SEVEN) (NTOZ THREE);\n"
+      },
+      "run": {
+        "stage": "decode",
+        "type": "integer"
+      },
+      "expect": {
+        "value": "1"
+      }
+    },
+    {
+      "name": "zmod-negative-dividend",
+      "input": {
+        "language": "lambda",
+        "source": "@! ZMOD (ZNEG (NTOZ SEVEN)) (NTOZ THREE);\n"
+      },
+      "run": {
+        "stage": "decode",
+        "type": "integer"
+      },
+      "expect": {
+        "value": "2"
+      }
+    },
+    {
+      "name": "zmod-negative-divisor",
+      "input": {
+        "language": "lambda",
+        "source": "@! ZMOD (NTOZ SEVEN) (ZNEG (NTOZ THREE));\n"
+      },
+      "run": {
+        "stage": "decode",
+        "type": "integer"
+      },
+      "expect": {
+        "value": "-2"
+      }
+    },
+    {
+      "name": "zmod-both-negative",
+      "input": {
+        "language": "lambda",
+        "source": "@! ZMOD (ZNEG (NTOZ SEVEN)) (ZNEG (NTOZ THREE));\n"
+      },
+      "run": {
+        "stage": "decode",
+        "type": "integer"
+      },
+      "expect": {
+        "value": "-1"
+      }
+    },
+    {
+      "name": "zmod-exact",
+      "input": {
+        "language": "lambda",
+        "source": "@! ZMOD (ZNEG (NTOZ SIX)) (NTOZ THREE);\n"
+      },
+      "run": {
+        "stage": "decode",
+        "type": "integer"
+      },
+      "expect": {
+        "value": "0"
+      }
+    },
+    {
+      "name": "zmod-zero-divisor",
+      "input": {
+        "language": "lambda",
+        "source": "@! ZMOD (PAIR TWO FIVE) (PAIR THREE THREE);\n"
+      },
+      "run": {
+        "stage": "decode",
+        "type": "integer"
+      },
+      "expect": {
+        "value": "-3"
+      }
+    },
+    {
+      "name": "zdiv-nonnormal",
+      "input": {
+        "language": "lambda",
+        "source": "@! ZDIV (PAIR FIVE TWO) (PAIR ONE THREE);\n"
+      },
+      "run": {
+        "stage": "decode",
+        "type": "integer"
+      },
+      "expect": {
+        "value": "-2"
+      }
+    },
+    {
       "name": "zpow-zero",
       "input": {
         "language": "lambda",

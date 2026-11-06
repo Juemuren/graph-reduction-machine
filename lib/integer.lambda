@@ -20,6 +20,21 @@
             (MUL (SND p) (FST q)));
 @> ZPOW = \p -> \n -> n (ZMUL p) (NTOZ ONE);
 
+@> ZDIV = \p -> \q ->
+    IF (ZISZERO q)
+        (NTOZ ZERO)
+        ((\a -> \b ->
+            (\quotient ->
+                IF (IF (ZLT p (NTOZ ZERO))
+                        (ZLT q (NTOZ ZERO))
+                        (NOT (ZLT q (NTOZ ZERO))))
+                    (NTOZ quotient)
+                    (ZNEG (NTOZ
+                        (IF (ISZERO (MOD a b)) quotient (SUCC quotient)))))
+            (DIV a b))
+        (FST (ZABS p)) (FST (ZABS q)));
+@> ZMOD = \p -> \q -> ZSUB p (ZMUL (ZDIV p q) q);
+
 @> ZNEG = \p -> PAIR (SND p) (FST p);
 @> ZABS = \p ->
     PAIR
