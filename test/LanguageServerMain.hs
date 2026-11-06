@@ -42,6 +42,15 @@ main = do
     assert "core local completion" (hasLabel "name" local)
     parameter <- getCompletions core (Position 3 30)
     assert "parameter completion" (hasLabel "bar" parameter)
+    assert
+      "named function parameter detail"
+      ( any
+          ( \item ->
+              hasLabel "bar" [item]
+                && field "detail" item == Just (String "Parameter of later")
+          )
+          parameter
+      )
     outside <- getCompletions core (Position 4 9)
     assert "parameter scope" (not (hasLabel "bar" outside))
     importedHover <- getHover core (Position 3 25)
@@ -123,20 +132,42 @@ main = do
     assert
       "local completion in expression"
       (hasLabel "SUCC" libraryItems)
+    topLevel <-
+      createDoc
+        "test/cases/lsp/top-level.lambda"
+        "core-lambda"
+        "divMod = \\m -> m;\nd"
+    topLevelItems <- getCompletions topLevel (Position 1 1)
+    assert "no top-level name completion" (null topLevelItems)
+    anonymous <-
+      createDoc "test/cases/lsp/anonymous.lambda" "core-lambda" "@! \\x -> x"
+    anonymousItems <- getCompletions anonymous (Position 0 10)
+    assert
+      "anonymous function parameter detail"
+      ( any
+          (\item -> hasLabel "x" [item] && field "detail" item == Just (String "Parameter"))
+          anonymousItems
+      )
 
     ski <- openDoc "test/cases/lsp/main.ski" "ski-graph"
     nodes <- getCompletions ski (Position 4 6)
     assert "SKI node completion" (all (`hasLabel` nodes) ["#0", "#1", "#2"])
     assert
-      "SKI node completion has no repeated detail"
-      (all (isNothing . field "detail") nodes)
+      "SKI node completion shows body"
+      ( any
+          (\item -> hasLabel "#0" [item] && field "detail" item == Just (String "#1 #2"))
+          nodes
+      )
     resolvedNodes <- getAndResolveCompletions ski (Position 4 6)
     assert
       "SKI node completion has documentation"
       ( any
           ( \item ->
               hasLabel "#0" [item]
-                && maybe False (contains "#0 = #1 #2;" . show) (field "documentation" item)
+                && maybe
+                  False
+                  (contains "```ski-graph\\n#0 = #1 #2;\\n```" . show)
+                  (field "documentation" item)
           )
           resolvedNodes
       )
@@ -251,6 +282,11 @@ main = do
     changeDoc invalidSki [change "#0 = #1 #1;\n#1 = I;"]
     cleared <- waitForDiagnostics
     assert "diagnostics update after change" (null cleared)
+    changeDoc invalidSki [change "#0 = I;\n#3 = #"]
+    unfinishedSkiIssues <- waitForDiagnostics
+    assert
+      "unfinished SKI statement diagnostic"
+      (any (contains "Invalid SKI node definition" . show) unfinishedSkiIssues)
 
 assert :: String -> Bool -> Session ()
 assert label passed = liftIO $ unless passed (die ("language server test failed: " ++ label))

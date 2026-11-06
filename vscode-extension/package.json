@@ -21,6 +21,14 @@
     "syntaxes/*.tmLanguage.json"
   ],
   "contributes": {
+    "configurationDefaults": {
+      "[core-lambda]": {
+        "editor.wordBasedSuggestions": "off"
+      },
+      "[ski-graph]": {
+        "editor.wordBasedSuggestions": "off"
+      }
+    },
     "languages": [
       {
         "id": "core-lambda",

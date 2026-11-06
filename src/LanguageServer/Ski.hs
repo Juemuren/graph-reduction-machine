@@ -54,7 +54,7 @@ skiCompletions source position =
           [ Completion
               (tokenText token)
               6
-              Nothing
+              (Just (nodeBody description))
               (Just ("```ski-graph\n" ++ description ++ "\n```"))
               range
           | (token, description) <- unique definitions
@@ -65,6 +65,8 @@ skiCompletions source position =
   go seen (item@(token, _) : rest)
     | tokenText token `elem` seen = go seen rest
     | otherwise = item : go (tokenText token : seen) rest
+  nodeBody description =
+    trim (takeWhile (/= ';') (drop 1 (dropWhile (/= '=') description)))
 
 skiHover :: String -> Position -> Maybe Hover
 skiHover source position = do
@@ -123,8 +125,7 @@ skiDiagnostics source = syntaxProblems ++ duplicateProblems ++ missingProblems +
   names = map (tokenText . fst) definitions
   syntaxProblems =
     [ (tokenRange source first, "Invalid SKI node definition")
-    | (part, end, terminated) <- statements source tokens
-    , terminated
+    | (part, end, _) <- statements source tokens
     , first : _ <- [part]
     , Left _ <- [Ski.pGraph (Ski.myLexer (slice (tokenStart first) end source))]
     ]

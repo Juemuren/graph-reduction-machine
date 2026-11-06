@@ -30,12 +30,21 @@ data Declaration = Declaration
   , declarationExported :: Bool
   }
 data Parameter = Parameter
-  {parameterToken :: Token, parameterBodyStart :: Int, parameterBodyEnd :: Int}
+  { parameterToken :: Token
+  , parameterBodyStart :: Int
+  , parameterBodyEnd :: Int
+  , parameterOwner :: Maybe String
+  }
+data Expression = Expression
+  { expressionStart :: Int
+  , expressionEnd :: Int
+  , expressionOwner :: Maybe String
+  }
 data CoreAnalysis = CoreAnalysis
   { coreTokens :: [Token]
   , coreDeclarations :: [Declaration]
   , coreParameters :: [Parameter]
-  , coreExpressions :: [(Int, Int)]
+  , coreExpressions :: [Expression]
   }
 coreTokensOf :: String -> [Token]
 coreTokensOf source =
@@ -91,12 +100,14 @@ analyzeCore source =
       (trim (slice start end source))
       Nothing
   expressionIn (tokens, end, terminated) = case tokens of
-    directive : _name : equals : _ | tokenText directive == "@>" && tokenText equals == "=" -> [spanAfter equals]
-    _name : equals : _ | tokenText equals == "=" -> [spanAfter equals]
-    directive : _ | tokenText directive == "@!" -> [spanAfter directive]
+    directive : name : equals : _
+      | tokenText directive == "@>" && tokenText equals == "=" ->
+          [spanAfter equals (Just (tokenText name))]
+    name : equals : _ | tokenText equals == "=" -> [spanAfter equals (Just (tokenText name))]
+    directive : _ | tokenText directive == "@!" -> [spanAfter directive Nothing]
     _ -> []
    where
-    spanAfter token = (tokenEnd token, if terminated then end - 1 else end)
+    spanAfter token = Expression (tokenEnd token) (if terminated then end - 1 else end)
 
 unquote :: String -> String
 unquote value = case reads value of
@@ -109,14 +120,31 @@ isName (first : rest) =
   (isAsciiUpper first || isAsciiLower first)
     && all (\c -> isAlphaNum c || c == '_') rest
 
-parametersIn :: [Token] -> (Int, Int) -> [Parameter]
-parametersIn tokens (start, end) =
+parametersIn :: [Token] -> Expression -> [Parameter]
+parametersIn tokens expression =
   go
     (filter (\token -> tokenStart token >= start && tokenStart token < end) tokens)
  where
+  start = expressionStart expression
+  end = expressionEnd expression
+  directParameters =
+    leadingParameters
+      (filter (\token -> tokenStart token >= start && tokenStart token < end) tokens)
+  leadingParameters (slash : name : arrow : rest)
+    | tokenText slash == "\\" && tokenText arrow == "->" && isName (tokenText name) =
+        tokenStart name : leadingParameters rest
+  leadingParameters _ = []
   go (slash : name : arrow : rest)
     | tokenText slash == "\\" && tokenText arrow == "->" && isName (tokenText name) =
-        Parameter name (tokenEnd arrow) (bodyEnd rest 0) : go (name : arrow : rest)
+        Parameter
+          name
+          (tokenEnd arrow)
+          (bodyEnd rest 0)
+          ( if tokenStart name `elem` directParameters
+              then expressionOwner expression
+              else Nothing
+          )
+          : go (name : arrow : rest)
   go (_ : rest) = go rest
   go [] = []
   bodyEnd [] _ = end
@@ -146,13 +174,18 @@ coreCompletions source position =
       start = offset - length prefix
       range = Range (positionAt source start) (positionAt source (offset + length suffix))
       candidates =
-        [ (tokenText (parameterToken parameter), 6, Nothing, Nothing)
+        [ ( tokenText (parameterToken parameter)
+          , 6
+          , Just (maybe "Parameter" ("Parameter of " ++) (parameterOwner parameter))
+          , Nothing
+          )
         | parameter <- activeParameters (coreParameters analysis) offset
         ]
           ++ [completionFor declaration | declaration <- coreDeclarations analysis]
       visible =
         any
-          (\(begin, end) -> begin <= offset && offset <= end)
+          ( \expression -> expressionStart expression <= offset && offset <= expressionEnd expression
+          )
           (coreExpressions analysis)
    in if not visible
         || insideCommentOrString source offset
@@ -406,7 +439,10 @@ coreDiagnostics source = syntaxProblems ++ duplicateProblems ++ unknownProblems
         first : _ -> isAsciiLower first
         _ -> False
     , any
-        (\(start, end) -> start <= tokenStart token && tokenStart token < end)
+        ( \expression ->
+            expressionStart expression <= tokenStart token
+              && tokenStart token < expressionEnd expression
+        )
         (coreExpressions analysis)
     , isNothing (resolveToken analysis token)
     ]
@@ -415,13 +451,14 @@ coreSignatureHelp :: String -> Position -> Maybe (String, [String], Int)
 coreSignatureHelp source position = do
   let analysis = analyzeCore source
       offset = offsetAt source position
-  (start, _) <-
+  expression <-
     find
-      (\(begin, end) -> begin <= offset && offset <= end)
+      (\item -> expressionStart item <= offset && offset <= expressionEnd item)
       (coreExpressions analysis)
   let before =
         filter
-          (\token -> start <= tokenStart token && tokenEnd token <= offset)
+          ( \token -> expressionStart expression <= tokenStart token && tokenEnd token <= offset
+          )
           (coreTokens analysis)
       callable token =
         any
