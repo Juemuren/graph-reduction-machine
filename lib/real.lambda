@@ -11,3 +11,23 @@
     IF (QISZERO (b n))
         (NTOQ ZERO)
         (QDIV (a n) (b n));
+
+@> RNEG = \a -> \n -> QNEG (a n);
+@> RABS = \a -> \n -> QABS (a n);
+@> RINV = \a -> \n ->
+    IF (QISZERO (a n))
+        (NTOQ ZERO)
+        (QINV (a n));
+
+@> RMAX = \a -> \b -> \n -> QMAX (a n) (b n);
+@> RMIN = \a -> \b -> \n -> QMIN (a n) (b n);
+
+@> RNORM = \a -> \n -> QNORM (a n);
+
+@> RISZERO = \a -> \n -> QISZERO (a n);
+@> REQ = \a -> \b -> \n -> QEQ (a n) (b n);
+@> RNEQ = \a -> \b -> \n -> QNEQ (a n) (b n);
+@> RLT = \a -> \b -> \n -> QLT (a n) (b n);
+@> RLEQ = \a -> \b -> \n -> QLEQ (a n) (b n);
+@> RGT = \a -> \b -> \n -> QGT (a n) (b n);
+@> RGEQ = \a -> \b -> \n -> QGEQ (a n) (b n);

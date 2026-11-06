@@ -18,17 +18,21 @@
         (ADD
             (MUL (FST p) (SND q))
             (MUL (SND p) (FST q)));
+
 @> ZNEG = \p -> PAIR (SND p) (FST p);
 @> ZABS = \p ->
     PAIR
         (ADD (SUB (FST p) (SND p)) (SUB (SND p) (FST p)))
         ZERO;
+
+@> ZMAX = \p -> \q -> IF (ZGEQ p q) p q;
+@> ZMIN = \p -> \q -> IF (ZLEQ p q) p q;
+
 @> ZNORM = \p ->
     PAIR
         (SUB (FST p) (SND p))
         (SUB (SND p) (FST p));
-@> ZMAX = \p -> \q -> IF (ZGEQ p q) p q;
-@> ZMIN = \p -> \q -> IF (ZLEQ p q) p q;
+
 
 @> ZISZERO = \z -> EQ (FST z) (SND z);
 @> ZEQ = \p -> \q ->

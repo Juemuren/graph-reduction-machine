@@ -23,12 +23,16 @@
     PAIR
         (ZMUL (FST p) (SND q))
         (ZMUL (SND p) (FST q));
+
 @> QNEG = \q -> PAIR (ZNEG (FST q)) (SND q);
 @> QABS = \q ->
     IF (ZLT (ZMUL (FST q) (SND q)) (NTOZ ZERO))
         (QNEG q)
         q;
 @> QINV = \q -> PAIR (SND q) (FST q);
+
+@> QMAX = \p -> \q -> IF (QGEQ p q) p q;
+@> QMIN = \p -> \q -> IF (QLEQ p q) p q;
 
 @> QNORM = \q ->
     (\numerator ->
@@ -48,8 +52,6 @@
                 (ADD (FST denominator) (SND denominator))))
         (ZNORM (SND q)))
     (ZNORM (FST q));
-@> QMAX = \p -> \q -> IF (QGEQ p q) p q;
-@> QMIN = \p -> \q -> IF (QLEQ p q) p q;
 
 @> QISZERO = \q -> ZEQ (FST q) (NTOZ ZERO);
 @> QEQ = \p -> \q ->

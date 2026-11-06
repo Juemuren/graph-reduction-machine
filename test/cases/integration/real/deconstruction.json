@@ -41,6 +41,34 @@
       "expect": {
         "value": "-2/1"
       }
+    },
+    {
+      "name": "rnorm-numerator",
+      "input": {
+        "language": "lambda",
+        "source": "@! FST (RNORM (QTOR (PAIR (NTOZ TWO) (NTOZ FOUR))) ONE);\n"
+      },
+      "run": {
+        "stage": "decode",
+        "type": "integer"
+      },
+      "expect": {
+        "value": "1"
+      }
+    },
+    {
+      "name": "rnorm-denominator",
+      "input": {
+        "language": "lambda",
+        "source": "@! SND (RNORM (QTOR (PAIR (NTOZ TWO) (NTOZ FOUR))) ONE);\n"
+      },
+      "run": {
+        "stage": "decode",
+        "type": "integer"
+      },
+      "expect": {
+        "value": "2"
+      }
     }
   ]
 }

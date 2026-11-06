@@ -89,6 +89,141 @@
       "expect": {
         "value": "1/2"
       }
+    },
+    {
+      "name": "rneg",
+      "input": {
+        "language": "lambda",
+        "source": "@! RNEG (NTOR TWO);\n"
+      },
+      "run": {
+        "stage": "decode",
+        "type": "real",
+        "precisionReal": 1
+      },
+      "expect": {
+        "value": "-2/1"
+      }
+    },
+    {
+      "name": "rabs-negative",
+      "input": {
+        "language": "lambda",
+        "source": "@! RABS (ZTOR (ZNEG (NTOZ TWO)));\n"
+      },
+      "run": {
+        "stage": "decode",
+        "type": "real",
+        "precisionReal": 1
+      },
+      "expect": {
+        "value": "2/1"
+      }
+    },
+    {
+      "name": "rabs-positive",
+      "input": {
+        "language": "lambda",
+        "source": "@! RABS (NTOR TWO);\n"
+      },
+      "run": {
+        "stage": "decode",
+        "type": "real",
+        "precisionReal": 1
+      },
+      "expect": {
+        "value": "2/1"
+      }
+    },
+    {
+      "name": "rinv",
+      "input": {
+        "language": "lambda",
+        "source": "@! RINV (NTOR TWO);\n"
+      },
+      "run": {
+        "stage": "decode",
+        "type": "real",
+        "precisionReal": 1
+      },
+      "expect": {
+        "value": "1/2"
+      }
+    },
+    {
+      "name": "rinv-zero-term",
+      "input": {
+        "language": "lambda",
+        "source": "@! RINV (\\n -> IF (ISZERO n) (NTOQ ZERO) (NTOQ TWO));\n"
+      },
+      "run": {
+        "stage": "decode",
+        "type": "real",
+        "precisionReal": 0
+      },
+      "expect": {
+        "value": "0/1"
+      }
+    },
+    {
+      "name": "rmax-first",
+      "input": {
+        "language": "lambda",
+        "source": "@! RMAX (NTOR TWO) (NTOR ONE);\n"
+      },
+      "run": {
+        "stage": "decode",
+        "type": "real",
+        "precisionReal": 1
+      },
+      "expect": {
+        "value": "2/1"
+      }
+    },
+    {
+      "name": "rmax-second",
+      "input": {
+        "language": "lambda",
+        "source": "@! RMAX (NTOR ONE) (NTOR TWO);\n"
+      },
+      "run": {
+        "stage": "decode",
+        "type": "real",
+        "precisionReal": 1
+      },
+      "expect": {
+        "value": "2/1"
+      }
+    },
+    {
+      "name": "rmin-first",
+      "input": {
+        "language": "lambda",
+        "source": "@! RMIN (NTOR ONE) (NTOR TWO);\n"
+      },
+      "run": {
+        "stage": "decode",
+        "type": "real",
+        "precisionReal": 1
+      },
+      "expect": {
+        "value": "1/1"
+      }
+    },
+    {
+      "name": "rmin-second",
+      "input": {
+        "language": "lambda",
+        "source": "@! RMIN (NTOR TWO) (NTOR ONE);\n"
+      },
+      "run": {
+        "stage": "decode",
+        "type": "real",
+        "precisionReal": 1
+      },
+      "expect": {
+        "value": "1/1"
+      }
     }
   ]
 }
