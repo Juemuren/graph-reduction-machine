@@ -48,6 +48,8 @@
                 (ADD (FST denominator) (SND denominator))))
         (ZNORM (SND q)))
     (ZNORM (FST q));
+@> QMAX = \p -> \q -> IF (QGEQ p q) p q;
+@> QMIN = \p -> \q -> IF (QLEQ p q) p q;
 
 @> QISZERO = \q -> ZEQ (FST q) (NTOZ ZERO);
 @> QEQ = \p -> \q ->

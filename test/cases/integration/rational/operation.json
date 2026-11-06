@@ -1,6 +1,90 @@
 {
   "cases": [
     {
+      "name": "qmax-first",
+      "input": {
+        "language": "lambda",
+        "source": "@! QMAX (PAIR (NTOZ ONE) (NTOZ TWO)) (PAIR (NTOZ ONE) (ZNEG (NTOZ TWO)));\n"
+      },
+      "run": {
+        "stage": "decode",
+        "type": "rational"
+      },
+      "expect": {
+        "value": "1/2"
+      }
+    },
+    {
+      "name": "qmax-second",
+      "input": {
+        "language": "lambda",
+        "source": "@! QMAX (PAIR (NTOZ ONE) (ZNEG (NTOZ TWO))) (PAIR (NTOZ ONE) (NTOZ THREE));\n"
+      },
+      "run": {
+        "stage": "decode",
+        "type": "rational"
+      },
+      "expect": {
+        "value": "1/3"
+      }
+    },
+    {
+      "name": "qmin-first",
+      "input": {
+        "language": "lambda",
+        "source": "@! QMIN (PAIR (NTOZ ONE) (ZNEG (NTOZ TWO))) (PAIR (NTOZ ONE) (NTOZ THREE));\n"
+      },
+      "run": {
+        "stage": "decode",
+        "type": "rational"
+      },
+      "expect": {
+        "value": "-1/2"
+      }
+    },
+    {
+      "name": "qmin-second",
+      "input": {
+        "language": "lambda",
+        "source": "@! QMIN (PAIR (NTOZ ONE) (NTOZ TWO)) (PAIR (NTOZ ONE) (ZNEG (NTOZ TWO)));\n"
+      },
+      "run": {
+        "stage": "decode",
+        "type": "rational"
+      },
+      "expect": {
+        "value": "-1/2"
+      }
+    },
+    {
+      "name": "qmax-equal",
+      "input": {
+        "language": "lambda",
+        "source": "@! QMAX (PAIR (NTOZ ONE) (NTOZ TWO)) (PAIR (NTOZ TWO) (NTOZ FOUR));\n"
+      },
+      "run": {
+        "stage": "decode",
+        "type": "rational"
+      },
+      "expect": {
+        "value": "1/2"
+      }
+    },
+    {
+      "name": "qmin-equal",
+      "input": {
+        "language": "lambda",
+        "source": "@! QMIN (PAIR (NTOZ ONE) (NTOZ TWO)) (PAIR (NTOZ TWO) (NTOZ FOUR));\n"
+      },
+      "run": {
+        "stage": "decode",
+        "type": "rational"
+      },
+      "expect": {
+        "value": "1/2"
+      }
+    },
+    {
       "name": "qabs-negative-denominator",
       "input": {
         "language": "lambda",

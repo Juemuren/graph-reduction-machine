@@ -52,6 +52,8 @@ divMod = \m -> \n ->
     IF (OR (ISZERO m) (ISZERO n))
         ZERO
         (DIV (MUL m n) (GCD m n));
+@> MAX = \m -> \n -> IF (GEQ m n) m n;
+@> MIN = \m -> \n -> IF (LEQ m n) m n;
 
 @> ISZERO = \n -> n (\x -> FALSE) TRUE;
 @> EQ = \m -> \n -> AND (LEQ m n) (LEQ n m);

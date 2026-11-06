@@ -1,6 +1,90 @@
 {
   "cases": [
     {
+      "name": "max-first",
+      "input": {
+        "language": "lambda",
+        "source": "@! MAX THREE ONE;\n"
+      },
+      "run": {
+        "stage": "decode",
+        "type": "natural"
+      },
+      "expect": {
+        "value": "3"
+      }
+    },
+    {
+      "name": "max-second",
+      "input": {
+        "language": "lambda",
+        "source": "@! MAX ZERO TWO;\n"
+      },
+      "run": {
+        "stage": "decode",
+        "type": "natural"
+      },
+      "expect": {
+        "value": "2"
+      }
+    },
+    {
+      "name": "min-first",
+      "input": {
+        "language": "lambda",
+        "source": "@! MIN ONE THREE;\n"
+      },
+      "run": {
+        "stage": "decode",
+        "type": "natural"
+      },
+      "expect": {
+        "value": "1"
+      }
+    },
+    {
+      "name": "min-second",
+      "input": {
+        "language": "lambda",
+        "source": "@! MIN TWO ZERO;\n"
+      },
+      "run": {
+        "stage": "decode",
+        "type": "natural"
+      },
+      "expect": {
+        "value": "0"
+      }
+    },
+    {
+      "name": "max-equal",
+      "input": {
+        "language": "lambda",
+        "source": "@! MAX TWO TWO;\n"
+      },
+      "run": {
+        "stage": "decode",
+        "type": "natural"
+      },
+      "expect": {
+        "value": "2"
+      }
+    },
+    {
+      "name": "min-equal",
+      "input": {
+        "language": "lambda",
+        "source": "@! MIN TWO TWO;\n"
+      },
+      "run": {
+        "stage": "decode",
+        "type": "natural"
+      },
+      "expect": {
+        "value": "2"
+      }
+    },
+    {
       "name": "add",
       "input": {
         "language": "lambda",

@@ -1,6 +1,90 @@
 {
   "cases": [
     {
+      "name": "zmax-first",
+      "input": {
+        "language": "lambda",
+        "source": "@! ZMAX (NTOZ TWO) (ZNEG (NTOZ ONE));\n"
+      },
+      "run": {
+        "stage": "decode",
+        "type": "integer"
+      },
+      "expect": {
+        "value": "2"
+      }
+    },
+    {
+      "name": "zmax-second",
+      "input": {
+        "language": "lambda",
+        "source": "@! ZMAX (PAIR TWO THREE) (NTOZ ZERO);\n"
+      },
+      "run": {
+        "stage": "decode",
+        "type": "integer"
+      },
+      "expect": {
+        "value": "0"
+      }
+    },
+    {
+      "name": "zmin-first",
+      "input": {
+        "language": "lambda",
+        "source": "@! ZMIN (PAIR TWO THREE) (NTOZ ZERO);\n"
+      },
+      "run": {
+        "stage": "decode",
+        "type": "integer"
+      },
+      "expect": {
+        "value": "-1"
+      }
+    },
+    {
+      "name": "zmin-second",
+      "input": {
+        "language": "lambda",
+        "source": "@! ZMIN (NTOZ TWO) (ZNEG (NTOZ ONE));\n"
+      },
+      "run": {
+        "stage": "decode",
+        "type": "integer"
+      },
+      "expect": {
+        "value": "-1"
+      }
+    },
+    {
+      "name": "zmax-equal",
+      "input": {
+        "language": "lambda",
+        "source": "@! ZMAX (PAIR TWO ONE) (NTOZ ONE);\n"
+      },
+      "run": {
+        "stage": "decode",
+        "type": "integer"
+      },
+      "expect": {
+        "value": "1"
+      }
+    },
+    {
+      "name": "zmin-equal",
+      "input": {
+        "language": "lambda",
+        "source": "@! ZMIN (PAIR TWO ONE) (NTOZ ONE);\n"
+      },
+      "run": {
+        "stage": "decode",
+        "type": "integer"
+      },
+      "expect": {
+        "value": "1"
+      }
+    },
+    {
       "name": "zabs-mixed",
       "input": {
         "language": "lambda",

@@ -27,6 +27,8 @@
     PAIR
         (SUB (FST p) (SND p))
         (SUB (SND p) (FST p));
+@> ZMAX = \p -> \q -> IF (ZGEQ p q) p q;
+@> ZMIN = \p -> \q -> IF (ZLEQ p q) p q;
 
 @> ZISZERO = \z -> EQ (FST z) (SND z);
 @> ZEQ = \p -> \q ->
