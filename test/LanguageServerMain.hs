@@ -19,6 +19,7 @@ import qualified Data.Aeson.KeyMap as KeyMap
 import Data.List (isInfixOf)
 import Data.Maybe (isNothing)
 import qualified Data.Text as Text
+import qualified Data.Text.IO as TextIO
 import Language.LSP.Protocol.Message (
   SMethod (SMethod_TextDocumentPrepareRename),
  )
@@ -111,11 +112,7 @@ main = do
       )
     signature <- getSignatureHelp core (Position 3 20) Nothing
     assert "lambda signature" (maybe False (contains "name x" . show) signature)
-    signatureDoc <-
-      createDoc
-        "test/cases/lsp/signature.lambda"
-        "core-lambda"
-        "pair = \\x -> \\y -> x;\n@! pair ID "
+    signatureDoc <- openDoc "test/cases/lsp/signature.lambda" "core-lambda"
     secondParameter <- getSignatureHelp signatureDoc (Position 1 11) Nothing
     assert
       "second lambda parameter"
@@ -129,13 +126,10 @@ main = do
       (any (contains "Undefined name: la" . show) diagnostics)
     commentHover <- getHover core (Position 7 10)
     assert "comment hover" (isNothing commentHover)
-    changeDoc
-      core
-      [change "@< \"./defs.lambda\" (remote);\nname = \\x -> x;\n@! na"]
+    replaceDoc core "main.changed.lambda"
     incomplete <- getCompletions core (Position 2 5)
     assert "incomplete core source" (hasLabel "name" incomplete)
-    libraryCompletion <-
-      createDoc "test/cases/lsp/local.lambda" "core-lambda" "SUCC = \\x -> x;\n@! SU"
+    libraryCompletion <- openDoc "test/cases/lsp/local.lambda" "core-lambda"
     libraryItems <- getCompletions libraryCompletion (Position 1 5)
     assert
       "local completion in expression"
@@ -146,7 +140,7 @@ main = do
           (\item -> hasLabel "SUCC" [item] && field "detail" item == Just (String "x"))
           libraryItems
       )
-    changeDoc libraryCompletion [change "SUCC = \\x -> x;\n@! SUCC;"]
+    replaceDoc libraryCompletion "local.changed.lambda"
     localHover <- getHover libraryCompletion (Position 1 5)
     assert
       "local hover takes precedence over standard library"
@@ -155,8 +149,7 @@ main = do
           (\hover -> contains "SUCC =" (show hover) && not (contains "lib" (show hover)))
           localHover
       )
-    standardDoc <-
-      createDoc "test/cases/lsp/standard.lambda" "core-lambda" "@! SU"
+    standardDoc <- openDoc "test/cases/lsp/standard.lambda" "core-lambda"
     standardItems <- getCompletions standardDoc (Position 0 5)
     assert "standard library completion" (hasLabel "SUCC" standardItems)
     assert
@@ -172,23 +165,18 @@ main = do
           (\item -> hasLabel "SUCC" [item] && contains "@> SUCC =" (show item))
           resolvedStandard
       )
-    changeDoc standardDoc [change "@! SUCC;"]
+    replaceDoc standardDoc "standard.valid.lambda"
     standardIssues <- waitForDiagnostics
     assert "standard library name has no diagnostic" (null standardIssues)
-    changeDoc standardDoc [change "@! NOT_EXPORTED;"]
+    replaceDoc standardDoc "standard.invalid.lambda"
     missingBuiltinIssues <- waitForDiagnostics
     assert
       "unknown builtin diagnostic"
       (any (contains "Undefined name: NOT_EXPORTED" . show) missingBuiltinIssues)
-    topLevel <-
-      createDoc
-        "test/cases/lsp/top-level.lambda"
-        "core-lambda"
-        "divMod = \\m -> m;\nd"
+    topLevel <- openDoc "test/cases/lsp/top-level.lambda" "core-lambda"
     topLevelItems <- getCompletions topLevel (Position 1 1)
     assert "no top-level name completion" (null topLevelItems)
-    anonymous <-
-      createDoc "test/cases/lsp/anonymous.lambda" "core-lambda" "@! \\x -> x"
+    anonymous <- openDoc "test/cases/lsp/anonymous.lambda" "core-lambda"
     anonymousItems <- getCompletions anonymous (Position 0 10)
     assert
       "anonymous function parameter detail"
@@ -223,15 +211,11 @@ main = do
     assert "SKI reference hover" (maybe False (contains "#1 = I" . show) reference)
     comment <- getHover ski (Position 3 5)
     assert "SKI comment" (isNothing comment)
-    changeDoc ski [change "#0 = #1 #2;\n#1 = S;\n#2 = K;\n#3 = #"]
+    replaceDoc ski "main.changed.ski"
     changed <- getHover ski (Position 0 6)
     assert "SKI changed document" (maybe False (contains "#1 = S" . show) changed)
 
-    coreRename <-
-      createDoc
-        "test/cases/lsp/rename.lambda"
-        "core-lambda"
-        "foo = \\x -> x;\n@! foo;"
+    coreRename <- openDoc "test/cases/lsp/rename.lambda" "core-lambda"
     coreEndReferences <- getReferences coreRename (Position 1 6) False
     assert "core references at name end" (length coreEndReferences == 2)
     coreEndPrepared <-
@@ -243,14 +227,11 @@ main = do
       (case toJSON coreEndPrepared of Object _ -> True; _ -> False)
     rename coreRename (Position 1 6) "bar"
     renamedCore <- documentContents coreRename
+    expectedCoreRename <- fixture "rename.changed.lambda"
     assert
       "core rename edits declaration and reference"
-      (renamedCore == "bar = \\x -> x;\n@! bar;")
-    upperRename <-
-      createDoc
-        "test/cases/lsp/upper-rename.lambda"
-        "core-lambda"
-        "@> FOO = \\x -> x;\n@! FOO;"
+      (renamedCore == expectedCoreRename)
+    upperRename <- openDoc "test/cases/lsp/upper-rename.lambda" "core-lambda"
     prepared <-
       request
         SMethod_TextDocumentPrepareRename
@@ -260,9 +241,9 @@ main = do
       (case toJSON prepared of Object _ -> True; _ -> False)
     rename upperRename (Position 0 4) "BAR"
     renamedUpper <- documentContents upperRename
-    assert "uppercase core rename" (renamedUpper == "@> BAR = \\x -> x;\n@! BAR;")
-    unfinishedCore <-
-      createDoc "test/cases/lsp/unfinished.lambda" "core-lambda" "foo = "
+    expectedUpperRename <- fixture "upper-rename.changed.lambda"
+    assert "uppercase core rename" (renamedUpper == expectedUpperRename)
+    unfinishedCore <- openDoc "test/cases/lsp/unfinished.lambda" "core-lambda"
     unfinishedPrepared <-
       request
         SMethod_TextDocumentPrepareRename
@@ -272,8 +253,7 @@ main = do
     assert
       "unfinished core definition can be renamed"
       (case toJSON unfinishedPrepared of Object _ -> True; _ -> False)
-    skiRename <-
-      createDoc "test/cases/lsp/rename.ski" "ski-graph" "#0 = #1 #1;\n#1 = I;"
+    skiRename <- openDoc "test/cases/lsp/rename.ski" "ski-graph"
     skiDefinition <- getDefinitions skiRename (Position 0 6)
     assert "SKI definition" (locationLine skiDefinition == Just 1)
     skiReferences <- getReferences skiRename (Position 0 6) True
@@ -293,33 +273,29 @@ main = do
       (contains "#0" (show skiSymbols) && contains "#1" (show skiSymbols))
     rename skiRename (Position 0 7) "2"
     renamedSki <- documentContents skiRename
-    assert "SKI rename edits node and edges" (renamedSki == "#0 = #2 #2;\n#2 = I;")
-    unfinishedSki <-
-      createDoc "test/cases/lsp/unfinished.ski" "ski-graph" "#0 = #1 #1;\n#1 = "
+    expectedSkiRename <- fixture "rename.changed.ski"
+    assert "SKI rename edits node and edges" (renamedSki == expectedSkiRename)
+    unfinishedSki <- openDoc "test/cases/lsp/unfinished.ski" "ski-graph"
     unfinishedSkiReferences <- getReferences unfinishedSki (Position 1 2) False
     assert
       "unfinished SKI definition keeps references"
       (length unfinishedSkiReferences == 3)
 
   runSession "graph-reduction-machine-lsp" fullLatestClientCaps root $ do
-    _ <- createDoc "test/cases/lsp/invalid.lambda" "core-lambda" "name = ;"
+    _ <- openDoc "test/cases/lsp/invalid.lambda" "core-lambda"
     coreIssues <- waitForDiagnostics
     assert
       "core syntax diagnostic"
       (any (contains "Invalid Core Lambda statement" . show) coreIssues)
-    invalidCore <-
-      createDoc "test/cases/lsp/changed.lambda" "core-lambda" "name = ;"
+    invalidCore <- openDoc "test/cases/lsp/changed.lambda" "core-lambda"
     _ <- waitForDiagnostics
+    insertion <- Text.stripEnd <$> fixture "changed.insert.lambda"
     changeDoc
       invalidCore
-      [changeAt (LSP.Range (Position 0 7) (Position 0 7)) "\\x -> x"]
+      [changeAt (LSP.Range (Position 0 7) (Position 0 7)) insertion]
     updatedCoreIssues <- waitForDiagnostics
     assert "incremental change clears core diagnostic" (null updatedCoreIssues)
-    invalidSki <-
-      createDoc
-        "test/cases/lsp/invalid.ski"
-        "ski-graph"
-        "#0 = #2 #2;\n#1 = I;\n#1 = K;"
+    invalidSki <- openDoc "test/cases/lsp/invalid.ski" "ski-graph"
     skiIssues <- waitForDiagnostics
     assert
       "SKI undefined node diagnostic"
@@ -327,10 +303,10 @@ main = do
     assert
       "SKI duplicate node diagnostic"
       (any (contains "Duplicate node: #1" . show) skiIssues)
-    changeDoc invalidSki [change "#0 = #1 #1;\n#1 = I;"]
+    replaceDoc invalidSki "invalid.changed.ski"
     cleared <- waitForDiagnostics
     assert "diagnostics update after change" (null cleared)
-    changeDoc invalidSki [change "#0 = I;\n#3 = #"]
+    replaceDoc invalidSki "invalid.unfinished.ski"
     unfinishedSkiIssues <- waitForDiagnostics
     assert
       "unfinished SKI statement diagnostic"
@@ -338,6 +314,13 @@ main = do
 
 assert :: String -> Bool -> Session ()
 assert label passed = liftIO $ unless passed (die ("language server test failed: " ++ label))
+
+fixture :: FilePath -> Session Text.Text
+fixture name = liftIO $ TextIO.readFile ("test/cases/lsp/" ++ name)
+
+replaceDoc document name = do
+  source <- fixture name
+  changeDoc document [change source]
 
 hasLabel :: (ToJSON a) => String -> [a] -> Bool
 hasLabel label = any $ \item -> case toJSON item of

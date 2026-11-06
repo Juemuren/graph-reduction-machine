@@ -1,0 +1,3 @@
+@< "./defs.lambda" (remote);
+name = \x -> x;
+@! na
