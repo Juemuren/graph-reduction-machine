@@ -3,3 +3,11 @@
 @> NTOR = \n -> QTOR (NTOQ n);
 @> ZTOR = \z -> QTOR (ZTOQ z);
 @> QTOR = \q -> \n -> q;
+
+@> RADD = \a -> \b -> \n -> QADD (a n) (b n);
+@> RSUB = \a -> \b -> \n -> QSUB (a n) (b n);
+@> RMUL = \a -> \b -> \n -> QMUL (a n) (b n);
+@> RDIV = \a -> \b -> \n ->
+    IF (QISZERO (b n))
+        (NTOQ ZERO)
+        (QDIV (a n) (b n));
