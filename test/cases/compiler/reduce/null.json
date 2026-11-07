@@ -7,8 +7,7 @@
         "source": "(\\x -> x) (\\f -> \\y -> f y)\n"
       },
       "run": {
-        "stage": "reduce",
-        "disableReduce": "both"
+        "stage": "reduce"
       },
       "expect": {
         "value": "(\\x -> x) (\\f -> \\y -> f y)\n"

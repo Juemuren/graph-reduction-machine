@@ -9,7 +9,6 @@ import Compiler (
 import Control.Monad (void, when)
 import qualified CoreLambda.Par as Core
 import qualified Data.Map.Strict as Map
-import Data.Maybe (isNothing)
 import qualified PureLambda.Abs as Pure
 import qualified PureLambda.Par as Pure
 import System.Exit (ExitCode (..), die)
@@ -35,7 +34,7 @@ main = runSuite "compiler" runCase
 runCase :: String -> TestCase -> IO ()
 runCase label (TestCase _ (Input language source modules) spec expected) = do
   void (caseLimit label 100000 spec)
-  reduction <- unwrap label (parseReduction (runDisableReduce spec))
+  reduction <- unwrap label (parseReduction (runEnableReduce spec))
   case (language, runStage spec, expected) of
     ("lambda", "parse", ExpectedValue value) ->
       assertParsed label source value
@@ -44,7 +43,7 @@ runCase label (TestCase _ (Input language source modules) spec expected) = do
     ("lambda", "reduce", ExpectedValue value) ->
       if Map.null modules
         then do
-          when (isNothing (runDisableReduce spec)) $
+          when (runEnableReduce spec == Just "both") $
             assertReduced label value (reduceSource (asProgram source))
           output <- runCompiler label (compilerOptions "reduce" spec) source
           assertReduced label value (Pure.pExp (Pure.myLexer output))
@@ -56,7 +55,7 @@ runCase label (TestCase _ (Input language source modules) spec expected) = do
     ("lambda", "compile", ExpectedGraph graph) ->
       if Map.null modules
         then do
-          when (isNothing (runDisableReduce spec)) $ do
+          when (runEnableReduce spec == Just "both") $ do
             expression <- unwrap label (Pure.pExp (Pure.myLexer source))
             void (assertGraph label graph (compile expression))
           output <- runCompiler label (compilerOptions "compile" spec) source
@@ -78,7 +77,7 @@ runCase label (TestCase _ (Input language source modules) spec expected) = do
 compilerOptions :: String -> RunSpec -> [String]
 compilerOptions stage spec =
   ["--stop-after=reduce" | stage == "reduce"]
-    ++ maybe [] (\value -> ["--disable-reduce=" ++ value]) (runDisableReduce spec)
+    ++ maybe [] (\value -> ["--enable-reduce=" ++ value]) (runEnableReduce spec)
 
 runCompiler :: String -> [String] -> String -> IO String
 runCompiler label options source = do

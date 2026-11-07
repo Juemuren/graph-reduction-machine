@@ -7,7 +7,8 @@
         "source": "(\\x -> x) (\\y -> y)\n"
       },
       "run": {
-        "stage": "compile"
+        "stage": "compile",
+        "enableReduce": "both"
       },
       "expect": {
         "graph": "#0 = I;\n"
@@ -20,7 +21,8 @@
         "source": "\\x -> x x\n"
       },
       "run": {
-        "stage": "compile"
+        "stage": "compile",
+        "enableReduce": "both"
       },
       "expect": {
         "graph": "#0 = #1 #4;\n#1 = #2 #3;\n#2 = S;\n#3 = I;\n#4 = I;\n"
@@ -33,7 +35,8 @@
         "source": "\\x -> \\y -> x\n"
       },
       "run": {
-        "stage": "compile"
+        "stage": "compile",
+        "enableReduce": "both"
       },
       "expect": {
         "graph": "#0 = #1 #6;\n#1 = #2 #3;\n#2 = S;\n#3 = #4 #5;\n#4 = K;\n#5 = K;\n#6 = I;\n"
@@ -46,7 +49,8 @@
         "source": "\\x -> x\n"
       },
       "run": {
-        "stage": "compile"
+        "stage": "compile",
+        "enableReduce": "both"
       },
       "expect": {
         "graph": "#0 = I;\n"
@@ -59,7 +63,8 @@
         "source": "\\x -> \\y -> y\n"
       },
       "run": {
-        "stage": "compile"
+        "stage": "compile",
+        "enableReduce": "both"
       },
       "expect": {
         "graph": "#0 = #1 #2;\n#1 = K;\n#2 = I;\n"
@@ -72,7 +77,8 @@
         "source": "\\x -> (\\x -> x) x\n"
       },
       "run": {
-        "stage": "compile"
+        "stage": "compile",
+        "enableReduce": "both"
       },
       "expect": {
         "graph": "#0 = I;\n"

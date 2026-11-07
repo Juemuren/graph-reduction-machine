@@ -165,8 +165,7 @@
         "stage": "decode",
         "type": "real",
         "precisionReal": 3,
-        "maxSteps": 2000000,
-        "disableReduce": "beta"
+        "maxSteps": 2000000
       },
       "expect": {
         "value": "-2/1"
@@ -182,8 +181,7 @@
         "stage": "decode",
         "type": "real",
         "precisionReal": 0,
-        "maxSteps": 2000000,
-        "disableReduce": "beta"
+        "maxSteps": 2000000
       },
       "expect": {
         "value": "1/1"
@@ -199,8 +197,7 @@
         "stage": "decode",
         "type": "real",
         "precisionReal": 2,
-        "maxSteps": 2000000,
-        "disableReduce": "beta"
+        "maxSteps": 2000000
       },
       "expect": {
         "value": "3/2"
@@ -215,9 +212,8 @@
       "run": {
         "stage": "decode",
         "type": "real",
-        "precisionReal": 4,
-        "maxSteps": 2000000,
-        "disableReduce": "beta"
+        "precisionReal": 3,
+        "maxSteps": 2000000
       },
       "expect": {
         "value": "11/8"
@@ -233,8 +229,7 @@
         "stage": "decode",
         "type": "real",
         "precisionReal": 3,
-        "maxSteps": 2000000,
-        "disableReduce": "beta"
+        "maxSteps": 2000000
       },
       "expect": {
         "value": "1/2"
@@ -250,8 +245,7 @@
         "stage": "decode",
         "type": "real",
         "precisionReal": 3,
-        "maxSteps": 2000000,
-        "disableReduce": "beta"
+        "maxSteps": 2000000
       },
       "expect": {
         "value": "-1/2"
@@ -266,8 +260,7 @@
       "run": {
         "stage": "decode",
         "type": "real",
-        "precisionReal": 0,
-        "disableReduce": "beta"
+        "precisionReal": 0
       },
       "expect": {
         "value": "1/4"

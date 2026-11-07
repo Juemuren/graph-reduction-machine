@@ -8,7 +8,7 @@
       },
       "run": {
         "stage": "reduce",
-        "disableReduce": "beta"
+        "enableReduce": "eta"
       },
       "expect": {
         "value": "(\\x -> x) (\\f -> f)\n"

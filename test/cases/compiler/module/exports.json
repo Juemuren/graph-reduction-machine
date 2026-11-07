@@ -17,7 +17,7 @@
         "source": "@< \"./defs.lambda\" (first, second); @! first second;",
         "modules": { "defs.lambda": "@> first = \\x -> x; @> second = \\y -> y;" }
       },
-      "run": { "stage": "reduce" },
+      "run": { "stage": "reduce", "enableReduce": "both" },
       "expect": { "value": "\\y -> y" }
     }
   ]

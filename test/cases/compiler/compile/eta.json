@@ -8,7 +8,7 @@
       },
       "run": {
         "stage": "compile",
-        "disableReduce": "beta"
+        "enableReduce": "eta"
       },
       "expect": {
         "graph": "#0 = #1 #2;\n#1 = I;\n#2 = I;\n"

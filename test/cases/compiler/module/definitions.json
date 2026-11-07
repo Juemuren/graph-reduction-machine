@@ -15,7 +15,7 @@
     {
       "name": "lambda-shadows-definition",
       "input": { "language": "lambda", "source": "value = \\x -> \\y -> x; @! (\\value -> value) (\\x -> x);" },
-      "run": { "stage": "reduce" },
+      "run": { "stage": "reduce", "enableReduce": "both" },
       "expect": { "value": "\\x -> x" }
     }
   ]

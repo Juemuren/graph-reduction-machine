@@ -51,7 +51,7 @@ data RunSpec = RunSpec
   , runDecode :: Maybe String
   , runPrecisionReal :: Maybe Integer
   , runMaxSteps :: Maybe Int
-  , runDisableReduce :: Maybe String
+  , runEnableReduce :: Maybe String
   }
 
 data Expected = ExpectedGraph String | ExpectedValue String | ExpectedError String
@@ -81,7 +81,7 @@ instance FromJSON RunSpec where
       <*> object .:? "type"
       <*> object .:? "precisionReal"
       <*> object .:? "maxSteps"
-      <*> object .:? "disableReduce"
+      <*> object .:? "enableReduce"
 
 instance FromJSON Expected where
   parseJSON = withObject "expect" $ \object -> do
@@ -142,11 +142,11 @@ caseLimit label defaultLimit spec = do
   pure limit
 
 parseReduction :: Maybe String -> Either String Reduction
-parseReduction Nothing = Right BetaEta
-parseReduction (Just "beta") = Right EtaOnly
-parseReduction (Just "eta") = Right BetaOnly
-parseReduction (Just "both") = Right NoReduction
-parseReduction (Just value) = Left ("unknown disableReduce: " ++ value)
+parseReduction Nothing = Right NoReduction
+parseReduction (Just "beta") = Right BetaOnly
+parseReduction (Just "eta") = Right EtaOnly
+parseReduction (Just "both") = Right BetaEta
+parseReduction (Just value) = Left ("unknown enableReduce: " ++ value)
 
 assertGraph :: String -> String -> Either String Graph.Graph -> IO String
 assertGraph label expected result = do

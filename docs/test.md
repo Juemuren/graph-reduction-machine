@@ -55,7 +55,7 @@ cabal test
   - `run.type` 仅用于 `decode`，可以是 `natural` / `boolean` / `integer` / `rational` / `real`
   - `run.precisionReal` 指定实数解码精度，是非负整数
   - `run.maxSteps` 指定归约步数上限
-  - `run.disableReduce` 可取 `beta` / `eta` / `both`
+  - `run.enableReduce` 可取 `beta` / `eta` / `both`
 - `expect` 必须且只能是 `value` / `graph` / `error` 之一
   - `expect.value` 对于 `parse` 和 `reduce` 按语法树比较，对于 `decode` 按文本比较
   - `expect.graph` 按图的输出行比较
@@ -80,15 +80,15 @@ cabal test compiler-tests
   - `errors.json` 验证解析错误
 - `expand` 验证两个核心 λ 表达式展开后是否相同（暂无用例）
 - `reduce/` 验证归约得到的纯 λ 表达式
-  - `default.json` 启用 β 归约和 η 归约
-  - `no-beta.json` 禁用 β 归约
-  - `no-eta.json` 禁用 η 归约
-  - `no-reduce.json` 禁用所有归约
+  - `beta.json` 仅启用 β 归约
+  - `eta.json` 仅启用 η 归约
+  - `both.json` 启用 β 归约和 η 归约
+  - `null.json` 不启用归约
 - `compile/` 验证编译得到的 SKI 图
-  - `default.json` 启用 β 归约和 η 归约
-  - `no-beta.json` 禁用 β 归约
-  - `no-eta.json` 禁用 η 归约
-  - `no-reduce.json` 禁用所有归约
+  - `beta.json` 仅启用 β 归约
+  - `eta.json` 仅启用 η 归约
+  - `both.json` 启用 β 归约和 η 归约
+  - `null.json` 不启用归约
   - `errors.json` 验证编译错误
 - `module/`
   - `definitions.json` 验证定义行为

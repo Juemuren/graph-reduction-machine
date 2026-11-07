@@ -107,7 +107,7 @@
       "required": ["stage"],
       "properties": {
         "stage": { "const": "reduce" },
-        "disableReduce": { "$ref": "#/$defs/reductionOption" }
+        "enableReduce": { "$ref": "#/$defs/reductionOption" }
       },
       "additionalProperties": false
     },
@@ -116,7 +116,7 @@
       "required": ["stage"],
       "properties": {
         "stage": { "const": "compile" },
-        "disableReduce": { "$ref": "#/$defs/reductionOption" }
+        "enableReduce": { "$ref": "#/$defs/reductionOption" }
       },
       "additionalProperties": false
     },
@@ -134,7 +134,7 @@
       "required": ["stage"],
       "properties": {
         "stage": { "const": "undecode" },
-        "disableReduce": { "$ref": "#/$defs/reductionOption" },
+        "enableReduce": { "$ref": "#/$defs/reductionOption" },
         "maxSteps": { "$ref": "#/$defs/maxSteps" }
       },
       "additionalProperties": false
@@ -146,7 +146,7 @@
         "stage": { "const": "decode" },
         "type": { "$ref": "#/$defs/decodeType" },
         "precisionReal": { "$ref": "#/$defs/precisionReal" },
-        "disableReduce": { "$ref": "#/$defs/reductionOption" },
+        "enableReduce": { "$ref": "#/$defs/reductionOption" },
         "maxSteps": { "$ref": "#/$defs/maxSteps" }
       },
       "additionalProperties": false,

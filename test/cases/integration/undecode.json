@@ -20,7 +20,8 @@
         "source": "@! (SUCC (ZERO));\n"
       },
       "run": {
-        "stage": "undecode"
+        "stage": "undecode",
+        "enableReduce": "both"
       },
       "expect": {
         "graph": "#0 = I;\n"

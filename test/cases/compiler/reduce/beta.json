@@ -8,7 +8,7 @@
       },
       "run": {
         "stage": "reduce",
-        "disableReduce": "eta"
+        "enableReduce": "beta"
       },
       "expect": {
         "value": "\\f -> \\y -> f y\n"

@@ -7,7 +7,8 @@
         "source": "\\y -> (\\x -> \\y -> x) (y y)\n"
       },
       "run": {
-        "stage": "reduce"
+        "stage": "reduce",
+        "enableReduce": "both"
       },
       "expect": {
         "value": "\\y -> \\y_1 -> y y\n"
@@ -20,7 +21,8 @@
         "source": "(\\x -> \\z -> z) ((\\y -> y y) (\\y -> y y))\n"
       },
       "run": {
-        "stage": "reduce"
+        "stage": "reduce",
+        "enableReduce": "both"
       },
       "expect": {
         "value": "\\z -> z\n"
@@ -33,7 +35,8 @@
         "source": "(\\x -> \\y -> (\\z -> y) x) ((\\w -> w w) (\\w -> w w))\n"
       },
       "run": {
-        "stage": "reduce"
+        "stage": "reduce",
+        "enableReduce": "both"
       },
       "expect": {
         "value": "\\y -> y\n"
@@ -46,7 +49,8 @@
         "source": "\\x -> x x\n"
       },
       "run": {
-        "stage": "reduce"
+        "stage": "reduce",
+        "enableReduce": "both"
       },
       "expect": {
         "value": "\\x -> x x\n"
@@ -59,7 +63,8 @@
         "source": "\\f -> \\x -> f x\n"
       },
       "run": {
-        "stage": "reduce"
+        "stage": "reduce",
+        "enableReduce": "both"
       },
       "expect": {
         "value": "\\f -> f\n"
@@ -72,7 +77,8 @@
         "source": "(\\x -> x) (\\f -> \\y -> f y)\n"
       },
       "run": {
-        "stage": "reduce"
+        "stage": "reduce",
+        "enableReduce": "both"
       },
       "expect": {
         "value": "\\f -> f\n"
@@ -85,7 +91,8 @@
         "source": "(\\x -> x) (\\y -> y) (\\z -> z)\n"
       },
       "run": {
-        "stage": "reduce"
+        "stage": "reduce",
+        "enableReduce": "both"
       },
       "expect": {
         "value": "\\z -> z\n"
@@ -98,7 +105,8 @@
         "source": "(\\x -> \\x -> x) (\\z -> z)\n"
       },
       "run": {
-        "stage": "reduce"
+        "stage": "reduce",
+        "enableReduce": "both"
       },
       "expect": {
         "value": "\\x -> x\n"
@@ -111,7 +119,8 @@
         "source": "\\x -> (\\y -> y) (x x)\n"
       },
       "run": {
-        "stage": "reduce"
+        "stage": "reduce",
+        "enableReduce": "both"
       },
       "expect": {
         "value": "\\x -> x x\n"

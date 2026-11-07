@@ -32,7 +32,7 @@ main = runSuite "integration" runCase
 
 runCase :: String -> TestCase -> IO ()
 runCase label (TestCase _ (Input language source modules) spec expected) = do
-  reduction <- unwrap label (parseReduction (runDisableReduce spec))
+  reduction <- unwrap label (parseReduction (runEnableReduce spec))
   limit <- caseLimit label 100000 spec
   case (language, runStage spec, expected) of
     ("lambda", "undecode", ExpectedGraph graph) ->

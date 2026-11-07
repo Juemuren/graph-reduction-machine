@@ -28,10 +28,10 @@ cabal exec -- lambda-to-graph example.lambda
 cabal exec -- lambda-to-graph --stop-after=expand example.lambda
 ```
 
-默认执行 β 归约和 η 归约。可用 `--disable-reduce` 指定要禁用的归约。比如禁用 β 归约
+默认不执行表达式归约。可用 `--enable-reduce` 指定要启用的归约。比如启用 β 归约
 
 ```sh
-cabal exec -- lambda-to-graph --disable-reduce=beta example.lambda
+cabal exec -- lambda-to-graph --enable-reduce=beta example.lambda
 ```
 
 编译器的所有参数请参考 [compiler.md#编译器选项](docs/compiler.md#编译器选项)。

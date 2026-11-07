@@ -8,8 +8,7 @@
       },
       "run": {
         "stage": "decode",
-        "type": "boolean",
-        "disableReduce": "both"
+        "type": "boolean"
       },
       "expect": {
         "value": "True"
@@ -23,8 +22,7 @@
       },
       "run": {
         "stage": "decode",
-        "type": "boolean",
-        "disableReduce": "both"
+        "type": "boolean"
       },
       "expect": {
         "value": "False"
@@ -38,8 +36,7 @@
       },
       "run": {
         "stage": "decode",
-        "type": "boolean",
-        "disableReduce": "both"
+        "type": "boolean"
       },
       "expect": {
         "value": "True"
@@ -53,8 +50,7 @@
       },
       "run": {
         "stage": "decode",
-        "type": "boolean",
-        "disableReduce": "both"
+        "type": "boolean"
       },
       "expect": {
         "value": "False"
@@ -68,8 +64,7 @@
       },
       "run": {
         "stage": "decode",
-        "type": "boolean",
-        "disableReduce": "both"
+        "type": "boolean"
       },
       "expect": {
         "value": "True"
