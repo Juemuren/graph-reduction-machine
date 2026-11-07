@@ -46,5 +46,5 @@ $$
 ```sh
 uv run scripts/compare_real.py examples/pi \
   --exact-value 3.1415926535897932384626433832795028841971693993751 \
-  --max-index 2 --max-steps 20000000
+  --max-index 10 --max-steps 20000000
 ```
