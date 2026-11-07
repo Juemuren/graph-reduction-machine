@@ -280,7 +280,7 @@ def parse_args() -> Arguments:
     parser.add_argument(
         "--max-steps",
         type=int,
-        default=10_000_000,
+        default=1_000_000,
         metavar=">0",
         help="maximum reduction steps",
     )

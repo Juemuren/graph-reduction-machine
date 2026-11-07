@@ -22,6 +22,6 @@ uv run scripts/compare_real.py examples/pi \
 
 - `directory` 指定目录。是位置参数，无默认值
 - `--max-index` 设置最大索引。默认为 `10`
-- `--max-steps` 设置最大步数。默认为 `10000000`
+- `--max-steps` 设置最大步数。默认为 `1000000`
 - `--csv PATH` 指定输出的 CSV 文件。默认为 `directory/steps-vs-error.csv`
 - `--plot PATH` 指定输出的 PNG 文件。默认为 `directory/steps-vs-error.png`
