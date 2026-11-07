@@ -12,16 +12,28 @@ from collections import defaultdict
 from dataclasses import dataclass
 from decimal import Decimal, localcontext
 from fractions import Fraction
-from pathlib import Path
+from pathlib import Path, PurePosixPath
 
 import matplotlib.pyplot as plt
 
 ROOT = Path(__file__).resolve().parents[1]
-FIELDS = ("method", "n", "steps", "value", "abs_error")
+DEFAULT_CSV = PurePosixPath("DIR/steps-vs-error.csv")
+DEFAULT_PLOT = PurePosixPath("DIR/steps-vs-error.png")
+
 LIMIT_ERROR = "reduction exceeded step limit"
 STEPS_PATTERN = r"^steps: (\d+)$"
 COMPILER = "lambda-to-graph"
 INTERPRETER = "ski-interpreter"
+
+MIN_DECIMAL_PRECISION = 50
+DECIMAL_GUARD_DIGITS = 20
+DEFAULT_ZERO_ERROR_FLOOR = 1e-12
+
+FIELDS = ("method", "n", "steps", "value", "abs_error")
+
+FIGURE_SIZE = (11, 7)
+POINT_ZORDER = 3
+FRONTIER_ZORDER = 4
 
 
 @dataclass(frozen=True)
@@ -31,6 +43,15 @@ class Sample:
     steps: int
     value: str
     error: Decimal
+
+
+class Arguments(argparse.Namespace):
+    directory: Path
+    exact_value: Decimal
+    max_steps: int
+    max_index: int
+    csv: Path
+    plot: Path
 
 
 def executable(name: str) -> str:
@@ -134,7 +155,10 @@ def make_samples(rows: list[dict[str, str]], exact: Decimal) -> list[Sample]:
     for row in rows:
         value = Fraction(row["value"])
         with localcontext() as context:
-            context.prec = max(50, len(exact.as_tuple().digits) + 20)
+            context.prec = max(
+                MIN_DECIMAL_PRECISION,
+                len(exact.as_tuple().digits) + DECIMAL_GUARD_DIGITS,
+            )
             approximation = Decimal(value.numerator) / Decimal(value.denominator)
             error = abs(approximation - exact)
         samples.append(
@@ -161,56 +185,66 @@ def pareto_frontier(samples: list[Sample]) -> list[Sample]:
     return frontier
 
 
+def plot_coordinates(
+    points: list[Sample], zero_floor: float
+) -> tuple[list[int], list[float]]:
+    steps = [point.steps for point in points]
+    errors = [float(point.error) if point.error > 0 else zero_floor for point in points]
+    return steps, errors
+
+
 def plot(samples: list[Sample], output: Path) -> None:
     grouped: dict[str, list[Sample]] = defaultdict(list)
     for sample in samples:
         grouped[sample.method].append(sample)
 
     positive_errors = [float(sample.error) for sample in samples if sample.error > 0]
-    zero_floor = min(positive_errors) / 10 if positive_errors else 1e-12
+    zero_floor = (
+        min(positive_errors) / 10 if positive_errors else DEFAULT_ZERO_ERROR_FLOOR
+    )
 
-    def y(sample: Sample) -> float:
-        return float(sample.error) if sample.error > 0 else zero_floor
-
-    figure, axis = plt.subplots(figsize=(11, 7))
+    figure, axis = plt.subplots(figsize=FIGURE_SIZE)
     colors = plt.get_cmap("tab10")
     for number, (method, points) in enumerate(sorted(grouped.items())):
-        points.sort(key=lambda item: item.index)
+        points = sorted(points, key=lambda item: item.index)
+        steps, errors = plot_coordinates(points, zero_floor)
         color = colors(number % 10)
         axis.plot(
-            [point.steps for point in points],
-            [y(point) for point in points],
+            steps,
+            errors,
             color=color,
             alpha=0.65,
             linewidth=1.5,
         )
         axis.scatter(
-            [point.steps for point in points],
-            [y(point) for point in points],
+            steps,
+            errors,
             color=color,
             s=55,
             label=method,
-            zorder=3,
+            zorder=POINT_ZORDER,
         )
-        for point in points:
+        for point, error in zip(points, errors):
             axis.annotate(
                 f"n={point.index}",
-                (point.steps, y(point)),
+                (point.steps, error),
                 xytext=(5, 5),
                 textcoords="offset points",
             )
 
-    frontier = pareto_frontier(samples)
+    frontier_steps, frontier_errors = plot_coordinates(
+        pareto_frontier(samples), zero_floor
+    )
     axis.plot(
-        [point.steps for point in frontier],
-        [y(point) for point in frontier],
+        frontier_steps,
+        frontier_errors,
         color="black",
         linestyle="--",
         linewidth=2,
         marker="x",
         markersize=8,
         label="Pareto frontier",
-        zorder=4,
+        zorder=FRONTIER_ZORDER,
     )
     axis.set(
         xscale="log",
@@ -227,7 +261,7 @@ def plot(samples: list[Sample], output: Path) -> None:
     plt.close(figure)
 
 
-def parse_args() -> argparse.Namespace:
+def parse_args() -> Arguments:
     parser = argparse.ArgumentParser(
         description=__doc__,
         formatter_class=argparse.ArgumentDefaultsHelpFormatter,
@@ -235,6 +269,7 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument(
         "directory",
         type=Path,
+        metavar="DIR",
         help="directory containing .lambda algorithms",
     )
     parser.add_argument(
@@ -246,44 +281,50 @@ def parse_args() -> argparse.Namespace:
         "--max-steps",
         type=int,
         default=10_000_000,
+        metavar=">0",
         help="maximum reduction steps",
     )
     parser.add_argument(
         "--max-index",
         type=int,
         default=10,
+        metavar=">=0",
         help="maximum index",
     )
     parser.add_argument(
         "--csv",
         type=Path,
-        default=argparse.SUPPRESS,
+        default=DEFAULT_CSV,
+        metavar="PATH",
         help="output CSV",
     )
     parser.add_argument(
         "--plot",
         type=Path,
-        default=argparse.SUPPRESS,
+        default=DEFAULT_PLOT,
+        metavar="PATH",
         help="output PNG",
     )
-    args = parser.parse_args()
+    args = parser.parse_args(namespace=Arguments())
     if args.max_steps <= 0:
         parser.error("--max-steps must be positive")
     if args.max_index < 0:
         parser.error("--max-index must be nonnegative")
+    if args.csv is DEFAULT_CSV:
+        args.csv = args.directory / DEFAULT_CSV.name
+    if args.plot is DEFAULT_PLOT:
+        args.plot = args.directory / DEFAULT_PLOT.name
     return args
 
 
 def main() -> None:
     args = parse_args()
-    csv_path = getattr(args, "csv", args.directory / "steps-vs-error.csv")
-    plot_path = getattr(args, "plot", args.directory / "steps-vs-error.png")
 
     rows = measure(args.directory, args.max_index, args.max_steps)
     samples = make_samples(rows, args.exact_value)
-    write_csv(csv_path, samples)
-    plot(samples, plot_path)
-    print(f"Saved {csv_path} and {plot_path}")
+    write_csv(args.csv, samples)
+    plot(samples, args.plot)
+    print(f"Saved {args.csv} and {args.plot}")
 
 
 if __name__ == "__main__":
