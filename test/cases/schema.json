@@ -71,6 +71,13 @@
             "run": { "$ref": "#/$defs/skiDecodeRun" },
             "expect": { "$ref": "#/$defs/errorExpectation" }
           }
+        },
+        {
+          "properties": {
+            "input": { "$ref": "#/$defs/skiInput" },
+            "run": { "$ref": "#/$defs/cliRun" },
+            "expect": { "$ref": "#/$defs/cliExpectation" }
+          }
         }
       ]
     },
@@ -164,6 +171,15 @@
       "additionalProperties": false,
       "allOf": [{ "$ref": "#/$defs/realPrecisionOnly" }]
     },
+    "cliRun": {
+      "type": "object",
+      "required": ["stage", "args"],
+      "properties": {
+        "stage": { "const": "cli" },
+        "args": { "type": "array", "items": { "type": "string" } }
+      },
+      "additionalProperties": false
+    },
     "decodeType": {
       "enum": ["natural", "boolean", "integer", "rational", "real"]
     },
@@ -202,6 +218,16 @@
       "type": "object",
       "required": ["error"],
       "properties": { "error": { "type": "string" } },
+      "additionalProperties": false
+    },
+    "cliExpectation": {
+      "type": "object",
+      "required": ["exitCode", "stdout", "stderr"],
+      "properties": {
+        "exitCode": { "type": "integer", "minimum": 0 },
+        "stdout": { "type": "string" },
+        "stderr": { "type": "string" }
+      },
       "additionalProperties": false
     },
     "graphOrErrorExpectation": {

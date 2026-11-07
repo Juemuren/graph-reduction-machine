@@ -51,15 +51,17 @@ cabal test
   - `input.source` 是完整源码
   - `input.modules` 是 JSON 对象，形如 `{ "defs.lambda": "@> f = \\x -> x;" }`
 - `run`
-  - `run.stage` 可以是 `parse` / `reduce` / `compile` / `interpret` / `undecode` / `decode`
+  - `run.stage` 可以是 `parse` / `reduce` / `compile` / `interpret` / `undecode` / `decode` / `cli`
   - `run.type` 仅用于 `decode`，可以是 `natural` / `boolean` / `integer` / `rational` / `real`
   - `run.precisionReal` 指定实数解码精度，是非负整数
   - `run.maxSteps` 指定归约步数上限
+  - `run.args` 仅用于 `cli`，指定传给 `ski-interpreter` 的命令行参数
   - `run.enableReduce` 可取 `beta` / `eta` / `both`
-- `expect` 必须且只能是 `value` / `graph` / `error` 之一
+- 除 `cli` 外，`expect` 必须且只能是 `value` / `graph` / `error` 之一
   - `expect.value` 对于 `parse` 和 `reduce` 按语法树比较，对于 `decode` 按文本比较
   - `expect.graph` 按图的输出行比较
   - `expect.error` 比较错误消息
+- `cli` 用例的 `expect` 使用 `exitCode` / `stdout` / `stderr`，分别比较进程退出码和两路原始输出
 
 完整字段及允许的组合见 [JSON Schema](../test/cases/schema.json)。
 
@@ -113,6 +115,7 @@ cabal test interpreter-tests
 - `limit/`
   - `reduce.json` 验证归约的步数限制
   - `decode.json` 验证解码的步数限制
+  - `options.json` 验证步数相关命令行选项及输出
 - `decode/*-errors.json` 验证各类型解码失败时的错误行为
 
 ## 集成测试

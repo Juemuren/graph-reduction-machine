@@ -52,9 +52,14 @@ data RunSpec = RunSpec
   , runPrecisionReal :: Maybe Integer
   , runMaxSteps :: Maybe Int
   , runEnableReduce :: Maybe String
+  , runArgs :: Maybe [String]
   }
 
-data Expected = ExpectedGraph String | ExpectedValue String | ExpectedError String
+data Expected
+  = ExpectedGraph String
+  | ExpectedValue String
+  | ExpectedError String
+  | ExpectedCli Int String String
 
 instance FromJSON CaseFile where
   parseJSON = withObject "case file" $ \object -> CaseFile <$> object .: "cases"
@@ -82,16 +87,21 @@ instance FromJSON RunSpec where
       <*> object .:? "precisionReal"
       <*> object .:? "maxSteps"
       <*> object .:? "enableReduce"
+      <*> object .:? "args"
 
 instance FromJSON Expected where
   parseJSON = withObject "expect" $ \object -> do
     graph <- object .:? "graph"
     value <- object .:? "value"
     problem <- object .:? "error"
-    case catMaybes
-      [ExpectedGraph <$> graph, ExpectedValue <$> value, ExpectedError <$> problem] of
-      [expected] -> pure expected
-      _ -> fail "expect must contain exactly one of graph, value, or error"
+    exitCode <- object .:? "exitCode"
+    case exitCode of
+      Just code -> ExpectedCli code <$> object .: "stdout" <*> object .: "stderr"
+      Nothing ->
+        case catMaybes
+          [ExpectedGraph <$> graph, ExpectedValue <$> value, ExpectedError <$> problem] of
+          [expected] -> pure expected
+          _ -> fail "expect must contain exactly one of graph, value, or error"
 
 runSuite :: String -> (String -> TestCase -> IO ()) -> IO ()
 runSuite suiteName runCase = do

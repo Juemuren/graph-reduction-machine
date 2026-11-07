@@ -1,0 +1,84 @@
+{
+  "cases": [
+    {
+      "name": "unlimited-and-show-steps",
+      "input": {
+        "language": "ski",
+        "source": "#0 = #1 #2;\n#1 = I;\n#2 = #3 #4;\n#3 = I;\n#4 = K;\n"
+      },
+      "run": {
+        "stage": "cli",
+        "args": ["--no-step-limit", "--show-steps"]
+      },
+      "expect": {
+        "exitCode": 0,
+        "stdout": "#0 = K;\n",
+        "stderr": "steps: 2\n"
+      }
+    },
+    {
+      "name": "decode-and-show-steps",
+      "input": {
+        "language": "ski",
+        "source": "#0 = K;\n"
+      },
+      "run": {
+        "stage": "cli",
+        "args": ["--decode=boolean", "--no-step-limit", "--show-steps"]
+      },
+      "expect": {
+        "exitCode": 0,
+        "stdout": "TRUE\n",
+        "stderr": "steps: 1\n"
+      }
+    },
+    {
+      "name": "zero-steps",
+      "input": {
+        "language": "ski",
+        "source": "#0 = I;\n"
+      },
+      "run": {
+        "stage": "cli",
+        "args": ["--show-steps"]
+      },
+      "expect": {
+        "exitCode": 0,
+        "stdout": "#0 = I;\n",
+        "stderr": "steps: 0\n"
+      }
+    },
+    {
+      "name": "no-steps-on-error",
+      "input": {
+        "language": "ski",
+        "source": "#0 = #1 #2;\n#1 = I;\n#2 = #3 #4;\n#3 = I;\n#4 = K;\n"
+      },
+      "run": {
+        "stage": "cli",
+        "args": ["--max-steps=1", "--show-steps"]
+      },
+      "expect": {
+        "exitCode": 1,
+        "stdout": "",
+        "stderr": "reduction exceeded step limit 1\n"
+      }
+    },
+    {
+      "name": "conflicting-step-options",
+      "input": {
+        "language": "ski",
+        "source": "#0 = I;\n"
+      },
+      "run": {
+        "stage": "cli",
+        "args": ["--max-steps=1", "--no-step-limit"]
+      },
+      "expect": {
+        "exitCode": 1,
+        "stdout": "",
+        "stderr": "usage: ski-interpreter [--max-steps=N|--no-step-limit] [--show-steps] [--decode=natural|boolean|integer|rational|real] [--precision-real=N] [FILE]\n"
+      }
+    }
+  ]
+}
