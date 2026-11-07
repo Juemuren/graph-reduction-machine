@@ -8,16 +8,34 @@
 
 # Rational power as a Cauchy sequence
 
-qRootStep = \numerator -> \denominator -> \degree -> \state ->
-    (\lower -> \upper -> \scale ->
-        (\middle -> \next_scale ->
-            IF (LEQ
-                    (MUL (POW middle degree) denominator)
-                    (MUL numerator (POW next_scale degree)))
-                (PAIR (PAIR middle (MUL TWO upper)) next_scale)
-                (PAIR (PAIR (MUL TWO lower) middle) next_scale))
-        (ADD lower upper) (MUL TWO scale))
-    (FST (FST state)) (SND (FST state)) (SND state);
+qRootWhole = \numerator -> \denominator -> \degree ->
+    WHILE
+        (\root -> LEQ (MUL denominator (POW (SUCC root) degree)) numerator)
+        SUCC
+        ZERO;
+qRootDigit = \denominator -> \degree -> \radix -> \state ->
+    (\root -> \remainder ->
+        IF (ISZERO remainder)
+            (PAIR (MUL TWO root) ZERO)
+            ((\twice_root -> \scaled_remainder -> \difference ->
+                IF (GEQ scaled_remainder difference)
+                    (PAIR (SUCC twice_root) (SUB scaled_remainder difference))
+                    (PAIR twice_root scaled_remainder))
+            (MUL TWO root)
+            (MUL radix remainder)
+            (MUL denominator
+                (SUB
+                    (POW (SUCC (MUL TWO root)) degree)
+                    (POW (MUL TWO root) degree)))))
+    (FST state) (SND state);
+qRootDigits = \numerator -> \denominator -> \degree -> \n ->
+    (\whole ->
+        (\state ->
+            PAIR (NTOZ (FST state)) (NTOZ (POW TWO n)))
+        (n (qRootDigit denominator degree (POW TWO degree))
+            (PAIR whole
+                (SUB numerator (MUL denominator (POW whole degree))))))
+    (qRootWhole numerator denominator degree);
 @> QTOR_POW = \a -> \b ->
     (\exponent ->
         (\degree ->
@@ -27,17 +45,11 @@ qRootStep = \numerator -> \denominator -> \degree -> \state ->
                     ((\positive ->
                         (\result ->
                             IF (QLT target (NTOQ ZERO)) (QNEG result) result)
-                        ((\state ->
-                            PAIR
-                                (NTOZ (FST (FST state)))
-                                (NTOZ (SND state)))
-                            (n (qRootStep
-                                    (FST (FST positive))
-                                    (FST (SND positive))
-                                    degree)
-                                (PAIR
-                                    (PAIR ZERO (MAX ONE (FST (FST positive))))
-                                    ONE))))
+                        (qRootDigits
+                            (FST (FST positive))
+                            (FST (SND positive))
+                            degree
+                            n))
                     (QNORM (QABS target))))
             (QZ_POW a (FST exponent)))
         (FST (SND exponent)))

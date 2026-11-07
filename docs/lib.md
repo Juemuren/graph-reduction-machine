@@ -294,8 +294,8 @@ $$
 - `NTOR n` 将自然数 `n` 构造为实数
 - `ZTOR z` 将整数 `z` 构造为实数
 - `QTOR q` 将有理数 `q` 构造为实数
-- `QTOR_POW a b` 将有理数 `a` 的有理数 `b` 次幂作为实数。第 `n` 项为 $TODO$
-- `QTOR_LOG a b` 将以有理数 `a` 为底、有理数 `b` 为真数的对数作为实数。第 `n` 项为 $\frac1{2^n}\max\Set{k\in\mathbb N | a^k\leq b^{2^n}}$。要求 `a` 大于零、`a` 不等于一且 `b` 大于零
+- `QTOR_POW a b` 将有理数 `a` 的有理数 `b` 次幂作为实数。第 `n` 项为 $\operatorname{sgn}(a^p)\frac{\left\lfloor 2^n\sqrt[d]{|a^p|}\right\rfloor}{2^n}$
+- `QTOR_LOG a b` 将以有理数 `a` 为底、有理数 `b` 为真数的对数作为实数。要求 `a` 大于零、`a` 不等于一且 `b` 大于零。第 `n` 项为 $\frac{\lfloor 2^n\log_a b\rfloor}{2^n}$
 - `E` 表示自然常数 $e$。采用级数定义，第 `n` 项为 $\sum_{k=0}^{n} \frac1{k!}$
 
 ### 实数运算

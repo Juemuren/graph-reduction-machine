@@ -156,6 +156,57 @@
       }
     },
     {
+      "name": "qtor_pow-large-odd-root",
+      "input": {
+        "language": "lambda",
+        "source": "@! QTOR_POW (ZTOQ (NTOZ_NEG EIGHT)) (PAIR (NTOZ ONE) (NTOZ THREE));\n"
+      },
+      "run": {
+        "stage": "decode",
+        "type": "real",
+        "precisionReal": 3,
+        "maxSteps": 2000000,
+        "disableReduce": "beta"
+      },
+      "expect": {
+        "value": "-2/1"
+      }
+    },
+    {
+      "name": "qtor_pow-integer-part",
+      "input": {
+        "language": "lambda",
+        "source": "@! QTOR_POW (NTOQ TWO) (PAIR (NTOZ ONE) (NTOZ TWO));\n"
+      },
+      "run": {
+        "stage": "decode",
+        "type": "real",
+        "precisionReal": 0,
+        "maxSteps": 2000000,
+        "disableReduce": "beta"
+      },
+      "expect": {
+        "value": "1/1"
+      }
+    },
+    {
+      "name": "qtor_pow-fractional-bits",
+      "input": {
+        "language": "lambda",
+        "source": "@! QTOR_POW (NTOQ THREE) (PAIR (NTOZ ONE) (NTOZ TWO));\n"
+      },
+      "run": {
+        "stage": "decode",
+        "type": "real",
+        "precisionReal": 2,
+        "maxSteps": 2000000,
+        "disableReduce": "beta"
+      },
+      "expect": {
+        "value": "3/2"
+      }
+    },
+    {
       "name": "qtor_pow-square-root",
       "input": {
         "language": "lambda",
