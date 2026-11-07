@@ -113,6 +113,24 @@ eStep = \state ->
     SND (SND (FOR n eStep
         (PAIR ZERO (PAIR (NTOQ ONE) (NTOQ ONE)))));
 
+# Pi from pi/4 = arctan(1/2) + arctan(1/3)
+piArcStep = \square -> \state ->
+    (\index -> \term ->
+        PAIR
+            (SUCC index)
+            (PAIR
+                (QNEG (QDIV
+                    (QMUL term (NTOQ (SUCC (MUL TWO index))))
+                    (NTOQ (MUL square (SUCC (SUCC (SUCC (MUL TWO index))))))))
+                (QADD (SND (SND state)) term)))
+    (FST state) (FST (SND state));
+piArc = \base -> \square -> \n ->
+    SND (SND (FOR (SUCC n) (piArcStep square)
+        (PAIR ZERO (PAIR (QINV (NTOQ base)) (NTOQ ZERO)))));
+@> PI = \n ->
+    QMUL (NTOQ FOUR)
+        (QADD (piArc TWO FOUR n) (piArc THREE NINE n));
+
 # Unary operations
 
 @> RNEG = \a -> \n -> QNEG (a n);

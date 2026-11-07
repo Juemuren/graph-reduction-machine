@@ -295,7 +295,8 @@ $$
 - `QTOR q` 将有理数 `q` 构造为实数
 - `QTOR_POW a b` 将有理数 `a` 的有理数 `b` 次幂作为实数。第 `n` 项为 $\operatorname{sgn}(a^p)\frac{\left\lfloor 2^n\sqrt[d]{|a^p|}\right\rfloor}{2^n}$
 - `QTOR_LOG a b` 将以有理数 `a` 为底、有理数 `b` 为真数的对数作为实数。要求 `a` 大于零、`a` 不等于一且 `b` 大于零。第 `n` 项为 $\frac{\lfloor 2^n\log_a b\rfloor}{2^n}$
-- `E` 表示自然常数 $e$。采用级数定义，第 `n` 项为 $\sum_{k=0}^{n} \frac1{k!}$
+- `E` 表示自然常数 $e$。第 `n` 项为 $\sum_{k=0}^{n} \frac1{k!}$
+- `PI` 表示圆周率 $\pi$。第 `n` 项为 $16\sum_{k=0}^{n}\frac{(-1)^k}{(2k+1)5^{2k+1}}-4\sum_{k=0}^{n}\frac{(-1)^k}{(2k+1)239^{2k+1}}$
 
 ### 实数运算
 

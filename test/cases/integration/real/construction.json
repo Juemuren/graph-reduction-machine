@@ -27,6 +27,33 @@
       }
     },
     {
+      "name": "pi-zero",
+      "language": "lambda",
+      "source": "@! PI;\n",
+      "stage": "decode",
+      "options": {
+        "precisionReal": 0,
+        "decode": "real"
+      },
+      "expect": {
+        "value": "10/3"
+      }
+    },
+    {
+      "name": "pi-one",
+      "language": "lambda",
+      "source": "@! PI;\n",
+      "stage": "decode",
+      "options": {
+        "precisionReal": 1,
+        "maxSteps": 2000000,
+        "decode": "real"
+      },
+      "expect": {
+        "value": "505/162"
+      }
+    },
+    {
       "name": "ntor",
       "language": "lambda",
       "source": "@! NTOR THREE;\n",
