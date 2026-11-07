@@ -7,8 +7,8 @@
 @> ZTOQ_DIV = \a -> \b -> PAIR a b;
 @> ZTOQ_POW = \p -> \z ->
     IF (ZLT z (NTOZ ZERO))
-        (QINV (ZTOQ (ZN_POW p (FST (ZABS z)))))
-        (ZTOQ (ZN_POW p (FST (ZABS z))));
+        (QINV (ZTOQ (ZPOW p (FST (ZABS z)))))
+        (ZTOQ (ZPOW p (FST (ZABS z))));
 
 # Unary operations
 
@@ -64,11 +64,11 @@
     PAIR
         (ZMUL (FST p) (SND q))
         (ZMUL (SND p) (FST q));
-@> QN_POW = \p -> \n -> n (QMUL p) (NTOQ ONE);
-@> QZ_POW = \p -> \z ->
+qNaturalPow = \p -> \n -> n (QMUL p) (NTOQ ONE);
+@> QPOW = \p -> \z ->
     IF (ZLT z (NTOZ ZERO))
-        (QINV (QN_POW p (FST (ZABS z))))
-        (QN_POW p (FST (ZABS z)));
+        (QINV (qNaturalPow p (FST (ZABS z))))
+        (qNaturalPow p (FST (ZABS z)));
 # Comparison
 
 @> QISZERO = \q -> ZEQ (FST q) (NTOZ ZERO);

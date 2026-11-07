@@ -51,7 +51,7 @@ qRootDigits = \numerator -> \denominator -> \degree -> \n ->
                             degree
                             n))
                     (QNORM (QABS target))))
-            (QZ_POW a (FST exponent)))
+            (QPOW a (FST exponent)))
         (FST (SND exponent)))
     (QNORM b);
 
@@ -122,6 +122,8 @@ eStep = \state ->
         (NTOQ ZERO)
         (QINV (a n));
 @> RNORM = \a -> \n -> QNORM (a n);
+@> EXP = \r -> RPOW E r;
+@> LN = \r -> \n -> QTOR_LOG (E (SUCC n)) (r n) n;
 
 # Symmetric binary operations
 
@@ -133,7 +135,7 @@ eStep = \state ->
 # Asymmetric binary operations
 
 @> RSUB = \a -> \b -> \n -> QSUB (a n) (b n);
-@> RPOW = \a -> \m -> \n -> QN_POW (a n) m;
+@> RPOW = \a -> \b -> \n -> QTOR_POW (a n) (b n) n;
 @> RLOG = \base -> \number -> \n -> QTOR_LOG (base n) (number n) n;
 @> RDIV = \a -> \b -> \n ->
     IF (QISZERO (b n))

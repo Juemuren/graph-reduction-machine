@@ -56,7 +56,7 @@
         (FST (ZABS p)) (FST (ZABS q)));
 @> ZMOD = \p -> \q -> ZSUB p (ZMUL (ZDIV p q) q);
 
-@> ZN_POW = \p -> \n -> n (ZMUL p) (NTOZ ONE);
+@> ZPOW = \p -> \n -> n (ZMUL p) (NTOZ ONE);
 @> ZLOG = \base -> \number ->
     NTOZ (LOG (FST (ZNORM base)) (FST (ZNORM number)));
 

@@ -52,7 +52,7 @@
       "name": "rpow-zero",
       "input": {
         "language": "lambda",
-        "source": "@! RPOW (NTOR ZERO) ZERO;\n"
+        "source": "@! RPOW (NTOR ZERO) (NTOR ZERO);\n"
       },
       "run": {
         "stage": "decode",
@@ -67,7 +67,7 @@
       "name": "rpow-negative",
       "input": {
         "language": "lambda",
-        "source": "@! RPOW (ZTOR (ZNEG (NTOZ TWO))) THREE;\n"
+        "source": "@! RPOW (ZTOR (ZNEG (NTOZ TWO))) (NTOR THREE);\n"
       },
       "run": {
         "stage": "decode",
@@ -82,7 +82,7 @@
       "name": "rpow-sequence",
       "input": {
         "language": "lambda",
-        "source": "@! RPOW (\\n -> NTOQ (SUCC n)) TWO;\n"
+        "source": "@! RPOW (\\n -> NTOQ (SUCC n)) (NTOR TWO);\n"
       },
       "run": {
         "stage": "decode",
@@ -313,6 +313,111 @@
         "stage": "decode",
         "type": "real",
         "precisionReal": 1
+      },
+      "expect": {
+        "value": "1/1"
+      }
+    },
+    {
+      "name": "rpow-fractional-exponent",
+      "input": {
+        "language": "lambda",
+        "source": "@! RPOW (NTOR FOUR) (QTOR (PAIR (NTOZ ONE) (NTOZ TWO)));\n"
+      },
+      "run": {
+        "stage": "decode",
+        "type": "real",
+        "precisionReal": 1
+      },
+      "expect": {
+        "value": "2/1"
+      }
+    },
+    {
+      "name": "rpow-negative-exponent",
+      "input": {
+        "language": "lambda",
+        "source": "@! RPOW (NTOR TWO) (ZTOR (ZNEG (NTOZ ONE)));\n"
+      },
+      "run": {
+        "stage": "decode",
+        "type": "real",
+        "precisionReal": 1
+      },
+      "expect": {
+        "value": "1/2"
+      }
+    },
+    {
+      "name": "rpow-exponent-sequence",
+      "input": {
+        "language": "lambda",
+        "source": "@! RPOW (NTOR TWO) (\\n -> NTOQ (SUCC n));\n"
+      },
+      "run": {
+        "stage": "decode",
+        "type": "real",
+        "precisionReal": 1
+      },
+      "expect": {
+        "value": "4/1"
+      }
+    },
+    {
+      "name": "exp-zero",
+      "input": {
+        "language": "lambda",
+        "source": "@! EXP (NTOR ZERO);\n"
+      },
+      "run": {
+        "stage": "decode",
+        "type": "real",
+        "precisionReal": 0
+      },
+      "expect": {
+        "value": "1/1"
+      }
+    },
+    {
+      "name": "exp-one",
+      "input": {
+        "language": "lambda",
+        "source": "@! EXP (NTOR ONE);\n"
+      },
+      "run": {
+        "stage": "decode",
+        "type": "real",
+        "precisionReal": 2
+      },
+      "expect": {
+        "value": "5/2"
+      }
+    },
+    {
+      "name": "ln-one",
+      "input": {
+        "language": "lambda",
+        "source": "@! LN (NTOR ONE);\n"
+      },
+      "run": {
+        "stage": "decode",
+        "type": "real",
+        "precisionReal": 0
+      },
+      "expect": {
+        "value": "0/1"
+      }
+    },
+    {
+      "name": "ln-two",
+      "input": {
+        "language": "lambda",
+        "source": "@! LN (NTOR TWO);\n"
+      },
+      "run": {
+        "stage": "decode",
+        "type": "real",
+        "precisionReal": 0
       },
       "expect": {
         "value": "1/1"

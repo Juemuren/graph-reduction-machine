@@ -1,10 +1,10 @@
 {
   "cases": [
     {
-      "name": "qn_pow-zero",
+      "name": "qpow-zero",
       "input": {
         "language": "lambda",
-        "source": "@! QN_POW (NTOQ ZERO) ZERO;\n"
+        "source": "@! QPOW (NTOQ ZERO) (NTOZ ZERO);\n"
       },
       "run": {
         "stage": "decode",
@@ -15,10 +15,10 @@
       }
     },
     {
-      "name": "qn_pow-negative-odd",
+      "name": "qpow-negative-odd",
       "input": {
         "language": "lambda",
-        "source": "@! QN_POW (PAIR (ZNEG (NTOZ ONE)) (NTOZ TWO)) THREE;\n"
+        "source": "@! QPOW (PAIR (ZNEG (NTOZ ONE)) (NTOZ TWO)) (NTOZ THREE);\n"
       },
       "run": {
         "stage": "decode",
@@ -29,10 +29,10 @@
       }
     },
     {
-      "name": "qn_pow-negative-even",
+      "name": "qpow-negative-even",
       "input": {
         "language": "lambda",
-        "source": "@! QN_POW (PAIR (NTOZ ONE) (ZNEG (NTOZ TWO))) TWO;\n"
+        "source": "@! QPOW (PAIR (NTOZ ONE) (ZNEG (NTOZ TWO))) (NTOZ TWO);\n"
       },
       "run": {
         "stage": "decode",
@@ -71,10 +71,10 @@
       }
     },
     {
-      "name": "qz_pow-negative-exponent",
+      "name": "qpow-negative-exponent",
       "input": {
         "language": "lambda",
-        "source": "@! QZ_POW (PAIR (NTOZ TWO) (NTOZ THREE)) (ZNEG (NTOZ TWO));\n"
+        "source": "@! QPOW (PAIR (NTOZ TWO) (NTOZ THREE)) (ZNEG (NTOZ TWO));\n"
       },
       "run": {
         "stage": "decode",
@@ -82,20 +82,6 @@
       },
       "expect": {
         "value": "9/4"
-      }
-    },
-    {
-      "name": "qz_pow-zero-exponent",
-      "input": {
-        "language": "lambda",
-        "source": "@! QZ_POW (NTOQ ZERO) (NTOZ ZERO);\n"
-      },
-      "run": {
-        "stage": "decode",
-        "type": "rational"
-      },
-      "expect": {
-        "value": "1/1"
       }
     },
     {
