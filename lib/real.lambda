@@ -113,7 +113,7 @@ eStep = \state ->
     SND (SND (FOR n eStep
         (PAIR ZERO (PAIR (NTOQ ONE) (NTOQ ONE)))));
 
-# Pi from pi/4 = arctan(1/2) + arctan(1/3)
+# Circle constant pi
 piArcStep = \square -> \state ->
     (\index -> \term ->
         PAIR
@@ -142,6 +142,25 @@ piArc = \base -> \square -> \n ->
 @> RNORM = \a -> \n -> QNORM (a n);
 @> EXP = \r -> RPOW E r;
 @> LN = \r -> \n -> QTOR_LOG (E (SUCC n)) (r n) n;
+
+# Sine and Cosine Taylor partial sums
+trigStep = \square -> \offset -> \state ->
+    (\index -> \term ->
+        PAIR
+            (SUCC index)
+            (PAIR
+                (QNEG (QDIV
+                    (QMUL term square)
+                    (NTOQ (MUL
+                        (ADD (MUL TWO index) offset)
+                        (SUCC (ADD (MUL TWO index) offset))))))
+                (QADD (SND (SND state)) term)))
+    (FST state) (FST (SND state));
+trigSum = \x -> \first -> \offset -> \n ->
+    SND (SND (FOR (SUCC n) (trigStep (QMUL x x) offset)
+        (PAIR ZERO (PAIR first (NTOQ ZERO)))));
+@> SIN = \r -> \n -> trigSum (r n) (r n) TWO n;
+@> COS = \r -> \n -> trigSum (r n) (NTOQ ONE) ONE n;
 
 # Symmetric binary operations
 

@@ -366,6 +366,54 @@
       "expect": {
         "value": "1/1"
       }
+    },
+    {
+      "name": "sin-zero",
+      "language": "lambda",
+      "source": "@! SIN (NTOR ZERO);\n",
+      "stage": "decode",
+      "options": { "precisionReal": 0, "decode": "real" },
+      "expect": { "value": "0/1" }
+    },
+    {
+      "name": "sin-negative",
+      "language": "lambda",
+      "source": "@! SIN (ZTOR (ZNEG (NTOZ ONE)));\n",
+      "stage": "decode",
+      "options": { "precisionReal": 1, "decode": "real" },
+      "expect": { "value": "-5/6" }
+    },
+    {
+      "name": "sin-sequence",
+      "language": "lambda",
+      "source": "@! SIN (\\n -> NTOQ n);\n",
+      "stage": "decode",
+      "options": { "precisionReal": 1, "decode": "real" },
+      "expect": { "value": "5/6" }
+    },
+    {
+      "name": "cos-zero",
+      "language": "lambda",
+      "source": "@! COS (NTOR ZERO);\n",
+      "stage": "decode",
+      "options": { "precisionReal": 0, "decode": "real" },
+      "expect": { "value": "1/1" }
+    },
+    {
+      "name": "cos-negative",
+      "language": "lambda",
+      "source": "@! COS (ZTOR (ZNEG (NTOZ ONE)));\n",
+      "stage": "decode",
+      "options": { "precisionReal": 1, "decode": "real" },
+      "expect": { "value": "1/2" }
+    },
+    {
+      "name": "cos-sequence",
+      "language": "lambda",
+      "source": "@! COS (\\n -> NTOQ n);\n",
+      "stage": "decode",
+      "options": { "precisionReal": 2, "decode": "real" },
+      "expect": { "value": "-1/3" }
     }
   ]
 }
