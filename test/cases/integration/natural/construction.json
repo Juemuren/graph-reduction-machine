@@ -2,13 +2,11 @@
   "cases": [
     {
       "name": "eight",
-      "input": {
-        "language": "lambda",
-        "source": "@! EIGHT;\n"
-      },
-      "run": {
-        "stage": "decode",
-        "type": "natural"
+      "language": "lambda",
+      "source": "@! EIGHT;\n",
+      "stage": "decode",
+      "options": {
+        "decode": "natural"
       },
       "expect": {
         "value": "8"
@@ -16,13 +14,11 @@
     },
     {
       "name": "five",
-      "input": {
-        "language": "lambda",
-        "source": "@! FIVE;\n"
-      },
-      "run": {
-        "stage": "decode",
-        "type": "natural"
+      "language": "lambda",
+      "source": "@! FIVE;\n",
+      "stage": "decode",
+      "options": {
+        "decode": "natural"
       },
       "expect": {
         "value": "5"
@@ -30,13 +26,11 @@
     },
     {
       "name": "four",
-      "input": {
-        "language": "lambda",
-        "source": "@! FOUR;\n"
-      },
-      "run": {
-        "stage": "decode",
-        "type": "natural"
+      "language": "lambda",
+      "source": "@! FOUR;\n",
+      "stage": "decode",
+      "options": {
+        "decode": "natural"
       },
       "expect": {
         "value": "4"
@@ -44,13 +38,11 @@
     },
     {
       "name": "nine",
-      "input": {
-        "language": "lambda",
-        "source": "@! NINE;\n"
-      },
-      "run": {
-        "stage": "decode",
-        "type": "natural"
+      "language": "lambda",
+      "source": "@! NINE;\n",
+      "stage": "decode",
+      "options": {
+        "decode": "natural"
       },
       "expect": {
         "value": "9"
@@ -58,13 +50,11 @@
     },
     {
       "name": "one",
-      "input": {
-        "language": "lambda",
-        "source": "@! ONE;\n"
-      },
-      "run": {
-        "stage": "decode",
-        "type": "natural"
+      "language": "lambda",
+      "source": "@! ONE;\n",
+      "stage": "decode",
+      "options": {
+        "decode": "natural"
       },
       "expect": {
         "value": "1"
@@ -72,13 +62,11 @@
     },
     {
       "name": "seven",
-      "input": {
-        "language": "lambda",
-        "source": "@! SEVEN;\n"
-      },
-      "run": {
-        "stage": "decode",
-        "type": "natural"
+      "language": "lambda",
+      "source": "@! SEVEN;\n",
+      "stage": "decode",
+      "options": {
+        "decode": "natural"
       },
       "expect": {
         "value": "7"
@@ -86,13 +74,11 @@
     },
     {
       "name": "six",
-      "input": {
-        "language": "lambda",
-        "source": "@! SIX;\n"
-      },
-      "run": {
-        "stage": "decode",
-        "type": "natural"
+      "language": "lambda",
+      "source": "@! SIX;\n",
+      "stage": "decode",
+      "options": {
+        "decode": "natural"
       },
       "expect": {
         "value": "6"
@@ -100,13 +86,11 @@
     },
     {
       "name": "succ",
-      "input": {
-        "language": "lambda",
-        "source": "@! SUCC (SUCC (SUCC (ZERO)));\n"
-      },
-      "run": {
-        "stage": "decode",
-        "type": "natural"
+      "language": "lambda",
+      "source": "@! SUCC (SUCC (SUCC (ZERO)));\n",
+      "stage": "decode",
+      "options": {
+        "decode": "natural"
       },
       "expect": {
         "value": "3"
@@ -114,13 +98,11 @@
     },
     {
       "name": "three",
-      "input": {
-        "language": "lambda",
-        "source": "@! THREE;\n"
-      },
-      "run": {
-        "stage": "decode",
-        "type": "natural"
+      "language": "lambda",
+      "source": "@! THREE;\n",
+      "stage": "decode",
+      "options": {
+        "decode": "natural"
       },
       "expect": {
         "value": "3"
@@ -128,13 +110,11 @@
     },
     {
       "name": "two",
-      "input": {
-        "language": "lambda",
-        "source": "@! TWO;\n"
-      },
-      "run": {
-        "stage": "decode",
-        "type": "natural"
+      "language": "lambda",
+      "source": "@! TWO;\n",
+      "stage": "decode",
+      "options": {
+        "decode": "natural"
       },
       "expect": {
         "value": "2"
@@ -142,13 +122,11 @@
     },
     {
       "name": "zero",
-      "input": {
-        "language": "lambda",
-        "source": "@! ZERO;\n"
-      },
-      "run": {
-        "stage": "decode",
-        "type": "natural"
+      "language": "lambda",
+      "source": "@! ZERO;\n",
+      "stage": "decode",
+      "options": {
+        "decode": "natural"
       },
       "expect": {
         "value": "0"

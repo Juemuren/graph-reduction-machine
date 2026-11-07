@@ -2,12 +2,10 @@
   "cases": [
     {
       "name": "nonterminating-term",
-      "input": {
-        "language": "ski",
-        "source": "#0 = #1 #6;\n#1 = #2 #5;\n#2 = #3 #4;\n#3 = S;\n#4 = I;\n#5 = I;\n#6 = #7 #10;\n#7 = #8 #9;\n#8 = S;\n#9 = I;\n#10 = I;\n"
-      },
-      "run": {
-        "stage": "interpret",
+      "language": "ski",
+      "source": "#0 = #1 #6;\n#1 = #2 #5;\n#2 = #3 #4;\n#3 = S;\n#4 = I;\n#5 = I;\n#6 = #7 #10;\n#7 = #8 #9;\n#8 = S;\n#9 = I;\n#10 = I;\n",
+      "stage": "interpret",
+      "options": {
         "maxSteps": 1
       },
       "expect": {

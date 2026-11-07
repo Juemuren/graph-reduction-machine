@@ -2,13 +2,11 @@
   "cases": [
     {
       "name": "ntoq",
-      "input": {
-        "language": "lambda",
-        "source": "@! NTOQ TWO;\n"
-      },
-      "run": {
-        "stage": "decode",
-        "type": "rational"
+      "language": "lambda",
+      "source": "@! NTOQ TWO;\n",
+      "stage": "decode",
+      "options": {
+        "decode": "rational"
       },
       "expect": {
         "value": "2/1"
@@ -16,13 +14,11 @@
     },
     {
       "name": "ztoq",
-      "input": {
-        "language": "lambda",
-        "source": "@! ZTOQ (NTOZ (SUCC (SUCC ZERO)));\n"
-      },
-      "run": {
-        "stage": "decode",
-        "type": "rational"
+      "language": "lambda",
+      "source": "@! ZTOQ (NTOZ (SUCC (SUCC ZERO)));\n",
+      "stage": "decode",
+      "options": {
+        "decode": "rational"
       },
       "expect": {
         "value": "2/1"
@@ -30,13 +26,11 @@
     },
     {
       "name": "ztoq_div",
-      "input": {
-        "language": "lambda",
-        "source": "@! ZTOQ_DIV (NTOZ ONE) (NTOZ TWO);\n"
-      },
-      "run": {
-        "stage": "decode",
-        "type": "rational"
+      "language": "lambda",
+      "source": "@! ZTOQ_DIV (NTOZ ONE) (NTOZ TWO);\n",
+      "stage": "decode",
+      "options": {
+        "decode": "rational"
       },
       "expect": {
         "value": "1/2"
@@ -44,13 +38,11 @@
     },
     {
       "name": "ztoq_pow",
-      "input": {
-        "language": "lambda",
-        "source": "@! ZTOQ_POW (NTOZ TWO) (NTOZ_NEG THREE);\n"
-      },
-      "run": {
-        "stage": "decode",
-        "type": "rational"
+      "language": "lambda",
+      "source": "@! ZTOQ_POW (NTOZ TWO) (NTOZ_NEG THREE);\n",
+      "stage": "decode",
+      "options": {
+        "decode": "rational"
       },
       "expect": {
         "value": "1/8"

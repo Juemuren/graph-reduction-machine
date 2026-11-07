@@ -2,13 +2,11 @@
   "cases": [
     {
       "name": "non-boolean",
-      "input": {
-        "language": "ski",
-        "source": "#0 = S;\n"
-      },
-      "run": {
-        "stage": "decode",
-        "type": "boolean"
+      "language": "ski",
+      "source": "#0 = S;\n",
+      "stage": "decode",
+      "options": {
+        "decode": "boolean"
       },
       "expect": {
         "error": "not a Church Boolean"

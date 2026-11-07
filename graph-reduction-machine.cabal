@@ -9,7 +9,8 @@ extra-source-files:
   , grammar/PureLambda.cf
   , grammar/Ski.cf
   , lib/*.lambda
-  , test/cases/schema.json
+  , test/cases/language.schema.json
+  , test/cases/cli.schema.json
   , test/cases/**/*.json
   , test/cases/lsp/*.lambda
   , test/cases/lsp/*.ski
@@ -160,4 +161,24 @@ test-suite language-server-tests
     , text
   build-tool-depends:
       graph-reduction-machine:graph-reduction-machine-lsp
+  default-language: Haskell2010
+
+test-suite cli-tests
+  type: exitcode-stdio-1.0
+  hs-source-dirs: test
+  main-is: CliMain.hs
+  other-modules: TestSupport
+  build-depends:
+      base >=4.16 && <5
+    , aeson >=2.0 && <3
+    , bytestring
+    , containers
+    , directory
+    , filepath
+    , graph-reduction-machine
+    , jsonschema >=0.3 && <0.4
+    , process
+  build-tool-depends:
+      graph-reduction-machine:lambda-to-graph
+    , graph-reduction-machine:ski-interpreter
   default-language: Haskell2010

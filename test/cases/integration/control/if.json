@@ -2,13 +2,11 @@
   "cases": [
     {
       "name": "false",
-      "input": {
-        "language": "lambda",
-        "source": "@! IF FALSE TRUE FALSE;\n"
-      },
-      "run": {
-        "stage": "decode",
-        "type": "boolean"
+      "language": "lambda",
+      "source": "@! IF FALSE TRUE FALSE;\n",
+      "stage": "decode",
+      "options": {
+        "decode": "boolean"
       },
       "expect": {
         "value": "False"
@@ -16,13 +14,11 @@
     },
     {
       "name": "true",
-      "input": {
-        "language": "lambda",
-        "source": "@! IF TRUE TRUE ((\\x -> x x) (\\x -> x x));\n"
-      },
-      "run": {
-        "stage": "decode",
-        "type": "boolean"
+      "language": "lambda",
+      "source": "@! IF TRUE TRUE ((\\x -> x x) (\\x -> x x));\n",
+      "stage": "decode",
+      "options": {
+        "decode": "boolean"
       },
       "expect": {
         "value": "True"

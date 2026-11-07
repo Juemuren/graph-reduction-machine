@@ -29,8 +29,6 @@ cabal test
 
 所有语言测试用例使用 JSON 文件，示例为
 
-<!-- TODO 待迁移 。其中 expand 是新增 stage -->
-
 ```json
 {
   "cases": [
@@ -67,7 +65,7 @@ cabal test
   - `expect.value` 对于 `parse` / `expand` / `reduce` 比较语法树，对于 `compile / interpret / undecode` 比较图，对于 `decode` 比较文本
   - `expect.error` 比较错误消息
 
-语言用例的完整 JSON Schema 见 [language.json](../test/cases/language.json)。
+语言用例的完整 JSON Schema 见 [language.schema.json](../test/cases/language.schema.json)。
 
 ### 命令行用例
 
@@ -99,7 +97,7 @@ cabal test
 - `stdin` 是传给程序的标准输入
 - `expect.exitCode`、`expect.stdout`、`expect.stderr` 分别比较退出码、标准输出和标准错误
 
-命令行用例的完整 JSON Schema 见 [cli.json](../test/cases/cli.json)。
+命令行用例的完整 JSON Schema 见 [cli.schema.json](../test/cases/cli.schema.json)。
 
 ## 编译器测试
 
@@ -200,7 +198,10 @@ cabal test cli-tests
 
 命令行测试用例放在 `test/cases/cli` 下，属于 [命令行用例](#命令行用例)。
 
-目前这些测试仍位于 `test/cases/interpreter/limit/options.json`，尚未迁移。
+测试用例按以下类别组织：
+
+- `compiler.json` 测试编译器的可执行程序
+- `interpreter.json` 测试解释器的可执行程序
 
 ## 语言服务器测试
 

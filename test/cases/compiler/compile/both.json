@@ -2,86 +2,74 @@
   "cases": [
     {
       "name": "application",
-      "input": {
-        "language": "lambda",
-        "source": "(\\x -> x) (\\y -> y)\n"
-      },
-      "run": {
-        "stage": "compile",
+      "language": "lambda",
+      "source": "(\\x -> x) (\\y -> y)\n",
+      "stage": "compile",
+      "options": {
         "enableReduce": "both"
       },
       "expect": {
-        "graph": "#0 = I;\n"
+        "value": "#0 = I;\n"
       }
     },
     {
       "name": "duplicate-argument",
-      "input": {
-        "language": "lambda",
-        "source": "\\x -> x x\n"
-      },
-      "run": {
-        "stage": "compile",
+      "language": "lambda",
+      "source": "\\x -> x x\n",
+      "stage": "compile",
+      "options": {
         "enableReduce": "both"
       },
       "expect": {
-        "graph": "#0 = #1 #4;\n#1 = #2 #3;\n#2 = S;\n#3 = I;\n#4 = I;\n"
+        "value": "#0 = #1 #4;\n#1 = #2 #3;\n#2 = S;\n#3 = I;\n#4 = I;\n"
       }
     },
     {
       "name": "first-argument",
-      "input": {
-        "language": "lambda",
-        "source": "\\x -> \\y -> x\n"
-      },
-      "run": {
-        "stage": "compile",
+      "language": "lambda",
+      "source": "\\x -> \\y -> x\n",
+      "stage": "compile",
+      "options": {
         "enableReduce": "both"
       },
       "expect": {
-        "graph": "#0 = #1 #6;\n#1 = #2 #3;\n#2 = S;\n#3 = #4 #5;\n#4 = K;\n#5 = K;\n#6 = I;\n"
+        "value": "#0 = #1 #6;\n#1 = #2 #3;\n#2 = S;\n#3 = #4 #5;\n#4 = K;\n#5 = K;\n#6 = I;\n"
       }
     },
     {
       "name": "identity",
-      "input": {
-        "language": "lambda",
-        "source": "\\x -> x\n"
-      },
-      "run": {
-        "stage": "compile",
+      "language": "lambda",
+      "source": "\\x -> x\n",
+      "stage": "compile",
+      "options": {
         "enableReduce": "both"
       },
       "expect": {
-        "graph": "#0 = I;\n"
+        "value": "#0 = I;\n"
       }
     },
     {
       "name": "second-argument",
-      "input": {
-        "language": "lambda",
-        "source": "\\x -> \\y -> y\n"
-      },
-      "run": {
-        "stage": "compile",
+      "language": "lambda",
+      "source": "\\x -> \\y -> y\n",
+      "stage": "compile",
+      "options": {
         "enableReduce": "both"
       },
       "expect": {
-        "graph": "#0 = #1 #2;\n#1 = K;\n#2 = I;\n"
+        "value": "#0 = #1 #2;\n#1 = K;\n#2 = I;\n"
       }
     },
     {
       "name": "shadowing",
-      "input": {
-        "language": "lambda",
-        "source": "\\x -> (\\x -> x) x\n"
-      },
-      "run": {
-        "stage": "compile",
+      "language": "lambda",
+      "source": "\\x -> (\\x -> x) x\n",
+      "stage": "compile",
+      "options": {
         "enableReduce": "both"
       },
       "expect": {
-        "graph": "#0 = I;\n"
+        "value": "#0 = I;\n"
       }
     }
   ]

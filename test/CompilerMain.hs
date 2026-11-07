@@ -52,7 +52,7 @@ runCase label (TestCase _ (Input language source modules) spec expected) = do
             label
             value
             (reduceSourceWithModules reduction modules "<input>" source)
-    ("lambda", "compile", ExpectedGraph graph) ->
+    ("lambda", "compile", ExpectedValue graph) ->
       if Map.null modules
         then do
           when (runEnableReduce spec == Just "both") $ do

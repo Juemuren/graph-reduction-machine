@@ -2,13 +2,11 @@
   "cases": [
     {
       "name": "compose",
-      "input": {
-        "language": "lambda",
-        "source": "@! COMPOSE NOT NOT TRUE;\n"
-      },
-      "run": {
-        "stage": "decode",
-        "type": "boolean"
+      "language": "lambda",
+      "source": "@! COMPOSE NOT NOT TRUE;\n",
+      "stage": "decode",
+      "options": {
+        "decode": "boolean"
       },
       "expect": {
         "value": "True"
@@ -16,13 +14,11 @@
     },
     {
       "name": "const",
-      "input": {
-        "language": "lambda",
-        "source": "@! CONST TRUE FALSE;\n"
-      },
-      "run": {
-        "stage": "decode",
-        "type": "boolean"
+      "language": "lambda",
+      "source": "@! CONST TRUE FALSE;\n",
+      "stage": "decode",
+      "options": {
+        "decode": "boolean"
       },
       "expect": {
         "value": "True"
@@ -30,13 +26,11 @@
     },
     {
       "name": "curry",
-      "input": {
-        "language": "lambda",
-        "source": "@! CURRY (\\p -> AND (FST p) (SND p)) TRUE FALSE;\n"
-      },
-      "run": {
-        "stage": "decode",
-        "type": "boolean"
+      "language": "lambda",
+      "source": "@! CURRY (\\p -> AND (FST p) (SND p)) TRUE FALSE;\n",
+      "stage": "decode",
+      "options": {
+        "decode": "boolean"
       },
       "expect": {
         "value": "False"
@@ -44,13 +38,11 @@
     },
     {
       "name": "flip",
-      "input": {
-        "language": "lambda",
-        "source": "@! FLIP CONST FALSE TRUE;\n"
-      },
-      "run": {
-        "stage": "decode",
-        "type": "boolean"
+      "language": "lambda",
+      "source": "@! FLIP CONST FALSE TRUE;\n",
+      "stage": "decode",
+      "options": {
+        "decode": "boolean"
       },
       "expect": {
         "value": "True"
@@ -58,13 +50,11 @@
     },
     {
       "name": "function-argument",
-      "input": {
-        "language": "lambda",
-        "source": "@! (\\apply -> apply NOT FALSE) (\\f -> \\x -> f x);\n"
-      },
-      "run": {
-        "stage": "decode",
-        "type": "boolean"
+      "language": "lambda",
+      "source": "@! (\\apply -> apply NOT FALSE) (\\f -> \\x -> f x);\n",
+      "stage": "decode",
+      "options": {
+        "decode": "boolean"
       },
       "expect": {
         "value": "True"
@@ -72,13 +62,11 @@
     },
     {
       "name": "function-result",
-      "input": {
-        "language": "lambda",
-        "source": "@! (\\make -> (make TRUE) FALSE) (\\x -> \\y -> AND x (NOT y));\n"
-      },
-      "run": {
-        "stage": "decode",
-        "type": "boolean"
+      "language": "lambda",
+      "source": "@! (\\make -> (make TRUE) FALSE) (\\x -> \\y -> AND x (NOT y));\n",
+      "stage": "decode",
+      "options": {
+        "decode": "boolean"
       },
       "expect": {
         "value": "True"
@@ -86,13 +74,11 @@
     },
     {
       "name": "id",
-      "input": {
-        "language": "lambda",
-        "source": "@! ID TRUE;\n"
-      },
-      "run": {
-        "stage": "decode",
-        "type": "boolean"
+      "language": "lambda",
+      "source": "@! ID TRUE;\n",
+      "stage": "decode",
+      "options": {
+        "decode": "boolean"
       },
       "expect": {
         "value": "True"
@@ -100,13 +86,11 @@
     },
     {
       "name": "partial-application",
-      "input": {
-        "language": "lambda",
-        "source": "@! (\\apply -> apply FALSE) ((\\f -> \\x -> f x) NOT);\n"
-      },
-      "run": {
-        "stage": "decode",
-        "type": "boolean"
+      "language": "lambda",
+      "source": "@! (\\apply -> apply FALSE) ((\\f -> \\x -> f x) NOT);\n",
+      "stage": "decode",
+      "options": {
+        "decode": "boolean"
       },
       "expect": {
         "value": "True"
@@ -114,13 +98,11 @@
     },
     {
       "name": "uncurry",
-      "input": {
-        "language": "lambda",
-        "source": "@! UNCURRY (\\x -> \\y -> AND x (NOT y)) (PAIR TRUE FALSE);\n"
-      },
-      "run": {
-        "stage": "decode",
-        "type": "boolean"
+      "language": "lambda",
+      "source": "@! UNCURRY (\\x -> \\y -> AND x (NOT y)) (PAIR TRUE FALSE);\n",
+      "stage": "decode",
+      "options": {
+        "decode": "boolean"
       },
       "expect": {
         "value": "True"

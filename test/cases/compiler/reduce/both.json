@@ -2,12 +2,10 @@
   "cases": [
     {
       "name": "capture",
-      "input": {
-        "language": "lambda",
-        "source": "\\y -> (\\x -> \\y -> x) (y y)\n"
-      },
-      "run": {
-        "stage": "reduce",
+      "language": "lambda",
+      "source": "\\y -> (\\x -> \\y -> x) (y y)\n",
+      "stage": "reduce",
+      "options": {
         "enableReduce": "both"
       },
       "expect": {
@@ -16,12 +14,10 @@
     },
     {
       "name": "discard-argument",
-      "input": {
-        "language": "lambda",
-        "source": "(\\x -> \\z -> z) ((\\y -> y y) (\\y -> y y))\n"
-      },
-      "run": {
-        "stage": "reduce",
+      "language": "lambda",
+      "source": "(\\x -> \\z -> z) ((\\y -> y y) (\\y -> y y))\n",
+      "stage": "reduce",
+      "options": {
         "enableReduce": "both"
       },
       "expect": {
@@ -30,12 +26,10 @@
     },
     {
       "name": "discard-argument-under-abstraction",
-      "input": {
-        "language": "lambda",
-        "source": "(\\x -> \\y -> (\\z -> y) x) ((\\w -> w w) (\\w -> w w))\n"
-      },
-      "run": {
-        "stage": "reduce",
+      "language": "lambda",
+      "source": "(\\x -> \\y -> (\\z -> y) x) ((\\w -> w w) (\\w -> w w))\n",
+      "stage": "reduce",
+      "options": {
         "enableReduce": "both"
       },
       "expect": {
@@ -44,12 +38,10 @@
     },
     {
       "name": "eta-side-condition",
-      "input": {
-        "language": "lambda",
-        "source": "\\x -> x x\n"
-      },
-      "run": {
-        "stage": "reduce",
+      "language": "lambda",
+      "source": "\\x -> x x\n",
+      "stage": "reduce",
+      "options": {
         "enableReduce": "both"
       },
       "expect": {
@@ -58,12 +50,10 @@
     },
     {
       "name": "eta",
-      "input": {
-        "language": "lambda",
-        "source": "\\f -> \\x -> f x\n"
-      },
-      "run": {
-        "stage": "reduce",
+      "language": "lambda",
+      "source": "\\f -> \\x -> f x\n",
+      "stage": "reduce",
+      "options": {
         "enableReduce": "both"
       },
       "expect": {
@@ -72,12 +62,10 @@
     },
     {
       "name": "modes",
-      "input": {
-        "language": "lambda",
-        "source": "(\\x -> x) (\\f -> \\y -> f y)\n"
-      },
-      "run": {
-        "stage": "reduce",
+      "language": "lambda",
+      "source": "(\\x -> x) (\\f -> \\y -> f y)\n",
+      "stage": "reduce",
+      "options": {
         "enableReduce": "both"
       },
       "expect": {
@@ -86,12 +74,10 @@
     },
     {
       "name": "multiple-head-applications",
-      "input": {
-        "language": "lambda",
-        "source": "(\\x -> x) (\\y -> y) (\\z -> z)\n"
-      },
-      "run": {
-        "stage": "reduce",
+      "language": "lambda",
+      "source": "(\\x -> x) (\\y -> y) (\\z -> z)\n",
+      "stage": "reduce",
+      "options": {
         "enableReduce": "both"
       },
       "expect": {
@@ -100,12 +86,10 @@
     },
     {
       "name": "shadowing",
-      "input": {
-        "language": "lambda",
-        "source": "(\\x -> \\x -> x) (\\z -> z)\n"
-      },
-      "run": {
-        "stage": "reduce",
+      "language": "lambda",
+      "source": "(\\x -> \\x -> x) (\\z -> z)\n",
+      "stage": "reduce",
+      "options": {
         "enableReduce": "both"
       },
       "expect": {
@@ -114,12 +98,10 @@
     },
     {
       "name": "under-abstraction",
-      "input": {
-        "language": "lambda",
-        "source": "\\x -> (\\y -> y) (x x)\n"
-      },
-      "run": {
-        "stage": "reduce",
+      "language": "lambda",
+      "source": "\\x -> (\\y -> y) (x x)\n",
+      "stage": "reduce",
+      "options": {
         "enableReduce": "both"
       },
       "expect": {

@@ -35,7 +35,7 @@ runCase label (TestCase _ (Input language source modules) spec expected) = do
   reduction <- unwrap label (parseReduction (runEnableReduce spec))
   limit <- caseLimit label 100000 spec
   case (language, runStage spec, expected) of
-    ("lambda", "undecode", ExpectedGraph graph) ->
+    ("lambda", "undecode", ExpectedValue graph) ->
       void
         ( assertGraph
             label
@@ -52,7 +52,6 @@ runCase label (TestCase _ (Input language source modules) spec expected) = do
           case result of
             Left actual -> assertEqual label (normalizeError problem) (normalizeError actual)
             Right _ -> die (label ++ ": expected error " ++ show problem)
-        _ -> die (label ++ ": decode requires value or error expectation")
     _ -> die (label ++ ": unsupported input, run, or expect combination")
 
 decodeGraph :: RunSpec -> Int -> Graph.Graph -> Either String String

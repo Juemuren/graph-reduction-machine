@@ -2,13 +2,11 @@
   "cases": [
     {
       "name": "non-pair",
-      "input": {
-        "language": "ski",
-        "source": "#0 = I;\n"
-      },
-      "run": {
-        "stage": "decode",
-        "type": "rational"
+      "language": "ski",
+      "source": "#0 = I;\n",
+      "stage": "decode",
+      "options": {
+        "decode": "rational"
       },
       "expect": {
         "error": "not a Church Rational"
@@ -16,13 +14,11 @@
     },
     {
       "name": "zero-denominator",
-      "input": {
-        "language": "ski",
-        "source": "#0 = #1 #24;\n#1 = #2 #3;\n#2 = S;\n#3 = #4 #7;\n#4 = #5 #6;\n#5 = S;\n#6 = I;\n#7 = #8 #9;\n#8 = K;\n#9 = #10 #19;\n#10 = #11 #12;\n#11 = S;\n#12 = #13 #16;\n#13 = #14 #15;\n#14 = S;\n#15 = I;\n#16 = #17 #18;\n#17 = K;\n#18 = I;\n#19 = #20 #21;\n#20 = K;\n#21 = #22 #23;\n#22 = K;\n#23 = I;\n#24 = #25 #26;\n#25 = K;\n#26 = #27 #38;\n#27 = #28 #29;\n#28 = S;\n#29 = #30 #33;\n#30 = #31 #32;\n#31 = S;\n#32 = I;\n#33 = #34 #35;\n#34 = K;\n#35 = #36 #37;\n#36 = K;\n#37 = I;\n#38 = #39 #40;\n#39 = K;\n#40 = #41 #42;\n#41 = K;\n#42 = I;\n"
-      },
-      "run": {
-        "stage": "decode",
-        "type": "rational"
+      "language": "ski",
+      "source": "#0 = #1 #24;\n#1 = #2 #3;\n#2 = S;\n#3 = #4 #7;\n#4 = #5 #6;\n#5 = S;\n#6 = I;\n#7 = #8 #9;\n#8 = K;\n#9 = #10 #19;\n#10 = #11 #12;\n#11 = S;\n#12 = #13 #16;\n#13 = #14 #15;\n#14 = S;\n#15 = I;\n#16 = #17 #18;\n#17 = K;\n#18 = I;\n#19 = #20 #21;\n#20 = K;\n#21 = #22 #23;\n#22 = K;\n#23 = I;\n#24 = #25 #26;\n#25 = K;\n#26 = #27 #38;\n#27 = #28 #29;\n#28 = S;\n#29 = #30 #33;\n#30 = #31 #32;\n#31 = S;\n#32 = I;\n#33 = #34 #35;\n#34 = K;\n#35 = #36 #37;\n#36 = K;\n#37 = I;\n#38 = #39 #40;\n#39 = K;\n#40 = #41 #42;\n#41 = K;\n#42 = I;\n",
+      "stage": "decode",
+      "options": {
+        "decode": "rational"
       },
       "expect": {
         "error": "not a Church Rational"

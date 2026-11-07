@@ -2,12 +2,10 @@
   "cases": [
     {
       "name": "duplicate-node",
-      "input": {
-        "language": "ski",
-        "source": "#0 = I;\n#0 = K;\n"
-      },
-      "run": {
-        "stage": "interpret",
+      "language": "ski",
+      "source": "#0 = I;\n#0 = K;\n",
+      "stage": "interpret",
+      "options": {
         "maxSteps": 100
       },
       "expect": {
@@ -16,12 +14,10 @@
     },
     {
       "name": "missing-root",
-      "input": {
-        "language": "ski",
-        "source": "#1 = I;\n"
-      },
-      "run": {
-        "stage": "interpret",
+      "language": "ski",
+      "source": "#1 = I;\n",
+      "stage": "interpret",
+      "options": {
         "maxSteps": 100
       },
       "expect": {
@@ -30,12 +26,10 @@
     },
     {
       "name": "reachable-cycle",
-      "input": {
-        "language": "ski",
-        "source": "#0 = #1 #2;\n#1 = #0 #2;\n#2 = I;\n"
-      },
-      "run": {
-        "stage": "interpret",
+      "language": "ski",
+      "source": "#0 = #1 #2;\n#1 = #0 #2;\n#2 = I;\n",
+      "stage": "interpret",
+      "options": {
         "maxSteps": 100
       },
       "expect": {
@@ -44,12 +38,10 @@
     },
     {
       "name": "undefined-reference",
-      "input": {
-        "language": "ski",
-        "source": "#0 = #1 #2;\n#1 = I;\n"
-      },
-      "run": {
-        "stage": "interpret",
+      "language": "ski",
+      "source": "#0 = #1 #2;\n#1 = I;\n",
+      "stage": "interpret",
+      "options": {
         "maxSteps": 100
       },
       "expect": {

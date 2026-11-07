@@ -2,21 +2,33 @@
   "cases": [
     {
       "name": "local-definition",
-      "input": { "language": "lambda", "source": "identity = \\x -> x; @! identity;" },
-      "run": { "stage": "reduce" },
-      "expect": { "value": "\\x -> x" }
+      "language": "lambda",
+      "source": "identity = \\x -> x; @! identity;",
+      "stage": "reduce",
+      "expect": {
+        "value": "\\x -> x"
+      }
     },
     {
       "name": "forward-definition",
-      "input": { "language": "lambda", "source": "first = second; second = \\x -> x; @! first;" },
-      "run": { "stage": "reduce" },
-      "expect": { "value": "\\x -> x" }
+      "language": "lambda",
+      "source": "first = second; second = \\x -> x; @! first;",
+      "stage": "reduce",
+      "expect": {
+        "value": "\\x -> x"
+      }
     },
     {
       "name": "lambda-shadows-definition",
-      "input": { "language": "lambda", "source": "value = \\x -> \\y -> x; @! (\\value -> value) (\\x -> x);" },
-      "run": { "stage": "reduce", "enableReduce": "both" },
-      "expect": { "value": "\\x -> x" }
+      "language": "lambda",
+      "source": "value = \\x -> \\y -> x; @! (\\value -> value) (\\x -> x);",
+      "stage": "reduce",
+      "options": {
+        "enableReduce": "both"
+      },
+      "expect": {
+        "value": "\\x -> x"
+      }
     }
   ]
 }

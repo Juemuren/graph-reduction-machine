@@ -2,13 +2,11 @@
   "cases": [
     {
       "name": "riszero-zero",
-      "input": {
-        "language": "lambda",
-        "source": "@! RISZERO (NTOR ZERO) ONE;\n"
-      },
-      "run": {
-        "stage": "decode",
-        "type": "boolean"
+      "language": "lambda",
+      "source": "@! RISZERO (NTOR ZERO) ONE;\n",
+      "stage": "decode",
+      "options": {
+        "decode": "boolean"
       },
       "expect": {
         "value": "True"
@@ -16,13 +14,11 @@
     },
     {
       "name": "riszero-nonzero",
-      "input": {
-        "language": "lambda",
-        "source": "@! RISZERO (NTOR ONE) ONE;\n"
-      },
-      "run": {
-        "stage": "decode",
-        "type": "boolean"
+      "language": "lambda",
+      "source": "@! RISZERO (NTOR ONE) ONE;\n",
+      "stage": "decode",
+      "options": {
+        "decode": "boolean"
       },
       "expect": {
         "value": "False"
@@ -30,13 +26,11 @@
     },
     {
       "name": "riszero-index-zero",
-      "input": {
-        "language": "lambda",
-        "source": "@! RISZERO (\\n -> IF (ISZERO n) (NTOQ ZERO) (NTOQ ONE)) ZERO;\n"
-      },
-      "run": {
-        "stage": "decode",
-        "type": "boolean"
+      "language": "lambda",
+      "source": "@! RISZERO (\\n -> IF (ISZERO n) (NTOQ ZERO) (NTOQ ONE)) ZERO;\n",
+      "stage": "decode",
+      "options": {
+        "decode": "boolean"
       },
       "expect": {
         "value": "True"
@@ -44,13 +38,11 @@
     },
     {
       "name": "riszero-index-one",
-      "input": {
-        "language": "lambda",
-        "source": "@! RISZERO (\\n -> IF (ISZERO n) (NTOQ ZERO) (NTOQ ONE)) ONE;\n"
-      },
-      "run": {
-        "stage": "decode",
-        "type": "boolean"
+      "language": "lambda",
+      "source": "@! RISZERO (\\n -> IF (ISZERO n) (NTOQ ZERO) (NTOQ ONE)) ONE;\n",
+      "stage": "decode",
+      "options": {
+        "decode": "boolean"
       },
       "expect": {
         "value": "False"
@@ -58,13 +50,11 @@
     },
     {
       "name": "req-equivalent",
-      "input": {
-        "language": "lambda",
-        "source": "@! REQ (QTOR (PAIR (NTOZ ONE) (NTOZ TWO))) (QTOR (PAIR (NTOZ TWO) (NTOZ FOUR))) ONE;\n"
-      },
-      "run": {
-        "stage": "decode",
-        "type": "boolean"
+      "language": "lambda",
+      "source": "@! REQ (QTOR (PAIR (NTOZ ONE) (NTOZ TWO))) (QTOR (PAIR (NTOZ TWO) (NTOZ FOUR))) ONE;\n",
+      "stage": "decode",
+      "options": {
+        "decode": "boolean"
       },
       "expect": {
         "value": "True"
@@ -72,13 +62,11 @@
     },
     {
       "name": "req-different",
-      "input": {
-        "language": "lambda",
-        "source": "@! REQ (NTOR ONE) (NTOR TWO) ONE;\n"
-      },
-      "run": {
-        "stage": "decode",
-        "type": "boolean"
+      "language": "lambda",
+      "source": "@! REQ (NTOR ONE) (NTOR TWO) ONE;\n",
+      "stage": "decode",
+      "options": {
+        "decode": "boolean"
       },
       "expect": {
         "value": "False"
@@ -86,13 +74,11 @@
     },
     {
       "name": "rneq",
-      "input": {
-        "language": "lambda",
-        "source": "@! RNEQ (NTOR ONE) (NTOR TWO) ONE;\n"
-      },
-      "run": {
-        "stage": "decode",
-        "type": "boolean"
+      "language": "lambda",
+      "source": "@! RNEQ (NTOR ONE) (NTOR TWO) ONE;\n",
+      "stage": "decode",
+      "options": {
+        "decode": "boolean"
       },
       "expect": {
         "value": "True"
@@ -100,13 +86,11 @@
     },
     {
       "name": "rlt",
-      "input": {
-        "language": "lambda",
-        "source": "@! RLT (NTOR ONE) (NTOR TWO) ONE;\n"
-      },
-      "run": {
-        "stage": "decode",
-        "type": "boolean"
+      "language": "lambda",
+      "source": "@! RLT (NTOR ONE) (NTOR TWO) ONE;\n",
+      "stage": "decode",
+      "options": {
+        "decode": "boolean"
       },
       "expect": {
         "value": "True"
@@ -114,13 +98,11 @@
     },
     {
       "name": "rlt-equal",
-      "input": {
-        "language": "lambda",
-        "source": "@! RLT (NTOR TWO) (NTOR TWO) ONE;\n"
-      },
-      "run": {
-        "stage": "decode",
-        "type": "boolean"
+      "language": "lambda",
+      "source": "@! RLT (NTOR TWO) (NTOR TWO) ONE;\n",
+      "stage": "decode",
+      "options": {
+        "decode": "boolean"
       },
       "expect": {
         "value": "False"
@@ -128,13 +110,11 @@
     },
     {
       "name": "rleq-equal",
-      "input": {
-        "language": "lambda",
-        "source": "@! RLEQ (NTOR TWO) (NTOR TWO) ONE;\n"
-      },
-      "run": {
-        "stage": "decode",
-        "type": "boolean"
+      "language": "lambda",
+      "source": "@! RLEQ (NTOR TWO) (NTOR TWO) ONE;\n",
+      "stage": "decode",
+      "options": {
+        "decode": "boolean"
       },
       "expect": {
         "value": "True"
@@ -142,13 +122,11 @@
     },
     {
       "name": "rgt",
-      "input": {
-        "language": "lambda",
-        "source": "@! RGT (NTOR TWO) (NTOR ONE) ONE;\n"
-      },
-      "run": {
-        "stage": "decode",
-        "type": "boolean"
+      "language": "lambda",
+      "source": "@! RGT (NTOR TWO) (NTOR ONE) ONE;\n",
+      "stage": "decode",
+      "options": {
+        "decode": "boolean"
       },
       "expect": {
         "value": "True"
@@ -156,13 +134,11 @@
     },
     {
       "name": "rgt-equal",
-      "input": {
-        "language": "lambda",
-        "source": "@! RGT (NTOR TWO) (NTOR TWO) ONE;\n"
-      },
-      "run": {
-        "stage": "decode",
-        "type": "boolean"
+      "language": "lambda",
+      "source": "@! RGT (NTOR TWO) (NTOR TWO) ONE;\n",
+      "stage": "decode",
+      "options": {
+        "decode": "boolean"
       },
       "expect": {
         "value": "False"
@@ -170,13 +146,11 @@
     },
     {
       "name": "rgeq-equal",
-      "input": {
-        "language": "lambda",
-        "source": "@! RGEQ (NTOR TWO) (NTOR TWO) ONE;\n"
-      },
-      "run": {
-        "stage": "decode",
-        "type": "boolean"
+      "language": "lambda",
+      "source": "@! RGEQ (NTOR TWO) (NTOR TWO) ONE;\n",
+      "stage": "decode",
+      "options": {
+        "decode": "boolean"
       },
       "expect": {
         "value": "True"

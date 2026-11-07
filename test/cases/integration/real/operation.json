@@ -2,15 +2,13 @@
   "cases": [
     {
       "name": "rlog-exact",
-      "input": {
-        "language": "lambda",
-        "source": "@! RLOG (NTOR TWO) (NTOR EIGHT);\n"
-      },
-      "run": {
-        "stage": "decode",
-        "type": "real",
+      "language": "lambda",
+      "source": "@! RLOG (NTOR TWO) (NTOR EIGHT);\n",
+      "stage": "decode",
+      "options": {
         "precisionReal": 0,
-        "maxSteps": 1000000
+        "maxSteps": 1000000,
+        "decode": "real"
       },
       "expect": {
         "value": "3/1"
@@ -18,15 +16,13 @@
     },
     {
       "name": "rlog-fractional",
-      "input": {
-        "language": "lambda",
-        "source": "@! RLOG (NTOR TWO) (NTOR THREE);\n"
-      },
-      "run": {
-        "stage": "decode",
-        "type": "real",
+      "language": "lambda",
+      "source": "@! RLOG (NTOR TWO) (NTOR THREE);\n",
+      "stage": "decode",
+      "options": {
         "precisionReal": 1,
-        "maxSteps": 1000000
+        "maxSteps": 1000000,
+        "decode": "real"
       },
       "expect": {
         "value": "3/2"
@@ -34,15 +30,13 @@
     },
     {
       "name": "rlog-sequence",
-      "input": {
-        "language": "lambda",
-        "source": "@! RLOG (NTOR TWO) (\\n -> NTOQ (SUCC (SUCC n)));\n"
-      },
-      "run": {
-        "stage": "decode",
-        "type": "real",
+      "language": "lambda",
+      "source": "@! RLOG (NTOR TWO) (\\n -> NTOQ (SUCC (SUCC n)));\n",
+      "stage": "decode",
+      "options": {
         "precisionReal": 1,
-        "maxSteps": 1000000
+        "maxSteps": 1000000,
+        "decode": "real"
       },
       "expect": {
         "value": "3/2"
@@ -50,14 +44,12 @@
     },
     {
       "name": "rpow-zero",
-      "input": {
-        "language": "lambda",
-        "source": "@! RPOW (NTOR ZERO) (NTOR ZERO);\n"
-      },
-      "run": {
-        "stage": "decode",
-        "type": "real",
-        "precisionReal": 2
+      "language": "lambda",
+      "source": "@! RPOW (NTOR ZERO) (NTOR ZERO);\n",
+      "stage": "decode",
+      "options": {
+        "precisionReal": 2,
+        "decode": "real"
       },
       "expect": {
         "value": "1/1"
@@ -65,14 +57,12 @@
     },
     {
       "name": "rpow-negative",
-      "input": {
-        "language": "lambda",
-        "source": "@! RPOW (ZTOR (ZNEG (NTOZ TWO))) (NTOR THREE);\n"
-      },
-      "run": {
-        "stage": "decode",
-        "type": "real",
-        "precisionReal": 1
+      "language": "lambda",
+      "source": "@! RPOW (ZTOR (ZNEG (NTOZ TWO))) (NTOR THREE);\n",
+      "stage": "decode",
+      "options": {
+        "precisionReal": 1,
+        "decode": "real"
       },
       "expect": {
         "value": "-8/1"
@@ -80,14 +70,12 @@
     },
     {
       "name": "rpow-sequence",
-      "input": {
-        "language": "lambda",
-        "source": "@! RPOW (\\n -> NTOQ (SUCC n)) (NTOR TWO);\n"
-      },
-      "run": {
-        "stage": "decode",
-        "type": "real",
-        "precisionReal": 2
+      "language": "lambda",
+      "source": "@! RPOW (\\n -> NTOQ (SUCC n)) (NTOR TWO);\n",
+      "stage": "decode",
+      "options": {
+        "precisionReal": 2,
+        "decode": "real"
       },
       "expect": {
         "value": "9/1"
@@ -95,14 +83,12 @@
     },
     {
       "name": "radd",
-      "input": {
-        "language": "lambda",
-        "source": "@! RADD (NTOR TWO) (NTOR ONE);\n"
-      },
-      "run": {
-        "stage": "decode",
-        "type": "real",
-        "precisionReal": 2
+      "language": "lambda",
+      "source": "@! RADD (NTOR TWO) (NTOR ONE);\n",
+      "stage": "decode",
+      "options": {
+        "precisionReal": 2,
+        "decode": "real"
       },
       "expect": {
         "value": "3/1"
@@ -110,14 +96,12 @@
     },
     {
       "name": "rsub",
-      "input": {
-        "language": "lambda",
-        "source": "@! RSUB (NTOR ONE) (NTOR TWO);\n"
-      },
-      "run": {
-        "stage": "decode",
-        "type": "real",
-        "precisionReal": 2
+      "language": "lambda",
+      "source": "@! RSUB (NTOR ONE) (NTOR TWO);\n",
+      "stage": "decode",
+      "options": {
+        "precisionReal": 2,
+        "decode": "real"
       },
       "expect": {
         "value": "-1/1"
@@ -125,14 +109,12 @@
     },
     {
       "name": "rmul",
-      "input": {
-        "language": "lambda",
-        "source": "@! RMUL (NTOR TWO) (QTOR (PAIR (NTOZ ONE) (NTOZ TWO)));\n"
-      },
-      "run": {
-        "stage": "decode",
-        "type": "real",
-        "precisionReal": 2
+      "language": "lambda",
+      "source": "@! RMUL (NTOR TWO) (QTOR (PAIR (NTOZ ONE) (NTOZ TWO)));\n",
+      "stage": "decode",
+      "options": {
+        "precisionReal": 2,
+        "decode": "real"
       },
       "expect": {
         "value": "1/1"
@@ -140,14 +122,12 @@
     },
     {
       "name": "rdiv",
-      "input": {
-        "language": "lambda",
-        "source": "@! RDIV (NTOR THREE) (NTOR TWO);\n"
-      },
-      "run": {
-        "stage": "decode",
-        "type": "real",
-        "precisionReal": 3
+      "language": "lambda",
+      "source": "@! RDIV (NTOR THREE) (NTOR TWO);\n",
+      "stage": "decode",
+      "options": {
+        "precisionReal": 3,
+        "decode": "real"
       },
       "expect": {
         "value": "3/2"
@@ -155,14 +135,12 @@
     },
     {
       "name": "rdiv-zero-term",
-      "input": {
-        "language": "lambda",
-        "source": "@! RDIV (NTOR ONE) (\\n -> IF (ISZERO n) (NTOQ ZERO) (NTOQ TWO));\n"
-      },
-      "run": {
-        "stage": "decode",
-        "type": "real",
-        "precisionReal": 0
+      "language": "lambda",
+      "source": "@! RDIV (NTOR ONE) (\\n -> IF (ISZERO n) (NTOQ ZERO) (NTOQ TWO));\n",
+      "stage": "decode",
+      "options": {
+        "precisionReal": 0,
+        "decode": "real"
       },
       "expect": {
         "value": "0/1"
@@ -170,14 +148,12 @@
     },
     {
       "name": "rdiv-after-zero-term",
-      "input": {
-        "language": "lambda",
-        "source": "@! RDIV (NTOR ONE) (\\n -> IF (ISZERO n) (NTOQ ZERO) (NTOQ TWO));\n"
-      },
-      "run": {
-        "stage": "decode",
-        "type": "real",
-        "precisionReal": 1
+      "language": "lambda",
+      "source": "@! RDIV (NTOR ONE) (\\n -> IF (ISZERO n) (NTOQ ZERO) (NTOQ TWO));\n",
+      "stage": "decode",
+      "options": {
+        "precisionReal": 1,
+        "decode": "real"
       },
       "expect": {
         "value": "1/2"
@@ -185,14 +161,12 @@
     },
     {
       "name": "rneg",
-      "input": {
-        "language": "lambda",
-        "source": "@! RNEG (NTOR TWO);\n"
-      },
-      "run": {
-        "stage": "decode",
-        "type": "real",
-        "precisionReal": 1
+      "language": "lambda",
+      "source": "@! RNEG (NTOR TWO);\n",
+      "stage": "decode",
+      "options": {
+        "precisionReal": 1,
+        "decode": "real"
       },
       "expect": {
         "value": "-2/1"
@@ -200,14 +174,12 @@
     },
     {
       "name": "rabs-negative",
-      "input": {
-        "language": "lambda",
-        "source": "@! RABS (ZTOR (ZNEG (NTOZ TWO)));\n"
-      },
-      "run": {
-        "stage": "decode",
-        "type": "real",
-        "precisionReal": 1
+      "language": "lambda",
+      "source": "@! RABS (ZTOR (ZNEG (NTOZ TWO)));\n",
+      "stage": "decode",
+      "options": {
+        "precisionReal": 1,
+        "decode": "real"
       },
       "expect": {
         "value": "2/1"
@@ -215,14 +187,12 @@
     },
     {
       "name": "rabs-positive",
-      "input": {
-        "language": "lambda",
-        "source": "@! RABS (NTOR TWO);\n"
-      },
-      "run": {
-        "stage": "decode",
-        "type": "real",
-        "precisionReal": 1
+      "language": "lambda",
+      "source": "@! RABS (NTOR TWO);\n",
+      "stage": "decode",
+      "options": {
+        "precisionReal": 1,
+        "decode": "real"
       },
       "expect": {
         "value": "2/1"
@@ -230,14 +200,12 @@
     },
     {
       "name": "rinv",
-      "input": {
-        "language": "lambda",
-        "source": "@! RINV (NTOR TWO);\n"
-      },
-      "run": {
-        "stage": "decode",
-        "type": "real",
-        "precisionReal": 1
+      "language": "lambda",
+      "source": "@! RINV (NTOR TWO);\n",
+      "stage": "decode",
+      "options": {
+        "precisionReal": 1,
+        "decode": "real"
       },
       "expect": {
         "value": "1/2"
@@ -245,14 +213,12 @@
     },
     {
       "name": "rinv-zero-term",
-      "input": {
-        "language": "lambda",
-        "source": "@! RINV (\\n -> IF (ISZERO n) (NTOQ ZERO) (NTOQ TWO));\n"
-      },
-      "run": {
-        "stage": "decode",
-        "type": "real",
-        "precisionReal": 0
+      "language": "lambda",
+      "source": "@! RINV (\\n -> IF (ISZERO n) (NTOQ ZERO) (NTOQ TWO));\n",
+      "stage": "decode",
+      "options": {
+        "precisionReal": 0,
+        "decode": "real"
       },
       "expect": {
         "value": "0/1"
@@ -260,14 +226,12 @@
     },
     {
       "name": "rmax-first",
-      "input": {
-        "language": "lambda",
-        "source": "@! RMAX (NTOR TWO) (NTOR ONE);\n"
-      },
-      "run": {
-        "stage": "decode",
-        "type": "real",
-        "precisionReal": 1
+      "language": "lambda",
+      "source": "@! RMAX (NTOR TWO) (NTOR ONE);\n",
+      "stage": "decode",
+      "options": {
+        "precisionReal": 1,
+        "decode": "real"
       },
       "expect": {
         "value": "2/1"
@@ -275,14 +239,12 @@
     },
     {
       "name": "rmax-second",
-      "input": {
-        "language": "lambda",
-        "source": "@! RMAX (NTOR ONE) (NTOR TWO);\n"
-      },
-      "run": {
-        "stage": "decode",
-        "type": "real",
-        "precisionReal": 1
+      "language": "lambda",
+      "source": "@! RMAX (NTOR ONE) (NTOR TWO);\n",
+      "stage": "decode",
+      "options": {
+        "precisionReal": 1,
+        "decode": "real"
       },
       "expect": {
         "value": "2/1"
@@ -290,14 +252,12 @@
     },
     {
       "name": "rmin-first",
-      "input": {
-        "language": "lambda",
-        "source": "@! RMIN (NTOR ONE) (NTOR TWO);\n"
-      },
-      "run": {
-        "stage": "decode",
-        "type": "real",
-        "precisionReal": 1
+      "language": "lambda",
+      "source": "@! RMIN (NTOR ONE) (NTOR TWO);\n",
+      "stage": "decode",
+      "options": {
+        "precisionReal": 1,
+        "decode": "real"
       },
       "expect": {
         "value": "1/1"
@@ -305,14 +265,12 @@
     },
     {
       "name": "rmin-second",
-      "input": {
-        "language": "lambda",
-        "source": "@! RMIN (NTOR TWO) (NTOR ONE);\n"
-      },
-      "run": {
-        "stage": "decode",
-        "type": "real",
-        "precisionReal": 1
+      "language": "lambda",
+      "source": "@! RMIN (NTOR TWO) (NTOR ONE);\n",
+      "stage": "decode",
+      "options": {
+        "precisionReal": 1,
+        "decode": "real"
       },
       "expect": {
         "value": "1/1"
@@ -320,14 +278,12 @@
     },
     {
       "name": "rpow-fractional-exponent",
-      "input": {
-        "language": "lambda",
-        "source": "@! RPOW (NTOR FOUR) (QTOR (PAIR (NTOZ ONE) (NTOZ TWO)));\n"
-      },
-      "run": {
-        "stage": "decode",
-        "type": "real",
-        "precisionReal": 1
+      "language": "lambda",
+      "source": "@! RPOW (NTOR FOUR) (QTOR (PAIR (NTOZ ONE) (NTOZ TWO)));\n",
+      "stage": "decode",
+      "options": {
+        "precisionReal": 1,
+        "decode": "real"
       },
       "expect": {
         "value": "2/1"
@@ -335,14 +291,12 @@
     },
     {
       "name": "rpow-negative-exponent",
-      "input": {
-        "language": "lambda",
-        "source": "@! RPOW (NTOR TWO) (ZTOR (ZNEG (NTOZ ONE)));\n"
-      },
-      "run": {
-        "stage": "decode",
-        "type": "real",
-        "precisionReal": 1
+      "language": "lambda",
+      "source": "@! RPOW (NTOR TWO) (ZTOR (ZNEG (NTOZ ONE)));\n",
+      "stage": "decode",
+      "options": {
+        "precisionReal": 1,
+        "decode": "real"
       },
       "expect": {
         "value": "1/2"
@@ -350,14 +304,12 @@
     },
     {
       "name": "rpow-exponent-sequence",
-      "input": {
-        "language": "lambda",
-        "source": "@! RPOW (NTOR TWO) (\\n -> NTOQ (SUCC n));\n"
-      },
-      "run": {
-        "stage": "decode",
-        "type": "real",
-        "precisionReal": 1
+      "language": "lambda",
+      "source": "@! RPOW (NTOR TWO) (\\n -> NTOQ (SUCC n));\n",
+      "stage": "decode",
+      "options": {
+        "precisionReal": 1,
+        "decode": "real"
       },
       "expect": {
         "value": "4/1"
@@ -365,14 +317,12 @@
     },
     {
       "name": "exp-zero",
-      "input": {
-        "language": "lambda",
-        "source": "@! EXP (NTOR ZERO);\n"
-      },
-      "run": {
-        "stage": "decode",
-        "type": "real",
-        "precisionReal": 0
+      "language": "lambda",
+      "source": "@! EXP (NTOR ZERO);\n",
+      "stage": "decode",
+      "options": {
+        "precisionReal": 0,
+        "decode": "real"
       },
       "expect": {
         "value": "1/1"
@@ -380,14 +330,12 @@
     },
     {
       "name": "exp-one",
-      "input": {
-        "language": "lambda",
-        "source": "@! EXP (NTOR ONE);\n"
-      },
-      "run": {
-        "stage": "decode",
-        "type": "real",
-        "precisionReal": 2
+      "language": "lambda",
+      "source": "@! EXP (NTOR ONE);\n",
+      "stage": "decode",
+      "options": {
+        "precisionReal": 2,
+        "decode": "real"
       },
       "expect": {
         "value": "5/2"
@@ -395,14 +343,12 @@
     },
     {
       "name": "ln-one",
-      "input": {
-        "language": "lambda",
-        "source": "@! LN (NTOR ONE);\n"
-      },
-      "run": {
-        "stage": "decode",
-        "type": "real",
-        "precisionReal": 0
+      "language": "lambda",
+      "source": "@! LN (NTOR ONE);\n",
+      "stage": "decode",
+      "options": {
+        "precisionReal": 0,
+        "decode": "real"
       },
       "expect": {
         "value": "0/1"
@@ -410,14 +356,12 @@
     },
     {
       "name": "ln-two",
-      "input": {
-        "language": "lambda",
-        "source": "@! LN (NTOR TWO);\n"
-      },
-      "run": {
-        "stage": "decode",
-        "type": "real",
-        "precisionReal": 0
+      "language": "lambda",
+      "source": "@! LN (NTOR TWO);\n",
+      "stage": "decode",
+      "options": {
+        "precisionReal": 0,
+        "decode": "real"
       },
       "expect": {
         "value": "1/1"

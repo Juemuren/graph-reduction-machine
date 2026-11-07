@@ -2,16 +2,14 @@
   "cases": [
     {
       "name": "eta",
-      "input": {
-        "language": "lambda",
-        "source": "\\f -> \\x -> f x\n"
-      },
-      "run": {
-        "stage": "compile",
+      "language": "lambda",
+      "source": "\\f -> \\x -> f x\n",
+      "stage": "compile",
+      "options": {
         "enableReduce": "beta"
       },
       "expect": {
-        "graph": "#0 = #1 #16;\n#1 = #2 #3;\n#2 = S;\n#3 = #4 #9;\n#4 = #5 #6;\n#5 = S;\n#6 = #7 #8;\n#7 = K;\n#8 = S;\n#9 = #10 #15;\n#10 = #11 #12;\n#11 = S;\n#12 = #13 #14;\n#13 = K;\n#14 = K;\n#15 = I;\n#16 = #17 #18;\n#17 = K;\n#18 = I;\n"
+        "value": "#0 = #1 #16;\n#1 = #2 #3;\n#2 = S;\n#3 = #4 #9;\n#4 = #5 #6;\n#5 = S;\n#6 = #7 #8;\n#7 = K;\n#8 = S;\n#9 = #10 #15;\n#10 = #11 #12;\n#11 = S;\n#12 = #13 #14;\n#13 = K;\n#14 = K;\n#15 = I;\n#16 = #17 #18;\n#17 = K;\n#18 = I;\n"
       }
     }
   ]

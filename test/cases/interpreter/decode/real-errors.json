@@ -2,14 +2,12 @@
   "cases": [
     {
       "name": "non-real",
-      "input": {
-        "language": "ski",
-        "source": "#0 = I;\n"
-      },
-      "run": {
-        "stage": "decode",
-        "type": "real",
-        "precisionReal": 2
+      "language": "ski",
+      "source": "#0 = I;\n",
+      "stage": "decode",
+      "options": {
+        "precisionReal": 2,
+        "decode": "real"
       },
       "expect": {
         "error": "not a Church Real"

@@ -2,13 +2,11 @@
   "cases": [
     {
       "name": "zero-s",
-      "input": {
-        "language": "lambda",
-        "source": "@! ISZERO_S ZERO_S;\n"
-      },
-      "run": {
-        "stage": "decode",
-        "type": "boolean"
+      "language": "lambda",
+      "source": "@! ISZERO_S ZERO_S;\n",
+      "stage": "decode",
+      "options": {
+        "decode": "boolean"
       },
       "expect": {
         "value": "True"
@@ -16,13 +14,11 @@
     },
     {
       "name": "successor-s",
-      "input": {
-        "language": "lambda",
-        "source": "@! ISZERO_S (SUCC_S ZERO_S);\n"
-      },
-      "run": {
-        "stage": "decode",
-        "type": "boolean"
+      "language": "lambda",
+      "source": "@! ISZERO_S (SUCC_S ZERO_S);\n",
+      "stage": "decode",
+      "options": {
+        "decode": "boolean"
       },
       "expect": {
         "value": "False"
@@ -30,13 +26,11 @@
     },
     {
       "name": "predecessor-s",
-      "input": {
-        "language": "lambda",
-        "source": "@! ISZERO_S (PRED_S (SUCC_S ZERO_S));\n"
-      },
-      "run": {
-        "stage": "decode",
-        "type": "boolean"
+      "language": "lambda",
+      "source": "@! ISZERO_S (PRED_S (SUCC_S ZERO_S));\n",
+      "stage": "decode",
+      "options": {
+        "decode": "boolean"
       },
       "expect": {
         "value": "True"
@@ -44,13 +38,11 @@
     },
     {
       "name": "predecessor-two-s",
-      "input": {
-        "language": "lambda",
-        "source": "@! ISZERO_S (PRED_S (SUCC_S (SUCC_S ZERO_S)));\n"
-      },
-      "run": {
-        "stage": "decode",
-        "type": "boolean"
+      "language": "lambda",
+      "source": "@! ISZERO_S (PRED_S (SUCC_S (SUCC_S ZERO_S)));\n",
+      "stage": "decode",
+      "options": {
+        "decode": "boolean"
       },
       "expect": {
         "value": "False"
@@ -58,13 +50,11 @@
     },
     {
       "name": "predecessor-zero-s",
-      "input": {
-        "language": "lambda",
-        "source": "@! ISZERO_S (PRED_S ZERO_S);\n"
-      },
-      "run": {
-        "stage": "decode",
-        "type": "boolean"
+      "language": "lambda",
+      "source": "@! ISZERO_S (PRED_S ZERO_S);\n",
+      "stage": "decode",
+      "options": {
+        "decode": "boolean"
       },
       "expect": {
         "value": "True"

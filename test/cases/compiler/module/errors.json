@@ -2,69 +2,93 @@
   "cases": [
     {
       "name": "private-import",
-      "input": {
-        "language": "lambda",
-        "source": "@< \"./defs.lambda\" (helper); @! helper;",
-        "modules": { "defs.lambda": "@> identity = \\x -> x; helper = \\x -> x;" }
+      "language": "lambda",
+      "source": "@< \"./defs.lambda\" (helper); @! helper;",
+      "modules": {
+        "defs.lambda": "@> identity = \\x -> x; helper = \\x -> x;"
       },
-      "run": { "stage": "compile" },
-      "expect": { "error": "<input>: defs.lambda does not export helper" }
+      "stage": "compile",
+      "expect": {
+        "error": "<input>: defs.lambda does not export helper"
+      }
     },
     {
       "name": "invalid-export-definition",
-      "input": {
-        "language": "lambda",
-        "source": "@< \"./defs.lambda\" (broken); @! broken;",
-        "modules": { "defs.lambda": "@> broken = missing;" }
+      "language": "lambda",
+      "source": "@< \"./defs.lambda\" (broken); @! broken;",
+      "modules": {
+        "defs.lambda": "@> broken = missing;"
       },
-      "run": { "stage": "compile" },
-      "expect": { "error": "defs.lambda: broken: free variable(s): missing" }
+      "stage": "compile",
+      "expect": {
+        "error": "defs.lambda: broken: free variable(s): missing"
+      }
     },
     {
       "name": "duplicate-export",
-      "input": {
-        "language": "lambda",
-        "source": "@< \"./defs.lambda\" (identity); @! identity;",
-        "modules": { "defs.lambda": "@> identity = \\x -> x; @> identity = \\y -> y;" }
+      "language": "lambda",
+      "source": "@< \"./defs.lambda\" (identity); @! identity;",
+      "modules": {
+        "defs.lambda": "@> identity = \\x -> x; @> identity = \\y -> y;"
       },
-      "run": { "stage": "compile" },
-      "expect": { "error": "defs.lambda: duplicate export: identity" }
+      "stage": "compile",
+      "expect": {
+        "error": "defs.lambda: duplicate export: identity"
+      }
     },
     {
       "name": "cyclic-definitions",
-      "input": { "language": "lambda", "source": "a = b; b = a; @! a;" },
-      "run": { "stage": "compile" },
-      "expect": { "error": "cyclic definition: a -> b -> a" }
+      "language": "lambda",
+      "source": "a = b; b = a; @! a;",
+      "stage": "compile",
+      "expect": {
+        "error": "cyclic definition: a -> b -> a"
+      }
     },
     {
       "name": "missing-entry",
-      "input": { "language": "lambda", "source": "x = ONE;" },
-      "run": { "stage": "compile" },
-      "expect": { "error": "module has no final expression" }
+      "language": "lambda",
+      "source": "x = ONE;",
+      "stage": "compile",
+      "expect": {
+        "error": "module has no final expression"
+      }
     },
     {
       "name": "missing-semicolon",
-      "input": { "language": "lambda", "source": "name = ONE" },
-      "run": { "stage": "compile" },
-      "expect": { "error": "syntax error at end of file" }
+      "language": "lambda",
+      "source": "name = ONE",
+      "stage": "compile",
+      "expect": {
+        "error": "syntax error at end of file"
+      }
     },
     {
       "name": "duplicate-definition",
-      "input": { "language": "lambda", "source": "x = ONE; x = TWO; @! x;" },
-      "run": { "stage": "compile" },
-      "expect": { "error": "duplicate definition: x" }
+      "language": "lambda",
+      "source": "x = ONE; x = TWO; @! x;",
+      "stage": "compile",
+      "expect": {
+        "error": "duplicate definition: x"
+      }
     },
     {
       "name": "duplicate-entry",
-      "input": { "language": "lambda", "source": "@! ONE; @! TWO;" },
-      "run": { "stage": "compile" },
-      "expect": { "error": "duplicate program entry" }
+      "language": "lambda",
+      "source": "@! ONE; @! TWO;",
+      "stage": "compile",
+      "expect": {
+        "error": "duplicate program entry"
+      }
     },
     {
       "name": "entry-must-be-last",
-      "input": { "language": "lambda", "source": "@! ONE; x = TWO;" },
-      "run": { "stage": "compile" },
-      "expect": { "error": "program entry must be last" }
+      "language": "lambda",
+      "source": "@! ONE; x = TWO;",
+      "stage": "compile",
+      "expect": {
+        "error": "program entry must be last"
+      }
     }
   ]
 }

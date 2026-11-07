@@ -2,13 +2,11 @@
   "cases": [
     {
       "name": "ntor",
-      "input": {
-        "language": "lambda",
-        "source": "@! NTOR THREE FIVE;\n"
-      },
-      "run": {
-        "stage": "decode",
-        "type": "rational"
+      "language": "lambda",
+      "source": "@! NTOR THREE FIVE;\n",
+      "stage": "decode",
+      "options": {
+        "decode": "rational"
       },
       "expect": {
         "value": "3/1"
@@ -16,13 +14,11 @@
     },
     {
       "name": "qtor",
-      "input": {
-        "language": "lambda",
-        "source": "@! QTOR (PAIR (NTOZ ONE) (NTOZ TWO)) THREE;\n"
-      },
-      "run": {
-        "stage": "decode",
-        "type": "rational"
+      "language": "lambda",
+      "source": "@! QTOR (PAIR (NTOZ ONE) (NTOZ TWO)) THREE;\n",
+      "stage": "decode",
+      "options": {
+        "decode": "rational"
       },
       "expect": {
         "value": "1/2"
@@ -30,13 +26,11 @@
     },
     {
       "name": "ztor",
-      "input": {
-        "language": "lambda",
-        "source": "@! ZTOR (ZNEG (NTOZ TWO)) TWO;\n"
-      },
-      "run": {
-        "stage": "decode",
-        "type": "rational"
+      "language": "lambda",
+      "source": "@! ZTOR (ZNEG (NTOZ TWO)) TWO;\n",
+      "stage": "decode",
+      "options": {
+        "decode": "rational"
       },
       "expect": {
         "value": "-2/1"
@@ -44,13 +38,11 @@
     },
     {
       "name": "rnorm-numerator",
-      "input": {
-        "language": "lambda",
-        "source": "@! FST (RNORM (QTOR (PAIR (NTOZ TWO) (NTOZ FOUR))) ONE);\n"
-      },
-      "run": {
-        "stage": "decode",
-        "type": "integer"
+      "language": "lambda",
+      "source": "@! FST (RNORM (QTOR (PAIR (NTOZ TWO) (NTOZ FOUR))) ONE);\n",
+      "stage": "decode",
+      "options": {
+        "decode": "integer"
       },
       "expect": {
         "value": "1"
@@ -58,13 +50,11 @@
     },
     {
       "name": "rnorm-denominator",
-      "input": {
-        "language": "lambda",
-        "source": "@! SND (RNORM (QTOR (PAIR (NTOZ TWO) (NTOZ FOUR))) ONE);\n"
-      },
-      "run": {
-        "stage": "decode",
-        "type": "integer"
+      "language": "lambda",
+      "source": "@! SND (RNORM (QTOR (PAIR (NTOZ TWO) (NTOZ FOUR))) ONE);\n",
+      "stage": "decode",
+      "options": {
+        "decode": "integer"
       },
       "expect": {
         "value": "2"

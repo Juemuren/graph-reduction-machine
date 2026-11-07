@@ -2,14 +2,12 @@
   "cases": [
     {
       "name": "qtor",
-      "input": {
-        "language": "lambda",
-        "source": "@! QTOR (PAIR (NTOZ ONE) (NTOZ TWO));\n"
-      },
-      "run": {
-        "stage": "decode",
-        "type": "real",
-        "precisionReal": 0
+      "language": "lambda",
+      "source": "@! QTOR (PAIR (NTOZ ONE) (NTOZ TWO));\n",
+      "stage": "decode",
+      "options": {
+        "precisionReal": 0,
+        "decode": "real"
       },
       "expect": {
         "value": "1/2"
@@ -17,14 +15,12 @@
     },
     {
       "name": "sequence",
-      "input": {
-        "language": "lambda",
-        "source": "@! \\n -> NTOQ n;\n"
-      },
-      "run": {
-        "stage": "decode",
-        "type": "real",
-        "precisionReal": 2
+      "language": "lambda",
+      "source": "@! \\n -> NTOQ n;\n",
+      "stage": "decode",
+      "options": {
+        "precisionReal": 2,
+        "decode": "real"
       },
       "expect": {
         "value": "2/1"

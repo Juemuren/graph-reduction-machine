@@ -2,13 +2,11 @@
   "cases": [
     {
       "name": "qpow-zero",
-      "input": {
-        "language": "lambda",
-        "source": "@! QPOW (NTOQ ZERO) (NTOZ ZERO);\n"
-      },
-      "run": {
-        "stage": "decode",
-        "type": "rational"
+      "language": "lambda",
+      "source": "@! QPOW (NTOQ ZERO) (NTOZ ZERO);\n",
+      "stage": "decode",
+      "options": {
+        "decode": "rational"
       },
       "expect": {
         "value": "1/1"
@@ -16,13 +14,11 @@
     },
     {
       "name": "qpow-negative-odd",
-      "input": {
-        "language": "lambda",
-        "source": "@! QPOW (PAIR (ZNEG (NTOZ ONE)) (NTOZ TWO)) (NTOZ THREE);\n"
-      },
-      "run": {
-        "stage": "decode",
-        "type": "rational"
+      "language": "lambda",
+      "source": "@! QPOW (PAIR (ZNEG (NTOZ ONE)) (NTOZ TWO)) (NTOZ THREE);\n",
+      "stage": "decode",
+      "options": {
+        "decode": "rational"
       },
       "expect": {
         "value": "-1/8"
@@ -30,13 +26,11 @@
     },
     {
       "name": "qpow-negative-even",
-      "input": {
-        "language": "lambda",
-        "source": "@! QPOW (PAIR (NTOZ ONE) (ZNEG (NTOZ TWO))) (NTOZ TWO);\n"
-      },
-      "run": {
-        "stage": "decode",
-        "type": "rational"
+      "language": "lambda",
+      "source": "@! QPOW (PAIR (NTOZ ONE) (ZNEG (NTOZ TWO))) (NTOZ TWO);\n",
+      "stage": "decode",
+      "options": {
+        "decode": "rational"
       },
       "expect": {
         "value": "1/4"
@@ -44,13 +38,11 @@
     },
     {
       "name": "ztoq_pow-negative-exponent",
-      "input": {
-        "language": "lambda",
-        "source": "@! ZTOQ_POW (ZNEG (NTOZ TWO)) (ZNEG (NTOZ THREE));\n"
-      },
-      "run": {
-        "stage": "decode",
-        "type": "rational"
+      "language": "lambda",
+      "source": "@! ZTOQ_POW (ZNEG (NTOZ TWO)) (ZNEG (NTOZ THREE));\n",
+      "stage": "decode",
+      "options": {
+        "decode": "rational"
       },
       "expect": {
         "value": "-1/8"
@@ -58,13 +50,11 @@
     },
     {
       "name": "ztoq_pow-positive-exponent",
-      "input": {
-        "language": "lambda",
-        "source": "@! ZTOQ_POW (NTOZ TWO) (NTOZ THREE);\n"
-      },
-      "run": {
-        "stage": "decode",
-        "type": "rational"
+      "language": "lambda",
+      "source": "@! ZTOQ_POW (NTOZ TWO) (NTOZ THREE);\n",
+      "stage": "decode",
+      "options": {
+        "decode": "rational"
       },
       "expect": {
         "value": "8/1"
@@ -72,13 +62,11 @@
     },
     {
       "name": "qpow-negative-exponent",
-      "input": {
-        "language": "lambda",
-        "source": "@! QPOW (PAIR (NTOZ TWO) (NTOZ THREE)) (ZNEG (NTOZ TWO));\n"
-      },
-      "run": {
-        "stage": "decode",
-        "type": "rational"
+      "language": "lambda",
+      "source": "@! QPOW (PAIR (NTOZ TWO) (NTOZ THREE)) (ZNEG (NTOZ TWO));\n",
+      "stage": "decode",
+      "options": {
+        "decode": "rational"
       },
       "expect": {
         "value": "9/4"
@@ -86,13 +74,11 @@
     },
     {
       "name": "qmax-first",
-      "input": {
-        "language": "lambda",
-        "source": "@! QMAX (PAIR (NTOZ ONE) (NTOZ TWO)) (PAIR (NTOZ ONE) (ZNEG (NTOZ TWO)));\n"
-      },
-      "run": {
-        "stage": "decode",
-        "type": "rational"
+      "language": "lambda",
+      "source": "@! QMAX (PAIR (NTOZ ONE) (NTOZ TWO)) (PAIR (NTOZ ONE) (ZNEG (NTOZ TWO)));\n",
+      "stage": "decode",
+      "options": {
+        "decode": "rational"
       },
       "expect": {
         "value": "1/2"
@@ -100,13 +86,11 @@
     },
     {
       "name": "qmax-second",
-      "input": {
-        "language": "lambda",
-        "source": "@! QMAX (PAIR (NTOZ ONE) (ZNEG (NTOZ TWO))) (PAIR (NTOZ ONE) (NTOZ THREE));\n"
-      },
-      "run": {
-        "stage": "decode",
-        "type": "rational"
+      "language": "lambda",
+      "source": "@! QMAX (PAIR (NTOZ ONE) (ZNEG (NTOZ TWO))) (PAIR (NTOZ ONE) (NTOZ THREE));\n",
+      "stage": "decode",
+      "options": {
+        "decode": "rational"
       },
       "expect": {
         "value": "1/3"
@@ -114,13 +98,11 @@
     },
     {
       "name": "qmin-first",
-      "input": {
-        "language": "lambda",
-        "source": "@! QMIN (PAIR (NTOZ ONE) (ZNEG (NTOZ TWO))) (PAIR (NTOZ ONE) (NTOZ THREE));\n"
-      },
-      "run": {
-        "stage": "decode",
-        "type": "rational"
+      "language": "lambda",
+      "source": "@! QMIN (PAIR (NTOZ ONE) (ZNEG (NTOZ TWO))) (PAIR (NTOZ ONE) (NTOZ THREE));\n",
+      "stage": "decode",
+      "options": {
+        "decode": "rational"
       },
       "expect": {
         "value": "-1/2"
@@ -128,13 +110,11 @@
     },
     {
       "name": "qmin-second",
-      "input": {
-        "language": "lambda",
-        "source": "@! QMIN (PAIR (NTOZ ONE) (NTOZ TWO)) (PAIR (NTOZ ONE) (ZNEG (NTOZ TWO)));\n"
-      },
-      "run": {
-        "stage": "decode",
-        "type": "rational"
+      "language": "lambda",
+      "source": "@! QMIN (PAIR (NTOZ ONE) (NTOZ TWO)) (PAIR (NTOZ ONE) (ZNEG (NTOZ TWO)));\n",
+      "stage": "decode",
+      "options": {
+        "decode": "rational"
       },
       "expect": {
         "value": "-1/2"
@@ -142,13 +122,11 @@
     },
     {
       "name": "qmax-equal",
-      "input": {
-        "language": "lambda",
-        "source": "@! QMAX (PAIR (NTOZ ONE) (NTOZ TWO)) (PAIR (NTOZ TWO) (NTOZ FOUR));\n"
-      },
-      "run": {
-        "stage": "decode",
-        "type": "rational"
+      "language": "lambda",
+      "source": "@! QMAX (PAIR (NTOZ ONE) (NTOZ TWO)) (PAIR (NTOZ TWO) (NTOZ FOUR));\n",
+      "stage": "decode",
+      "options": {
+        "decode": "rational"
       },
       "expect": {
         "value": "1/2"
@@ -156,13 +134,11 @@
     },
     {
       "name": "qmin-equal",
-      "input": {
-        "language": "lambda",
-        "source": "@! QMIN (PAIR (NTOZ ONE) (NTOZ TWO)) (PAIR (NTOZ TWO) (NTOZ FOUR));\n"
-      },
-      "run": {
-        "stage": "decode",
-        "type": "rational"
+      "language": "lambda",
+      "source": "@! QMIN (PAIR (NTOZ ONE) (NTOZ TWO)) (PAIR (NTOZ TWO) (NTOZ FOUR));\n",
+      "stage": "decode",
+      "options": {
+        "decode": "rational"
       },
       "expect": {
         "value": "1/2"
@@ -170,13 +146,11 @@
     },
     {
       "name": "qabs-negative-denominator",
-      "input": {
-        "language": "lambda",
-        "source": "@! QABS (PAIR (NTOZ ONE) (ZNEG (NTOZ TWO)));\n"
-      },
-      "run": {
-        "stage": "decode",
-        "type": "rational"
+      "language": "lambda",
+      "source": "@! QABS (PAIR (NTOZ ONE) (ZNEG (NTOZ TWO)));\n",
+      "stage": "decode",
+      "options": {
+        "decode": "rational"
       },
       "expect": {
         "value": "1/2"
@@ -184,13 +158,11 @@
     },
     {
       "name": "qabs-positive",
-      "input": {
-        "language": "lambda",
-        "source": "@! QABS (PAIR (NTOZ ONE) (NTOZ TWO));\n"
-      },
-      "run": {
-        "stage": "decode",
-        "type": "rational"
+      "language": "lambda",
+      "source": "@! QABS (PAIR (NTOZ ONE) (NTOZ TWO));\n",
+      "stage": "decode",
+      "options": {
+        "decode": "rational"
       },
       "expect": {
         "value": "1/2"
@@ -198,13 +170,11 @@
     },
     {
       "name": "qadd",
-      "input": {
-        "language": "lambda",
-        "source": "@! QADD (PAIR (PAIR (SUCC ZERO) ZERO) (PAIR (SUCC (SUCC ZERO)) ZERO)) (PAIR (PAIR (SUCC ZERO) ZERO) (PAIR (SUCC ZERO) ZERO));\n"
-      },
-      "run": {
-        "stage": "decode",
-        "type": "rational"
+      "language": "lambda",
+      "source": "@! QADD (PAIR (PAIR (SUCC ZERO) ZERO) (PAIR (SUCC (SUCC ZERO)) ZERO)) (PAIR (PAIR (SUCC ZERO) ZERO) (PAIR (SUCC ZERO) ZERO));\n",
+      "stage": "decode",
+      "options": {
+        "decode": "rational"
       },
       "expect": {
         "value": "3/2"
@@ -212,13 +182,11 @@
     },
     {
       "name": "qdiv",
-      "input": {
-        "language": "lambda",
-        "source": "@! QDIV (PAIR (PAIR (SUCC ZERO) ZERO) (PAIR (SUCC (SUCC ZERO)) ZERO)) (PAIR (PAIR (SUCC ZERO) ZERO) (PAIR (SUCC ZERO) ZERO));\n"
-      },
-      "run": {
-        "stage": "decode",
-        "type": "rational"
+      "language": "lambda",
+      "source": "@! QDIV (PAIR (PAIR (SUCC ZERO) ZERO) (PAIR (SUCC (SUCC ZERO)) ZERO)) (PAIR (PAIR (SUCC ZERO) ZERO) (PAIR (SUCC ZERO) ZERO));\n",
+      "stage": "decode",
+      "options": {
+        "decode": "rational"
       },
       "expect": {
         "value": "1/2"
@@ -226,13 +194,11 @@
     },
     {
       "name": "qinv-negative-denominator",
-      "input": {
-        "language": "lambda",
-        "source": "@! QINV (PAIR (NTOZ ONE) (ZNEG (NTOZ TWO)));\n"
-      },
-      "run": {
-        "stage": "decode",
-        "type": "rational"
+      "language": "lambda",
+      "source": "@! QINV (PAIR (NTOZ ONE) (ZNEG (NTOZ TWO)));\n",
+      "stage": "decode",
+      "options": {
+        "decode": "rational"
       },
       "expect": {
         "value": "-2/1"
@@ -240,13 +206,11 @@
     },
     {
       "name": "qinv-positive-denominator",
-      "input": {
-        "language": "lambda",
-        "source": "@! QINV (PAIR (NTOZ ONE) (NTOZ TWO));\n"
-      },
-      "run": {
-        "stage": "decode",
-        "type": "rational"
+      "language": "lambda",
+      "source": "@! QINV (PAIR (NTOZ ONE) (NTOZ TWO));\n",
+      "stage": "decode",
+      "options": {
+        "decode": "rational"
       },
       "expect": {
         "value": "2/1"
@@ -254,13 +218,11 @@
     },
     {
       "name": "qmul",
-      "input": {
-        "language": "lambda",
-        "source": "@! QMUL (PAIR (PAIR (SUCC ZERO) ZERO) (PAIR (SUCC (SUCC ZERO)) ZERO)) (PAIR (PAIR (SUCC ZERO) ZERO) (PAIR (SUCC ZERO) ZERO));\n"
-      },
-      "run": {
-        "stage": "decode",
-        "type": "rational"
+      "language": "lambda",
+      "source": "@! QMUL (PAIR (PAIR (SUCC ZERO) ZERO) (PAIR (SUCC (SUCC ZERO)) ZERO)) (PAIR (PAIR (SUCC ZERO) ZERO) (PAIR (SUCC ZERO) ZERO));\n",
+      "stage": "decode",
+      "options": {
+        "decode": "rational"
       },
       "expect": {
         "value": "1/2"
@@ -268,13 +230,11 @@
     },
     {
       "name": "qneg",
-      "input": {
-        "language": "lambda",
-        "source": "@! QNEG (PAIR (NTOZ ONE) (NTOZ TWO));\n"
-      },
-      "run": {
-        "stage": "decode",
-        "type": "rational"
+      "language": "lambda",
+      "source": "@! QNEG (PAIR (NTOZ ONE) (NTOZ TWO));\n",
+      "stage": "decode",
+      "options": {
+        "decode": "rational"
       },
       "expect": {
         "value": "-1/2"
@@ -282,13 +242,11 @@
     },
     {
       "name": "qsub",
-      "input": {
-        "language": "lambda",
-        "source": "@! QSUB (PAIR (PAIR (SUCC ZERO) ZERO) (PAIR (SUCC (SUCC ZERO)) ZERO)) (PAIR (PAIR (SUCC ZERO) ZERO) (PAIR (SUCC ZERO) ZERO));\n"
-      },
-      "run": {
-        "stage": "decode",
-        "type": "rational"
+      "language": "lambda",
+      "source": "@! QSUB (PAIR (PAIR (SUCC ZERO) ZERO) (PAIR (SUCC (SUCC ZERO)) ZERO)) (PAIR (PAIR (SUCC ZERO) ZERO) (PAIR (SUCC ZERO) ZERO));\n",
+      "stage": "decode",
+      "options": {
+        "decode": "rational"
       },
       "expect": {
         "value": "-1/2"

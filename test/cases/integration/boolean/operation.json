@@ -2,13 +2,11 @@
   "cases": [
     {
       "name": "and",
-      "input": {
-        "language": "lambda",
-        "source": "@! AND TRUE FALSE;\n"
-      },
-      "run": {
-        "stage": "decode",
-        "type": "boolean"
+      "language": "lambda",
+      "source": "@! AND TRUE FALSE;\n",
+      "stage": "decode",
+      "options": {
+        "decode": "boolean"
       },
       "expect": {
         "value": "False"
@@ -16,13 +14,11 @@
     },
     {
       "name": "not",
-      "input": {
-        "language": "lambda",
-        "source": "@! NOT FALSE;\n"
-      },
-      "run": {
-        "stage": "decode",
-        "type": "boolean"
+      "language": "lambda",
+      "source": "@! NOT FALSE;\n",
+      "stage": "decode",
+      "options": {
+        "decode": "boolean"
       },
       "expect": {
         "value": "True"
@@ -30,13 +26,11 @@
     },
     {
       "name": "or",
-      "input": {
-        "language": "lambda",
-        "source": "@! OR FALSE TRUE;\n"
-      },
-      "run": {
-        "stage": "decode",
-        "type": "boolean"
+      "language": "lambda",
+      "source": "@! OR FALSE TRUE;\n",
+      "stage": "decode",
+      "options": {
+        "decode": "boolean"
       },
       "expect": {
         "value": "True"

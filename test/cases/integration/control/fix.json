@@ -2,13 +2,11 @@
   "cases": [
     {
       "name": "y-recursion",
-      "input": {
-        "language": "lambda",
-        "source": "@! Y (\\self -> \\p -> IF (FST p) (self (PAIR (SND p) FALSE)) (SND p)) (PAIR TRUE TRUE);\n"
-      },
-      "run": {
-        "stage": "decode",
-        "type": "boolean"
+      "language": "lambda",
+      "source": "@! Y (\\self -> \\p -> IF (FST p) (self (PAIR (SND p) FALSE)) (SND p)) (PAIR TRUE TRUE);\n",
+      "stage": "decode",
+      "options": {
+        "decode": "boolean"
       },
       "expect": {
         "value": "False"
@@ -16,13 +14,11 @@
     },
     {
       "name": "z-constant",
-      "input": {
-        "language": "lambda",
-        "source": "@! Z (\\self -> \\x -> TRUE) FALSE;\n"
-      },
-      "run": {
-        "stage": "decode",
-        "type": "boolean"
+      "language": "lambda",
+      "source": "@! Z (\\self -> \\x -> TRUE) FALSE;\n",
+      "stage": "decode",
+      "options": {
+        "decode": "boolean"
       },
       "expect": {
         "value": "True"
@@ -30,13 +26,11 @@
     },
     {
       "name": "z-recursion",
-      "input": {
-        "language": "lambda",
-        "source": "@! Z (\\self -> \\p -> IF (FST p) (self (PAIR (SND p) FALSE)) (SND p)) (PAIR TRUE TRUE);\n"
-      },
-      "run": {
-        "stage": "decode",
-        "type": "boolean"
+      "language": "lambda",
+      "source": "@! Z (\\self -> \\p -> IF (FST p) (self (PAIR (SND p) FALSE)) (SND p)) (PAIR TRUE TRUE);\n",
+      "stage": "decode",
+      "options": {
+        "decode": "boolean"
       },
       "expect": {
         "value": "False"

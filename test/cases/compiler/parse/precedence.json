@@ -2,26 +2,18 @@
   "cases": [
     {
       "name": "application",
-      "input": {
-        "language": "lambda",
-        "source": "f ZERO SUCC\n"
-      },
-      "run": {
-        "stage": "parse"
-      },
+      "language": "lambda",
+      "source": "f ZERO SUCC\n",
+      "stage": "parse",
       "expect": {
         "value": "(f ZERO) SUCC\n"
       }
     },
     {
       "name": "lambda",
-      "input": {
-        "language": "lambda",
-        "source": "\\x -> SUCC x\n"
-      },
-      "run": {
-        "stage": "parse"
-      },
+      "language": "lambda",
+      "source": "\\x -> SUCC x\n",
+      "stage": "parse",
       "expect": {
         "value": "\\x -> (SUCC x)\n"
       }

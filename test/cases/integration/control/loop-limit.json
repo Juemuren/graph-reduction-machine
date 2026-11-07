@@ -2,14 +2,12 @@
   "cases": [
     {
       "name": "infinite",
-      "input": {
-        "language": "lambda",
-        "source": "@! WHILE (\\x -> TRUE) NOT FALSE;\n"
-      },
-      "run": {
-        "stage": "decode",
-        "type": "boolean",
-        "maxSteps": 100
+      "language": "lambda",
+      "source": "@! WHILE (\\x -> TRUE) NOT FALSE;\n",
+      "stage": "decode",
+      "options": {
+        "maxSteps": 100,
+        "decode": "boolean"
       },
       "expect": {
         "error": "reduction exceeded step limit 100"

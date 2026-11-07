@@ -2,9 +2,12 @@
   "cases": [
     {
       "name": "free-variable",
-      "input": { "language": "lambda", "source": "\\x -> y x\n" },
-      "run": { "stage": "compile" },
-      "expect": { "error": "free variable(s): y" }
+      "language": "lambda",
+      "source": "\\x -> y x\n",
+      "stage": "compile",
+      "expect": {
+        "error": "free variable(s): y"
+      }
     }
   ]
 }

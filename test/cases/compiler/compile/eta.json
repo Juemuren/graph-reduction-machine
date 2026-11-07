@@ -2,16 +2,14 @@
   "cases": [
     {
       "name": "application",
-      "input": {
-        "language": "lambda",
-        "source": "(\\x -> x) (\\y -> y)\n"
-      },
-      "run": {
-        "stage": "compile",
+      "language": "lambda",
+      "source": "(\\x -> x) (\\y -> y)\n",
+      "stage": "compile",
+      "options": {
         "enableReduce": "eta"
       },
       "expect": {
-        "graph": "#0 = #1 #2;\n#1 = I;\n#2 = I;\n"
+        "value": "#0 = #1 #2;\n#1 = I;\n#2 = I;\n"
       }
     }
   ]

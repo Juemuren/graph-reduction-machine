@@ -1,0 +1,74 @@
+{
+  "cases": [
+    {
+      "name": "unlimited-and-show-steps",
+      "command": "ski-interpreter",
+      "args": [
+        "--no-step-limit",
+        "--show-steps"
+      ],
+      "stdin": "#0 = #1 #2;\n#1 = I;\n#2 = #3 #4;\n#3 = I;\n#4 = K;\n",
+      "expect": {
+        "exitCode": 0,
+        "stdout": "#0 = K;\n",
+        "stderr": "steps: 2\n"
+      }
+    },
+    {
+      "name": "decode-and-show-steps",
+      "command": "ski-interpreter",
+      "args": [
+        "--decode=boolean",
+        "--no-step-limit",
+        "--show-steps"
+      ],
+      "stdin": "#0 = K;\n",
+      "expect": {
+        "exitCode": 0,
+        "stdout": "TRUE\n",
+        "stderr": "steps: 1\n"
+      }
+    },
+    {
+      "name": "zero-steps",
+      "command": "ski-interpreter",
+      "args": [
+        "--show-steps"
+      ],
+      "stdin": "#0 = I;\n",
+      "expect": {
+        "exitCode": 0,
+        "stdout": "#0 = I;\n",
+        "stderr": "steps: 0\n"
+      }
+    },
+    {
+      "name": "no-steps-on-error",
+      "command": "ski-interpreter",
+      "args": [
+        "--max-steps=1",
+        "--show-steps"
+      ],
+      "stdin": "#0 = #1 #2;\n#1 = I;\n#2 = #3 #4;\n#3 = I;\n#4 = K;\n",
+      "expect": {
+        "exitCode": 1,
+        "stdout": "",
+        "stderr": "reduction exceeded step limit 1\n"
+      }
+    },
+    {
+      "name": "conflicting-step-options",
+      "command": "ski-interpreter",
+      "args": [
+        "--max-steps=1",
+        "--no-step-limit"
+      ],
+      "stdin": "#0 = I;\n",
+      "expect": {
+        "exitCode": 1,
+        "stdout": "",
+        "stderr": "usage: ski-interpreter [--max-steps=N|--no-step-limit] [--show-steps] [--decode=natural|boolean|integer|rational|real] [--precision-real=N] [FILE]\n"
+      }
+    }
+  ]
+}

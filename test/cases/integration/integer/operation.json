@@ -2,13 +2,11 @@
   "cases": [
     {
       "name": "zlog-exact",
-      "input": {
-        "language": "lambda",
-        "source": "@! ZLOG (NTOZ TWO) (NTOZ EIGHT);\n"
-      },
-      "run": {
-        "stage": "decode",
-        "type": "integer"
+      "language": "lambda",
+      "source": "@! ZLOG (NTOZ TWO) (NTOZ EIGHT);\n",
+      "stage": "decode",
+      "options": {
+        "decode": "integer"
       },
       "expect": {
         "value": "3"
@@ -16,13 +14,11 @@
     },
     {
       "name": "zlog-nonnormal",
-      "input": {
-        "language": "lambda",
-        "source": "@! ZLOG (PAIR FIVE THREE) (PAIR NINE TWO);\n"
-      },
-      "run": {
-        "stage": "decode",
-        "type": "integer"
+      "language": "lambda",
+      "source": "@! ZLOG (PAIR FIVE THREE) (PAIR NINE TWO);\n",
+      "stage": "decode",
+      "options": {
+        "decode": "integer"
       },
       "expect": {
         "value": "2"
@@ -30,13 +26,11 @@
     },
     {
       "name": "zdiv-positive",
-      "input": {
-        "language": "lambda",
-        "source": "@! ZDIV (NTOZ SEVEN) (NTOZ THREE);\n"
-      },
-      "run": {
-        "stage": "decode",
-        "type": "integer"
+      "language": "lambda",
+      "source": "@! ZDIV (NTOZ SEVEN) (NTOZ THREE);\n",
+      "stage": "decode",
+      "options": {
+        "decode": "integer"
       },
       "expect": {
         "value": "2"
@@ -44,13 +38,11 @@
     },
     {
       "name": "zdiv-negative-dividend",
-      "input": {
-        "language": "lambda",
-        "source": "@! ZDIV (ZNEG (NTOZ SEVEN)) (NTOZ THREE);\n"
-      },
-      "run": {
-        "stage": "decode",
-        "type": "integer"
+      "language": "lambda",
+      "source": "@! ZDIV (ZNEG (NTOZ SEVEN)) (NTOZ THREE);\n",
+      "stage": "decode",
+      "options": {
+        "decode": "integer"
       },
       "expect": {
         "value": "-3"
@@ -58,13 +50,11 @@
     },
     {
       "name": "zdiv-negative-divisor",
-      "input": {
-        "language": "lambda",
-        "source": "@! ZDIV (NTOZ SEVEN) (ZNEG (NTOZ THREE));\n"
-      },
-      "run": {
-        "stage": "decode",
-        "type": "integer"
+      "language": "lambda",
+      "source": "@! ZDIV (NTOZ SEVEN) (ZNEG (NTOZ THREE));\n",
+      "stage": "decode",
+      "options": {
+        "decode": "integer"
       },
       "expect": {
         "value": "-3"
@@ -72,13 +62,11 @@
     },
     {
       "name": "zdiv-both-negative",
-      "input": {
-        "language": "lambda",
-        "source": "@! ZDIV (ZNEG (NTOZ SEVEN)) (ZNEG (NTOZ THREE));\n"
-      },
-      "run": {
-        "stage": "decode",
-        "type": "integer"
+      "language": "lambda",
+      "source": "@! ZDIV (ZNEG (NTOZ SEVEN)) (ZNEG (NTOZ THREE));\n",
+      "stage": "decode",
+      "options": {
+        "decode": "integer"
       },
       "expect": {
         "value": "2"
@@ -86,13 +74,11 @@
     },
     {
       "name": "zdiv-exact",
-      "input": {
-        "language": "lambda",
-        "source": "@! ZDIV (ZNEG (NTOZ SIX)) (NTOZ THREE);\n"
-      },
-      "run": {
-        "stage": "decode",
-        "type": "integer"
+      "language": "lambda",
+      "source": "@! ZDIV (ZNEG (NTOZ SIX)) (NTOZ THREE);\n",
+      "stage": "decode",
+      "options": {
+        "decode": "integer"
       },
       "expect": {
         "value": "-2"
@@ -100,13 +86,11 @@
     },
     {
       "name": "zdiv-zero-divisor",
-      "input": {
-        "language": "lambda",
-        "source": "@! ZDIV (NTOZ SEVEN) (PAIR THREE THREE);\n"
-      },
-      "run": {
-        "stage": "decode",
-        "type": "integer"
+      "language": "lambda",
+      "source": "@! ZDIV (NTOZ SEVEN) (PAIR THREE THREE);\n",
+      "stage": "decode",
+      "options": {
+        "decode": "integer"
       },
       "expect": {
         "value": "0"
@@ -114,13 +98,11 @@
     },
     {
       "name": "zmod-positive",
-      "input": {
-        "language": "lambda",
-        "source": "@! ZMOD (NTOZ SEVEN) (NTOZ THREE);\n"
-      },
-      "run": {
-        "stage": "decode",
-        "type": "integer"
+      "language": "lambda",
+      "source": "@! ZMOD (NTOZ SEVEN) (NTOZ THREE);\n",
+      "stage": "decode",
+      "options": {
+        "decode": "integer"
       },
       "expect": {
         "value": "1"
@@ -128,13 +110,11 @@
     },
     {
       "name": "zmod-negative-dividend",
-      "input": {
-        "language": "lambda",
-        "source": "@! ZMOD (ZNEG (NTOZ SEVEN)) (NTOZ THREE);\n"
-      },
-      "run": {
-        "stage": "decode",
-        "type": "integer"
+      "language": "lambda",
+      "source": "@! ZMOD (ZNEG (NTOZ SEVEN)) (NTOZ THREE);\n",
+      "stage": "decode",
+      "options": {
+        "decode": "integer"
       },
       "expect": {
         "value": "2"
@@ -142,13 +122,11 @@
     },
     {
       "name": "zmod-negative-divisor",
-      "input": {
-        "language": "lambda",
-        "source": "@! ZMOD (NTOZ SEVEN) (ZNEG (NTOZ THREE));\n"
-      },
-      "run": {
-        "stage": "decode",
-        "type": "integer"
+      "language": "lambda",
+      "source": "@! ZMOD (NTOZ SEVEN) (ZNEG (NTOZ THREE));\n",
+      "stage": "decode",
+      "options": {
+        "decode": "integer"
       },
       "expect": {
         "value": "-2"
@@ -156,13 +134,11 @@
     },
     {
       "name": "zmod-both-negative",
-      "input": {
-        "language": "lambda",
-        "source": "@! ZMOD (ZNEG (NTOZ SEVEN)) (ZNEG (NTOZ THREE));\n"
-      },
-      "run": {
-        "stage": "decode",
-        "type": "integer"
+      "language": "lambda",
+      "source": "@! ZMOD (ZNEG (NTOZ SEVEN)) (ZNEG (NTOZ THREE));\n",
+      "stage": "decode",
+      "options": {
+        "decode": "integer"
       },
       "expect": {
         "value": "-1"
@@ -170,13 +146,11 @@
     },
     {
       "name": "zmod-exact",
-      "input": {
-        "language": "lambda",
-        "source": "@! ZMOD (ZNEG (NTOZ SIX)) (NTOZ THREE);\n"
-      },
-      "run": {
-        "stage": "decode",
-        "type": "integer"
+      "language": "lambda",
+      "source": "@! ZMOD (ZNEG (NTOZ SIX)) (NTOZ THREE);\n",
+      "stage": "decode",
+      "options": {
+        "decode": "integer"
       },
       "expect": {
         "value": "0"
@@ -184,13 +158,11 @@
     },
     {
       "name": "zmod-zero-divisor",
-      "input": {
-        "language": "lambda",
-        "source": "@! ZMOD (PAIR TWO FIVE) (PAIR THREE THREE);\n"
-      },
-      "run": {
-        "stage": "decode",
-        "type": "integer"
+      "language": "lambda",
+      "source": "@! ZMOD (PAIR TWO FIVE) (PAIR THREE THREE);\n",
+      "stage": "decode",
+      "options": {
+        "decode": "integer"
       },
       "expect": {
         "value": "-3"
@@ -198,13 +170,11 @@
     },
     {
       "name": "zdiv-nonnormal",
-      "input": {
-        "language": "lambda",
-        "source": "@! ZDIV (PAIR FIVE TWO) (PAIR ONE THREE);\n"
-      },
-      "run": {
-        "stage": "decode",
-        "type": "integer"
+      "language": "lambda",
+      "source": "@! ZDIV (PAIR FIVE TWO) (PAIR ONE THREE);\n",
+      "stage": "decode",
+      "options": {
+        "decode": "integer"
       },
       "expect": {
         "value": "-2"
@@ -212,13 +182,11 @@
     },
     {
       "name": "zpow-zero",
-      "input": {
-        "language": "lambda",
-        "source": "@! ZPOW (NTOZ ZERO) ZERO;\n"
-      },
-      "run": {
-        "stage": "decode",
-        "type": "integer"
+      "language": "lambda",
+      "source": "@! ZPOW (NTOZ ZERO) ZERO;\n",
+      "stage": "decode",
+      "options": {
+        "decode": "integer"
       },
       "expect": {
         "value": "1"
@@ -226,13 +194,11 @@
     },
     {
       "name": "zpow-negative-odd",
-      "input": {
-        "language": "lambda",
-        "source": "@! ZPOW (PAIR ONE THREE) THREE;\n"
-      },
-      "run": {
-        "stage": "decode",
-        "type": "integer"
+      "language": "lambda",
+      "source": "@! ZPOW (PAIR ONE THREE) THREE;\n",
+      "stage": "decode",
+      "options": {
+        "decode": "integer"
       },
       "expect": {
         "value": "-8"
@@ -240,13 +206,11 @@
     },
     {
       "name": "zpow-negative-even",
-      "input": {
-        "language": "lambda",
-        "source": "@! ZPOW (ZNEG (NTOZ TWO)) TWO;\n"
-      },
-      "run": {
-        "stage": "decode",
-        "type": "integer"
+      "language": "lambda",
+      "source": "@! ZPOW (ZNEG (NTOZ TWO)) TWO;\n",
+      "stage": "decode",
+      "options": {
+        "decode": "integer"
       },
       "expect": {
         "value": "4"
@@ -254,13 +218,11 @@
     },
     {
       "name": "zmax-first",
-      "input": {
-        "language": "lambda",
-        "source": "@! ZMAX (NTOZ TWO) (ZNEG (NTOZ ONE));\n"
-      },
-      "run": {
-        "stage": "decode",
-        "type": "integer"
+      "language": "lambda",
+      "source": "@! ZMAX (NTOZ TWO) (ZNEG (NTOZ ONE));\n",
+      "stage": "decode",
+      "options": {
+        "decode": "integer"
       },
       "expect": {
         "value": "2"
@@ -268,13 +230,11 @@
     },
     {
       "name": "zmax-second",
-      "input": {
-        "language": "lambda",
-        "source": "@! ZMAX (PAIR TWO THREE) (NTOZ ZERO);\n"
-      },
-      "run": {
-        "stage": "decode",
-        "type": "integer"
+      "language": "lambda",
+      "source": "@! ZMAX (PAIR TWO THREE) (NTOZ ZERO);\n",
+      "stage": "decode",
+      "options": {
+        "decode": "integer"
       },
       "expect": {
         "value": "0"
@@ -282,13 +242,11 @@
     },
     {
       "name": "zmin-first",
-      "input": {
-        "language": "lambda",
-        "source": "@! ZMIN (PAIR TWO THREE) (NTOZ ZERO);\n"
-      },
-      "run": {
-        "stage": "decode",
-        "type": "integer"
+      "language": "lambda",
+      "source": "@! ZMIN (PAIR TWO THREE) (NTOZ ZERO);\n",
+      "stage": "decode",
+      "options": {
+        "decode": "integer"
       },
       "expect": {
         "value": "-1"
@@ -296,13 +254,11 @@
     },
     {
       "name": "zmin-second",
-      "input": {
-        "language": "lambda",
-        "source": "@! ZMIN (NTOZ TWO) (ZNEG (NTOZ ONE));\n"
-      },
-      "run": {
-        "stage": "decode",
-        "type": "integer"
+      "language": "lambda",
+      "source": "@! ZMIN (NTOZ TWO) (ZNEG (NTOZ ONE));\n",
+      "stage": "decode",
+      "options": {
+        "decode": "integer"
       },
       "expect": {
         "value": "-1"
@@ -310,13 +266,11 @@
     },
     {
       "name": "zmax-equal",
-      "input": {
-        "language": "lambda",
-        "source": "@! ZMAX (PAIR TWO ONE) (NTOZ ONE);\n"
-      },
-      "run": {
-        "stage": "decode",
-        "type": "integer"
+      "language": "lambda",
+      "source": "@! ZMAX (PAIR TWO ONE) (NTOZ ONE);\n",
+      "stage": "decode",
+      "options": {
+        "decode": "integer"
       },
       "expect": {
         "value": "1"
@@ -324,13 +278,11 @@
     },
     {
       "name": "zmin-equal",
-      "input": {
-        "language": "lambda",
-        "source": "@! ZMIN (PAIR TWO ONE) (NTOZ ONE);\n"
-      },
-      "run": {
-        "stage": "decode",
-        "type": "integer"
+      "language": "lambda",
+      "source": "@! ZMIN (PAIR TWO ONE) (NTOZ ONE);\n",
+      "stage": "decode",
+      "options": {
+        "decode": "integer"
       },
       "expect": {
         "value": "1"
@@ -338,13 +290,11 @@
     },
     {
       "name": "zabs-mixed",
-      "input": {
-        "language": "lambda",
-        "source": "@! ZABS (PAIR (SUCC ZERO) (SUCC (SUCC (SUCC ZERO))));\n"
-      },
-      "run": {
-        "stage": "decode",
-        "type": "integer"
+      "language": "lambda",
+      "source": "@! ZABS (PAIR (SUCC ZERO) (SUCC (SUCC (SUCC ZERO))));\n",
+      "stage": "decode",
+      "options": {
+        "decode": "integer"
       },
       "expect": {
         "value": "2"
@@ -352,13 +302,11 @@
     },
     {
       "name": "zabs-negative",
-      "input": {
-        "language": "lambda",
-        "source": "@! ZABS (PAIR ZERO (SUCC (SUCC (ZERO))));\n"
-      },
-      "run": {
-        "stage": "decode",
-        "type": "integer"
+      "language": "lambda",
+      "source": "@! ZABS (PAIR ZERO (SUCC (SUCC (ZERO))));\n",
+      "stage": "decode",
+      "options": {
+        "decode": "integer"
       },
       "expect": {
         "value": "2"
@@ -366,13 +314,11 @@
     },
     {
       "name": "zabs-positive",
-      "input": {
-        "language": "lambda",
-        "source": "@! ZABS (PAIR (SUCC (SUCC (ZERO))) ZERO);\n"
-      },
-      "run": {
-        "stage": "decode",
-        "type": "integer"
+      "language": "lambda",
+      "source": "@! ZABS (PAIR (SUCC (SUCC (ZERO))) ZERO);\n",
+      "stage": "decode",
+      "options": {
+        "decode": "integer"
       },
       "expect": {
         "value": "2"
@@ -380,13 +326,11 @@
     },
     {
       "name": "zneg",
-      "input": {
-        "language": "lambda",
-        "source": "@! ZNEG (PAIR (SUCC (SUCC (ZERO))) ZERO);\n"
-      },
-      "run": {
-        "stage": "decode",
-        "type": "integer"
+      "language": "lambda",
+      "source": "@! ZNEG (PAIR (SUCC (SUCC (ZERO))) ZERO);\n",
+      "stage": "decode",
+      "options": {
+        "decode": "integer"
       },
       "expect": {
         "value": "-2"
@@ -394,13 +338,11 @@
     },
     {
       "name": "zadd",
-      "input": {
-        "language": "lambda",
-        "source": "@! ZADD (PAIR (SUCC (SUCC (ZERO))) ZERO) (PAIR ZERO (SUCC (SUCC (SUCC (ZERO)))));\n"
-      },
-      "run": {
-        "stage": "decode",
-        "type": "integer"
+      "language": "lambda",
+      "source": "@! ZADD (PAIR (SUCC (SUCC (ZERO))) ZERO) (PAIR ZERO (SUCC (SUCC (SUCC (ZERO)))));\n",
+      "stage": "decode",
+      "options": {
+        "decode": "integer"
       },
       "expect": {
         "value": "-1"
@@ -408,13 +350,11 @@
     },
     {
       "name": "zmul",
-      "input": {
-        "language": "lambda",
-        "source": "@! ZMUL (PAIR ZERO (SUCC ZERO)) (PAIR (SUCC (SUCC ZERO)) ZERO);\n"
-      },
-      "run": {
-        "stage": "decode",
-        "type": "integer"
+      "language": "lambda",
+      "source": "@! ZMUL (PAIR ZERO (SUCC ZERO)) (PAIR (SUCC (SUCC ZERO)) ZERO);\n",
+      "stage": "decode",
+      "options": {
+        "decode": "integer"
       },
       "expect": {
         "value": "-2"
@@ -422,13 +362,11 @@
     },
     {
       "name": "zsub",
-      "input": {
-        "language": "lambda",
-        "source": "@! ZSUB (PAIR ZERO (SUCC (SUCC (ZERO)))) (PAIR ZERO (SUCC (SUCC (SUCC (SUCC (SUCC (ZERO)))))));\n"
-      },
-      "run": {
-        "stage": "decode",
-        "type": "integer"
+      "language": "lambda",
+      "source": "@! ZSUB (PAIR ZERO (SUCC (SUCC (ZERO)))) (PAIR ZERO (SUCC (SUCC (SUCC (SUCC (SUCC (ZERO)))))));\n",
+      "stage": "decode",
+      "options": {
+        "decode": "integer"
       },
       "expect": {
         "value": "3"

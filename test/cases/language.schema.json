@@ -1,0 +1,76 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Language test cases",
+  "type": "object",
+  "required": ["cases"],
+  "properties": {
+    "cases": {
+      "type": "array",
+      "minItems": 1,
+      "items": { "$ref": "#/$defs/testCase" }
+    }
+  },
+  "additionalProperties": false,
+  "$defs": {
+    "testCase": {
+      "type": "object",
+      "required": ["name", "language", "source", "stage", "expect"],
+      "properties": {
+        "name": { "type": "string", "minLength": 1 },
+        "language": { "enum": ["lambda", "ski"] },
+        "source": { "type": "string" },
+        "modules": { "type": "object", "additionalProperties": { "type": "string" } },
+        "stage": { "enum": ["parse", "expand", "reduce", "compile", "interpret", "undecode", "decode"] },
+        "options": { "$ref": "#/$defs/options" },
+        "expect": { "$ref": "#/$defs/expectation" }
+      },
+      "additionalProperties": false,
+      "oneOf": [
+        {
+          "properties": {
+            "language": { "const": "lambda" },
+            "stage": { "enum": ["parse", "expand", "reduce", "compile", "undecode"] }
+          }
+        },
+        {
+          "properties": {
+            "language": { "const": "ski" },
+            "stage": { "const": "interpret" }
+          },
+          "not": { "required": ["modules"] }
+        },
+        {
+          "properties": { "stage": { "const": "decode" } }
+        }
+      ]
+    },
+    "options": {
+      "type": "object",
+      "properties": {
+        "enableReduce": { "enum": ["beta", "eta", "both"] },
+        "maxSteps": { "type": "integer", "minimum": 1 },
+        "decode": { "enum": ["natural", "boolean", "integer", "rational", "real"] },
+        "precisionReal": { "type": "integer", "minimum": 0 }
+      },
+      "additionalProperties": false,
+      "if": { "required": ["precisionReal"] },
+      "then": { "properties": { "decode": { "const": "real" } }, "required": ["decode"] }
+    },
+    "expectation": {
+      "oneOf": [
+        {
+          "type": "object",
+          "required": ["value"],
+          "properties": { "value": { "type": "string" } },
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "required": ["error"],
+          "properties": { "error": { "type": "string" } },
+          "additionalProperties": false
+        }
+      ]
+    }
+  }
+}

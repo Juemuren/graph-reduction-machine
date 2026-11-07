@@ -2,10 +2,12 @@
 
 module TestSupport (
   TestCase (..),
+  CliCase (..),
   Input (..),
   RunSpec (..),
   Expected (..),
   runSuite,
+  runCliSuite,
   caseLimit,
   parseReduction,
   assertGraph,
@@ -22,13 +24,14 @@ import Control.Monad (forM_, unless, when)
 import Data.Aeson (
   FromJSON (..),
   Result (..),
-  Value,
+  Value (..),
   eitherDecode,
   fromJSON,
   withObject,
   (.:),
   (.:?),
  )
+import Data.Aeson.Types (Parser)
 import qualified Data.ByteString.Lazy as ByteString
 import Data.JSON.JSONSchema (validate)
 import Data.List (nub, sort)
@@ -40,9 +43,11 @@ import System.Directory (doesDirectoryExist, listDirectory)
 import System.Exit (die)
 import System.FilePath (takeExtension, (</>))
 
-newtype CaseFile = CaseFile [TestCase]
+newtype CaseFile a = CaseFile [a]
 
 data TestCase = TestCase String Input RunSpec Expected
+
+data CliCase = CliCase String String [String] String Int String String
 
 data Input = Input String String (Map.Map FilePath String)
 
@@ -52,25 +57,44 @@ data RunSpec = RunSpec
   , runPrecisionReal :: Maybe Integer
   , runMaxSteps :: Maybe Int
   , runEnableReduce :: Maybe String
-  , runArgs :: Maybe [String]
   }
 
 data Expected
-  = ExpectedGraph String
-  | ExpectedValue String
+  = ExpectedValue String
   | ExpectedError String
-  | ExpectedCli Int String String
 
-instance FromJSON CaseFile where
+instance (FromJSON a) => FromJSON (CaseFile a) where
   parseJSON = withObject "case file" $ \object -> CaseFile <$> object .: "cases"
 
 instance FromJSON TestCase where
-  parseJSON = withObject "test case" $ \object ->
-    TestCase
-      <$> object .: "name"
-      <*> object .: "input"
-      <*> object .: "run"
-      <*> object .: "expect"
+  parseJSON = withObject "test case" $ \object -> do
+    name <- object .: "name"
+    input <- parseJSON (Object object)
+    stage <- object .: "stage"
+    options <- object .:? "options"
+    spec <-
+      maybe
+        (pure (RunSpec stage Nothing Nothing Nothing Nothing))
+        (parseRunSpec stage)
+        options
+    TestCase name input spec <$> object .: "expect"
+
+instance FromJSON CliCase where
+  parseJSON = withObject "CLI test case" $ \object -> do
+    name <- object .: "name"
+    command <- object .: "command"
+    args <- object .: "args"
+    stdin <- object .: "stdin"
+    expected <- object .: "expect"
+    withObject
+      "CLI expectation"
+      ( \value ->
+          CliCase name command args stdin
+            <$> value .: "exitCode"
+            <*> value .: "stdout"
+            <*> value .: "stderr"
+      )
+      expected
 
 instance FromJSON Input where
   parseJSON = withObject "input" $ \object ->
@@ -79,34 +103,37 @@ instance FromJSON Input where
       <*> object .: "source"
       <*> (fromMaybe Map.empty <$> object .:? "modules")
 
-instance FromJSON RunSpec where
-  parseJSON = withObject "run" $ \object ->
-    RunSpec
-      <$> object .: "stage"
-      <*> object .:? "type"
-      <*> object .:? "precisionReal"
-      <*> object .:? "maxSteps"
-      <*> object .:? "enableReduce"
-      <*> object .:? "args"
+parseRunSpec :: String -> Value -> Parser RunSpec
+parseRunSpec stage = withObject "options" $ \object ->
+  RunSpec stage
+    <$> object .:? "decode"
+    <*> object .:? "precisionReal"
+    <*> object .:? "maxSteps"
+    <*> object .:? "enableReduce"
 
 instance FromJSON Expected where
   parseJSON = withObject "expect" $ \object -> do
-    graph <- object .:? "graph"
     value <- object .:? "value"
     problem <- object .:? "error"
-    exitCode <- object .:? "exitCode"
-    case exitCode of
-      Just code -> ExpectedCli code <$> object .: "stdout" <*> object .: "stderr"
-      Nothing ->
-        case catMaybes
-          [ExpectedGraph <$> graph, ExpectedValue <$> value, ExpectedError <$> problem] of
-          [expected] -> pure expected
-          _ -> fail "expect must contain exactly one of graph, value, or error"
+    case catMaybes [ExpectedValue <$> value, ExpectedError <$> problem] of
+      [expected] -> pure expected
+      _ -> fail "expect must contain exactly one of value or error"
 
 runSuite :: String -> (String -> TestCase -> IO ()) -> IO ()
-runSuite suiteName runCase = do
-  let schemaPath = "test/cases/schema.json"
-      root = "test/cases" </> suiteName
+runSuite suiteName = runSuiteWith suiteName "test/cases/language.schema.json" caseName
+ where
+  caseName (TestCase name _ _ _) = name
+
+runCliSuite :: (String -> CliCase -> IO ()) -> IO ()
+runCliSuite = runSuiteWith "cli" "test/cases/cli.schema.json" caseName
+ where
+  caseName (CliCase name _ _ _ _ _ _) = name
+
+runSuiteWith ::
+  (FromJSON a) =>
+  String -> FilePath -> (a -> String) -> (String -> a -> IO ()) -> IO ()
+runSuiteWith suiteName schemaPath caseName runCase = do
+  let root = "test/cases" </> suiteName
   schemaBytes <- ByteString.readFile schemaPath
   schema <- unwrap schemaPath (eitherDecode schemaBytes :: Either String Value)
   entries <- sort <$> listDirectory root
@@ -124,11 +151,11 @@ runSuite suiteName runCase = do
       Error problem -> die (path ++ ": " ++ problem)
       Success result -> pure result
     when (null cases) $ die (path ++ ": empty cases array")
-    let names = [name | TestCase name _ _ _ <- cases]
+    let names = map caseName cases
     when (length names /= length (nub names)) $
       die (path ++ ": case names must be unique")
-    forM_ cases $ \testCase@(TestCase name _ _ _) -> do
-      let label = path ++ ":" ++ name
+    forM_ cases $ \testCase -> do
+      let label = path ++ ":" ++ caseName testCase
       runCase label testCase
       putStrLn (label ++ ": PASS")
   putStrLn (suiteName ++ " tests passed")

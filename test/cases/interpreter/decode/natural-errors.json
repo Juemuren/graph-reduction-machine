@@ -2,13 +2,11 @@
   "cases": [
     {
       "name": "non-numeral",
-      "input": {
-        "language": "ski",
-        "source": "#0 = S;\n"
-      },
-      "run": {
-        "stage": "decode",
-        "type": "natural"
+      "language": "ski",
+      "source": "#0 = S;\n",
+      "stage": "decode",
+      "options": {
+        "decode": "natural"
       },
       "expect": {
         "error": "not a Church Natural"

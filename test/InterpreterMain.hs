@@ -28,7 +28,7 @@ runCase label (TestCase _ (Input language source _) spec expected) = do
   let defaultLimit = if runStage spec == "interpret" then 100 else 100000
   limit <- caseLimit label defaultLimit spec
   case (language, runStage spec, expected) of
-    ("ski", "interpret", ExpectedGraph graph) -> do
+    ("ski", "interpret", ExpectedValue graph) -> do
       actual <- assertGraph label graph (interpretSource limit source)
       again <- unwrap label (interpretSource limit actual)
       assertEqual label (normalizeGraph actual) (normalizeGraph (printTree again))
@@ -36,13 +36,6 @@ runCase label (TestCase _ (Input language source _) spec expected) = do
       assertError label problem (interpretSource limit source)
     ("ski", "decode", ExpectedError problem) ->
       assertDecodeCliError label source spec limit problem
-    ("ski", "cli", ExpectedCli code stdout stderr) -> do
-      args <- maybe (die (label ++ ": CLI args are required")) pure (runArgs spec)
-      (status, output, problem) <-
-        readProcessWithExitCode "ski-interpreter" args source
-      assertEqual label (if code == 0 then ExitSuccess else ExitFailure code) status
-      assertEqual label stdout (filter (/= '\r') output)
-      assertEqual label stderr (filter (/= '\r') problem)
     _ -> die (label ++ ": unsupported input, run, or expect combination")
 
 assertDecodeCliError :: String -> String -> RunSpec -> Int -> String -> IO ()
