@@ -93,10 +93,16 @@ SUCC (SUCC ZERO)
 
 以此类推。
 
+目前的算术系统中包含两种编码：
+
+- Church 编码无后缀，为 `ZERO` / `SUCC`
+- Scott 编码使用 `S` 后缀，为 `ZERO_S` / `SUCC_S`
+
+两种编码不可混用，且需要不同的解码方式。
+
 ### 自然数构造
 
-- `ZERO` 表示零
-- `ONE` / `TWO` / `THREE` / `FOUR` / `FIVE` / `SIX` / `SEVEN` / `EIGHT` / `NINE` 分别表示一到九
+- `ZERO` / `ONE` / `TWO` / `THREE` / `FOUR` / `FIVE` / `SIX` / `SEVEN` / `EIGHT` / `NINE` 分别表示零到九
 - `SUCC a` 表示自然数 `a` 的后继
 - `PRED a` 表示自然数 `a` 的前驱。零的前驱仍为零
 

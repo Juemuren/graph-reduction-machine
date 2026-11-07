@@ -1,5 +1,6 @@
 # Natural
 
+# Church-encoded naturals
 @> ZERO = \f -> \x -> x;
 @> ONE = \f -> \x -> f x;
 @> TWO = SUCC ONE;
@@ -71,3 +72,9 @@ divMod = \m -> \n ->
 @> LEQ = \m -> \n -> ISZERO (SUB m n);
 @> GT = \m -> \n -> NOT (LEQ m n);
 @> GEQ = \m -> \n -> LEQ n m;
+
+# Scott-encoded naturals
+@> ZERO_S = \zero -> \successor -> zero;
+@> SUCC_S = \n -> \zero -> \successor -> successor n;
+@> PRED_S = \n -> n ZERO_S (\predecessor -> predecessor);
+@> ISZERO_S = \n -> n TRUE (\predecessor -> FALSE);
