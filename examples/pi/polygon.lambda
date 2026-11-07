@@ -1,0 +1,20 @@
+# 2^n sin(pi / 2^n), using half-angle identities.
+# Square roots are truncated to 2n binary fractional digits.
+squareRoot = \q -> \precision ->
+    QTOR_POW q (PAIR (NTOZ ONE) (NTOZ TWO)) precision;
+halfAngle = \precision -> \state ->
+    (\cosine ->
+        PAIR
+            (squareRoot (QDIV (QADD (NTOQ ONE) cosine) (NTOQ TWO)) precision)
+            (squareRoot (QDIV (QSUB (NTOQ ONE) cosine) (NTOQ TWO)) precision))
+    (FST state);
+polygonPi = \n ->
+    IF (ISZERO n)
+        (NTOQ ZERO)
+        (QMUL
+            (NTOQ (POW TWO n))
+            (SND (FOR (PRED n)
+                (halfAngle (MUL TWO n))
+                (PAIR (NTOQ ZERO) (NTOQ ONE)))));
+
+@! polygonPi;

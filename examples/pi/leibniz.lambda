@@ -1,0 +1,16 @@
+# 4 * sum from k = 0 to n of (-1)^k / (2k + 1).
+leibnizStep = \state ->
+    (\index -> \positive -> \sum ->
+        (\term ->
+            PAIR
+                (SUCC index)
+                (PAIR (NOT positive)
+                    (IF positive (QADD sum term) (QSUB sum term))))
+        (QINV (NTOQ (SUCC (MUL TWO index)))))
+    (FST state) (FST (SND state)) (SND (SND state));
+leibnizPi = \n ->
+    QMUL (NTOQ FOUR)
+        (SND (SND (FOR (SUCC n) leibnizStep
+            (PAIR ZERO (PAIR TRUE (NTOQ ZERO))))));
+
+@! leibnizPi;
