@@ -20,20 +20,27 @@ cabal test
 
 ## 用例格式
 
-所有测试用例使用 JSON 文件，示例为
+测试用例分为：
+
+- 语言用例
+- 命令行用例
+
+### 语言用例
+
+所有语言测试用例使用 JSON 文件，示例为
+
+<!-- TODO 待迁移 。其中 expand 是新增 stage -->
 
 ```json
 {
   "cases": [
     {
       "name": "sequence-at-two",
-      "input": {
-        "language": "lambda",
-        "source": "@! \\n -> NTOQ n;"
-      },
-      "run": {
-        "stage": "decode",
-        "type": "real",
+      "language": "lambda",
+      "source": "@! \\n -> NTOQ n;",
+      "stage": "decode",
+      "options": {
+        "decode": "real",
         "precisionReal": 2
       },
       "expect": {
@@ -46,34 +53,65 @@ cabal test
 
 其中：
 
-- `input`
-  - `input.language` 是 `lambda` 或 `ski`
-  - `input.source` 是完整源码
-  - `input.modules` 是 JSON 对象，形如 `{ "defs.lambda": "@> f = \\x -> x;" }`
-- `run`
-  - `run.stage` 可以是 `parse` / `reduce` / `compile` / `interpret` / `undecode` / `decode` / `cli`
-  - `run.type` 仅用于 `decode`，可以是 `natural` / `boolean` / `integer` / `rational` / `real`
-  - `run.precisionReal` 指定实数解码精度，是非负整数
-  - `run.maxSteps` 指定归约步数上限
-  - `run.args` 仅用于 `cli`，指定传给 `ski-interpreter` 的命令行参数
-  - `run.enableReduce` 可取 `beta` / `eta` / `both`
-- 除 `cli` 外，`expect` 必须且只能是 `value` / `graph` / `error` 之一
-  - `expect.value` 对于 `parse` 和 `reduce` 按语法树比较，对于 `decode` 按文本比较
-  - `expect.graph` 按图的输出行比较
+- `name` 是用例的名称。同一 JSON 文件中的用例不能重名
+- `language` 是要测试的语言。可以为 `lambda` / `ski`
+- `source` 是完整源码
+- `modules` 是核心 λ 的模块。格式为 `{ "文件名": "源码" }`
+- `stage` 是要进行到的阶段。可以为 `parse` / `expand` / `reduce` / `compile` / `interpret` / `undecode` / `decode`
+- `options`
+  - `options.enableReduce` 是编译器启用的归约类型。可以为 `beta` / `eta` / `both`
+  - `options.maxSteps` 是解释器的归约步数上限。为正整数
+  - `options.decode` 是解释器的解码方式。可以为 `natural` / `boolean` / `integer` / `rational` / `real`
+  - `options.precisionReal` 是实数解码精度。为非负整数
+- `expect` 是预期的值。只能是 `value` / `error` 之一
+  - `expect.value` 对于 `parse` / `expand` / `reduce` 比较语法树，对于 `compile / interpret / undecode` 比较图，对于 `decode` 比较文本
   - `expect.error` 比较错误消息
-- `cli` 用例的 `expect` 使用 `exitCode` / `stdout` / `stderr`，分别比较进程退出码和两路原始输出
 
-完整字段及允许的组合见 [JSON Schema](../test/cases/schema.json)。
+语言用例的完整 JSON Schema 见 [language.json](../test/cases/language.json)。
+
+### 命令行用例
+
+所有命令行测试用例使用 JSON 文件，示例为
+
+```json
+{
+  "cases": [
+    {
+      "name": "zero-steps",
+      "command": "ski-interpreter",
+      "args": ["--show-steps"],
+      "stdin": "#0 = I;\n",
+      "expect": {
+        "exitCode": 0,
+        "stdout": "#0 = I;\n",
+        "stderr": "steps: 0\n"
+      }
+    }
+  ]
+}
+```
+
+其中：
+
+- `name` 是用例的名称，同一 JSON 文件中的用例不能重名
+- `command` 可以是 `lambda-to-graph` / `ski-interpreter`
+- `args` 是传给程序的命令行参数数组
+- `stdin` 是传给程序的标准输入
+- `expect.exitCode`、`expect.stdout`、`expect.stderr` 分别比较退出码、标准输出和标准错误
+
+命令行用例的完整 JSON Schema 见 [cli.json](../test/cases/cli.json)。
 
 ## 编译器测试
 
-测试所有编译器用例
+编译器测试用于测试把核心 λ 编译为 SKI 图的过程。
+
+测试所有编译器测试用例
 
 ```sh
 cabal test compiler-tests
 ```
 
-编译器测试用例放在 `test/cases/compiler` 下。
+编译器测试用例放在 `test/cases/compiler` 下，属于 [语言用例](#语言用例)。
 
 测试用例按以下类别组织：
 
@@ -99,13 +137,15 @@ cabal test compiler-tests
 
 ## 解释器测试
 
-测试所有解释器用例
+解释器测试用于测试解释 SKI 图的过程。
+
+测试所有解释器测试用例
 
 ```sh
 cabal test interpreter-tests
 ```
 
-解释器测试用例放在 `test/cases/interpreter` 下。
+解释器测试用例放在 `test/cases/interpreter` 下，属于 [语言用例](#语言用例)。
 
 测试用例按以下类别组织：
 
@@ -120,13 +160,15 @@ cabal test interpreter-tests
 
 ## 集成测试
 
-从核心 λ 到归约后 SKI 图的集成测试
+集成测试用于测试从编译核心 λ 到解释 SKI 图的完整过程。
+
+测试所有集成测试用例
 
 ```sh
 cabal test integration-tests
 ```
 
-集成测试用例放在 `test/cases/integration` 下。
+集成测试用例放在 `test/cases/integration` 下，属于 [语言用例](#语言用例)。
 
 测试用例按以下类别组织：
 
@@ -146,14 +188,30 @@ cabal test integration-tests
 - 对于一个运算，在对应类型目录的 `operation.json` 中用一个或多个用例测试结果。只有运算存在不同的边界行为，才使用多个用例。用例名使用内置函数名的小写；多用例时使用后缀说明覆盖的边界
 - 对于一个控制结构，在 `control` 目录中用一个或多个用例测试行为。用最少的用例覆盖不同分支。用例名应当说明覆盖的分支
 
+## 命令行测试
+
+命令行测试用于测试可执行程序的参数、退出码和输出。
+
+测试所有命令行测试用例
+
+```sh
+cabal test cli-tests
+```
+
+命令行测试用例放在 `test/cases/cli` 下，属于 [命令行用例](#命令行用例)。
+
+目前这些测试仍位于 `test/cases/interpreter/limit/options.json`，尚未迁移。
+
 ## 语言服务器测试
 
-语言服务器的测试用例为静态文件，位于 `test/cases/lsp`，不是自定义的 JSON 用例格式。
+语言服务器测试用于测试语言服务器的功能。
 
 测试所有语言服务器用例
 
 ```sh
 cabal test language-server-tests
 ```
+
+语言服务器测试用例放在 `test/cases/lsp` 下，不属于语言用例或命令行用例。
 
 语言服务测试的完整说明见 [lsp.md#测试](lsp.md#测试)。

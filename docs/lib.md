@@ -334,9 +334,3 @@ $$
 - `REQ a b n` / `RNEQ a b n` 判断 `a n` 是否等于 / 不等于 `b n`
 - `RLT a b n` / `RLEQ a b n` 判断 `a n` 是否小于 / 小于或等于 `b n`
 - `RGT a b n` / `RGEQ a b n` 判断 `a n` 是否大于 / 大于或等于 `b n`
-
-<!-- TODO 实数平方根
-
-- `SQRT r` 计算实数的平方根，使用牛顿迭代法
-
--->
