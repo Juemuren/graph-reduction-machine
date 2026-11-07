@@ -8,6 +8,12 @@
 cabal build
 ```
 
+安装所有可执行文件
+
+```sh
+cabal install
+```
+
 ## 构建的组织结构
 
 项目能够构建的可执行文件包含：
@@ -26,12 +32,24 @@ cabal build
 cabal build exe:lambda-to-graph
 ```
 
+安装编译器可执行文件
+
+```sh
+cabal install exe:lambda-to-graph
+```
+
 ## 构建解释器
 
 构建解释器及其依赖
 
 ```sh
 cabal build exe:ski-interpreter
+```
+
+安装解释器可执行文件
+
+```sh
+cabal install exe:ski-interpreter
 ```
 
 ## 构建语言服务器
@@ -42,13 +60,8 @@ cabal build exe:ski-interpreter
 cabal build exe:graph-reduction-machine-lsp
 ```
 
-<!-- TODO ## 构建处理器
-
-首先在项目中安装安装 Clash
+安装语言服务器可执行文件
 
 ```sh
-cabal build clash-ghc
-cabal exec -- clash --version
+cabal install exe:graph-reduction-machine-lsp
 ```
-
--->

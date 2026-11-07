@@ -2,5 +2,4 @@ packages: .
 
 extra-packages:
   fourmolu >= 0.18 && < 0.19,
-  hlint >= 3.10 && < 3.11,
-  clash-ghc == 1.10.2
+  hlint >= 3.10 && < 3.11
