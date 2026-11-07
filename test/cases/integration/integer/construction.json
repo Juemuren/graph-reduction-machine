@@ -13,6 +13,34 @@
       "expect": {
         "value": "2"
       }
+    },
+    {
+      "name": "ntoz_neg",
+      "input": {
+        "language": "lambda",
+        "source": "@! NTOZ_NEG THREE;\n"
+      },
+      "run": {
+        "stage": "decode",
+        "type": "integer"
+      },
+      "expect": {
+        "value": "-3"
+      }
+    },
+    {
+      "name": "ntoz_sub",
+      "input": {
+        "language": "lambda",
+        "source": "@! NTOZ_SUB TWO FIVE;\n"
+      },
+      "run": {
+        "stage": "decode",
+        "type": "integer"
+      },
+      "expect": {
+        "value": "-3"
+      }
     }
   ]
 }

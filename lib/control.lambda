@@ -1,9 +1,15 @@
 # Control
 
+# Condition
+
 @> IF = \condition -> \true -> \false ->
     condition true false;
 
+# Recursion
+
 @> FIX = Y;
+
+# Loops
 
 @> FOR = \natural -> \step -> \initial ->
     natural step initial;

@@ -1,90 +1,10 @@
 {
   "cases": [
     {
-      "name": "qlog-exact",
+      "name": "qn_pow-zero",
       "input": {
         "language": "lambda",
-        "source": "@! QLOG (NTOQ TWO) (NTOQ EIGHT);\n"
-      },
-      "run": {
-        "stage": "decode",
-        "type": "real",
-        "precisionReal": 1,
-        "maxSteps": 1000000
-      },
-      "expect": {
-        "value": "3/1"
-      }
-    },
-    {
-      "name": "qlog-fractional-zero",
-      "input": {
-        "language": "lambda",
-        "source": "@! QLOG (NTOQ TWO) (NTOQ THREE);\n"
-      },
-      "run": {
-        "stage": "decode",
-        "type": "real",
-        "precisionReal": 0,
-        "maxSteps": 1000000
-      },
-      "expect": {
-        "value": "1/1"
-      }
-    },
-    {
-      "name": "qlog-fractional",
-      "input": {
-        "language": "lambda",
-        "source": "@! QLOG (NTOQ TWO) (NTOQ THREE);\n"
-      },
-      "run": {
-        "stage": "decode",
-        "type": "real",
-        "precisionReal": 1,
-        "maxSteps": 1000000
-      },
-      "expect": {
-        "value": "3/2"
-      }
-    },
-    {
-      "name": "qlog-base-below-one",
-      "input": {
-        "language": "lambda",
-        "source": "@! QLOG (PAIR (NTOZ ONE) (NTOZ TWO)) (NTOQ TWO);\n"
-      },
-      "run": {
-        "stage": "decode",
-        "type": "real",
-        "precisionReal": 0,
-        "maxSteps": 1000000
-      },
-      "expect": {
-        "value": "-1/1"
-      }
-    },
-    {
-      "name": "qlog-number-below-one",
-      "input": {
-        "language": "lambda",
-        "source": "@! QLOG (NTOQ TWO) (PAIR (NTOZ ONE) (NTOZ TWO));\n"
-      },
-      "run": {
-        "stage": "decode",
-        "type": "real",
-        "precisionReal": 0,
-        "maxSteps": 1000000
-      },
-      "expect": {
-        "value": "-1/1"
-      }
-    },
-    {
-      "name": "qpow-zero",
-      "input": {
-        "language": "lambda",
-        "source": "@! QPOW (NTOQ ZERO) ZERO;\n"
+        "source": "@! QN_POW (NTOQ ZERO) ZERO;\n"
       },
       "run": {
         "stage": "decode",
@@ -95,10 +15,10 @@
       }
     },
     {
-      "name": "qpow-negative-odd",
+      "name": "qn_pow-negative-odd",
       "input": {
         "language": "lambda",
-        "source": "@! QPOW (PAIR (ZNEG (NTOZ ONE)) (NTOZ TWO)) THREE;\n"
+        "source": "@! QN_POW (PAIR (ZNEG (NTOZ ONE)) (NTOZ TWO)) THREE;\n"
       },
       "run": {
         "stage": "decode",
@@ -109,10 +29,10 @@
       }
     },
     {
-      "name": "qpow-negative-even",
+      "name": "qn_pow-negative-even",
       "input": {
         "language": "lambda",
-        "source": "@! QPOW (PAIR (NTOZ ONE) (ZNEG (NTOZ TWO))) TWO;\n"
+        "source": "@! QN_POW (PAIR (NTOZ ONE) (ZNEG (NTOZ TWO))) TWO;\n"
       },
       "run": {
         "stage": "decode",
@@ -120,6 +40,62 @@
       },
       "expect": {
         "value": "1/4"
+      }
+    },
+    {
+      "name": "ztoq_pow-negative-exponent",
+      "input": {
+        "language": "lambda",
+        "source": "@! ZTOQ_POW (ZNEG (NTOZ TWO)) (ZNEG (NTOZ THREE));\n"
+      },
+      "run": {
+        "stage": "decode",
+        "type": "rational"
+      },
+      "expect": {
+        "value": "-1/8"
+      }
+    },
+    {
+      "name": "ztoq_pow-positive-exponent",
+      "input": {
+        "language": "lambda",
+        "source": "@! ZTOQ_POW (NTOZ TWO) (NTOZ THREE);\n"
+      },
+      "run": {
+        "stage": "decode",
+        "type": "rational"
+      },
+      "expect": {
+        "value": "8/1"
+      }
+    },
+    {
+      "name": "qz_pow-negative-exponent",
+      "input": {
+        "language": "lambda",
+        "source": "@! QZ_POW (PAIR (NTOZ TWO) (NTOZ THREE)) (ZNEG (NTOZ TWO));\n"
+      },
+      "run": {
+        "stage": "decode",
+        "type": "rational"
+      },
+      "expect": {
+        "value": "9/4"
+      }
+    },
+    {
+      "name": "qz_pow-zero-exponent",
+      "input": {
+        "language": "lambda",
+        "source": "@! QZ_POW (NTOQ ZERO) (NTOZ ZERO);\n"
+      },
+      "run": {
+        "stage": "decode",
+        "type": "rational"
+      },
+      "expect": {
+        "value": "1/1"
       }
     },
     {

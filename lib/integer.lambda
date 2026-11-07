@@ -1,15 +1,29 @@
 # Integer
 
+# Construction
+
 @> NTOZ = \n -> PAIR n ZERO;
+@> NTOZ_NEG = \n -> PAIR ZERO n;
+@> NTOZ_SUB = \a -> \b -> PAIR a b;
+
+# Unary operations
+
+@> ZNEG = \p -> PAIR (SND p) (FST p);
+@> ZABS = \p ->
+    PAIR
+        (ADD (SUB (FST p) (SND p)) (SUB (SND p) (FST p)))
+        ZERO;
+@> ZNORM = \p ->
+    PAIR
+        (SUB (FST p) (SND p))
+        (SUB (SND p) (FST p));
+
+# Symmetric binary operations
 
 @> ZADD = \p -> \q ->
     PAIR
         (ADD (FST p) (FST q))
         (ADD (SND p) (SND q));
-@> ZSUB = \p -> \q ->
-    PAIR
-        (ADD (FST p) (SND q))
-        (ADD (SND p) (FST q));
 @> ZMUL = \p -> \q ->
     PAIR
         (ADD
@@ -18,8 +32,15 @@
         (ADD
             (MUL (FST p) (SND q))
             (MUL (SND p) (FST q)));
-@> ZPOW = \p -> \n -> n (ZMUL p) (NTOZ ONE);
+@> ZMAX = \p -> \q -> IF (ZGEQ p q) p q;
+@> ZMIN = \p -> \q -> IF (ZLEQ p q) p q;
 
+# Asymmetric binary operations
+
+@> ZSUB = \p -> \q ->
+    PAIR
+        (ADD (FST p) (SND q))
+        (ADD (SND p) (FST q));
 @> ZDIV = \p -> \q ->
     IF (ZISZERO q)
         (NTOZ ZERO)
@@ -34,23 +55,12 @@
             (DIV a b))
         (FST (ZABS p)) (FST (ZABS q)));
 @> ZMOD = \p -> \q -> ZSUB p (ZMUL (ZDIV p q) q);
+
+@> ZN_POW = \p -> \n -> n (ZMUL p) (NTOZ ONE);
 @> ZLOG = \base -> \number ->
     NTOZ (LOG (FST (ZNORM base)) (FST (ZNORM number)));
 
-@> ZNEG = \p -> PAIR (SND p) (FST p);
-@> ZABS = \p ->
-    PAIR
-        (ADD (SUB (FST p) (SND p)) (SUB (SND p) (FST p)))
-        ZERO;
-
-@> ZMAX = \p -> \q -> IF (ZGEQ p q) p q;
-@> ZMIN = \p -> \q -> IF (ZLEQ p q) p q;
-
-@> ZNORM = \p ->
-    PAIR
-        (SUB (FST p) (SND p))
-        (SUB (SND p) (FST p));
-
+# Comparison
 
 @> ZISZERO = \z -> EQ (FST z) (SND z);
 @> ZEQ = \p -> \q ->

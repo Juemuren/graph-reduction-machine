@@ -1,7 +1,9 @@
 # Natural
 
-# Church-encoded naturals
+# Church-encoded naturals: construction
+
 @> ZERO = \f -> \x -> x;
+@> SUCC = \n -> \f -> \x -> f (n f x);
 @> ONE = \f -> \x -> f x;
 @> TWO = SUCC ONE;
 @> THREE = SUCC TWO;
@@ -12,13 +14,9 @@
 @> EIGHT = SUCC SEVEN;
 @> NINE = SUCC EIGHT;
 
-@> SUCC = \n -> \f -> \x -> f (n f x);
-@> PRED = \n -> \f -> \x -> n (\g -> \h -> h (g f)) (\u -> x) (\u -> u);
+# Unary operations
 
-@> ADD = \m -> \n -> \f -> \x -> m f (n f x);
-@> SUB = \m -> \n -> n PRED m;
-@> MUL = \m -> \n -> \f -> m (n f);
-@> POW = \m -> \n -> n m;
+@> PRED = \n -> \f -> \x -> n (\g -> \h -> h (g f)) (\u -> x) (\u -> u);
 @> FACT = \n ->
     SND (FOR n
         (\count_product ->
@@ -27,7 +25,29 @@
                 (MUL (SUCC (FST count_product)) (SND count_product)))
         (PAIR ZERO ONE));
 
-# Division
+# Symmetric binary operations
+
+@> ADD = \m -> \n -> \f -> \x -> m f (n f x);
+@> MUL = \m -> \n -> \f -> m (n f);
+@> GCD = \m -> \n ->
+    FST (WHILE
+        (\pair -> NOT (ISZERO (SND pair)))
+        (\pair -> PAIR (SND pair) (MOD (FST pair) (SND pair)))
+        (PAIR m n));
+@> LCM = \m -> \n ->
+    IF (OR (ISZERO m) (ISZERO n))
+        ZERO
+        (DIV (MUL m n) (GCD m n));
+@> MAX = \m -> \n -> IF (GEQ m n) m n;
+@> MIN = \m -> \n -> IF (LEQ m n) m n;
+
+# Asymmetric binary operations
+
+@> SUB = \m -> \n -> n PRED m;
+@> POW = \m -> \n -> n m;
+
+# Division helpers
+
 divModStep = \divisor -> \quotient_remainder ->
     IF (LEQ divisor (SUCC (SND quotient_remainder)))
         (PAIR
@@ -42,6 +62,7 @@ divMod = \m -> \n ->
     IF (ISZERO n)
         (PAIR ZERO m)
         (m (divModStep n) (PAIR ZERO ZERO));
+
 @> DIV = \m -> \n -> FST (divMod m n);
 @> MOD = \m -> \n -> SND (divMod m n);
 @> LOG = \base -> \number ->
@@ -53,17 +74,7 @@ divMod = \m -> \n ->
                 (DIV (SND state) base))
         (PAIR ZERO number));
 
-@> GCD = \m -> \n ->
-    FST (WHILE
-        (\pair -> NOT (ISZERO (SND pair)))
-        (\pair -> PAIR (SND pair) (MOD (FST pair) (SND pair)))
-        (PAIR m n));
-@> LCM = \m -> \n ->
-    IF (OR (ISZERO m) (ISZERO n))
-        ZERO
-        (DIV (MUL m n) (GCD m n));
-@> MAX = \m -> \n -> IF (GEQ m n) m n;
-@> MIN = \m -> \n -> IF (LEQ m n) m n;
+# Comparison
 
 @> ISZERO = \n -> n (\x -> FALSE) TRUE;
 @> EQ = \m -> \n -> AND (LEQ m n) (LEQ n m);
@@ -73,7 +84,8 @@ divMod = \m -> \n ->
 @> GT = \m -> \n -> NOT (LEQ m n);
 @> GEQ = \m -> \n -> LEQ n m;
 
-# Scott-encoded naturals
+# Scott-encoded naturals: construction and deconstruction
+
 @> ZERO_S = \zero -> \successor -> zero;
 @> SUCC_S = \n -> \zero -> \successor -> successor n;
 @> PRED_S = \n -> n ZERO_S (\predecessor -> predecessor);

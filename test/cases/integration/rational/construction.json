@@ -27,6 +27,34 @@
       "expect": {
         "value": "2/1"
       }
+    },
+    {
+      "name": "ztoq_div",
+      "input": {
+        "language": "lambda",
+        "source": "@! ZTOQ_DIV (NTOZ ONE) (NTOZ TWO);\n"
+      },
+      "run": {
+        "stage": "decode",
+        "type": "rational"
+      },
+      "expect": {
+        "value": "1/2"
+      }
+    },
+    {
+      "name": "ztoq_pow",
+      "input": {
+        "language": "lambda",
+        "source": "@! ZTOQ_POW (NTOZ TWO) (NTOZ_NEG THREE);\n"
+      },
+      "run": {
+        "stage": "decode",
+        "type": "rational"
+      },
+      "expect": {
+        "value": "1/8"
+      }
     }
   ]
 }

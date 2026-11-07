@@ -74,6 +74,153 @@
       "expect": {
         "value": "-2/1"
       }
+    },
+    {
+      "name": "qtor_log-exact",
+      "input": {
+        "language": "lambda",
+        "source": "@! QTOR_LOG (NTOQ TWO) (NTOQ EIGHT);\n"
+      },
+      "run": {
+        "stage": "decode",
+        "type": "real",
+        "precisionReal": 1,
+        "maxSteps": 1000000
+      },
+      "expect": {
+        "value": "3/1"
+      }
+    },
+    {
+      "name": "qtor_log-fractional-zero",
+      "input": {
+        "language": "lambda",
+        "source": "@! QTOR_LOG (NTOQ TWO) (NTOQ THREE);\n"
+      },
+      "run": {
+        "stage": "decode",
+        "type": "real",
+        "precisionReal": 0,
+        "maxSteps": 1000000
+      },
+      "expect": {
+        "value": "1/1"
+      }
+    },
+    {
+      "name": "qtor_log-fractional",
+      "input": {
+        "language": "lambda",
+        "source": "@! QTOR_LOG (NTOQ TWO) (NTOQ THREE);\n"
+      },
+      "run": {
+        "stage": "decode",
+        "type": "real",
+        "precisionReal": 1,
+        "maxSteps": 1000000
+      },
+      "expect": {
+        "value": "3/2"
+      }
+    },
+    {
+      "name": "qtor_log-base-below-one",
+      "input": {
+        "language": "lambda",
+        "source": "@! QTOR_LOG (PAIR (NTOZ ONE) (NTOZ TWO)) (NTOQ TWO);\n"
+      },
+      "run": {
+        "stage": "decode",
+        "type": "real",
+        "precisionReal": 0,
+        "maxSteps": 1000000
+      },
+      "expect": {
+        "value": "-1/1"
+      }
+    },
+    {
+      "name": "qtor_log-number-below-one",
+      "input": {
+        "language": "lambda",
+        "source": "@! QTOR_LOG (NTOQ TWO) (PAIR (NTOZ ONE) (NTOZ TWO));\n"
+      },
+      "run": {
+        "stage": "decode",
+        "type": "real",
+        "precisionReal": 0,
+        "maxSteps": 1000000
+      },
+      "expect": {
+        "value": "-1/1"
+      }
+    },
+    {
+      "name": "qtor_pow-square-root",
+      "input": {
+        "language": "lambda",
+        "source": "@! QTOR_POW (NTOQ TWO) (PAIR (NTOZ ONE) (NTOZ TWO));\n"
+      },
+      "run": {
+        "stage": "decode",
+        "type": "real",
+        "precisionReal": 4,
+        "maxSteps": 2000000,
+        "disableReduce": "beta"
+      },
+      "expect": {
+        "value": "11/8"
+      }
+    },
+    {
+      "name": "qtor_pow-negative-exponent",
+      "input": {
+        "language": "lambda",
+        "source": "@! QTOR_POW (NTOQ FOUR) (PAIR (ZNEG (NTOZ ONE)) (NTOZ TWO));\n"
+      },
+      "run": {
+        "stage": "decode",
+        "type": "real",
+        "precisionReal": 3,
+        "maxSteps": 2000000,
+        "disableReduce": "beta"
+      },
+      "expect": {
+        "value": "1/2"
+      }
+    },
+    {
+      "name": "qtor_pow-negative-base-odd-root",
+      "input": {
+        "language": "lambda",
+        "source": "@! QTOR_POW (PAIR (ZNEG (NTOZ ONE)) (NTOZ EIGHT)) (PAIR (NTOZ ONE) (NTOZ THREE));\n"
+      },
+      "run": {
+        "stage": "decode",
+        "type": "real",
+        "precisionReal": 3,
+        "maxSteps": 2000000,
+        "disableReduce": "beta"
+      },
+      "expect": {
+        "value": "-1/2"
+      }
+    },
+    {
+      "name": "qtor_pow-integer-exponent",
+      "input": {
+        "language": "lambda",
+        "source": "@! QTOR_POW (NTOQ TWO) (ZTOQ (ZNEG (NTOZ TWO)));\n"
+      },
+      "run": {
+        "stage": "decode",
+        "type": "real",
+        "precisionReal": 0,
+        "disableReduce": "beta"
+      },
+      "expect": {
+        "value": "1/4"
+      }
     }
   ]
 }

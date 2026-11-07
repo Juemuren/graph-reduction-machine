@@ -1,6 +1,10 @@
 # Pairs
 
+# Construction
+
 @> PAIR = \a -> \b -> \s -> s a b;
+
+# Operations
 
 @> FST = \p -> p (\a -> \b -> a);
 @> SND = \p -> p (\a -> \b -> b);

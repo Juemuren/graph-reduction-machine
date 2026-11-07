@@ -1,29 +1,16 @@
 # Rational
 
+# Construction
+
 @> NTOQ = \n -> ZTOQ (NTOZ n);
 @> ZTOQ = \z -> PAIR z (NTOZ ONE);
+@> ZTOQ_DIV = \a -> \b -> PAIR a b;
+@> ZTOQ_POW = \p -> \z ->
+    IF (ZLT z (NTOZ ZERO))
+        (QINV (ZTOQ (ZN_POW p (FST (ZABS z)))))
+        (ZTOQ (ZN_POW p (FST (ZABS z))));
 
-@> QADD = \p -> \q ->
-    PAIR
-        (ZADD
-            (ZMUL (FST p) (SND q))
-            (ZMUL (FST q) (SND p)))
-        (ZMUL (SND p) (SND q));
-@> QSUB = \p -> \q ->
-    PAIR
-        (ZSUB
-            (ZMUL (FST p) (SND q))
-            (ZMUL (FST q) (SND p)))
-        (ZMUL (SND p) (SND q));
-@> QMUL = \p -> \q ->
-    PAIR
-        (ZMUL (FST p) (FST q))
-        (ZMUL (SND p) (SND q));
-@> QPOW = \p -> \n -> n (QMUL p) (NTOQ ONE);
-@> QDIV = \p -> \q ->
-    PAIR
-        (ZMUL (FST p) (SND q))
-        (ZMUL (SND p) (FST q));
+# Unary operations
 
 @> QNEG = \q -> PAIR (ZNEG (FST q)) (SND q);
 @> QABS = \q ->
@@ -31,51 +18,6 @@
         (QNEG q)
         q;
 @> QINV = \q -> PAIR (SND q) (FST q);
-
-# binary logarithm digit extraction
-qLogFractionStep = \base -> \state ->
-    (\square ->
-        IF (QGEQ square base)
-            (PAIR
-                (SUCC (MUL TWO (FST state)))
-                (QDIV square base))
-            (PAIR
-                (MUL TWO (FST state))
-                square))
-    (QMUL (SND state) (SND state));
-qLogPositive = \base -> \number -> \precision ->
-    (\whole ->
-        (\fraction ->
-            QADD
-                (NTOQ (FST whole))
-                (QDIV
-                    (NTOQ (FST fraction))
-                    (NTOQ (POW TWO precision))))
-        (precision (qLogFractionStep base)
-            (PAIR ZERO (SND whole))))
-    (WHILE
-        (\state -> QGEQ (SND state) base)
-        (\state ->
-            PAIR
-                (SUCC (FST state))
-                (QDIV (SND state) base))
-        (PAIR ZERO number));
-@> QLOG = \base -> \number -> \precision ->
-    (\inverse_base -> \inverse_number ->
-        (\result ->
-            IF (IF inverse_base (NOT inverse_number) inverse_number)
-                (QNEG result)
-                result)
-        (qLogPositive
-            (IF inverse_base (QINV base) base)
-            (IF inverse_number (QINV number) number)
-            precision))
-    (QLT base (NTOQ ONE))
-    (QLT number (NTOQ ONE));
-
-@> QMAX = \p -> \q -> IF (QGEQ p q) p q;
-@> QMIN = \p -> \q -> IF (QLEQ p q) p q;
-
 @> QNORM = \q ->
     (\numerator ->
         (\denominator ->
@@ -94,6 +36,40 @@ qLogPositive = \base -> \number -> \precision ->
                 (ADD (FST denominator) (SND denominator))))
         (ZNORM (SND q)))
     (ZNORM (FST q));
+
+# Symmetric binary operations
+
+@> QADD = \p -> \q ->
+    PAIR
+        (ZADD
+            (ZMUL (FST p) (SND q))
+            (ZMUL (FST q) (SND p)))
+        (ZMUL (SND p) (SND q));
+@> QMUL = \p -> \q ->
+    PAIR
+        (ZMUL (FST p) (FST q))
+        (ZMUL (SND p) (SND q));
+@> QMAX = \p -> \q -> IF (QGEQ p q) p q;
+@> QMIN = \p -> \q -> IF (QLEQ p q) p q;
+
+# Asymmetric binary operations
+
+@> QSUB = \p -> \q ->
+    PAIR
+        (ZSUB
+            (ZMUL (FST p) (SND q))
+            (ZMUL (FST q) (SND p)))
+        (ZMUL (SND p) (SND q));
+@> QDIV = \p -> \q ->
+    PAIR
+        (ZMUL (FST p) (SND q))
+        (ZMUL (SND p) (FST q));
+@> QN_POW = \p -> \n -> n (QMUL p) (NTOQ ONE);
+@> QZ_POW = \p -> \z ->
+    IF (ZLT z (NTOZ ZERO))
+        (QINV (QN_POW p (FST (ZABS z))))
+        (QN_POW p (FST (ZABS z)));
+# Comparison
 
 @> QISZERO = \q -> ZEQ (FST q) (NTOZ ZERO);
 @> QEQ = \p -> \q ->

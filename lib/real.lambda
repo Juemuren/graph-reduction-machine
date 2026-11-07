@@ -1,10 +1,92 @@
 # Real
 
+# Construction from numbers
+
 @> NTOR = \n -> QTOR (NTOQ n);
 @> ZTOR = \z -> QTOR (ZTOQ z);
 @> QTOR = \q -> \n -> q;
 
-# e
+# Rational power as a Cauchy sequence
+
+qRootStep = \numerator -> \denominator -> \degree -> \state ->
+    (\lower -> \upper -> \scale ->
+        (\middle -> \next_scale ->
+            IF (LEQ
+                    (MUL (POW middle degree) denominator)
+                    (MUL numerator (POW next_scale degree)))
+                (PAIR (PAIR middle (MUL TWO upper)) next_scale)
+                (PAIR (PAIR (MUL TWO lower) middle) next_scale))
+        (ADD lower upper) (MUL TWO scale))
+    (FST (FST state)) (SND (FST state)) (SND state);
+@> QTOR_POW = \a -> \b ->
+    (\exponent ->
+        (\degree ->
+            (\target -> \n ->
+                IF (EQ degree ONE)
+                    target
+                    ((\positive ->
+                        (\result ->
+                            IF (QLT target (NTOQ ZERO)) (QNEG result) result)
+                        ((\state ->
+                            PAIR
+                                (NTOZ (FST (FST state)))
+                                (NTOZ (SND state)))
+                            (n (qRootStep
+                                    (FST (FST positive))
+                                    (FST (SND positive))
+                                    degree)
+                                (PAIR
+                                    (PAIR ZERO (MAX ONE (FST (FST positive))))
+                                    ONE))))
+                    (QNORM (QABS target))))
+            (QZ_POW a (FST exponent)))
+        (FST (SND exponent)))
+    (QNORM b);
+
+# Rational logarithm as a Cauchy sequence
+
+qLogFractionStep = \base -> \state ->
+    (\square ->
+        IF (QGEQ square base)
+            (PAIR
+                (SUCC (MUL TWO (FST state)))
+                (QDIV square base))
+            (PAIR
+                (MUL TWO (FST state))
+                square))
+    (QMUL (SND state) (SND state));
+qLogPositive = \base -> \number -> \precision ->
+    (\whole ->
+        (\fraction ->
+            QADD
+                (NTOQ (FST whole))
+                (QDIV
+                    (NTOQ (FST fraction))
+                    (NTOQ (POW TWO precision))))
+        (precision (qLogFractionStep base)
+            (PAIR ZERO (SND whole))))
+    (WHILE
+        (\state -> QGEQ (SND state) base)
+        (\state ->
+            PAIR
+                (SUCC (FST state))
+                (QDIV (SND state) base))
+        (PAIR ZERO number));
+@> QTOR_LOG = \base -> \number -> \precision ->
+    (\inverse_base -> \inverse_number ->
+        (\result ->
+            IF (IF inverse_base (NOT inverse_number) inverse_number)
+                (QNEG result)
+                result)
+        (qLogPositive
+            (IF inverse_base (QINV base) base)
+            (IF inverse_number (QINV number) number)
+            precision))
+    (QLT base (NTOQ ONE))
+    (QLT number (NTOQ ONE));
+
+# Natural constant e
+
 eStep = \state ->
     (\term ->
         PAIR
@@ -19,15 +101,7 @@ eStep = \state ->
     SND (SND (FOR n eStep
         (PAIR ZERO (PAIR (NTOQ ONE) (NTOQ ONE)))));
 
-@> RADD = \a -> \b -> \n -> QADD (a n) (b n);
-@> RSUB = \a -> \b -> \n -> QSUB (a n) (b n);
-@> RMUL = \a -> \b -> \n -> QMUL (a n) (b n);
-@> RPOW = \a -> \m -> \n -> QPOW (a n) m;
-@> RLOG = \base -> \number -> \n -> QLOG (base n) (number n) n;
-@> RDIV = \a -> \b -> \n ->
-    IF (QISZERO (b n))
-        (NTOQ ZERO)
-        (QDIV (a n) (b n));
+# Unary operations
 
 @> RNEG = \a -> \n -> QNEG (a n);
 @> RABS = \a -> \n -> QABS (a n);
@@ -35,11 +109,26 @@ eStep = \state ->
     IF (QISZERO (a n))
         (NTOQ ZERO)
         (QINV (a n));
+@> RNORM = \a -> \n -> QNORM (a n);
 
+# Symmetric binary operations
+
+@> RADD = \a -> \b -> \n -> QADD (a n) (b n);
+@> RMUL = \a -> \b -> \n -> QMUL (a n) (b n);
 @> RMAX = \a -> \b -> \n -> QMAX (a n) (b n);
 @> RMIN = \a -> \b -> \n -> QMIN (a n) (b n);
 
-@> RNORM = \a -> \n -> QNORM (a n);
+# Asymmetric binary operations
+
+@> RSUB = \a -> \b -> \n -> QSUB (a n) (b n);
+@> RPOW = \a -> \m -> \n -> QN_POW (a n) m;
+@> RLOG = \base -> \number -> \n -> QTOR_LOG (base n) (number n) n;
+@> RDIV = \a -> \b -> \n ->
+    IF (QISZERO (b n))
+        (NTOQ ZERO)
+        (QDIV (a n) (b n));
+
+# Comparison
 
 @> RISZERO = \a -> \n -> QISZERO (a n);
 @> REQ = \a -> \b -> \n -> QEQ (a n) (b n);

@@ -1,8 +1,12 @@
 # Higher-order functions
 
+# Identity and composition
+
 @> ID = \x -> x;
 @> COMPOSE = \f -> \g -> \x -> f (g x);
 @> CONST = \x -> \y -> x;
+
+# Argument order and pair conversion
 
 @> FLIP = \f -> \x -> \y -> f y x;
 

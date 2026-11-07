@@ -211,10 +211,10 @@
       }
     },
     {
-      "name": "zpow-zero",
+      "name": "zn_pow-zero",
       "input": {
         "language": "lambda",
-        "source": "@! ZPOW (NTOZ ZERO) ZERO;\n"
+        "source": "@! ZN_POW (NTOZ ZERO) ZERO;\n"
       },
       "run": {
         "stage": "decode",
@@ -225,10 +225,10 @@
       }
     },
     {
-      "name": "zpow-negative-odd",
+      "name": "zn_pow-negative-odd",
       "input": {
         "language": "lambda",
-        "source": "@! ZPOW (PAIR ONE THREE) THREE;\n"
+        "source": "@! ZN_POW (PAIR ONE THREE) THREE;\n"
       },
       "run": {
         "stage": "decode",
@@ -239,10 +239,10 @@
       }
     },
     {
-      "name": "zpow-negative-even",
+      "name": "zn_pow-negative-even",
       "input": {
         "language": "lambda",
-        "source": "@! ZPOW (ZNEG (NTOZ TWO)) TWO;\n"
+        "source": "@! ZN_POW (ZNEG (NTOZ TWO)) TWO;\n"
       },
       "run": {
         "stage": "decode",
