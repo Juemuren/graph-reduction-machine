@@ -162,6 +162,39 @@ trigSum = \x -> \first -> \offset -> \n ->
 @> SIN = \r -> \n -> trigSum (r n) (r n) TWO n;
 @> COS = \r -> \n -> trigSum (r n) (NTOQ ONE) ONE n;
 
+# Inverse sine and cosine Taylor partial sums
+inverseTrigStep = \square -> \combine -> \state ->
+    (\index -> \term ->
+        (\odd ->
+            PAIR
+                (SUCC index)
+                (PAIR
+                    (QDIV
+                        (QMUL term (QMUL square (NTOQ (MUL odd odd))))
+                        (NTOQ (MUL TWO (MUL (SUCC index) (SUCC (SUCC odd))))))
+                    (combine (SND (SND state)) term)))
+        (SUCC (MUL TWO index)))
+    (FST state) (FST (SND state));
+inverseTrigSum = \x -> \initial -> \combine -> \n ->
+    SND (SND (FOR (SUCC n) (inverseTrigStep (QMUL x x) combine)
+        (PAIR ZERO (PAIR x initial))));
+acosPiHalfStep = \state ->
+    (\index -> \term ->
+        PAIR
+            (SUCC index)
+            (PAIR
+                (QNEG (QDIV
+                    (QMUL term (NTOQ (SUCC (MUL TWO index))))
+                    (NTOQ (SUCC (SUCC (SUCC (MUL TWO index)))))))
+                (QADD (SND (SND state)) term)))
+    (FST state) (FST (SND state));
+acosPiHalf = \n ->
+    SND (SND (FOR (SUCC n) acosPiHalfStep
+        (PAIR ZERO (PAIR (NTOQ TWO) (NTOQ ZERO)))));
+@> ASIN = \r -> \n -> inverseTrigSum (r n) (NTOQ ZERO) QADD n;
+@> ACOS = \r -> \n ->
+    inverseTrigSum (r n) (acosPiHalf n) QSUB n;
+
 # Symmetric binary operations
 
 @> RADD = \a -> \b -> \n -> QADD (a n) (b n);

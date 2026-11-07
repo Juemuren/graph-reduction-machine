@@ -414,6 +414,54 @@
       "stage": "decode",
       "options": { "precisionReal": 2, "decode": "real" },
       "expect": { "value": "-1/3" }
+    },
+    {
+      "name": "asin-zero",
+      "language": "lambda",
+      "source": "@! ASIN (NTOR ZERO);\n",
+      "stage": "decode",
+      "options": { "precisionReal": 0, "decode": "real" },
+      "expect": { "value": "0/1" }
+    },
+    {
+      "name": "asin-negative-one",
+      "language": "lambda",
+      "source": "@! ASIN (ZTOR (ZNEG (NTOZ ONE)));\n",
+      "stage": "decode",
+      "options": { "precisionReal": 1, "decode": "real" },
+      "expect": { "value": "-7/6" }
+    },
+    {
+      "name": "asin-sequence",
+      "language": "lambda",
+      "source": "@! ASIN (\\n -> QDIV (NTOQ n) (NTOQ TWO));\n",
+      "stage": "decode",
+      "options": { "precisionReal": 1, "decode": "real" },
+      "expect": { "value": "25/48" }
+    },
+    {
+      "name": "acos-zero",
+      "language": "lambda",
+      "source": "@! ACOS (NTOR ZERO);\n",
+      "stage": "decode",
+      "options": { "precisionReal": 0, "decode": "real" },
+      "expect": { "value": "2/1" }
+    },
+    {
+      "name": "acos-one",
+      "language": "lambda",
+      "source": "@! ACOS (NTOR ONE);\n",
+      "stage": "decode",
+      "options": { "precisionReal": 1, "decode": "real" },
+      "expect": { "value": "1/6" }
+    },
+    {
+      "name": "acos-negative-one",
+      "language": "lambda",
+      "source": "@! ACOS (ZTOR (ZNEG (NTOZ ONE)));\n",
+      "stage": "decode",
+      "options": { "precisionReal": 1, "decode": "real" },
+      "expect": { "value": "5/2" }
     }
   ]
 }
