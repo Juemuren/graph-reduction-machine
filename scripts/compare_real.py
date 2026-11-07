@@ -19,6 +19,9 @@ import matplotlib.pyplot as plt
 ROOT = Path(__file__).resolve().parents[1]
 FIELDS = ("method", "n", "steps", "value", "abs_error")
 LIMIT_ERROR = "reduction exceeded step limit"
+STEPS_PATTERN = r"^steps: (\d+)$"
+COMPILER = "lambda-to-graph"
+INTERPRETER = "ski-interpreter"
 
 
 @dataclass(frozen=True)
@@ -76,7 +79,7 @@ def decode(
         if LIMIT_ERROR in result.stderr:
             return None
         raise RuntimeError(f"n={index}: {result.stderr.strip()}")
-    match = re.search(r"^steps: (\d+)$", result.stderr, re.MULTILINE)
+    match = re.search(STEPS_PATTERN, result.stderr, re.MULTILINE)
     if match is None:
         raise RuntimeError(f"n={index}: missing step count in {result.stderr!r}")
     return int(match.group(1)), result.stdout.strip()
@@ -86,8 +89,8 @@ def measure(directory: Path, max_index: int, max_steps: int) -> list[dict[str, s
     sources = sorted(directory.glob("*.lambda"))
     if not sources:
         raise ValueError(f"no .lambda algorithms in {directory}")
-    compiler = executable("lambda-to-graph")
-    interpreter = executable("ski-interpreter")
+    compiler = executable(COMPILER)
+    interpreter = executable(INTERPRETER)
     rows = []
     for source in sources:
         graph = compile_example(compiler, source)
@@ -95,7 +98,7 @@ def measure(directory: Path, max_index: int, max_steps: int) -> list[dict[str, s
             result = decode(interpreter, graph, index, max_steps)
             if result is None:
                 print(f"{source.stem} n={index}: exceeded {max_steps} steps")
-                continue
+                break
             steps, value = result
             print(f"{source.stem} n={index}: {steps} steps, {value}")
             rows.append(
@@ -126,14 +129,6 @@ def write_csv(path: Path, samples: list[Sample]) -> None:
         )
 
 
-def read_rows(path: Path) -> list[dict[str, str]]:
-    with path.open(encoding="utf-8", newline="") as source:
-        reader = csv.DictReader(source)
-        if reader.fieldnames not in (list(FIELDS), list(FIELDS[:-1])):
-            raise ValueError(f"expected CSV columns: {', '.join(FIELDS)}")
-        return [{key: row[key] for key in FIELDS[:-1]} for row in reader]
-
-
 def make_samples(rows: list[dict[str, str]], exact: Decimal) -> list[Sample]:
     samples = []
     for row in rows:
@@ -143,7 +138,13 @@ def make_samples(rows: list[dict[str, str]], exact: Decimal) -> list[Sample]:
             approximation = Decimal(value.numerator) / Decimal(value.denominator)
             error = abs(approximation - exact)
         samples.append(
-            Sample(row["method"], int(row["n"]), int(row["steps"]), row["value"], error)
+            Sample(
+                row["method"],
+                int(row["n"]),
+                int(row["steps"]),
+                row["value"],
+                error,
+            )
         )
     if not samples:
         raise ValueError("no successful measurements")
@@ -212,7 +213,10 @@ def plot(samples: list[Sample], output: Path) -> None:
         zorder=4,
     )
     axis.set(
-        xscale="log", yscale="log", xlabel="Reduction steps", ylabel="Absolute error"
+        xscale="log",
+        yscale="log",
+        xlabel="Reduction steps",
+        ylabel="Absolute error",
     )
     axis.set_title("Real-number approximation: steps vs error")
     axis.grid(True, which="both", alpha=0.25)
@@ -223,34 +227,59 @@ def plot(samples: list[Sample], output: Path) -> None:
     plt.close(figure)
 
 
-def main() -> None:
-    parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument(
-        "directory", type=Path, help="directory containing .lambda algorithms"
-    )
-    parser.add_argument("--exact-value", required=True, type=Decimal)
-    parser.add_argument("--max-steps", type=int, default=20_000_000)
-    parser.add_argument("--max-index", type=int, default=2)
-    parser.add_argument(
-        "--csv", type=Path, help="output CSV (default: DIRECTORY/steps-vs-error.csv)"
+def parse_args() -> argparse.Namespace:
+    parser = argparse.ArgumentParser(
+        description=__doc__,
+        formatter_class=argparse.ArgumentDefaultsHelpFormatter,
     )
     parser.add_argument(
-        "--plot", type=Path, help="output PNG (default: DIRECTORY/steps-vs-error.png)"
+        "directory",
+        type=Path,
+        help="directory containing .lambda algorithms",
     )
     parser.add_argument(
-        "--plot-only", action="store_true", help="redraw an existing CSV"
+        "--exact-value",
+        required=True,
+        type=Decimal,
+    )
+    parser.add_argument(
+        "--max-steps",
+        type=int,
+        default=10_000_000,
+        help="maximum reduction steps",
+    )
+    parser.add_argument(
+        "--max-index",
+        type=int,
+        default=10,
+        help="maximum index",
+    )
+    parser.add_argument(
+        "--csv",
+        type=Path,
+        default=argparse.SUPPRESS,
+        help="output CSV",
+    )
+    parser.add_argument(
+        "--plot",
+        type=Path,
+        default=argparse.SUPPRESS,
+        help="output PNG",
     )
     args = parser.parse_args()
-    if args.max_steps <= 0 or args.max_index < 0:
-        parser.error("--max-steps must be positive and --max-index must be nonnegative")
+    if args.max_steps <= 0:
+        parser.error("--max-steps must be positive")
+    if args.max_index < 0:
+        parser.error("--max-index must be nonnegative")
+    return args
 
-    csv_path = args.csv or args.directory / "steps-vs-error.csv"
-    plot_path = args.plot or args.directory / "steps-vs-error.png"
-    rows = (
-        read_rows(csv_path)
-        if args.plot_only
-        else measure(args.directory, args.max_index, args.max_steps)
-    )
+
+def main() -> None:
+    args = parse_args()
+    csv_path = getattr(args, "csv", args.directory / "steps-vs-error.csv")
+    plot_path = getattr(args, "plot", args.directory / "steps-vs-error.png")
+
+    rows = measure(args.directory, args.max_index, args.max_steps)
     samples = make_samples(rows, args.exact_value)
     write_csv(csv_path, samples)
     plot(samples, plot_path)
