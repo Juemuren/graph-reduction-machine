@@ -4,6 +4,7 @@ module Interpreter.Machine (
   Node (..),
   Run,
   runGraph,
+  runGraphWithSteps,
   allocate,
   normalize,
   readNode,
@@ -36,17 +37,21 @@ data Node
 data Machine = Machine
   { heap :: IntMap.IntMap Node
   , nextAddress :: Address
-  , steps :: Int
-  , stepLimit :: Int
+  , steps :: Natural
+  , stepLimit :: Maybe Natural
   }
 
 type Run a = StateT Machine (Either String) a
 
 runGraph :: Int -> Graph.Graph -> (Address -> Run a) -> Either String a
-runGraph limit graph action = do
+runGraph limit graph action = fst <$> runGraphWithSteps (Just limit) graph action
+
+runGraphWithSteps ::
+  Maybe Int -> Graph.Graph -> (Address -> Run a) -> Either String (a, Natural)
+runGraphWithSteps limit graph action = do
   (initialHeap, root) <- loadGraph graph
-  let machine = Machine initialHeap (IntMap.size initialHeap) 0 limit
-  evalStateT (action root) machine
+  let machine = Machine initialHeap (IntMap.size initialHeap) 0 (fromIntegral <$> limit)
+  evalStateT ((,) <$> action root <*> gets steps) machine
 
 loadGraph :: Graph.Graph -> Either String (IntMap.IntMap Node, Address)
 loadGraph (Graph.GGraph definitions) = do
@@ -164,8 +169,7 @@ whnf address = go address []
       then pure ()
       else do
         machine <- get
-        when (steps machine >= stepLimit machine) $
-          lift (Left ("reduction exceeded step limit " ++ show (stepLimit machine)))
+        checkSteps machine 1
         let (redex, _) = applications !! (arity - 1)
             arguments = map snd (take arity applications)
         case (headNode, arguments) of
@@ -176,16 +180,23 @@ whnf address = go address []
             right <- allocate (App y z)
             writeNode redex (App left right)
           (ChurchNumeral count, [function, value]) -> do
-            when (count >= fromIntegral (stepLimit machine - steps machine)) $
-              lift (Left ("reduction exceeded step limit " ++ show (stepLimit machine)))
+            checkSteps machine (count + 1)
             result <-
               foldM (\argument _ -> allocate (App function argument)) value [1 .. count]
             writeNode redex (Indirect result)
-            modify (\state -> state{steps = steps state + fromIntegral count})
+            modify (\state -> state{steps = steps state + count})
           _ -> lift (Left "internal error: invalid SKI redex")
         modify (\state -> state{steps = steps state + 1})
         -- The outer applications are unchanged by rewriting this redex.
         go redex (drop arity applications)
+
+checkSteps :: Machine -> Natural -> Run ()
+checkSteps machine additional =
+  case stepLimit machine of
+    Just limit
+      | steps machine + additional > limit ->
+          lift (Left ("reduction exceeded step limit " ++ show limit))
+    _ -> pure ()
 
 normalize :: Address -> Run ()
 normalize address = do

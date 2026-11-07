@@ -1,6 +1,7 @@
 module Main (main) where
 
 import Control.Monad (unless)
+import Data.List (isPrefixOf)
 import Interpreter (interpretSource)
 import Ski.Print (printTree)
 import System.Exit (ExitCode (..), die)
@@ -21,7 +22,54 @@ import TestSupport (
  )
 
 main :: IO ()
-main = runSuite "interpreter" runCase
+main = do
+  runSuite "interpreter" runCase
+  assertStepOptions
+
+assertStepOptions :: IO ()
+assertStepOptions = do
+  let source = "#0 = #1 #2;\n#1 = I;\n#2 = #3 #4;\n#3 = I;\n#4 = K;\n"
+      label = "interpreter CLI step options"
+  (status, output, problem) <-
+    readProcessWithExitCode
+      "ski-interpreter"
+      ["--no-step-limit", "--show-steps"]
+      source
+  assertEqual label ExitSuccess status
+  assertEqual label ["#0 = K;"] (normalizeGraph output)
+  assertEqual label "steps: 2" (normalizeError problem)
+  (decodeStatus, decodeOutput, decodeProblem) <-
+    readProcessWithExitCode
+      "ski-interpreter"
+      ["--decode=boolean", "--no-step-limit", "--show-steps"]
+      "#0 = K;\n"
+  assertEqual label ExitSuccess decodeStatus
+  assertEqual label "TRUE\n" decodeOutput
+  assertEqual label "steps: 1" (normalizeError decodeProblem)
+  (zeroStatus, _, zeroProblem) <-
+    readProcessWithExitCode "ski-interpreter" ["--show-steps"] "#0 = I;\n"
+  assertEqual label ExitSuccess zeroStatus
+  assertEqual label "steps: 0" (normalizeError zeroProblem)
+  (limitStatus, limitOutput, limitProblem) <-
+    readProcessWithExitCode
+      "ski-interpreter"
+      ["--max-steps=1", "--show-steps"]
+      source
+  assertEqual label (ExitFailure 1) limitStatus
+  assertEqual label "" limitOutput
+  assertEqual
+    label
+    "reduction exceeded step limit 1"
+    (normalizeError limitProblem)
+  (conflictStatus, _, conflictProblem) <-
+    readProcessWithExitCode
+      "ski-interpreter"
+      ["--max-steps=1", "--no-step-limit"]
+      source
+  assertEqual label (ExitFailure 1) conflictStatus
+  unless ("usage: ski-interpreter" `isPrefixOf` conflictProblem) $
+    die (label ++ ": expected usage error for conflicting options")
+  putStrLn (label ++ ": PASS")
 
 runCase :: String -> TestCase -> IO ()
 runCase label (TestCase _ (Input language source _) spec expected) = do

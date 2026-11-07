@@ -1,14 +1,19 @@
 -- | Decode Church-encoded values from SKI graphs.
 module Interpreter.Church (
   decodeNaturalSource,
+  decodeNaturalSourceWithSteps,
   decodeNatural,
   decodeBooleanSource,
+  decodeBooleanSourceWithSteps,
   decodeBoolean,
   decodeIntegerSource,
+  decodeIntegerSourceWithSteps,
   decodeInteger,
   decodeRationalSource,
+  decodeRationalSourceWithSteps,
   decodeRational,
   decodeRealSource,
+  decodeRealSourceWithSteps,
   decodeReal,
 ) where
 
@@ -20,16 +25,24 @@ import qualified Ski.Par as Graph
 
 -- | Apply a closed SKI term to symbolic f and x, then recognize f^n x.
 decodeNaturalSource :: Int -> String -> Either String (Maybe Natural)
-decodeNaturalSource limit source =
-  Graph.pGraph (Graph.myLexer source) >>= decodeNatural limit
+decodeNaturalSource limit source = fst <$> decodeNaturalSourceWithSteps (Just limit) source
+
+decodeNaturalSourceWithSteps ::
+  Maybe Int -> String -> Either String (Maybe Natural, Natural)
+decodeNaturalSourceWithSteps limit source =
+  Graph.pGraph (Graph.myLexer source) >>= \graph -> runGraphWithSteps limit graph decodeNaturalAt
 
 decodeNatural :: Int -> Graph.Graph -> Either String (Maybe Natural)
 decodeNatural limit graph = runGraph limit graph decodeNaturalAt
 
 -- | Decode a Church integer represented by a pair of Church naturals.
 decodeIntegerSource :: Int -> String -> Either String (Maybe Integer)
-decodeIntegerSource limit source =
-  Graph.pGraph (Graph.myLexer source) >>= decodeInteger limit
+decodeIntegerSource limit source = fst <$> decodeIntegerSourceWithSteps (Just limit) source
+
+decodeIntegerSourceWithSteps ::
+  Maybe Int -> String -> Either String (Maybe Integer, Natural)
+decodeIntegerSourceWithSteps limit source =
+  Graph.pGraph (Graph.myLexer source) >>= \graph -> runGraphWithSteps limit graph decodeIntegerAt
 
 decodeInteger :: Int -> Graph.Graph -> Either String (Maybe Integer)
 decodeInteger limit graph = runGraph limit graph decodeIntegerAt
@@ -46,8 +59,12 @@ decodeIntegerAt root = do
 
 -- | Decode a pair of Church integers as a reduced rational number.
 decodeRationalSource :: Int -> String -> Either String (Maybe Rational)
-decodeRationalSource limit source =
-  Graph.pGraph (Graph.myLexer source) >>= decodeRational limit
+decodeRationalSource limit source = fst <$> decodeRationalSourceWithSteps (Just limit) source
+
+decodeRationalSourceWithSteps ::
+  Maybe Int -> String -> Either String (Maybe Rational, Natural)
+decodeRationalSourceWithSteps limit source =
+  Graph.pGraph (Graph.myLexer source) >>= \graph -> runGraphWithSteps limit graph decodeRationalAt
 
 decodeRational :: Int -> Graph.Graph -> Either String (Maybe Rational)
 decodeRational limit graph = runGraph limit graph decodeRationalAt
@@ -66,8 +83,16 @@ decodeRationalAt root = do
 
 -- | Decode the rational approximation at the given natural index.
 decodeRealSource :: Int -> Natural -> String -> Either String (Maybe Rational)
-decodeRealSource limit precision source =
-  Graph.pGraph (Graph.myLexer source) >>= decodeReal limit precision
+decodeRealSource limit precision source = fst <$> decodeRealSourceWithSteps (Just limit) precision source
+
+decodeRealSourceWithSteps ::
+  Maybe Int -> Natural -> String -> Either String (Maybe Rational, Natural)
+decodeRealSourceWithSteps limit precision source =
+  Graph.pGraph (Graph.myLexer source) >>= \graph ->
+    runGraphWithSteps limit graph $ \root -> do
+      index <- allocate (ChurchNumeral precision)
+      approximation <- allocate (App root index)
+      decodeRationalAt approximation
 
 decodeReal :: Int -> Natural -> Graph.Graph -> Either String (Maybe Rational)
 decodeReal limit precision graph =
@@ -97,22 +122,29 @@ decodeNaturalAt root = do
 
 -- | Apply a closed SKI term to two distinct symbolic values and identify the selected one.
 decodeBooleanSource :: Int -> String -> Either String (Maybe Bool)
-decodeBooleanSource limit source =
-  Graph.pGraph (Graph.myLexer source) >>= decodeBoolean limit
+decodeBooleanSource limit source = fst <$> decodeBooleanSourceWithSteps (Just limit) source
+
+decodeBooleanSourceWithSteps ::
+  Maybe Int -> String -> Either String (Maybe Bool, Natural)
+decodeBooleanSourceWithSteps limit source =
+  Graph.pGraph (Graph.myLexer source) >>= \graph ->
+    runGraphWithSteps limit graph decodeBooleanAt
 
 decodeBoolean :: Int -> Graph.Graph -> Either String (Maybe Bool)
-decodeBoolean limit graph =
-  runGraph limit graph $ \root -> do
-    trueValue <- allocate ProbeFunction
-    falseValue <- allocate ProbeValue
-    appliedOnce <- allocate (App root trueValue)
-    appliedTwice <- allocate (App appliedOnce falseValue)
-    normalize appliedTwice
-    result <- resolve appliedTwice
-    pure $
-      if result == trueValue
-        then Just True
-        else if result == falseValue then Just False else Nothing
+decodeBoolean limit graph = runGraph limit graph decodeBooleanAt
+
+decodeBooleanAt :: Address -> Run (Maybe Bool)
+decodeBooleanAt root = do
+  trueValue <- allocate ProbeFunction
+  falseValue <- allocate ProbeValue
+  appliedOnce <- allocate (App root trueValue)
+  appliedTwice <- allocate (App appliedOnce falseValue)
+  normalize appliedTwice
+  result <- resolve appliedTwice
+  pure $
+    if result == trueValue
+      then Just True
+      else if result == falseValue then Just False else Nothing
 
 countApplications ::
   Address -> Address -> Address -> Natural -> Run (Maybe Natural)

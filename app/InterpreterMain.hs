@@ -1,15 +1,18 @@
 module Main (main) where
 
+import Control.Monad (when)
+import Data.Bifunctor (first)
 import Data.Char (toUpper)
 import Data.List (stripPrefix)
+import Data.Maybe (fromMaybe, isNothing)
 import Data.Ratio (denominator, numerator)
 import Interpreter (
-  decodeBooleanSource,
-  decodeIntegerSource,
-  decodeNaturalSource,
-  decodeRationalSource,
-  decodeRealSource,
-  interpretSource,
+  decodeBooleanSourceWithSteps,
+  decodeIntegerSourceWithSteps,
+  decodeNaturalSourceWithSteps,
+  decodeRationalSourceWithSteps,
+  decodeRealSourceWithSteps,
+  interpretSourceWithSteps,
  )
 import Numeric.Natural (Natural)
 import Ski.Print (printTree)
@@ -21,31 +24,38 @@ import Text.Read (readMaybe)
 main :: IO ()
 main = do
   args <- getArgs
-  (limit, mode, path) <- either die pure (parseArgs args)
+  (limit, showSteps, mode, path) <- either die pure (parseArgs args)
   source <- maybe getContents readFile path
   let result =
         case mode of
-          Raw -> fmap printTree (interpretSource limit source)
+          Raw -> first printTree <$> interpretSourceWithSteps limit source
           Natural ->
-            decodeNaturalSource limit source
-              >>= maybe (Left "not a Church Natural") (Right . show)
+            decodeNaturalSourceWithSteps limit source
+              >>= renderDecoded "not a Church Natural" show
           Boolean ->
-            decodeBooleanSource limit source
-              >>= maybe (Left "not a Church Boolean") (Right . map toUpper . show)
+            decodeBooleanSourceWithSteps limit source
+              >>= renderDecoded "not a Church Boolean" (map toUpper . show)
           Integer ->
-            decodeIntegerSource limit source
-              >>= maybe (Left "not a Church Integer") (Right . show)
+            decodeIntegerSourceWithSteps limit source
+              >>= renderDecoded "not a Church Integer" show
           Rational ->
-            decodeRationalSource limit source
-              >>= maybe (Left "not a Church Rational") (Right . renderRational)
+            decodeRationalSourceWithSteps limit source
+              >>= renderDecoded "not a Church Rational" renderRational
           Real precision ->
-            decodeRealSource limit precision source
-              >>= maybe (Left "not a Church Real") (Right . renderRational)
+            decodeRealSourceWithSteps limit precision source
+              >>= renderDecoded "not a Church Real" renderRational
   case result of
     Left message -> do
       hPutStrLn stderr message
       exitFailure
-    Right output -> putStrLn output
+    Right (output, steps) -> do
+      putStrLn output
+      when showSteps $ hPutStrLn stderr ("steps: " ++ show steps)
+
+renderDecoded ::
+  String -> (a -> String) -> (Maybe a, Natural) -> Either String (String, Natural)
+renderDecoded message render (value, steps) =
+  maybe (Left message) (\result -> Right (render result, steps)) value
 
 renderRational :: Rational -> String
 renderRational value = show (numerator value) ++ "/" ++ show (denominator value)
@@ -53,41 +63,53 @@ renderRational value = show (numerator value) ++ "/" ++ show (denominator value)
 data DecodeMode = Raw | Natural | Boolean | Integer | Rational | Real Natural
   deriving (Eq)
 
-parseArgs :: [String] -> Either String (Int, DecodeMode, Maybe FilePath)
-parseArgs = go 100000 Raw Nothing Nothing
+parseArgs ::
+  [String] -> Either String (Maybe Int, Bool, DecodeMode, Maybe FilePath)
+parseArgs = go Nothing False Raw Nothing Nothing
  where
   usage =
     unwords
       [ "usage: ski-interpreter"
-      , "[--max-steps=N]"
+      , "[--max-steps=N|--no-step-limit]"
+      , "[--show-steps]"
       , "[--decode=natural|boolean|integer|rational|real]"
       , "[--precision-real=N]"
       , "[FILE]"
       ]
-  go limit mode precision path [] = case (mode, precision) of
-    (Real _, Just index) -> Right (limit, Real index, path)
-    (Real _, Nothing) -> Right (limit, Real 0, path)
-    (_, Nothing) -> Right (limit, mode, path)
+  go limit showSteps mode precision path [] = case (mode, precision) of
+    (Real _, Just index) -> Right (fromMaybe (Just 100000) limit, showSteps, Real index, path)
+    (Real _, Nothing) -> Right (fromMaybe (Just 100000) limit, showSteps, Real 0, path)
+    (_, Nothing) -> Right (fromMaybe (Just 100000) limit, showSteps, mode, path)
     _ -> Left usage
-  go limit Raw precision path (value : rest)
+  go limit showSteps Raw precision path (value : rest)
     | Just name <- stripPrefix "--decode=" value =
         case name of
-          "natural" -> go limit Natural precision path rest
-          "boolean" -> go limit Boolean precision path rest
-          "integer" -> go limit Integer precision path rest
-          "rational" -> go limit Rational precision path rest
-          "real" -> go limit (Real 0) precision path rest
+          "natural" -> go limit showSteps Natural precision path rest
+          "boolean" -> go limit showSteps Boolean precision path rest
+          "integer" -> go limit showSteps Integer precision path rest
+          "rational" -> go limit showSteps Rational precision path rest
+          "real" -> go limit showSteps (Real 0) precision path rest
           _ -> Left usage
-  go _ mode precision path (value : rest)
+  go limit showSteps mode precision path (value : rest)
+    | value == "--no-step-limit" && isNothing limit =
+        go (Just Nothing) showSteps mode precision path rest
+  go limit showSteps mode precision path (value : rest)
+    | value == "--show-steps" && not showSteps =
+        go limit True mode precision path rest
+  go limit showSteps mode precision path (value : rest)
     | Just steps <- stripPrefix "--max-steps=" value =
         case readMaybe steps of
-          Just limit | limit > 0 -> go limit mode precision path rest
+          Just maximumSteps
+            | maximumSteps > 0 && limit /= Just Nothing ->
+                go (Just (Just maximumSteps)) showSteps mode precision path rest
           _ -> Left usage
-  go limit mode Nothing path (value : rest)
+  go limit showSteps mode Nothing path (value : rest)
     | Just index <- stripPrefix "--precision-real=" value =
         case readMaybe index :: Maybe Integer of
-          Just precision | precision >= 0 -> go limit mode (Just (fromInteger precision)) path rest
+          Just precision
+            | precision >= 0 ->
+                go limit showSteps mode (Just (fromInteger precision)) path rest
           _ -> Left usage
-  go limit mode precision Nothing (value@(first : _) : rest)
-    | first /= '-' = go limit mode precision (Just value) rest
-  go _ _ _ _ _ = Left usage
+  go limit showSteps mode precision Nothing (value@(first : _) : rest)
+    | first /= '-' = go limit showSteps mode precision (Just value) rest
+  go _ _ _ _ _ _ = Left usage
