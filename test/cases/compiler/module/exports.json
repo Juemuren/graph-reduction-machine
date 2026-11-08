@@ -26,6 +26,18 @@
       "expect": {
         "value": "\\y -> y"
       }
+    },
+    {
+      "name": "entry-before-import",
+      "language": "lambda",
+      "source": "@! identity; @< \"./defs.lambda\" (identity);",
+      "modules": {
+        "defs.lambda": "@> identity = \\x -> x;"
+      },
+      "stage": "reduce",
+      "expect": {
+        "value": "\\x -> x"
+      }
     }
   ]
 }

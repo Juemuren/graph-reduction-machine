@@ -27,11 +27,6 @@ parseModule source = do
  where
   collect result statement = do
     (imports, exports, definitions, expression) <- result
-    case expression of
-      Just _ -> case statement of
-        Core.SEntry _ -> Left "duplicate program entry"
-        _ -> Left "program entry must be last"
-      Nothing -> pure ()
     case statement of
       Core.SImport path expressions -> do
         names <- mapM expressionName expressions

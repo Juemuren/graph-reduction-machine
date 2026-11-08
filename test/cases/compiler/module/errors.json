@@ -80,15 +80,6 @@
       "expect": {
         "error": "duplicate program entry"
       }
-    },
-    {
-      "name": "entry-must-be-last",
-      "language": "lambda",
-      "source": "@! ONE; x = TWO;",
-      "stage": "compile",
-      "expect": {
-        "error": "program entry must be last"
-      }
     }
   ]
 }

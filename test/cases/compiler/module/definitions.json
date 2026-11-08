@@ -19,6 +19,24 @@
       }
     },
     {
+      "name": "entry-before-definition",
+      "language": "lambda",
+      "source": "@! identity; identity = \\x -> x;",
+      "stage": "reduce",
+      "expect": {
+        "value": "\\x -> x"
+      }
+    },
+    {
+      "name": "entry-between-definitions",
+      "language": "lambda",
+      "source": "first = second; @! first; second = \\x -> x;",
+      "stage": "reduce",
+      "expect": {
+        "value": "\\x -> x"
+      }
+    },
+    {
       "name": "lambda-shadows-definition",
       "language": "lambda",
       "source": "value = \\x -> \\y -> x; @! (\\value -> value) (\\x -> x);",
