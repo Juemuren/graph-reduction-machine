@@ -8,13 +8,13 @@ Haskell 代码使用 fourmolu 进行格式化
 cabal run fourmolu -- -i $(git ls-files '*.hs')
 ```
 
-BNFC 文法规则中的 `::=` 可用项目脚本对齐。脚本使用 awk，预览功能需要 delta 和 gum
+BNFC 文法规则中的 `::=` 可用脚本 [align-bnfc.py](../scripts/align-bnfc.py) 对齐
 
 ```sh
 # 对齐
-sh scripts/align-bnfc.sh
+python scripts/align-bnfc.py
 # 先预览再写入
-sh scripts/align-bnfc.sh -p
+python scripts/align-bnfc.py -p
 ```
 
 ## 静态检查
