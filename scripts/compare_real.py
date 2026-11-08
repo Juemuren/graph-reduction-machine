@@ -97,13 +97,13 @@ def write_csv(path: Path, samples: list[Sample]) -> None:
         path,
         FIELDS,
         (
-            {
-                "method": sample.method,
-                "n": sample.index,
-                "steps": sample.steps,
-                "value": sample.value,
-                "abs_error": str(sample.error),
-            }
+            (
+                sample.method,
+                sample.index,
+                sample.steps,
+                sample.value,
+                str(sample.error),
+            )
             for sample in samples
         ),
     )

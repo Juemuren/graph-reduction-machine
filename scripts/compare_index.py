@@ -68,12 +68,12 @@ def write_csv(path: Path, samples: list[Measurement]) -> None:
         path,
         FIELDS,
         (
-            {
-                "method": sample.method,
-                "n": sample.index,
-                "steps": sample.steps,
-                "value": sample.value,
-            }
+            (
+                sample.method,
+                sample.index,
+                sample.steps,
+                sample.value,
+            )
             for sample in samples
         ),
     )

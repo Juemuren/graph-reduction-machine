@@ -3,7 +3,7 @@
 import csv
 import re
 import subprocess
-from collections.abc import Callable, Iterable, Mapping
+from collections.abc import Callable, Iterable, Sequence
 from dataclasses import dataclass
 from pathlib import Path
 
@@ -111,10 +111,10 @@ def measure_algorithms(
 
 
 def write_csv_rows(
-    path: Path, fields: tuple[str, ...], rows: Iterable[Mapping[str, str | int]]
+    path: Path, fields: tuple[str, ...], rows: Iterable[Sequence[str | int]]
 ) -> None:
     path.parent.mkdir(parents=True, exist_ok=True)
     with path.open("w", encoding="utf-8", newline="") as output:
-        writer = csv.DictWriter(output, fieldnames=fields)
-        writer.writeheader()
+        writer = csv.writer(output)
+        writer.writerow(fields)
         writer.writerows(rows)
