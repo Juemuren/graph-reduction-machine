@@ -4,7 +4,7 @@
       "name": "false",
       "language": "lambda",
       "source": "@! FALSE;",
-      "stage": "undecode",
+      "stage": "interpret",
       "expect": {
         "value": "#0 = #1 #2;\n#1 = K;\n#2 = I;\n"
       }
@@ -13,7 +13,7 @@
       "name": "one",
       "language": "lambda",
       "source": "@! (SUCC (ZERO));\n",
-      "stage": "undecode",
+      "stage": "interpret",
       "options": {
         "enableReduce": "both"
       },

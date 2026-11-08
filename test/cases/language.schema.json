@@ -20,7 +20,7 @@
         "language": { "enum": ["lambda", "ski"] },
         "source": { "type": "string" },
         "modules": { "type": "object", "additionalProperties": { "type": "string" } },
-        "stage": { "enum": ["parse", "expand", "reduce", "compile", "interpret", "undecode", "decode"] },
+        "stage": { "enum": ["parse", "expand", "reduce", "compile", "interpret", "decode"] },
         "options": { "$ref": "#/$defs/options" },
         "expect": { "$ref": "#/$defs/expectation" }
       },
@@ -29,7 +29,7 @@
         {
           "properties": {
             "language": { "const": "lambda" },
-            "stage": { "enum": ["parse", "expand", "reduce", "compile", "undecode"] }
+            "stage": { "enum": ["parse", "expand", "reduce", "compile", "interpret"] }
           }
         },
         {

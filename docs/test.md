@@ -55,7 +55,7 @@ cabal test
 - `language` 是要测试的语言。可以为 `lambda` / `ski`
 - `source` 是完整源码
 - `modules` 是核心 λ 的模块。格式为 `{ "文件名": "源码" }`
-- `stage` 是要进行到的阶段。可以为 `parse` / `expand` / `reduce` / `compile` / `interpret` / `undecode` / `decode`
+- `stage` 是要进行到的阶段。可以为 `parse` / `expand` / `reduce` / `compile` / `interpret` / `decode`
 - `options`
   - `options.enableReduce` 是编译器启用的归约类型。可以为 `beta` / `eta` / `both`
   - `options.encode` 是字面量的编码。可以为 `church` / `scott`
@@ -63,7 +63,7 @@ cabal test
   - `options.decode` 是解释器的解码方式。可以为 `natural` / `scott-natural` / `boolean` / `integer` / `rational` / `real`
   - `options.precisionReal` 是实数解码精度。为非负整数
 - `expect` 是预期的值。只能是 `value` / `error` 之一
-  - `expect.value` 对于 `parse` / `expand` / `reduce` 比较语法树，对于 `compile / interpret / undecode` 比较图，对于 `decode` 比较文本
+  - `expect.value` 对于 `parse` / `expand` / `reduce` 比较语法树，对于 `compile` / `interpret` 比较图，对于 `decode` 比较文本
   - `expect.error` 比较错误消息
 
 语言用例的完整 JSON Schema 见 [language.schema.json](../test/cases/language.schema.json)。
@@ -152,7 +152,7 @@ cabal test integration-tests
 
 测试用例按以下类别组织：
 
-- `undecode` 验证核心 λ 编译后得到的 SKI 图
+- `interpret.json` 验证核心 λ 编译并解释后得到的 SKI 图
 - `high-order` 验证高阶函数的行为
 - `boolean` 验证布尔值构造 / 布尔值运算 / 布尔值解码
 - `pair` 验证有序对构造 / 有序对运算

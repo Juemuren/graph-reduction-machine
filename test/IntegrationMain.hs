@@ -38,7 +38,7 @@ runCase label (TestCase _ (Input language source modules) spec expected) = do
   let encoding = if runEncode spec == Just "scott" then Scott else Church
   limit <- caseLimit label 100000 spec
   case (language, runStage spec, expected) of
-    ("lambda", "undecode", ExpectedValue graph) ->
+    ("lambda", "interpret", ExpectedValue graph) ->
       void
         ( assertGraph
             label
