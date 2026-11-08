@@ -1,10 +1,13 @@
+#!/usr/bin/env -S uv run --script
 # /// script
 # requires-python = ">=3.11"
 # dependencies = ["matplotlib>=3.10,<4"]
 # [tool.ty.environment]
 # root = ["."]
 # ///
-"""Measure indexed algorithms and plot reduction steps against the index."""
+"""
+Measure indexed algorithms and plot reduction steps against the index.
+"""
 
 import argparse
 from collections import defaultdict

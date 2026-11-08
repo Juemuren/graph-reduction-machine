@@ -1,4 +1,6 @@
-"""Shared compiler and interpreter calls for example comparisons."""
+"""
+Shared compiler and interpreter calls for example comparisons.
+"""
 
 import csv
 import re
