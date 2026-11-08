@@ -80,6 +80,7 @@ Invoke-LambdaStage -File "examples/e/factorial.lambda" -Stage decode -Decode rea
 
 ```pwsh
 '@! ONE;' | ./scripts/run.ps1 -Stages expand,reduce,decode
+./scripts/run.ps1 -Source '@! ONE;' -Stages compile,decode
 ./scripts/run.ps1 -File "examples/e/factorial.lambda" -Stages decode -Decode real
 ```
 
@@ -88,6 +89,7 @@ Invoke-LambdaStage -File "examples/e/factorial.lambda" -Stage decode -Decode rea
 参数为：
 
 - `-File` 文件路径
+- `-Source` 源代码内容
 - `-Stages` 指定的一个或多个阶段，用 `,` 连接。默认为 `decode`
 - `-Encode` 编译器编码方式。可以为 `church` / `scott`。默认为 `church`
 - `-Decode` 解释器解码方式。可以为 `natural` / `scott-natural` / `boolean` / `integer` / `rational` / `real`。默认为 `natural`
@@ -170,8 +172,8 @@ invoke_lambda_stage -f examples/e/factorial.lambda -t decode -d real
 
 ```sh
 printf '%s\n' '@! ONE;' | ./scripts/run.sh -t expand,reduce,decode
-./scripts/run.sh -f examples/e/factorial.lambda -t decode -d real
 ./scripts/run.sh -s '@! ONE;' -t compile,decode
+./scripts/run.sh -f examples/e/factorial.lambda -t decode -d real
 ```
 
 脚本会按 `expand` / `reduce` / `compile` / `interpret` / `decode` 的顺序依次运行至选中的阶段。

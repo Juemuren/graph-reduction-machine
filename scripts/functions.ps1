@@ -76,13 +76,13 @@ function Invoke-Interpreter {
 
 function Invoke-LambdaStage {
     param(
-        [Parameter(Mandatory)]
-        [ValidateSet('expand', 'reduce', 'compile', 'interpret', 'decode')]
-        [string]$Stage,
-
         [string]$File,
 
         [string[]]$Source,
+
+        [Parameter(Mandatory)]
+        [ValidateSet('expand', 'reduce', 'compile', 'interpret', 'decode')]
+        [string]$Stage,
 
         [ValidateSet('church', 'scott')]
         [string]$Encode = 'church',

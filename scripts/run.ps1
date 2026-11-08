@@ -2,6 +2,8 @@ param(
     [Parameter(Position = 0)]
     [string]$File,
 
+    [string[]]$Source,
+
     [ValidateSet('expand', 'reduce', 'compile', 'interpret', 'decode')]
     [string[]]$Stages = @('decode'),
 
@@ -17,19 +19,25 @@ param(
 
 begin {
     . (Join-Path $PSScriptRoot 'functions.ps1')
-    $source = [System.Collections.Generic.List[string]]::new()
+    $inputSource = [System.Collections.Generic.List[string]]::new()
+    if ($Source) {
+        $inputSource.AddRange($Source)
+    }
 }
 
 process {
     if ($PSBoundParameters.ContainsKey('PipelineItem')) {
-        $source.Add($PipelineItem)
+        $inputSource.Add($PipelineItem)
     }
 }
 
 end {
     foreach ($stage in @('expand', 'reduce', 'compile', 'interpret', 'decode')) {
         if ($Stages -contains $stage) {
-            Invoke-LambdaStage -Stage $stage -File $File -Source $source -Encode $Encode -Decode $Decode
+            Invoke-LambdaStage -File $File -Source $inputSource `
+                -Stage $stage `
+                -Encode $Encode `
+                -Decode $Decode
         }
     }
 }
