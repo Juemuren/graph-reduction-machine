@@ -3,48 +3,107 @@
   "name": "Core Lambda",
   "scopeName": "source.core-lambda",
   "patterns": [
-    { "include": "#comments" },
-    { "include": "#strings" },
-    {
-      "match": "^(\\s*)(@>)(\\s+)([a-z][A-Za-z0-9_]*)(\\s*)(=)",
-      "captures": {
-        "2": { "name": "keyword.control.export.core-lambda" },
-        "4": { "name": "entity.name.function.definition.core-lambda" },
-        "6": { "name": "keyword.operator.assignment.core-lambda" }
-      }
+    { "include": "#import" },
+    { "include": "#export" },
+    { "include": "#entry" },
+    { "include": "#definition" },
+    { "include": "#expression" }
+  ],
+  "repository": {
+    "import": {
+      "name": "meta.statement.import.core-lambda",
+      "begin": "^(\\s*)(@<)",
+      "beginCaptures": {
+        "2": { "name": "keyword.control.import.core-lambda" }
+      },
+      "end": "(;)|(?=^\\s*(?:@<|@>|@!|[a-z][A-Za-z0-9_]*\\s*=))",
+      "endCaptures": {
+        "1": { "name": "punctuation.core-lambda" }
+      },
+      "patterns": [
+        { "include": "#comments" },
+        { "include": "#strings" },
+        { "include": "#names" },
+        { "match": "[,()]", "name": "punctuation.core-lambda" }
+      ]
     },
-    {
+    "export": {
+      "name": "meta.statement.export.core-lambda",
+      "begin": "^(\\s*)(@>)",
+      "beginCaptures": {
+        "2": { "name": "keyword.control.export.core-lambda" }
+      },
+      "end": "(;)|(?=^\\s*(?:@<|@>|@!|[a-z][A-Za-z0-9_]*\\s*=))",
+      "endCaptures": {
+        "1": { "name": "punctuation.core-lambda" }
+      },
+      "patterns": [
+        { "match": "\\b[a-z][A-Za-z0-9_]*\\b(?=\\s*=)", "name": "entity.name.function.definition.core-lambda" },
+        { "include": "#expression" }
+      ]
+    },
+    "entry": {
+      "name": "meta.statement.entry.core-lambda",
+      "begin": "^(\\s*)(@!)",
+      "beginCaptures": {
+        "2": { "name": "keyword.control.entry.core-lambda" }
+      },
+      "end": "(;)|(?=^\\s*(?:@<|@>|@!|[a-z][A-Za-z0-9_]*\\s*=))",
+      "endCaptures": {
+        "1": { "name": "punctuation.core-lambda" }
+      },
+      "patterns": [
+        { "include": "#expression" }
+      ]
+    },
+    "definition": {
       "match": "^(\\s*)([a-z][A-Za-z0-9_]*)(\\s*)(=)",
       "captures": {
         "2": { "name": "entity.name.function.definition.core-lambda" },
         "4": { "name": "keyword.operator.assignment.core-lambda" }
       }
     },
-    {
-      "match": "(\\\\)(\\s*)([a-z][A-Za-z0-9_]*)(\\s*)(->)",
-      "captures": {
-        "1": { "name": "keyword.operator.lambda.core-lambda" },
-        "3": { "name": "variable.parameter.core-lambda" },
-        "5": { "name": "keyword.operator.arrow.core-lambda" }
-      }
-    },
-    { "match": "@<|@>|@!", "name": "keyword.control.directive.core-lambda" },
-    { "match": "\\b[0-9]+\\b", "name": "constant.numeric.integer.core-lambda" },
-    { "match": "\\b[A-Z][A-Za-z0-9_]*\\b", "name": "support.function.builtin.core-lambda" },
-    { "match": "\\b[a-z][A-Za-z0-9_]*\\b", "name": "variable.other.core-lambda" },
-    { "match": "=", "name": "keyword.operator.assignment.core-lambda" },
-    { "match": "[,;()]", "name": "punctuation.core-lambda" }
-  ],
-  "repository": {
     "comments": {
-      "match": "#.*$",
-      "name": "comment.line.number-sign.core-lambda"
+      "name": "comment.line.number-sign.core-lambda",
+      "match": "#.*$"
+    },
+    "expression": {
+      "patterns": [
+        { "include": "#comments" },
+        { "include": "#strings" },
+        { "include": "#names" },
+        { "include": "#numbers"},
+        {
+          "match": "(\\\\)(\\s*)([a-z][A-Za-z0-9_]*)(\\s*)(->)",
+          "captures": {
+            "1": { "name": "keyword.operator.lambda.core-lambda" },
+            "3": { "name": "variable.parameter.core-lambda" },
+            "5": { "name": "keyword.operator.arrow.core-lambda" }
+          }
+        },
+        { "match": "@<|@>|@!", "name": "keyword.control.directive.core-lambda" },
+        { "match": "=", "name": "keyword.operator.assignment.core-lambda" },
+        { "match": "[,;()]", "name": "punctuation.core-lambda" }
+      ]
     },
     "strings": {
       "name": "string.quoted.double.core-lambda",
       "begin": "\"",
       "end": "\"",
-      "patterns": [{ "match": "\\\\.", "name": "constant.character.escape.core-lambda" }]
+      "patterns": [
+        { "match": "\\\\.", "name": "constant.character.escape.core-lambda" }
+      ]
+    },
+    "names": {
+      "patterns": [
+        { "match": "\\b[A-Z][A-Za-z0-9_]*\\b", "name": "support.function.builtin.core-lambda" },
+        { "match": "\\b[a-z][A-Za-z0-9_]*\\b", "name": "variable.other.core-lambda" }
+      ]
+    },
+    "numbers": {
+      "patterns": [
+        { "match": "\\b[0-9]+\\b", "name": "constant.numeric.integer.core-lambda" }
+      ]
     }
   }
 }
