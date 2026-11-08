@@ -59,14 +59,12 @@ coreTokensOf source =
           _ -> CoreLex.tokenText (CoreLex.PT (CoreLex.Pn start 0 0) value)
   ]
 
-validCoreStatement :: String -> [Token] -> Int -> Bool -> Bool
-validCoreStatement source tokens end terminated =
-  terminated
-    && case tokens of
-      [] -> False
-      first : _ -> case Core.pProgram (Core.myLexer (slice (tokenStart first) end source)) of
-        Right _ -> True
-        Left _ -> False
+validCoreStatement :: String -> [Token] -> Int -> Bool
+validCoreStatement source tokens end = case tokens of
+  [] -> False
+  first : _ -> case Core.pProgram (Core.myLexer (slice (tokenStart first) end source)) of
+    Right _ -> True
+    Left _ -> False
 
 analyzeCore :: String -> CoreAnalysis
 analyzeCore source =
@@ -433,9 +431,8 @@ coreDiagnostics source = syntaxProblems ++ duplicateProblems ++ unknownProblems
   declarations = coreDeclarations analysis
   syntaxProblems =
     [ (tokenRange source first, "Invalid Core Lambda statement")
-    | (tokens, end, terminated) <- statements source (coreTokens analysis)
-    , terminated
-    , not (validCoreStatement source tokens end terminated)
+    | (tokens, end, _) <- statements source (coreTokens analysis)
+    , not (validCoreStatement source tokens end)
     , first : _ <- [tokens]
     ]
   duplicateProblems =

@@ -29,6 +29,7 @@
       }
     },
     { "match": "@<|@>|@!", "name": "keyword.control.directive.core-lambda" },
+    { "match": "\\b[0-9]+\\b", "name": "constant.numeric.integer.core-lambda" },
     { "match": "\\b[A-Z][A-Za-z0-9_]*\\b", "name": "support.function.builtin.core-lambda" },
     { "match": "\\b[a-z][A-Za-z0-9_]*\\b", "name": "variable.other.core-lambda" },
     { "match": "=", "name": "keyword.operator.assignment.core-lambda" },

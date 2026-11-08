@@ -282,6 +282,21 @@ main = do
       (length unfinishedSkiReferences == 3)
 
   runSession "graph-reduction-machine-lsp" fullLatestClientCaps root $ do
+    missingSemicolon <-
+      openDoc "test/cases/lsp/missing-semicolon.lambda" "core-lambda"
+    _ <- waitForDiagnostics
+    missingSemicolonIssues <- getCurrentDiagnostics missingSemicolon
+    assert
+      "missing final semicolon diagnostic"
+      (any (contains "Invalid Core Lambda statement" . show) missingSemicolonIssues)
+    entryFirst <- openDoc "test/cases/lsp/entry-first.lambda" "core-lambda"
+    _ <- waitForDiagnostics
+    firstEntryIssues <- getCurrentDiagnostics entryFirst
+    assert "entry before definitions is valid" (null firstEntryIssues)
+    entryMiddle <- openDoc "test/cases/lsp/entry-middle.lambda" "core-lambda"
+    _ <- waitForDiagnostics
+    middleEntryIssues <- getCurrentDiagnostics entryMiddle
+    assert "entry between definitions is valid" (null middleEntryIssues)
     _ <- openDoc "test/cases/lsp/invalid.lambda" "core-lambda"
     coreIssues <- waitForDiagnostics
     assert
