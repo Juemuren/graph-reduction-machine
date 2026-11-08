@@ -1,41 +1,126 @@
 param(
     [Parameter(Position = 0)]
-    [string]$InputFile,
+    [string]$File,
 
-    [ValidateSet('natural', 'boolean', 'integer', 'rational', 'real')]
+    [ValidateSet('church', 'scott')]
+    [string]$Encode = "church",
+
+    [ValidateSet('natural', 'boolean', 'integer', 'rational', 'scott-natural', 'real')]
     [string]$Decode = "natural",
 
     [ValidateSet('expand', 'reduce', 'compile', 'interpret', 'decode')]
-    [string[]]$Stages = @('expand', 'reduce', 'compile', 'interpret', 'decode')
+    [string[]]$Stages = @('decode'),
+
+    [Parameter(ValueFromPipeline)]
+    [string]$PipelineItem
 )
 
-$compiler = cabal list-bin exe:lambda-compiler
-$interpreter = cabal list-bin exe:ski-interpreter
-
-$headingStyle = $PSStyle.Bold + $PSStyle.Foreground.BrightCyan
-$resetStyle = $PSStyle.Reset
-
-if ($Stages -contains 'expand') {
-    Write-Output "${headingStyle}Expand${resetStyle}"
-    & $compiler $InputFile --stop-after=expand
+begin {
+    $source = [System.Collections.Generic.List[string]]::new()
 }
 
-if ($Stages -contains 'reduce') {
-    Write-Output "${headingStyle}Reduce${resetStyle}"
-    & $compiler $InputFile --stop-after=reduce --enable-reduce=both
+process {
+    if ($PSBoundParameters.ContainsKey('PipelineItem')) {
+        $source.Add($PipelineItem)
+    }
 }
 
-if ($Stages -contains 'compile') {
-    Write-Output "${headingStyle}Compile${resetStyle}"
-    & $compiler $InputFile | Join-String -Separator "`t"
-}
+end {
+    function Write-Heading {
+        param([string]$Name)
 
-if ($Stages -contains 'interpret') {
-    Write-Output "${headingStyle}Interpret${resetStyle}"
-    & $compiler $InputFile | & $interpreter --show-steps | Join-String -Separator "`t"
-}
+        $headingStyle = $PSStyle.Bold + $PSStyle.Foreground.BrightCyan
+        $resetStyle = $PSStyle.Reset
+        Write-Output "${headingStyle}${Name}${resetStyle}"
+    }
 
-if ($Stages -contains 'decode') {
-    Write-Output "${headingStyle}Decode${resetStyle}"
-    & $compiler $InputFile | & $interpreter --show-steps --decode="$Decode"
+    function Invoke-Compiler {
+        param(
+            [string]$Path,
+            [string[]]$Source,
+            [string[]]$Options
+        )
+
+        $compiler = cabal list-bin exe:lambda-compiler
+        if ($Path) {
+            & $compiler $Path @Options
+        }
+        elseif ($Source) {
+            $Source | & $compiler @Options
+        }
+        else {
+            Write-Error "No input from file or pipe."
+            exit(1)
+        }
+    }
+
+    function Invoke-Interpreter {
+        param(
+            [Parameter(ValueFromPipeline)]
+            [string]$PipelineItem,
+            [string[]]$Options
+        )
+
+        begin {
+            $source = [System.Collections.Generic.List[string]]::new()
+        }
+
+        process {
+            if ($PSBoundParameters.ContainsKey('PipelineItem')) {
+                $source.Add($PipelineItem)
+            }
+        }
+
+        end {
+            $interpreter = cabal list-bin exe:ski-interpreter
+            $source | & $interpreter @Options
+        }
+    }
+
+    if ($Stages -contains 'expand') {
+        Write-Heading 'Expand'
+        Invoke-Compiler -Path $File -Source $source -Options @(
+            "--encode=$Encode",
+            '--stop-after=expand'
+        )
+    }
+
+    if ($Stages -contains 'reduce') {
+        Write-Heading 'Reduce'
+        Invoke-Compiler -Path $File -Source $source -Options @(
+            "--encode=$Encode",
+            '--stop-after=reduce',
+            '--enable-reduce=both'
+        )
+    }
+
+    if ($Stages -contains 'compile') {
+        Write-Heading 'Compile'
+        Invoke-Compiler -Path $File -Source $source -Options @(
+            "--encode=$Encode"
+        )
+        | Join-String -Separator "`t"
+    }
+
+    if ($Stages -contains 'interpret') {
+        Write-Heading 'Interpret'
+        Invoke-Compiler -Path $File -Source $source -Options @(
+            "--encode=$Encode"
+        )
+        | Invoke-Interpreter -Options @(
+            '--show-steps'
+        )
+        | Join-String -Separator "`t"
+    }
+
+    if ($Stages -contains 'decode') {
+        Write-Heading 'Decode'
+        Invoke-Compiler -Path $File -Source $source -Options @(
+            "--encode=$Encode"
+        )
+        | Invoke-Interpreter -Options @(
+            '--show-steps',
+            "--decode=$Decode"
+        )
+    }
 }
