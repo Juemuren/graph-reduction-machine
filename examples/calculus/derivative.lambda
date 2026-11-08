@@ -1,0 +1,38 @@
+# A small symbolic expression tree.
+# Each node chooses one of four handlers.
+constant = \value -> \onConstant -> \onVariable -> \onAdd -> \onMultiply ->
+    onConstant value;
+variable = \onConstant -> \onVariable -> \onAdd -> \onMultiply ->
+    onVariable;
+add = \left -> \right -> \onConstant -> \onVariable -> \onAdd -> \onMultiply ->
+    onAdd left right;
+mul = \left -> \right -> \onConstant -> \onVariable -> \onAdd -> \onMultiply ->
+    onMultiply left right;
+
+# D(c) = 0, D(x) = 1, D(f+g) = D(f) + D(g), D(f*g) = D(f)g + fD(g)
+differentiate = FIX (\recur -> \expression ->
+    expression
+        (\value -> constant ZERO)
+        (constant ONE)
+        (\left -> \right -> add (recur left) (recur right))
+        (\left -> \right ->
+            add
+                (mul (recur left) right)
+                (mul left (recur right))));
+
+# Interpret the expression tree at a natural-number value of x.
+evaluate = FIX (\recur -> \expression -> \x ->
+    expression
+        (\value -> value)
+        x
+        (\left -> \right -> ADD (recur left x) (recur right x))
+        (\left -> \right -> MUL (recur left x) (recur right x)));
+
+# f(x) = x*x + 3*x + 2, so f'(x) = 2*x + 3
+polynomial = add
+    (add
+        (mul variable variable)
+        (mul (constant THREE) variable))
+    (constant TWO);
+
+@! evaluate (differentiate polynomial) FIVE;
