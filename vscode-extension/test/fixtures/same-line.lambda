@@ -1,0 +1,1 @@
+UPPER = 1; lower = UPPER; @< "./lib.lambda" (IMPORTED); @> EXPORTED = \value -> lower value; @! EXPORTED;

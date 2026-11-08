@@ -12,11 +12,11 @@
   "repository": {
     "import": {
       "name": "meta.statement.import.core-lambda",
-      "begin": "^(\\s*)(@<)",
+      "begin": "(@<)",
       "beginCaptures": {
-        "2": { "name": "keyword.control.import.core-lambda" }
+        "1": { "name": "keyword.control.import.core-lambda" }
       },
-      "end": "(;)|(?=^\\s*(?:@<|@>|@!|[a-z][A-Za-z0-9_]*\\s*=))",
+      "end": "(;)|(?=^\\s*(?:@<|@>|@!|[A-Za-z][A-Za-z0-9_]*\\s*=))",
       "endCaptures": {
         "1": { "name": "punctuation.core-lambda" }
       },
@@ -29,26 +29,26 @@
     },
     "export": {
       "name": "meta.statement.export.core-lambda",
-      "begin": "^(\\s*)(@>)",
+      "begin": "(@>)",
       "beginCaptures": {
-        "2": { "name": "keyword.control.export.core-lambda" }
+        "1": { "name": "keyword.control.export.core-lambda" }
       },
-      "end": "(;)|(?=^\\s*(?:@<|@>|@!|[a-z][A-Za-z0-9_]*\\s*=))",
+      "end": "(;)|(?=^\\s*(?:@<|@>|@!|[A-Za-z][A-Za-z0-9_]*\\s*=))",
       "endCaptures": {
         "1": { "name": "punctuation.core-lambda" }
       },
       "patterns": [
-        { "match": "\\b[a-z][A-Za-z0-9_]*\\b(?=\\s*=)", "name": "entity.name.function.definition.core-lambda" },
+        { "match": "\\b[A-Za-z][A-Za-z0-9_]*\\b(?=\\s*=)", "name": "entity.name.function.definition.core-lambda" },
         { "include": "#expression" }
       ]
     },
     "entry": {
       "name": "meta.statement.entry.core-lambda",
-      "begin": "^(\\s*)(@!)",
+      "begin": "(@!)",
       "beginCaptures": {
-        "2": { "name": "keyword.control.entry.core-lambda" }
+        "1": { "name": "keyword.control.entry.core-lambda" }
       },
-      "end": "(;)|(?=^\\s*(?:@<|@>|@!|[a-z][A-Za-z0-9_]*\\s*=))",
+      "end": "(;)|(?=^\\s*(?:@<|@>|@!|[A-Za-z][A-Za-z0-9_]*\\s*=))",
       "endCaptures": {
         "1": { "name": "punctuation.core-lambda" }
       },
@@ -57,10 +57,10 @@
       ]
     },
     "definition": {
-      "match": "^(\\s*)([a-z][A-Za-z0-9_]*)(\\s*)(=)",
+      "match": "\\b([A-Za-z][A-Za-z0-9_]*)(\\s*)(=)",
       "captures": {
-        "2": { "name": "entity.name.function.definition.core-lambda" },
-        "4": { "name": "keyword.operator.assignment.core-lambda" }
+        "1": { "name": "entity.name.function.definition.core-lambda" },
+        "3": { "name": "keyword.operator.assignment.core-lambda" }
       }
     },
     "expression": {

@@ -28,11 +28,26 @@ test('keeps punctuation and comments inside an import path in the string scope',
 });
 
 test('a missing semicolon does not extend a directive over the next definition', async () => {
-  for (const name of ['missing-import', 'missing-export', 'missing-entry']) {
-    const fixture = await tokenizeFixture(`${name}.lambda`);
-    const scopes = scopesAt(fixture, 1, 'next');
+  for (const directive of ['import', 'export', 'entry']) {
+    for (const [suffix, name] of [['', 'next'], ['-uppercase', 'NEXT']]) {
+      const fixture = await tokenizeFixture(`missing-${directive}${suffix}.lambda`);
+      const scopes = scopesAt(fixture, 1, name);
 
-    assertScope(fixture, 1, 'next', 'entity.name.function.definition.core-lambda');
-    assert(!scopes.some(scope => scope.startsWith('meta.statement.')), name);
+      assertScope(fixture, 1, name, 'entity.name.function.definition.core-lambda');
+      assert(!scopes.some(scope => scope.startsWith('meta.statement.')), `${directive}: ${name}`);
+    }
   }
+});
+
+test('highlights uppercase definitions and statements on the same line', async () => {
+  const fixture = await tokenizeFixture('same-line.lambda');
+
+  for (const name of ['UPPER', 'lower']) {
+    assertScope(fixture, 0, name, 'entity.name.function.definition.core-lambda');
+  }
+  assertScope(fixture, 0, '@<', 'keyword.control.import.core-lambda');
+  assertScope(fixture, 0, 'IMPORTED', 'meta.statement.import.core-lambda');
+  assertScope(fixture, 0, '@>', 'keyword.control.export.core-lambda');
+  assertScope(fixture, 0, 'EXPORTED', 'entity.name.function.definition.core-lambda');
+  assertScope(fixture, 0, '@!', 'keyword.control.entry.core-lambda');
 });
