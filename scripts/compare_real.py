@@ -1,6 +1,8 @@
 # /// script
 # requires-python = ">=3.11"
 # dependencies = ["matplotlib>=3.10,<4"]
+# [tool.ty.environment]
+# root = ["."]
 # ///
 """Measure real-number examples and plot their accuracy against reduction steps."""
 
