@@ -33,12 +33,12 @@ $$
 
 实现在 [recursive-y.lambda](recursive-y.lambda) / [recursive-z.lambda](recursive-z.lambda) / [recursive-theta.lambda](recursive-theta.lambda) 中。分别使用 `Y` 组合子 / `Z` 组合子 / `THETA` 组合子
 
-## 比较
+## 比较并绘图
 
 在仓库根目录运行：
 
 ```sh
-lambda-compiler examples/fibonacci/recursive-y.lambda | ski-interpreter --decode=natural --show-steps
-lambda-compiler examples/fibonacci/recursive-z.lambda | ski-interpreter --decode=natural --show-steps
-lambda-compiler examples/fibonacci/recursive-theta.lambda | ski-interpreter --decode=natural --show-steps
+uv run scripts/compare_index.py examples/fibonacci \
+    --function fib --decode natural \
+    --max-index 10 --max-steps 1000000
 ```

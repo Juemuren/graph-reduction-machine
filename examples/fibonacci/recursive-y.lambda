@@ -1,7 +1,6 @@
-# Fibonacci(6) = 8
 # Using Y combinator
 
-fib = Y (\fib -> \n ->
+@> fib = Y (\fib -> \n ->
     IF (LEQ n ONE)
     n
     (ADD
@@ -9,5 +8,3 @@ fib = Y (\fib -> \n ->
         (fib (PRED (PRED n)))
     )
 );
-
-@! fib SIX;

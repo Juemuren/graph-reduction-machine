@@ -1,4 +1,3 @@
-# Fibonacci(6) = 8
 # Using loop
 
 step = \p -> PAIR
@@ -10,10 +9,8 @@ step = \p -> PAIR
 
 init = PAIR ZERO ONE;
 
-fib = \n -> FST (
+@> fib = \n -> FST (
     FOR n
     step
     init
 );
-
-@! fib SIX;

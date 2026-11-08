@@ -6,8 +6,6 @@
 
 import argparse
 import csv
-import re
-import subprocess
 from collections import defaultdict
 from dataclasses import dataclass
 from decimal import Decimal, localcontext
@@ -15,15 +13,17 @@ from fractions import Fraction
 from pathlib import Path, PurePosixPath
 
 import matplotlib.pyplot as plt
+from compare_common import (
+    COMPILER,
+    INTERPRETER,
+    compile_example,
+    decode,
+    executable,
+    sources_in,
+)
 
-ROOT = Path(__file__).resolve().parents[1]
 DEFAULT_CSV = PurePosixPath("DIR/steps-vs-error.csv")
 DEFAULT_PLOT = PurePosixPath("DIR/steps-vs-error.png")
-
-LIMIT_ERROR = "reduction exceeded step limit"
-STEPS_PATTERN = r"^steps: (\d+)$"
-COMPILER = "lambda-compiler"
-INTERPRETER = "ski-interpreter"
 
 MIN_DECIMAL_PRECISION = 50
 DECIMAL_GUARD_DIGITS = 20
@@ -54,69 +54,17 @@ class Arguments(argparse.Namespace):
     plot: Path
 
 
-def executable(name: str) -> str:
-    result = subprocess.run(
-        ["cabal", "list-bin", f"exe:{name}"],
-        cwd=ROOT,
-        capture_output=True,
-        text=True,
-        check=True,
-    )
-    return result.stdout.strip()
-
-
-def compile_example(compiler: str, source: Path) -> str:
-    result = subprocess.run(
-        [compiler],
-        cwd=ROOT,
-        input=source.read_text(encoding="utf-8"),
-        capture_output=True,
-        text=True,
-        check=False,
-    )
-    if result.returncode:
-        raise RuntimeError(f"{source}: {result.stderr.strip()}")
-    return result.stdout
-
-
-def decode(
-    interpreter: str, graph: str, index: int, max_steps: int
-) -> tuple[int, str] | None:
-    result = subprocess.run(
-        [
-            interpreter,
-            "--decode=real",
-            f"--precision-real={index}",
-            f"--max-steps={max_steps}",
-            "--show-steps",
-        ],
-        cwd=ROOT,
-        input=graph,
-        capture_output=True,
-        text=True,
-        check=False,
-    )
-    if result.returncode:
-        if LIMIT_ERROR in result.stderr:
-            return None
-        raise RuntimeError(f"n={index}: {result.stderr.strip()}")
-    match = re.search(STEPS_PATTERN, result.stderr, re.MULTILINE)
-    if match is None:
-        raise RuntimeError(f"n={index}: missing step count in {result.stderr!r}")
-    return int(match.group(1)), result.stdout.strip()
-
-
 def measure(directory: Path, max_index: int, max_steps: int) -> list[dict[str, str]]:
-    sources = sorted(directory.glob("*.lambda"))
-    if not sources:
-        raise ValueError(f"no .lambda algorithms in {directory}")
+    sources = sources_in(directory)
     compiler = executable(COMPILER)
     interpreter = executable(INTERPRETER)
     rows = []
     for source in sources:
-        graph = compile_example(compiler, source)
+        graph = compile_example(
+            compiler, source.read_text(encoding="utf-8"), str(source)
+        )
         for index in range(max_index + 1):
-            result = decode(interpreter, graph, index, max_steps)
+            result = decode(interpreter, graph, "real", max_steps, f"n={index}", index)
             if result is None:
                 print(f"{source.stem} n={index}: exceeded {max_steps} steps")
                 break
@@ -276,6 +224,7 @@ def parse_args() -> Arguments:
         "--exact-value",
         required=True,
         type=Decimal,
+        metavar="VALUE",
     )
     parser.add_argument(
         "--max-steps",
