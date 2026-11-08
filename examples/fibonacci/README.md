@@ -24,7 +24,7 @@ $$
 $$
 \boxed{
 \operatorname{fib}(n) = \begin{cases}
-    1 & n = 0 \\
+    0 & n = 0 \\
     1 & n = 1 \\
     \operatorname{fib}(n-1) + \operatorname{fib}(n-2) & n \ge 2 \\
 \end{cases}
