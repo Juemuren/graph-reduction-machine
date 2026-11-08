@@ -8,30 +8,20 @@ import argparse
 import csv
 import re
 from collections import defaultdict
-from dataclasses import dataclass
 from pathlib import Path
 
 import matplotlib.pyplot as plt
 from compare_common import (
-    COMPILER,
-    INTERPRETER,
     ROOT,
+    Measurement,
+    Probe,
     compile_example,
     decode,
-    executable,
-    sources_in,
+    measure_algorithms,
 )
 
 FIELDS = ("method", "n", "steps", "value")
 FUNCTION_PATTERN = re.compile(r"^[a-z][A-Za-z0-9_]*$")
-
-
-@dataclass(frozen=True)
-class Sample:
-    method: str
-    index: int
-    steps: int
-    value: str
 
 
 class Arguments(argparse.Namespace):
@@ -55,30 +45,21 @@ def entry_source(source: Path, function: str, index: int) -> str:
 
 def measure(
     directory: Path, function: str, mode: str, max_index: int, max_steps: int
-) -> list[Sample]:
-    sources = sources_in(directory)
-    compiler = executable(COMPILER)
-    interpreter = executable(INTERPRETER)
-    samples = []
-    for source in sources:
-        for index in range(max_index + 1):
+) -> list[Measurement]:
+    def prepare(source: Path, compiler: str, interpreter: str) -> Probe:
+        def probe(index: int, limit: int) -> tuple[int, str] | None:
             context = f"{source} n={index}"
             graph = compile_example(
                 compiler, entry_source(source, function, index), context
             )
-            result = decode(interpreter, graph, mode, max_steps, context)
-            if result is None:
-                print(f"{source.stem} n={index}: exceeded {max_steps} steps")
-                break
-            steps, value = result
-            print(f"{source.stem} n={index}: {steps} steps, {value}")
-            samples.append(Sample(source.stem, index, steps, value))
-    if not samples:
-        raise ValueError("no successful measurements")
-    return samples
+            return decode(interpreter, graph, mode, limit, context)
+
+        return probe
+
+    return measure_algorithms(directory, max_index, max_steps, prepare)
 
 
-def write_csv(path: Path, samples: list[Sample]) -> None:
+def write_csv(path: Path, samples: list[Measurement]) -> None:
     path.parent.mkdir(parents=True, exist_ok=True)
     with path.open("w", encoding="utf-8", newline="") as output:
         writer = csv.DictWriter(output, fieldnames=FIELDS)
@@ -94,8 +75,8 @@ def write_csv(path: Path, samples: list[Sample]) -> None:
         )
 
 
-def plot(samples: list[Sample], output: Path) -> None:
-    grouped: dict[str, list[Sample]] = defaultdict(list)
+def plot(samples: list[Measurement], output: Path) -> None:
+    grouped: dict[str, list[Measurement]] = defaultdict(list)
     for sample in samples:
         grouped[sample.method].append(sample)
 

@@ -2,6 +2,8 @@
 
 import re
 import subprocess
+from collections.abc import Callable
+from dataclasses import dataclass
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -9,6 +11,18 @@ COMPILER = "lambda-compiler"
 INTERPRETER = "ski-interpreter"
 LIMIT_ERROR = "reduction exceeded step limit"
 STEPS_PATTERN = r"^steps: (\d+)$"
+
+
+@dataclass(frozen=True)
+class Measurement:
+    method: str
+    index: int
+    steps: int
+    value: str
+
+
+Probe = Callable[[int, int], tuple[int, str] | None]
+Prepare = Callable[[Path, str, str], Probe]
 
 
 def executable(name: str) -> str:
@@ -71,3 +85,25 @@ def sources_in(directory: Path) -> list[Path]:
     if not sources:
         raise ValueError(f"no .lambda algorithms in {directory}")
     return sources
+
+
+def measure_algorithms(
+    directory: Path, max_index: int, max_steps: int, prepare: Prepare
+) -> list[Measurement]:
+    sources = sources_in(directory)
+    compiler = executable(COMPILER)
+    interpreter = executable(INTERPRETER)
+    samples = []
+    for source in sources:
+        probe = prepare(source, compiler, interpreter)
+        for index in range(max_index + 1):
+            result = probe(index, max_steps)
+            if result is None:
+                print(f"{source.stem} n={index}: exceeded {max_steps} steps")
+                break
+            steps, value = result
+            print(f"{source.stem} n={index}: {steps} steps, {value}")
+            samples.append(Measurement(source.stem, index, steps, value))
+    if not samples:
+        raise ValueError("no successful measurements")
+    return samples

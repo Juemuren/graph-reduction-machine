@@ -14,12 +14,11 @@ from pathlib import Path, PurePosixPath
 
 import matplotlib.pyplot as plt
 from compare_common import (
-    COMPILER,
-    INTERPRETER,
+    Measurement,
+    Probe,
     compile_example,
     decode,
-    executable,
-    sources_in,
+    measure_algorithms,
 )
 
 DEFAULT_CSV = PurePosixPath("DIR/steps-vs-error.csv")
@@ -54,31 +53,42 @@ class Arguments(argparse.Namespace):
     plot: Path
 
 
-def measure(directory: Path, max_index: int, max_steps: int) -> list[dict[str, str]]:
-    sources = sources_in(directory)
-    compiler = executable(COMPILER)
-    interpreter = executable(INTERPRETER)
-    rows = []
-    for source in sources:
+def measure(directory: Path, max_index: int, max_steps: int) -> list[Measurement]:
+    def prepare(source: Path, compiler: str, interpreter: str) -> Probe:
         graph = compile_example(
             compiler, source.read_text(encoding="utf-8"), str(source)
         )
-        for index in range(max_index + 1):
-            result = decode(interpreter, graph, "real", max_steps, f"n={index}", index)
-            if result is None:
-                print(f"{source.stem} n={index}: exceeded {max_steps} steps")
-                break
-            steps, value = result
-            print(f"{source.stem} n={index}: {steps} steps, {value}")
-            rows.append(
-                {
-                    "method": source.stem,
-                    "n": str(index),
-                    "steps": str(steps),
-                    "value": value,
-                }
+
+        def probe(index: int, limit: int) -> tuple[int, str] | None:
+            context = f"{source} n={index}"
+            return decode(interpreter, graph, "real", limit, context, index)
+
+        return probe
+
+    return measure_algorithms(directory, max_index, max_steps, prepare)
+
+
+def make_samples(rows: list[Measurement], exact: Decimal) -> list[Sample]:
+    samples = []
+    for row in rows:
+        value = Fraction(row.value)
+        with localcontext() as context:
+            context.prec = max(
+                MIN_DECIMAL_PRECISION,
+                len(exact.as_tuple().digits) + DECIMAL_GUARD_DIGITS,
             )
-    return rows
+            approximation = Decimal(value.numerator) / Decimal(value.denominator)
+            error = abs(approximation - exact)
+        samples.append(
+            Sample(
+                row.method,
+                row.index,
+                row.steps,
+                row.value,
+                error,
+            )
+        )
+    return samples
 
 
 def write_csv(path: Path, samples: list[Sample]) -> None:
@@ -96,31 +106,6 @@ def write_csv(path: Path, samples: list[Sample]) -> None:
             }
             for sample in samples
         )
-
-
-def make_samples(rows: list[dict[str, str]], exact: Decimal) -> list[Sample]:
-    samples = []
-    for row in rows:
-        value = Fraction(row["value"])
-        with localcontext() as context:
-            context.prec = max(
-                MIN_DECIMAL_PRECISION,
-                len(exact.as_tuple().digits) + DECIMAL_GUARD_DIGITS,
-            )
-            approximation = Decimal(value.numerator) / Decimal(value.denominator)
-            error = abs(approximation - exact)
-        samples.append(
-            Sample(
-                row["method"],
-                int(row["n"]),
-                int(row["steps"]),
-                row["value"],
-                error,
-            )
-        )
-    if not samples:
-        raise ValueError("no successful measurements")
-    return samples
 
 
 def pareto_frontier(samples: list[Sample]) -> list[Sample]:
