@@ -68,6 +68,7 @@
   },
   "scripts": {
     "build": "node build.mjs",
+    "test": "node --test test",
     "prepackage": "npm run build",
     "package": "vsce package --allow-missing-repository"
   },
@@ -76,6 +77,8 @@
   },
   "devDependencies": {
     "@vscode/vsce": "^4.1.0",
-    "esbuild": "^0.25.0"
+    "esbuild": "^0.25.0",
+    "vscode-oniguruma": "^2.0.1",
+    "vscode-textmate": "^9.3.2"
   }
 }
