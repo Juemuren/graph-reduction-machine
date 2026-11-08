@@ -68,7 +68,7 @@ library
     , happy:happy >=2 && <3
   default-language: Haskell2010
 
-executable lambda-to-graph
+executable lambda-compiler
   hs-source-dirs: app
   main-is: CompilerMain.hs
   build-depends:
@@ -108,7 +108,7 @@ test-suite compiler-tests
     , jsonschema >=0.3 && <0.4
     , process
   build-tool-depends:
-      graph-reduction-machine:lambda-to-graph
+      graph-reduction-machine:lambda-compiler
   default-language: Haskell2010
 
 test-suite interpreter-tests
@@ -179,6 +179,6 @@ test-suite cli-tests
     , jsonschema >=0.3 && <0.4
     , process
   build-tool-depends:
-      graph-reduction-machine:lambda-to-graph
+      graph-reduction-machine:lambda-compiler
     , graph-reduction-machine:ski-interpreter
   default-language: Haskell2010

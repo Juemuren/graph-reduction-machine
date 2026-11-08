@@ -32,7 +32,7 @@ main = do
             (reduceSourceWithModules reduction modules sourcePath source)
   case result of
     Left message -> do
-      hPutStrLn stderr ("lambda-to-graph: " ++ message)
+      hPutStrLn stderr ("lambda-compiler: " ++ message)
       exitFailure
     Right output -> putStrLn output
 
@@ -43,7 +43,7 @@ parseArgs = go Nothing Nothing Nothing
  where
   usage =
     unwords
-      [ "usage: lambda-to-graph"
+      [ "usage: lambda-compiler"
       , "[--stop-after=expand|reduce]"
       , "[--enable-reduce=beta|eta|both]"
       , "[FILE]"

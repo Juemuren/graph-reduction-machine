@@ -6,7 +6,7 @@ param(
     [string]$Decode = "natural"
 )
 
-$compiler = cabal list-bin exe:lambda-to-graph
+$compiler = cabal list-bin exe:lambda-compiler
 $interpreter = cabal list-bin exe:ski-interpreter
 
 $headingStyle = $PSStyle.Bold + $PSStyle.Foreground.BrightCyan

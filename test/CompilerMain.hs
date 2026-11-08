@@ -83,7 +83,7 @@ runCompiler :: String -> [String] -> String -> IO String
 runCompiler label options source = do
   let program = asProgram source
   (status, output, problem) <-
-    readProcessWithExitCode "lambda-to-graph" options program
+    readProcessWithExitCode "lambda-compiler" options program
   case status of
     ExitSuccess -> pure output
     _ -> die (label ++ ": " ++ problem)

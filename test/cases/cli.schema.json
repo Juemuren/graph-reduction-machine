@@ -17,7 +17,7 @@
       "required": ["name", "command", "args", "stdin", "expect"],
       "properties": {
         "name": { "type": "string", "minLength": 1 },
-        "command": { "enum": ["lambda-to-graph", "ski-interpreter"] },
+        "command": { "enum": ["lambda-compiler", "ski-interpreter"] },
         "args": { "type": "array", "items": { "type": "string" } },
         "stdin": { "type": "string" },
         "expect": {

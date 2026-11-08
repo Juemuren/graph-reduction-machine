@@ -92,7 +92,7 @@ cabal test
 其中：
 
 - `name` 是用例的名称，同一 JSON 文件中的用例不能重名
-- `command` 可以是 `lambda-to-graph` / `ski-interpreter`
+- `command` 可以是 `lambda-compiler` / `ski-interpreter`
 - `args` 是传给程序的命令行参数数组
 - `stdin` 是传给程序的标准输入
 - `expect.exitCode`、`expect.stdout`、`expect.stderr` 分别比较退出码、标准输出和标准错误

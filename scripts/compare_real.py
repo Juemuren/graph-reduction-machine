@@ -22,7 +22,7 @@ DEFAULT_PLOT = PurePosixPath("DIR/steps-vs-error.png")
 
 LIMIT_ERROR = "reduction exceeded step limit"
 STEPS_PATTERN = r"^steps: (\d+)$"
-COMPILER = "lambda-to-graph"
+COMPILER = "lambda-compiler"
 INTERPRETER = "ski-interpreter"
 
 MIN_DECIMAL_PRECISION = 50

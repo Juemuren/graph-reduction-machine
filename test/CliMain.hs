@@ -10,7 +10,7 @@ main = runCliSuite runCase
 
 runCase :: String -> CliCase -> IO ()
 runCase label (CliCase _ command args stdin code stdout stderr) = do
-  when (command /= "lambda-to-graph" && command /= "ski-interpreter") $
+  when (command /= "lambda-compiler" && command /= "ski-interpreter") $
     die (label ++ ": unknown command " ++ command)
   (status, output, problem) <- readProcessWithExitCode command args stdin
   assertEqual label (if code == 0 then ExitSuccess else ExitFailure code) status

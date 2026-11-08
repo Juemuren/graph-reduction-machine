@@ -29,13 +29,13 @@ cabal install
 构建编译器及其依赖
 
 ```sh
-cabal build exe:lambda-to-graph
+cabal build exe:lambda-compiler
 ```
 
 安装编译器可执行文件
 
 ```sh
-cabal install exe:lambda-to-graph
+cabal install exe:lambda-compiler
 ```
 
 ## 构建解释器

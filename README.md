@@ -17,7 +17,7 @@
 把 `.lambda` 文件中的 λ 表达式编译为 SKI 图
 
 ```sh
-cabal exec -- lambda-to-graph example.lambda
+cabal exec -- lambda-compiler example.lambda
 ```
 
 不提供文件名时从标准输入读取。成功时结果写到标准输出；错误信息写到标准错误。
@@ -25,13 +25,13 @@ cabal exec -- lambda-to-graph example.lambda
 默认进行完整编译。可用 `--stop-after` 指定完成后停止的阶段。比如在展开后停止
 
 ```sh
-cabal exec -- lambda-to-graph --stop-after=expand example.lambda
+cabal exec -- lambda-compiler --stop-after=expand example.lambda
 ```
 
 默认不执行表达式归约。可用 `--enable-reduce` 指定要启用的归约。比如启用 β 归约
 
 ```sh
-cabal exec -- lambda-to-graph --enable-reduce=beta example.lambda
+cabal exec -- lambda-compiler --enable-reduce=beta example.lambda
 ```
 
 编译器的所有参数请参考 [compiler.md#编译器选项](docs/compiler.md#编译器选项)。
