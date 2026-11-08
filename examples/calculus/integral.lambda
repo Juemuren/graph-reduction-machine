@@ -1,0 +1,32 @@
+# A polynomial is a sum of monomials with rational coefficients.
+# A monomial represents coefficient * x^exponent.
+monomial = \coefficient -> \exponent -> \onMonomial -> \onAdd ->
+    onMonomial coefficient exponent;
+add = \left -> \right -> \onMonomial -> \onAdd ->
+    onAdd left right;
+
+# Integrate each term: integral(c*x^n) = (c/(n+1))*x^(n+1).
+# The arbitrary constant of integration is omitted.
+integrate = FIX (\recur -> \expression ->
+    expression
+        (\coefficient -> \exponent ->
+            monomial
+                (QDIV coefficient (NTOQ (SUCC exponent)))
+                (SUCC exponent))
+        (\left -> \right -> add (recur left) (recur right)));
+
+# Evaluate the resulting polynomial at a natural-number value of x.
+evaluate = FIX (\recur -> \expression -> \x ->
+    expression
+        (\coefficient -> \exponent ->
+            QMUL coefficient (NTOQ (POW x exponent)))
+        (\left -> \right -> QADD (recur left x) (recur right x)));
+
+# f(x) = x^2 + x + 1; its antiderivative is x^3/3 + x^2/2 + x.
+polynomial = add
+    (add
+        (monomial (NTOQ ONE) TWO)
+        (monomial (NTOQ ONE) ONE))
+    (monomial (NTOQ ONE) ZERO);
+
+@! evaluate (integrate polynomial) TWO;
