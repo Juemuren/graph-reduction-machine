@@ -118,6 +118,7 @@ invoke_lambda_stage() (
                 "--encode=$encode" |
                 invoke_interpreter -- \
                     --show-steps \
+                    --no-step-limit \
                     "--decode=$decode"
             ;;
     esac

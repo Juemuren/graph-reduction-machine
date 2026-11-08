@@ -144,6 +144,7 @@ function Invoke-LambdaStage {
                     "--encode=$Encode"
                 ) | Invoke-Interpreter -Options @(
                     '--show-steps',
+                    '--no-step-limit',
                     "--decode=$Decode"
                 )
             }
