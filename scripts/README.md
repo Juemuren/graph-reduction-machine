@@ -1,8 +1,98 @@
 # 脚本
 
+所有使用示例都是在仓库根目录运行。
+
+## functions.ps1
+
+运行：
+
+```pwsh
+. ./scripts/functions.ps1
+```
+
+该命令会把脚本中定义的函数提升到当前 PowerShell 会话，包括：
+
+- `Invoke-Compiler`
+- `Invoke-Interpreter`
+- `Invoke-LambdaStage`
+
+### Invoke-Compiler
+
+`Invoke-Compiler` 调用编译器。
+
+各参数为：
+
+- `-File` 文件路径
+- `-Source` 源代码内容
+- `-Options` 编译器选项。具体选项请参考 [compiler.md#编译器选项](../docs/compiler.md#编译器选项)
+
+使用示例：
+
+```pwsh
+'@! ONE;' | Invoke-Compiler -Options @("--stop-after=reduce", "--enable-reduce=both")
+Invoke-Compiler -Source '@! ONE;'
+Invoke-Compiler -File "examples/e/factorial.lambda"
+```
+
+### Invoke-Interpreter
+
+`Invoke-Interpreter` 调用解释器。
+
+各参数为：
+
+- `-File` 文件路径
+- `-Source` 源代码内容
+- `-Options` 解释器选项。具体选项请参考 [interpreter.md#解释器选项](../docs/interpreter.md#解释器选项)
+
+使用示例：
+
+```pwsh
+'#0 = I;' | Invoke-Interpreter -Options @("--show-steps", "--decode=natural")
+Invoke-Interpreter -Source '#0 = I;'
+Invoke-Interpreter -File "examples/encoding/church.ski" -Options @("--decode=natural")
+```
+
+### Invoke-LambdaStage
+
+`Invoke-LambdaStage` 调用编译器和解释器至指定的阶段后停止。
+
+使用示例：
+
+```pwsh
+'@! ONE;' | Invoke-LambdaStage -Stage expand
+Invoke-LambdaStage -Source '@! ONE;' -Stage expand
+Invoke-LambdaStage -File "examples/e/factorial.lambda" -Stage decode -Decode real
+```
+
+各参数为：
+
+- `-File` 文件路径
+- `-Source` 源代码内容
+- `-Stage` 指定的一个阶段。可以为 `expand` / `reduce` / `compile` / `interpret` / `decode`。无默认值
+- `-Encode` 编译器编码方式。可以为 `church` / `scott`。默认为 `church`
+- `-Decode` 解释器解码方式。可以为 `natural` / `scott-natural` / `boolean` / `integer` / `rational` / `real`。默认为 `natural`
+
+## run.ps1
+
+使用示例：
+
+```pwsh
+'@! ONE;' | ./scripts/run.ps1 -Stages expand,reduce,decode
+./scripts/run.ps1 -File "examples/e/factorial.lambda" -Stages decode -Decode real
+```
+
+脚本会按 `expand` / `reduce` / `compile` / `interpret` / `decode` 的顺序依次执行选中的阶段。
+
+参数为：
+
+- `-File` 文件路径
+- `-Stages` 指定的一个或多个阶段，用 `,` 连接。默认为 `decode`
+- `-Encode` 编译器编码方式。可以为 `church` / `scott`。默认为 `church`
+- `-Decode` 解释器解码方式。可以为 `natural` / `scott-natural` / `boolean` / `integer` / `rational` / `real`。默认为 `natural`
+
 ## compare_real.py
 
-使用示例（在仓库根目录运行）：
+使用示例：
 
 ```sh
 uv run scripts/compare_real.py examples/pi \
@@ -34,7 +124,7 @@ uv run scripts/compare_real.py examples/pi \
 
 ## compare_index.py
 
-使用示例（在仓库根目录运行）：
+使用示例：
 
 ```sh
 uv run scripts/compare_index.py examples/fibonacci \
