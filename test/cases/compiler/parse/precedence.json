@@ -1,6 +1,13 @@
 {
   "cases": [
     {
+      "name": "numeral-application",
+      "language": "lambda",
+      "source": "f 12 x",
+      "stage": "parse",
+      "expect": { "value": "(f 12) x" }
+    },
+    {
       "name": "application",
       "language": "lambda",
       "source": "f ZERO SUCC\n",

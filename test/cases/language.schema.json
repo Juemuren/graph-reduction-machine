@@ -48,6 +48,7 @@
       "type": "object",
       "properties": {
         "enableReduce": { "enum": ["beta", "eta", "both"] },
+        "encode": { "enum": ["church", "scott"] },
         "maxSteps": { "type": "integer", "minimum": 1 },
         "decode": { "enum": ["natural", "boolean", "integer", "rational", "real"] },
         "precisionReal": { "type": "integer", "minimum": 0 }

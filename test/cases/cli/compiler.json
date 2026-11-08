@@ -1,0 +1,37 @@
+{
+  "cases": [
+    {
+      "name": "church-numeral",
+      "command": "lambda-compiler",
+      "args": ["--stop-after=expand", "--encode=church"],
+      "stdin": "@! 2;",
+      "expect": {
+        "exitCode": 0,
+        "stdout": "\\ f -> \\ x -> f (f x)\n",
+        "stderr": ""
+      }
+    },
+    {
+      "name": "scott-numeral",
+      "command": "lambda-compiler",
+      "args": ["--stop-after=expand", "--encode=scott"],
+      "stdin": "@! 1;",
+      "expect": {
+        "exitCode": 0,
+        "stdout": "\\ zero -> \\ successor -> successor (\\ zero -> \\ successor -> zero)\n",
+        "stderr": ""
+      }
+    },
+    {
+      "name": "invalid-encoding",
+      "command": "lambda-compiler",
+      "args": ["--encode=other"],
+      "stdin": "@! 0;",
+      "expect": {
+        "exitCode": 1,
+        "stdout": "",
+        "stderr": "usage: lambda-compiler [--stop-after=expand|reduce] [--enable-reduce=beta|eta|both] [--encode=church|scott] [FILE]\n"
+      }
+    }
+  ]
+}

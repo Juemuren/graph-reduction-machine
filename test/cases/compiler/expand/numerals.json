@@ -1,0 +1,42 @@
+{
+  "cases": [
+    {
+      "name": "zero-church-default",
+      "language": "lambda",
+      "source": "0",
+      "stage": "expand",
+      "expect": { "value": "\\f -> \\x -> x" }
+    },
+    {
+      "name": "two-church",
+      "language": "lambda",
+      "source": "2",
+      "stage": "expand",
+      "options": { "encode": "church" },
+      "expect": { "value": "\\f -> \\x -> f (f x)" }
+    },
+    {
+      "name": "zero-scott",
+      "language": "lambda",
+      "source": "0",
+      "stage": "expand",
+      "options": { "encode": "scott" },
+      "expect": { "value": "\\zero -> \\successor -> zero" }
+    },
+    {
+      "name": "two-scott",
+      "language": "lambda",
+      "source": "2",
+      "stage": "expand",
+      "options": { "encode": "scott" },
+      "expect": { "value": "\\zero -> \\successor -> successor (\\zero -> \\successor -> successor (\\zero -> \\successor -> zero))" }
+    },
+    {
+      "name": "numeral-in-definition-and-application",
+      "language": "lambda",
+      "source": "value = 2; @! (\\n -> n) value;",
+      "stage": "expand",
+      "expect": { "value": "(\\n -> n) (\\f -> \\x -> f (f x))" }
+    }
+  ]
+}

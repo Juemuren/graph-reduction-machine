@@ -57,6 +57,7 @@ data RunSpec = RunSpec
   , runPrecisionReal :: Maybe Integer
   , runMaxSteps :: Maybe Int
   , runEnableReduce :: Maybe String
+  , runEncode :: Maybe String
   }
 
 data Expected
@@ -74,7 +75,7 @@ instance FromJSON TestCase where
     options <- object .:? "options"
     spec <-
       maybe
-        (pure (RunSpec stage Nothing Nothing Nothing Nothing))
+        (pure (RunSpec stage Nothing Nothing Nothing Nothing Nothing))
         (parseRunSpec stage)
         options
     TestCase name input spec <$> object .: "expect"
@@ -110,6 +111,7 @@ parseRunSpec stage = withObject "options" $ \object ->
     <*> object .:? "precisionReal"
     <*> object .:? "maxSteps"
     <*> object .:? "enableReduce"
+    <*> object .:? "encode"
 
 instance FromJSON Expected where
   parseJSON = withObject "expect" $ \object -> do

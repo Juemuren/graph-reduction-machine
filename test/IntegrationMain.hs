@@ -1,6 +1,7 @@
 module Main (main) where
 
-import Compiler (compileSourceWithModules)
+import Compiler (compileSourceWithEncoding)
+import Compiler.Expand (Encoding (..))
 import Control.Monad (void)
 import Data.Ratio (denominator, numerator)
 import Interpreter (
@@ -33,6 +34,7 @@ main = runSuite "integration" runCase
 runCase :: String -> TestCase -> IO ()
 runCase label (TestCase _ (Input language source modules) spec expected) = do
   reduction <- unwrap label (parseReduction (runEnableReduce spec))
+  let encoding = if runEncode spec == Just "scott" then Scott else Church
   limit <- caseLimit label 100000 spec
   case (language, runStage spec, expected) of
     ("lambda", "undecode", ExpectedValue graph) ->
@@ -40,11 +42,15 @@ runCase label (TestCase _ (Input language source modules) spec expected) = do
         ( assertGraph
             label
             graph
-            (compileSourceWithModules reduction modules "<input>" source >>= interpret limit)
+            ( compileSourceWithEncoding encoding reduction modules "<input>" source
+                >>= interpret limit
+            )
         )
     ("lambda", "decode", _) -> do
       graph <-
-        unwrap label (compileSourceWithModules reduction modules "<input>" source)
+        unwrap
+          label
+          (compileSourceWithEncoding encoding reduction modules "<input>" source)
       let result = decodeGraph spec limit graph
       case expected of
         ExpectedValue value -> unwrap label result >>= assertEqual label value

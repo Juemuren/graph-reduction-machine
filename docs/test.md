@@ -58,6 +58,7 @@ cabal test
 - `stage` 是要进行到的阶段。可以为 `parse` / `expand` / `reduce` / `compile` / `interpret` / `undecode` / `decode`
 - `options`
   - `options.enableReduce` 是编译器启用的归约类型。可以为 `beta` / `eta` / `both`
+  - `options.encode` 是字面量的编码。可以为 `church` / `scott`
   - `options.maxSteps` 是解释器的归约步数上限。为正整数
   - `options.decode` 是解释器的解码方式。可以为 `natural` / `boolean` / `integer` / `rational` / `real`
   - `options.precisionReal` 是实数解码精度。为非负整数
@@ -116,7 +117,7 @@ cabal test compiler-tests
 - `parse/`
   - `precedence.json` 验证两个核心 λ 表达式解析后是否相同
   - `errors.json` 验证解析错误
-- `expand` 验证两个核心 λ 表达式展开后是否相同（暂无用例）
+- `expand/` 验证展开得到的纯 λ 表达式
 - `reduce/` 验证归约得到的纯 λ 表达式
   - `beta.json` 仅启用 β 归约
   - `eta.json` 仅启用 η 归约

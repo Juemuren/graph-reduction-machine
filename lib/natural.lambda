@@ -4,7 +4,7 @@
 
 @> ZERO = \f -> \x -> x;
 @> SUCC = \n -> \f -> \x -> f (n f x);
-@> ONE = \f -> \x -> f x;
+@> ONE = SUCC ZERO;
 @> TWO = SUCC ONE;
 @> THREE = SUCC TWO;
 @> FOUR = SUCC THREE;
@@ -13,6 +13,7 @@
 @> SEVEN = SUCC SIX;
 @> EIGHT = SUCC SEVEN;
 @> NINE = SUCC EIGHT;
+@> TEN = SUCC NINE;
 
 # Unary operations
 

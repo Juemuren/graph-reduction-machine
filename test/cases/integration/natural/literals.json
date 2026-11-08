@@ -1,0 +1,20 @@
+{
+  "cases": [
+    {
+      "name": "church-literal",
+      "language": "lambda",
+      "source": "@! 3;",
+      "stage": "decode",
+      "options": { "encode": "church", "decode": "natural" },
+      "expect": { "value": "3" }
+    },
+    {
+      "name": "scott-predecessor",
+      "language": "lambda",
+      "source": "@! 3 ZERO (\\previous -> previous ZERO (\\n -> ONE));",
+      "stage": "decode",
+      "options": { "encode": "scott", "decode": "natural" },
+      "expect": { "value": "1" }
+    }
+  ]
+}

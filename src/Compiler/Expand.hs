@@ -1,7 +1,7 @@
 {-# LANGUAGE TemplateHaskell #-}
 
 -- | Resolve modules and expand library definitions into pure lambda calculus.
-module Compiler.Expand (expand, expandSource, standardLibrarySources) where
+module Compiler.Expand (Encoding (..), expand, expandSource, expandSourceWith, standardLibrarySources) where
 
 import Compiler.LibrarySource (embeddedSources)
 import Compiler.ModuleSource (Import (..), Module (..), parseModule)
@@ -34,6 +34,8 @@ standardIndex = foldM addModule Map.empty (Map.toList sources)
     | Map.member name index = Left ("duplicate standard library export: " ++ name)
     | otherwise = Right (Map.insert name path index)
 
+data Encoding = Church | Scott deriving (Eq, Show)
+
 -- | Keep the expression API available to callers that already have an AST.
 expand :: Core.Exp -> Either String Pure.Exp
 expand expression = expandSource Map.empty "<input>" ("@! " ++ Core.printTree expression ++ ";")
@@ -41,7 +43,15 @@ expand expression = expandSource Map.empty "<input>" ("@! " ++ Core.printTree ex
 -- | Expand a complete source file using embedded and externally loaded modules.
 expandSource ::
   Map.Map FilePath String -> FilePath -> String -> Either String Pure.Exp
-expandSource external path source = do
+expandSource = expandSourceWith Church
+
+expandSourceWith ::
+  Encoding ->
+  Map.Map FilePath String ->
+  FilePath ->
+  String ->
+  Either String Pure.Exp
+expandSourceWith encoding external path source = do
   let file = normalise path
       allSources = Map.insert file source (Map.union external sources)
   library <- standardIndex
@@ -49,7 +59,7 @@ expandSource external path source = do
   body <-
     maybe (Left "module has no final expression") Right (moduleExpression parsed)
   validateImports allSources file parsed
-  go library allSources file [] [] body
+  go encoding library allSources file [] [] body
 
 parsedModule :: Map.Map FilePath String -> FilePath -> Either String Module
 parsedModule allSources file = do
@@ -84,13 +94,14 @@ validateImports allSources file parsed = do
     | otherwise = Left (file ++ ": " ++ target ++ " does not export " ++ name)
 
 resolve ::
+  Encoding ->
   Map.Map String FilePath ->
   Map.Map FilePath String ->
   FilePath ->
   [(FilePath, String)] ->
   String ->
   Either String Pure.Exp
-resolve library allSources file stack name = do
+resolve encoding library allSources file stack name = do
   let key = (file, name)
   when (key `elem` stack) $
     Left
@@ -99,7 +110,7 @@ resolve library allSources file stack name = do
   validateImports allSources file parsed
   case lookup name (moduleDefinitions parsed) of
     Just body -> do
-      result <- go library allSources file (key : stack) [] body
+      result <- go encoding library allSources file (key : stack) [] body
       case freeVariables [] result of
         [] -> Right result
         names ->
@@ -107,6 +118,7 @@ resolve library allSources file stack name = do
     Nothing -> Left (file ++ ": undefined name: " ++ name)
 
 go ::
+  Encoding ->
   Map.Map String FilePath ->
   Map.Map FilePath String ->
   FilePath ->
@@ -114,32 +126,47 @@ go ::
   [String] ->
   Core.Exp ->
   Either String Pure.Exp
-go library allSources file stack bound expression = case expression of
+go encoding library allSources file stack bound expression = case expression of
   Core.EVar (Core.Name name)
     | name `elem` bound -> Right (Pure.EVar (Pure.Name name))
     | otherwise -> do
         definition <- lookupName allSources file name
         case definition of
           Nothing -> Right (Pure.EVar (Pure.Name name))
-          Just target -> resolve library allSources target stack name
+          Just target -> resolve encoding library allSources target stack name
   Core.EApp function argument ->
     Pure.EApp
-      <$> go library allSources file stack bound function
-      <*> go library allSources file stack bound argument
+      <$> go encoding library allSources file stack bound function
+      <*> go encoding library allSources file stack bound argument
   Core.EAbs (Core.Name name) body ->
     Pure.EAbs (Pure.Name name)
-      <$> go library allSources file stack (name : bound) body
+      <$> go encoding library allSources file stack (name : bound) body
+  Core.ENumber number -> Right (encodeNatural encoding number)
   Core.EBuiltin (Core.Builtin name) -> do
     imported <- lookupName allSources file name
     case imported of
-      Just target -> resolve library allSources target stack name
+      Just target -> resolve encoding library allSources target stack name
       Nothing -> do
         target <-
           maybe
             (Left ("standard library does not export " ++ name))
             Right
             (Map.lookup name library)
-        resolve library allSources target stack name
+        resolve encoding library allSources target stack name
+
+encodeNatural :: Encoding -> Integer -> Pure.Exp
+encodeNatural encoding number = case encoding of
+  Church -> absName "f" (absName "x" (iterateN number (app (var "f")) (var "x")))
+  Scott -> iterateN number successor zero
+ where
+  zero = absName "zero" (absName "successor" (var "zero"))
+  successor predecessor =
+    absName "zero" (absName "successor" (app (var "successor") predecessor))
+  iterateN 0 _ base = base
+  iterateN n step base = step (iterateN (n - 1) step base)
+  var = Pure.EVar . Pure.Name
+  absName name = Pure.EAbs (Pure.Name name)
+  app = Pure.EApp
 
 lookupName ::
   Map.Map FilePath String -> FilePath -> String -> Either String (Maybe FilePath)

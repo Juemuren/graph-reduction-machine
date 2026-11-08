@@ -104,7 +104,8 @@ SUCC (SUCC ZERO)
 
 - `ZERO` 表示零
 - `SUCC a` 表示自然数 `a` 的后继
-- `ONE` / `TWO` / `THREE` / `FOUR` / `FIVE` / `SIX` / `SEVEN` / `EIGHT` / `NINE` 分别表示一到九
+- `ONE` / `TWO` / `THREE` / `FOUR` / `FIVE` / `SIX` / `SEVEN` / `EIGHT` / `NINE` / `TEN` 分别表示一到十
+- 可以直接使用十进制阿拉伯数字表示自然数
 
 ### 自然数运算
 

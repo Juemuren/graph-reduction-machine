@@ -6,14 +6,16 @@ module Compiler (
   compileSource,
   compileSourceWith,
   compileSourceWithModules,
+  compileSourceWithEncoding,
   reduce,
   reduceWith,
   reduceSource,
   reduceSourceWith,
   reduceSourceWithModules,
+  reduceSourceWithEncoding,
 ) where
 
-import Compiler.Expand (expandSource)
+import Compiler.Expand (Encoding (..), expandSourceWith)
 import Data.List (intercalate, nub)
 import qualified Data.Map.Strict as Map
 import Data.Maybe (fromMaybe)
@@ -39,8 +41,17 @@ compileSourceWithModules ::
   FilePath ->
   String ->
   Either String Graph.Graph
-compileSourceWithModules reduction modules path source =
-  expandSource modules path source >>= compileWith reduction
+compileSourceWithModules = compileSourceWithEncoding Church
+
+compileSourceWithEncoding ::
+  Encoding ->
+  Reduction ->
+  Map.Map FilePath String ->
+  FilePath ->
+  String ->
+  Either String Graph.Graph
+compileSourceWithEncoding encoding reduction modules path source =
+  expandSourceWith encoding modules path source >>= compileWith reduction
 
 -- | Parse and reduce one expression without translating it to SKI.
 reduceSource :: String -> Either String Pure.Exp
@@ -56,8 +67,17 @@ reduceSourceWithModules ::
   FilePath ->
   String ->
   Either String Pure.Exp
-reduceSourceWithModules reduction modules path source =
-  expandSource modules path source >>= reduceChecked reduction
+reduceSourceWithModules = reduceSourceWithEncoding Church
+
+reduceSourceWithEncoding ::
+  Encoding ->
+  Reduction ->
+  Map.Map FilePath String ->
+  FilePath ->
+  String ->
+  Either String Pure.Exp
+reduceSourceWithEncoding encoding reduction modules path source =
+  expandSourceWith encoding modules path source >>= reduceChecked reduction
 
 compile :: Pure.Exp -> Either String Graph.Graph
 compile = compileWith BetaEta
