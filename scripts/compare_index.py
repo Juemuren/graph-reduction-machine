@@ -31,16 +31,6 @@ FIELDS = ("method", "n", "steps", "value")
 FIGURE_SIZE = (11, 7)
 
 
-class Arguments(argparse.Namespace):
-    directory: Path
-    function: str
-    decode: str
-    max_index: int
-    max_steps: int
-    csv: Path
-    plot: Path
-
-
 def entry_source(source: Path, function: str, index: int) -> str:
     resolved = source.resolve()
     try:
@@ -109,6 +99,16 @@ def plot(samples: list[Measurement], output: Path) -> None:
     output.parent.mkdir(parents=True, exist_ok=True)
     figure.savefig(output, dpi=180)
     plt.close(figure)
+
+
+class Arguments(argparse.Namespace):
+    directory: Path
+    function: str
+    decode: str
+    max_index: int
+    max_steps: int
+    csv: Path
+    plot: Path
 
 
 def parse_args() -> Arguments:

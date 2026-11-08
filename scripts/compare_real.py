@@ -39,24 +39,6 @@ POINT_ZORDER = 3
 FRONTIER_ZORDER = 4
 
 
-@dataclass(frozen=True)
-class Sample:
-    method: str
-    index: int
-    steps: int
-    value: str
-    error: Decimal
-
-
-class Arguments(argparse.Namespace):
-    directory: Path
-    exact_value: Decimal
-    max_steps: int
-    max_index: int
-    csv: Path
-    plot: Path
-
-
 def measure(directory: Path, max_index: int, max_steps: int) -> list[Measurement]:
     def prepare(source: Path, compiler: str, interpreter: str) -> Probe:
         graph = compile_example(
@@ -70,6 +52,15 @@ def measure(directory: Path, max_index: int, max_steps: int) -> list[Measurement
         return probe
 
     return measure_algorithms(directory, max_index, max_steps, prepare)
+
+
+@dataclass(frozen=True)
+class Sample:
+    method: str
+    index: int
+    steps: int
+    value: str
+    error: Decimal
 
 
 def make_samples(measurements: list[Measurement], exact: Decimal) -> list[Sample]:
@@ -196,6 +187,15 @@ def plot(samples: list[Sample], output: Path) -> None:
     output.parent.mkdir(parents=True, exist_ok=True)
     figure.savefig(output, dpi=180)
     plt.close(figure)
+
+
+class Arguments(argparse.Namespace):
+    directory: Path
+    exact_value: Decimal
+    max_steps: int
+    max_index: int
+    csv: Path
+    plot: Path
 
 
 def parse_args() -> Arguments:
