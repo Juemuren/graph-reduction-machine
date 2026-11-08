@@ -1,0 +1,3 @@
+@< "./lib.lambda" (value, ADD);
+@> exported = \param -> ADD param 12;
+@! exported;

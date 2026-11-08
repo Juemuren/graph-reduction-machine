@@ -1,0 +1,2 @@
+@< "./lib.lambda" (value)
+next = 2;

@@ -63,10 +63,6 @@
         "4": { "name": "keyword.operator.assignment.core-lambda" }
       }
     },
-    "comments": {
-      "name": "comment.line.number-sign.core-lambda",
-      "match": "#.*$"
-    },
     "expression": {
       "patterns": [
         { "include": "#comments" },
@@ -85,6 +81,10 @@
         { "match": "=", "name": "keyword.operator.assignment.core-lambda" },
         { "match": "[,;()]", "name": "punctuation.core-lambda" }
       ]
+    },
+    "comments": {
+      "name": "comment.line.number-sign.core-lambda",
+      "match": "#.*$"
     },
     "strings": {
       "name": "string.quoted.double.core-lambda",
