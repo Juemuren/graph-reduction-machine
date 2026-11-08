@@ -81,7 +81,7 @@ Invoke-LambdaStage -File "examples/e/factorial.lambda" -Stage decode -Decode rea
 ./scripts/run.ps1 -File "examples/e/factorial.lambda" -Stages decode -Decode real
 ```
 
-脚本会按 `expand` / `reduce` / `compile` / `interpret` / `decode` 的顺序依次执行选中的阶段。
+脚本会按 `expand` / `reduce` / `compile` / `interpret` / `decode` 的顺序依次运行至选中的阶段。
 
 参数为：
 
@@ -89,6 +89,96 @@ Invoke-LambdaStage -File "examples/e/factorial.lambda" -Stage decode -Decode rea
 - `-Stages` 指定的一个或多个阶段，用 `,` 连接。默认为 `decode`
 - `-Encode` 编译器编码方式。可以为 `church` / `scott`。默认为 `church`
 - `-Decode` 解释器解码方式。可以为 `natural` / `scott-natural` / `boolean` / `integer` / `rational` / `real`。默认为 `natural`
+
+## functions.sh
+
+运行：
+
+```sh
+source ./scripts/functions.sh
+```
+
+该命令会把脚本中定义的函数加载到当前 Bash 会话，包括：
+
+- `invoke_compiler`
+- `invoke_interpreter`
+- `invoke_lambda_stage`
+
+### invoke_compiler
+
+`invoke_compiler` 调用编译器。
+
+各参数为：
+
+- `-f` / `--file` 文件路径
+- `-s` / `--source` 源代码内容
+- `--` 后为编译器选项。具体选项请参考 [compiler.md#编译器选项](../docs/compiler.md#编译器选项)
+
+使用示例：
+
+```sh
+echo '@! ONE;' | invoke_compiler -- --stop-after=reduce --enable-reduce=both
+invoke_compiler -s '@! ONE;'
+invoke_compiler -f examples/e/factorial.lambda
+```
+
+### invoke_interpreter
+
+`invoke_interpreter` 调用解释器。
+
+各参数为：
+
+- `-f` / `--file` 文件路径
+- `-s` / `--source` 源代码内容
+- `--` 后为解释器选项。具体选项请参考 [interpreter.md#解释器选项](../docs/interpreter.md#解释器选项)
+
+使用示例：
+
+```sh
+printf '%s\n' '#0 = I;' | invoke_interpreter -- --show-steps --decode=natural
+invoke_interpreter -s '#0 = I;'
+invoke_interpreter -f examples/encoding/church.ski -- --decode=natural
+```
+
+### invoke_lambda_stage
+
+`invoke_lambda_stage` 调用编译器和解释器至指定的阶段后停止。
+
+使用示例：
+
+```sh
+printf '%s\n' '@! ONE;' | invoke_lambda_stage -t expand
+invoke_lambda_stage -s '@! ONE;' -t expand
+invoke_lambda_stage -f examples/e/factorial.lambda -t decode -d real
+```
+
+各参数为：
+
+- `-f` / `--file` 文件路径
+- `-s` / `--source` 源代码内容
+- `-t` / `--stage` 指定的一个阶段。可以为 `expand` / `reduce` / `compile` / `interpret` / `decode`。无默认值
+- `-e` / `--encode` 编译器编码方式。可以为 `church` / `scott`。默认为 `church`
+- `-d` / `--decode` 解释器解码方式。可以为 `natural` / `scott-natural` / `boolean` / `integer` / `rational` / `real`。默认为 `natural`
+
+## run.sh
+
+使用示例：
+
+```sh
+printf '%s\n' '@! ONE;' | ./scripts/run.sh -t expand,reduce,decode
+./scripts/run.sh -f examples/e/factorial.lambda -t decode -d real
+./scripts/run.sh -s '@! ONE;' -t compile,decode
+```
+
+脚本会按 `expand` / `reduce` / `compile` / `interpret` / `decode` 的顺序依次运行至选中的阶段。
+
+参数为：
+
+- `-f` / `--file` 文件路径
+- `-s` / `--source` 源代码内容
+- `-t` / `--stages` 指定的一个或多个阶段，用 `,` 连接。默认为 `decode`
+- `-e` / `--encode` 编译器编码方式。可以为 `church` / `scott`。默认为 `church`
+- `-d` / `--decode` 解释器解码方式。可以为 `natural` / `scott-natural` / `boolean` / `integer` / `rational` / `real`。默认为 `natural`
 
 ## compare_real.py
 
