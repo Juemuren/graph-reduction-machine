@@ -114,25 +114,11 @@ cabal test compiler-tests
 
 测试用例按以下类别组织：
 
-- `parse/`
-  - `precedence.json` 验证两个核心 λ 表达式解析后是否相同
-  - `errors.json` 验证解析错误
+- `parse/` 验证解析得到的纯 λ 表达式
 - `expand/` 验证展开得到的纯 λ 表达式
 - `reduce/` 验证归约得到的纯 λ 表达式
-  - `beta.json` 仅启用 β 归约
-  - `eta.json` 仅启用 η 归约
-  - `both.json` 启用 β 归约和 η 归约
-  - `null.json` 不启用归约
 - `compile/` 验证编译得到的 SKI 图
-  - `beta.json` 仅启用 β 归约
-  - `eta.json` 仅启用 η 归约
-  - `both.json` 启用 β 归约和 η 归约
-  - `null.json` 不启用归约
-  - `errors.json` 验证编译错误
-- `module/`
-  - `definitions.json` 验证定义行为
-  - `exports.json` 验证导入和导出行为
-  - `errors.json` 验证导入、导出、定义错误
+- `module/` 验证核心 λ 的定义 / 导入 / 导出
 
 ## 解释器测试
 
@@ -148,14 +134,9 @@ cabal test interpreter-tests
 
 测试用例按以下类别组织：
 
-- `reduce/`
-  - `normal.json` 验证 SKI 图与归约后的 SKI 图是否相同
-  - `errors.json` 验证归约错误
-- `limit/`
-  - `reduce.json` 验证归约的步数限制
-  - `decode.json` 验证解码的步数限制
-  - `options.json` 验证步数相关命令行选项及输出
-- `decode/*-errors.json` 验证各类型解码失败时的错误行为
+- `reduce/` 验证归约后得到的 SKI 图
+- `decode/` 验证解码后得到的值
+- `limit/` 验证归约和解码的步数限制
 
 ## 集成测试
 
