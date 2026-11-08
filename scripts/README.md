@@ -209,8 +209,8 @@ uv run scripts/compare_real.py examples/pi \
 - `--exact-value` 指定精确值。必填
 - `--max-index` 设置最大索引。默认为 `10`
 - `--max-steps` 设置最大步数。默认为 `1000000`
-- `--csv PATH` 指定输出的 CSV 文件。默认为 `directory/steps-vs-error.csv`
-- `--plot PATH` 指定输出的 PNG 文件。默认为 `directory/steps-vs-error.png`
+- `--csv` 指定输出的 CSV 文件。默认为 `directory/steps-vs-error.csv`
+- `--plot` 指定输出的 PNG 文件。默认为 `directory/steps-vs-error.png`
 
 ## compare_index.py
 
@@ -237,9 +237,29 @@ uv run scripts/compare_index.py examples/fibonacci \
 各参数为：
 
 - `directory` 指定目录。是位置参数，必填
-- `--function NAME` 指定各算法共同导出的函数名，必填
-- `--decode MODE` 指定解码方式，默认为 `natural`
+- `--function` 指定各算法共同导出的函数名，必填
+- `--decode` 指定解码方式，默认为 `natural`
 - `--max-index` 设置最大索引，默认为 `10`
 - `--max-steps` 设置每次解码的最大归约步数，默认为 `1000000`
-- `--csv PATH` 指定输出的 CSV 文件。默认为 `directory/index-vs-error.csv`
-- `--plot PATH` 指定输出的 PNG 文件。默认为 `directory/index-vs-error.png`
+- `--csv` 指定输出的 CSV 文件。默认为 `directory/index-vs-error.csv`
+- `--plot` 指定输出的 PNG 文件。默认为 `directory/index-vs-error.png`
+
+## align-bnfc.py
+
+使用示例：
+
+```sh
+python scripts/align-bnfc.py -g grammar/CoreLambda.cf
+python scripts/align-bnfc.py -g grammar/CoreLambda.cf -p
+```
+
+脚本会：
+
+1. 对齐 BNFC 文法规则中的标签、类别和 `::=`
+2. 若启用预览且内容发生变化，则显示差异并等待确认
+3. 将结果写回文件
+
+各参数为：
+
+- `-g` / `--grammar` 指定要对齐的文件
+- `-p` / `--preview` 启用预览。默认不启用
