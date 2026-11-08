@@ -73,4 +73,5 @@
 
 - `Interpreter` 是图归约和解码的对外入口
 - `Interpreter.Machine` 加载 SKI 图、维护共享堆并执行图归约
-- `Interpreter.Church` 使用符号探针解码布尔值、自然数、整数、有理数和实数
+- `Interpreter.Church` 对 Church 编码进行解码
+- `Interpreter.Scott` 对 Scott 编码进行解码

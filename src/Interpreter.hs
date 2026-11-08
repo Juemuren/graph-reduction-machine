@@ -6,6 +6,9 @@ module Interpreter (
   decodeNaturalSource,
   decodeNaturalSourceWithSteps,
   decodeNatural,
+  decodeScottNaturalSource,
+  decodeScottNaturalSourceWithSteps,
+  decodeScottNatural,
   decodeBooleanSource,
   decodeBooleanSourceWithSteps,
   decodeBoolean,
@@ -38,6 +41,11 @@ import Interpreter.Church (
   decodeRealSourceWithSteps,
  )
 import Interpreter.Machine (normalize, runGraph, runGraphWithSteps, serialize)
+import Interpreter.Scott (
+  decodeScottNatural,
+  decodeScottNaturalSource,
+  decodeScottNaturalSourceWithSteps,
+ )
 import Numeric.Natural (Natural)
 import qualified Ski.Abs as Graph
 import qualified Ski.Par as Graph

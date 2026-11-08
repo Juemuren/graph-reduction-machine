@@ -9,12 +9,12 @@
       "expect": { "value": "3" }
     },
     {
-      "name": "scott-predecessor",
+      "name": "scott-three",
       "language": "lambda",
-      "source": "@! 3 ZERO (\\previous -> previous ZERO (\\n -> ONE));",
+      "source": "@! 3;",
       "stage": "decode",
-      "options": { "encode": "scott", "decode": "natural" },
-      "expect": { "value": "1" }
+      "options": { "encode": "scott", "decode": "scott-natural" },
+      "expect": { "value": "3" }
     }
   ]
 }

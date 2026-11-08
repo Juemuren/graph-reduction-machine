@@ -57,6 +57,17 @@
       }
     },
     {
+      "name": "decode-scott-zero",
+      "command": "ski-interpreter",
+      "args": ["--decode=scott-natural", "--show-steps"],
+      "stdin": "#0 = K;\n",
+      "expect": {
+        "exitCode": 0,
+        "stdout": "0\n",
+        "stderr": "steps: 1\n"
+      }
+    },
+    {
       "name": "conflicting-step-options",
       "command": "ski-interpreter",
       "args": [
@@ -67,7 +78,7 @@
       "expect": {
         "exitCode": 1,
         "stdout": "",
-        "stderr": "usage: ski-interpreter [--max-steps=N|--no-step-limit] [--show-steps] [--decode=natural|boolean|integer|rational|real] [--precision-real=N] [FILE]\n"
+        "stderr": "usage: ski-interpreter [--max-steps=N|--no-step-limit] [--show-steps] [--decode=natural|scott-natural|boolean|integer|rational|real] [--precision-real=N] [FILE]\n"
       }
     }
   ]

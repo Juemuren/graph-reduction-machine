@@ -49,6 +49,7 @@ library
     , Compiler.ModuleSource
     , Interpreter.Church
     , Interpreter.Machine
+    , Interpreter.Scott
     , LanguageServer.Common
   build-depends:
       base >=4.16 && <5

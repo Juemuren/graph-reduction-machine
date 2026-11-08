@@ -12,6 +12,7 @@ import Interpreter (
   decodeNaturalSourceWithSteps,
   decodeRationalSourceWithSteps,
   decodeRealSourceWithSteps,
+  decodeScottNaturalSourceWithSteps,
   interpretSourceWithSteps,
  )
 import Numeric.Natural (Natural)
@@ -32,6 +33,9 @@ main = do
           Natural ->
             decodeNaturalSourceWithSteps limit source
               >>= renderDecoded "not a Church Natural" show
+          ScottNatural ->
+            decodeScottNaturalSourceWithSteps limit source
+              >>= renderDecoded "not a Scott Natural" show
           Boolean ->
             decodeBooleanSourceWithSteps limit source
               >>= renderDecoded "not a Church Boolean" (map toUpper . show)
@@ -60,7 +64,14 @@ renderDecoded message render (value, steps) =
 renderRational :: Rational -> String
 renderRational value = show (numerator value) ++ "/" ++ show (denominator value)
 
-data DecodeMode = Raw | Natural | Boolean | Integer | Rational | Real Natural
+data DecodeMode
+  = Raw
+  | Natural
+  | ScottNatural
+  | Boolean
+  | Integer
+  | Rational
+  | Real Natural
   deriving (Eq)
 
 parseArgs ::
@@ -72,7 +83,7 @@ parseArgs = go Nothing False Raw Nothing Nothing
       [ "usage: ski-interpreter"
       , "[--max-steps=N|--no-step-limit]"
       , "[--show-steps]"
-      , "[--decode=natural|boolean|integer|rational|real]"
+      , "[--decode=natural|scott-natural|boolean|integer|rational|real]"
       , "[--precision-real=N]"
       , "[FILE]"
       ]
@@ -85,6 +96,7 @@ parseArgs = go Nothing False Raw Nothing Nothing
     | Just name <- stripPrefix "--decode=" value =
         case name of
           "natural" -> go limit showSteps Natural precision path rest
+          "scott-natural" -> go limit showSteps ScottNatural precision path rest
           "boolean" -> go limit showSteps Boolean precision path rest
           "integer" -> go limit showSteps Integer precision path rest
           "rational" -> go limit showSteps Rational precision path rest

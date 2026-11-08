@@ -1,0 +1,20 @@
+{
+  "cases": [
+    {
+      "name": "non-scott-natural",
+      "language": "ski",
+      "source": "#0 = S;\n",
+      "stage": "decode",
+      "options": { "decode": "scott-natural" },
+      "expect": { "error": "not a Scott Natural" }
+    },
+    {
+      "name": "malformed-successor",
+      "language": "ski",
+      "source": "#0 = I;\n",
+      "stage": "decode",
+      "options": { "decode": "scott-natural" },
+      "expect": { "error": "not a Scott Natural" }
+    }
+  ]
+}

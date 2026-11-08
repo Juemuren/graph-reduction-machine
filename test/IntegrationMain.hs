@@ -10,6 +10,7 @@ import Interpreter (
   decodeNatural,
   decodeRational,
   decodeReal,
+  decodeScottNatural,
   interpret,
  )
 import qualified Ski.Abs as Graph
@@ -63,6 +64,7 @@ runCase label (TestCase _ (Input language source modules) spec expected) = do
 decodeGraph :: RunSpec -> Int -> Graph.Graph -> Either String String
 decodeGraph spec limit graph = case runDecode spec of
   Just "natural" -> showDecoded "Natural" show (decodeNatural limit graph)
+  Just "scott-natural" -> showScottDecoded (decodeScottNatural limit graph)
   Just "boolean" -> showDecoded "Boolean" show (decodeBoolean limit graph)
   Just "integer" -> showDecoded "Integer" show (decodeInteger limit graph)
   Just "rational" -> showDecoded "Rational" renderRational (decodeRational limit graph)
@@ -77,6 +79,9 @@ decodeGraph spec limit graph = case runDecode spec of
   showDecoded kind render result = do
     value <- result
     maybe (Left ("not a Church " ++ kind)) (Right . render) value
+  showScottDecoded result = do
+    value <- result
+    maybe (Left "not a Scott Natural") (Right . show) value
 
 renderRational :: Rational -> String
 renderRational value = show (numerator value) ++ "/" ++ show (denominator value)
