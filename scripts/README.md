@@ -16,6 +16,8 @@
 - `Invoke-Interpreter`
 - `Invoke-LambdaStage`
 
+并且脚本为这些函数的参数提供了补全。
+
 ### Invoke-Compiler
 
 `Invoke-Compiler` 调用编译器。
@@ -103,6 +105,8 @@ source ./scripts/functions.sh
 - `invoke_compiler`
 - `invoke_interpreter`
 - `invoke_lambda_stage`
+
+并且脚本为这些函数的参数提供了补全。
 
 ### invoke_compiler
 

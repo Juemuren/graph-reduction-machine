@@ -59,12 +59,12 @@ invoke_lambda_stage() (
 
     while (($#)); do
         case $1 in
-            -t | --stage)
-                stage=$2
-                shift 2
-                ;;
             -f | --file | -s | --source)
                 input=("$1" "$2")
+                shift 2
+                ;;
+            -t | --stage)
+                stage=$2
                 shift 2
                 ;;
             -e | --encode)
@@ -122,3 +122,52 @@ invoke_lambda_stage() (
             ;;
     esac
 )
+
+_lambda_tool_completion() {
+    local current=${COMP_WORDS[COMP_CWORD]}
+    local previous=${COMP_WORDS[COMP_CWORD - 1]}
+    local command=${COMP_WORDS[0]}
+    local option_words='-f --file -s --source'
+    local word
+
+    if [[ $command != invoke_lambda_stage ]]; then
+        for word in "${COMP_WORDS[@]:1:COMP_CWORD-1}"; do
+            [[ $word == -- ]] && return
+        done
+        option_words+=' --'
+    else
+        option_words+=' -t --stage -e --encode -d --decode'
+    fi
+
+    case $previous in
+        -f | --file)
+            compopt -o filenames
+            mapfile -t COMPREPLY < <(compgen -f -- "$current")
+            return
+            ;;
+        -s | --source)
+            return
+            ;;
+    esac
+
+    if [[ $command == invoke_lambda_stage ]]; then
+        case $previous in
+            -t | --stage)
+                mapfile -t COMPREPLY < <(compgen -W 'expand reduce compile interpret decode' -- "$current")
+                return
+                ;;
+            -e | --encode)
+                mapfile -t COMPREPLY < <(compgen -W 'church scott' -- "$current")
+                return
+                ;;
+            -d | --decode)
+                mapfile -t COMPREPLY < <(compgen -W 'natural scott-natural boolean integer rational real' -- "$current")
+                return
+                ;;
+        esac
+    fi
+
+    mapfile -t COMPREPLY < <(compgen -W "$option_words" -- "$current")
+}
+
+complete -F _lambda_tool_completion invoke_compiler invoke_interpreter invoke_lambda_stage
