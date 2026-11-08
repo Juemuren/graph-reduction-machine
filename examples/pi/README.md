@@ -6,7 +6,6 @@
 
 $$
 \boxed{
-a_n=
 16\sum_{k=0}^{n}\frac{(-1)^k}{(2k+1)5^{2k+1}}
 -
 4\sum_{k=0}^{n}\frac{(-1)^k}{(2k+1)239^{2k+1}}
@@ -15,13 +14,13 @@ $$
 
 实现在 [arctan.lambda](arctan.lambda) 中。
 
-## Leibniz 构造
+## 莱布尼茨构造
 
 第 $n$ 项为：
 
 $$
 \boxed{
-a_n=4\sum_{k=0}^{n}\frac{(-1)^k}{2k+1}
+4\sum_{k=0}^{n}\frac{(-1)^k}{2k+1}
 }
 $$
 
@@ -33,7 +32,7 @@ $$
 
 $$
 \boxed{
-a_n=2^n\sin\frac{\pi}{2^n}
+2^n\sin\frac{\pi}{2^n}
 }
 $$
 

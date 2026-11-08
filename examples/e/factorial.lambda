@@ -1,0 +1,14 @@
+# Sum from k = 0 to n of 1/k!.
+factorialStep = \state ->
+    (\index -> \term -> \sum ->
+        PAIR
+            (SUCC index)
+            (PAIR
+                (QDIV term (NTOQ (SUCC index)))
+                (QADD sum term)))
+    (FST state) (FST (SND state)) (SND (SND state));
+factorialE = \n ->
+    SND (SND (FOR (SUCC n) factorialStep
+        (PAIR ZERO (PAIR (NTOQ ONE) (NTOQ ZERO)))));
+
+@! factorialE;

@@ -1,0 +1,8 @@
+# (1 - 1/m)^(-m), where m=n+2.
+binomialUpperE = \n ->
+    (\m -> QPOW
+        (QSUB (NTOQ ONE) (QINV (NTOQ m)))
+        (ZNEG (NTOZ m)))
+    (SUCC (SUCC n));
+
+@! binomialUpperE;

@@ -1,0 +1,8 @@
+# (1 + 1/m)^m, where m=n+2.
+binomialLowerE = \n ->
+    (\m -> QPOW
+        (QADD (NTOQ ONE) (QINV (NTOQ m)))
+        (NTOZ m))
+    (SUCC (SUCC n));
+
+@! binomialLowerE;
