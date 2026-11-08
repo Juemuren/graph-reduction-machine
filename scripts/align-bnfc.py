@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Align the label, category, and ::= columns in the CoreLambda grammar.
+Align the label, category, and ::= columns in a BNFC grammar.
 """
 
 import argparse
@@ -8,7 +8,6 @@ import difflib
 import re
 from pathlib import Path
 
-ROOT = Path(__file__).resolve().parents[1]
 RULE = re.compile(r"^([A-Za-z0-9_]+\.)\s+(\S+)\s+::=\s*(.*)$")
 
 
@@ -58,28 +57,47 @@ def write_grammar(grammar_file: Path, aligned: str) -> None:
         output.write(aligned)
 
 
-def parse_args() -> argparse.Namespace:
-    parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("-p", "--preview", action="store_true")
-    return parser.parse_args()
+class Args(argparse.Namespace):
+    preview: bool
+    grammar: Path
+
+
+def parse_args() -> Args:
+    parser = argparse.ArgumentParser(
+        description=__doc__,
+        formatter_class=argparse.ArgumentDefaultsHelpFormatter,
+    )
+    parser.add_argument(
+        "-p",
+        "--preview",
+        action="store_true",
+        help="preview diff before writing",
+    )
+    parser.add_argument(
+        "-g",
+        "--grammar",
+        type=Path,
+        help="grammar file to align",
+    )
+    args = parser.parse_args(namespace=Args())
+    return args
 
 
 def main() -> None:
     args = parse_args()
-    grammar_file = ROOT / "grammar" / "CoreLambda.cf"
-    original = grammar_file.read_text(encoding="utf-8")
+    original = args.grammar.read_text(encoding="utf-8")
     aligned = align_grammar(original)
 
     if original == aligned:
         print("BNFC grammar is already aligned")
         return
     if args.preview:
-        preview_grammar(grammar_file, original, aligned)
+        preview_grammar(args.grammar, original, aligned)
         if not confirm_write():
             return
 
-    write_grammar(grammar_file, aligned)
-    print(f"Aligned {grammar_file}")
+    write_grammar(args.grammar, aligned)
+    print(f"Aligned {args.grammar}")
 
 
 if __name__ == "__main__":

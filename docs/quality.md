@@ -11,10 +11,7 @@ cabal run fourmolu -- -i $(git ls-files '*.hs')
 BNFC 文法规则中的 `::=` 可用脚本 [align-bnfc.py](../scripts/align-bnfc.py) 对齐
 
 ```sh
-# 对齐
-python scripts/align-bnfc.py
-# 先预览再写入
-python scripts/align-bnfc.py -p
+python scripts/align-bnfc.py-g grammar/CoreLambda.cf
 ```
 
 ## 静态检查
