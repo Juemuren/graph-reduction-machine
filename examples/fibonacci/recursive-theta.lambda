@@ -1,0 +1,13 @@
+# Fibonacci(6) = 8
+# Using THETA combinator
+
+fib = THETA (\fib -> \n ->
+    IF (LEQ n ONE)
+    n
+    (ADD
+        (fib (PRED n))
+        (fib (PRED (PRED n)))
+    )
+);
+
+@! fib SIX;

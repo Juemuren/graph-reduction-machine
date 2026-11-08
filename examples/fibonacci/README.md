@@ -1,6 +1,6 @@
-# 斐波那契数列构造算法比较
+# 斐波那契数列算法比较
 
-## 迭代构造
+## 迭代算法
 
 迭代过程表示为：
 
@@ -17,7 +17,7 @@ $$
 
 实现在 [loop.lambda](loop.lambda) 中。
 
-## 递归构造
+## 递归算法
 
 递归过程表示为：
 
@@ -31,4 +31,14 @@ $$
 }
 $$
 
-实现在 [recursive.lambda](recursive.lambda) 中。
+实现在 [recursive-y.lambda](recursive-y.lambda) / [recursive-z.lambda](recursive-z.lambda) / [recursive-theta.lambda](recursive-theta.lambda) 中。分别使用 `Y` 组合子 / `Z` 组合子 / `THETA` 组合子
+
+## 比较
+
+在仓库根目录运行：
+
+```sh
+lambda-compiler examples/fibonacci/recursive-y.lambda | ski-interpreter --decode=natural --show-steps
+lambda-compiler examples/fibonacci/recursive-z.lambda | ski-interpreter --decode=natural --show-steps
+lambda-compiler examples/fibonacci/recursive-theta.lambda | ski-interpreter --decode=natural --show-steps
+```

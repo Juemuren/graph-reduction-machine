@@ -1,0 +1,13 @@
+# Fibonacci(6) = 8
+# Using Z combinator
+
+fib = Z (\fib -> \n ->
+    IF (LEQ n ONE)
+    n
+    (ADD
+        (fib (PRED n))
+        (fib (PRED (PRED n)))
+    )
+);
+
+@! fib SIX;

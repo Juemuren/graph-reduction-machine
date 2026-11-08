@@ -1,7 +1,7 @@
 # Fibonacci(6) = 8
-# Using recursive
+# Using Y combinator
 
-fib = FIX (\fib -> \n ->
+fib = Y (\fib -> \n ->
     IF (LEQ n ONE)
     n
     (ADD
