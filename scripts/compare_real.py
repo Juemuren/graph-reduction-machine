@@ -5,7 +5,6 @@
 """Measure real-number examples and plot their accuracy against reduction steps."""
 
 import argparse
-import csv
 from collections import defaultdict
 from dataclasses import dataclass
 from decimal import Decimal, localcontext
@@ -19,6 +18,7 @@ from compare_common import (
     compile_example,
     decode,
     measure_algorithms,
+    write_csv_rows,
 )
 
 DEFAULT_CSV = PurePosixPath("DIR/steps-vs-error.csv")
@@ -29,7 +29,6 @@ DECIMAL_GUARD_DIGITS = 20
 DEFAULT_ZERO_ERROR_FLOOR = 1e-12
 
 FIELDS = ("method", "n", "steps", "value", "abs_error")
-
 FIGURE_SIZE = (11, 7)
 POINT_ZORDER = 3
 FRONTIER_ZORDER = 4
@@ -68,10 +67,10 @@ def measure(directory: Path, max_index: int, max_steps: int) -> list[Measurement
     return measure_algorithms(directory, max_index, max_steps, prepare)
 
 
-def make_samples(rows: list[Measurement], exact: Decimal) -> list[Sample]:
+def make_samples(measurements: list[Measurement], exact: Decimal) -> list[Sample]:
     samples = []
-    for row in rows:
-        value = Fraction(row.value)
+    for measurement in measurements:
+        value = Fraction(measurement.value)
         with localcontext() as context:
             context.prec = max(
                 MIN_DECIMAL_PRECISION,
@@ -81,10 +80,10 @@ def make_samples(rows: list[Measurement], exact: Decimal) -> list[Sample]:
             error = abs(approximation - exact)
         samples.append(
             Sample(
-                row.method,
-                row.index,
-                row.steps,
-                row.value,
+                measurement.method,
+                measurement.index,
+                measurement.steps,
+                measurement.value,
                 error,
             )
         )
@@ -92,11 +91,10 @@ def make_samples(rows: list[Measurement], exact: Decimal) -> list[Sample]:
 
 
 def write_csv(path: Path, samples: list[Sample]) -> None:
-    path.parent.mkdir(parents=True, exist_ok=True)
-    with path.open("w", encoding="utf-8", newline="") as output:
-        writer = csv.DictWriter(output, fieldnames=FIELDS)
-        writer.writeheader()
-        writer.writerows(
+    write_csv_rows(
+        path,
+        FIELDS,
+        (
             {
                 "method": sample.method,
                 "n": sample.index,
@@ -105,7 +103,8 @@ def write_csv(path: Path, samples: list[Sample]) -> None:
                 "abs_error": str(sample.error),
             }
             for sample in samples
-        )
+        ),
+    )
 
 
 def pareto_frontier(samples: list[Sample]) -> list[Sample]:
@@ -209,7 +208,8 @@ def parse_args() -> Arguments:
         "--exact-value",
         required=True,
         type=Decimal,
-        metavar="VALUE",
+        metavar="NUM",
+        help="exact value of a real number",
     )
     parser.add_argument(
         "--max-steps",
@@ -254,8 +254,14 @@ def parse_args() -> Arguments:
 def main() -> None:
     args = parse_args()
 
-    rows = measure(args.directory, args.max_index, args.max_steps)
-    samples = make_samples(rows, args.exact_value)
+    samples = make_samples(
+        measure(
+            args.directory,
+            args.max_index,
+            args.max_steps,
+        ),
+        args.exact_value,
+    )
     write_csv(args.csv, samples)
     plot(samples, args.plot)
     print(f"Saved {args.csv} and {args.plot}")

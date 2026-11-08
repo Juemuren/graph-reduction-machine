@@ -5,10 +5,8 @@
 """Measure indexed algorithms and plot reduction steps against the index."""
 
 import argparse
-import csv
-import re
 from collections import defaultdict
-from pathlib import Path
+from pathlib import Path, PurePosixPath
 
 import matplotlib.pyplot as plt
 from compare_common import (
@@ -18,10 +16,14 @@ from compare_common import (
     compile_example,
     decode,
     measure_algorithms,
+    write_csv_rows,
 )
 
+DEFAULT_CSV = PurePosixPath("DIR/index-vs-steps.csv")
+DEFAULT_PLOT = PurePosixPath("DIR/index-vs-steps.png")
+
 FIELDS = ("method", "n", "steps", "value")
-FUNCTION_PATTERN = re.compile(r"^[a-z][A-Za-z0-9_]*$")
+FIGURE_SIZE = (11, 7)
 
 
 class Arguments(argparse.Namespace):
@@ -30,8 +32,8 @@ class Arguments(argparse.Namespace):
     decode: str
     max_index: int
     max_steps: int
-    csv: Path | None
-    plot: Path | None
+    csv: Path
+    plot: Path
 
 
 def entry_source(source: Path, function: str, index: int) -> str:
@@ -60,11 +62,10 @@ def measure(
 
 
 def write_csv(path: Path, samples: list[Measurement]) -> None:
-    path.parent.mkdir(parents=True, exist_ok=True)
-    with path.open("w", encoding="utf-8", newline="") as output:
-        writer = csv.DictWriter(output, fieldnames=FIELDS)
-        writer.writeheader()
-        writer.writerows(
+    write_csv_rows(
+        path,
+        FIELDS,
+        (
             {
                 "method": sample.method,
                 "n": sample.index,
@@ -72,7 +73,8 @@ def write_csv(path: Path, samples: list[Measurement]) -> None:
                 "value": sample.value,
             }
             for sample in samples
-        )
+        ),
+    )
 
 
 def plot(samples: list[Measurement], output: Path) -> None:
@@ -80,7 +82,7 @@ def plot(samples: list[Measurement], output: Path) -> None:
     for sample in samples:
         grouped[sample.method].append(sample)
 
-    figure, axis = plt.subplots(figsize=(11, 7))
+    figure, axis = plt.subplots(figsize=FIGURE_SIZE)
     for method, points in sorted(grouped.items()):
         positive = [point for point in points if point.steps > 0]
         if positive:
@@ -112,17 +114,20 @@ def parse_args() -> Arguments:
     parser.add_argument(
         "directory",
         type=Path,
+        metavar="DIR",
         help="directory containing .lambda algorithms",
     )
     parser.add_argument(
         "--function",
         required=True,
+        metavar="NAME",
         help="function exported by each algorithm",
     )
     parser.add_argument(
         "--decode",
         choices=("natural", "scott-natural", "integer", "rational", "boolean"),
         default="natural",
+        metavar="MODE",
         help="interpreter decoding mode",
     )
     parser.add_argument(
@@ -130,44 +135,50 @@ def parse_args() -> Arguments:
         type=int,
         default=10,
         metavar=">=0",
+        help="maximum reduction steps",
     )
     parser.add_argument(
         "--max-steps",
         type=int,
         default=1_000_000,
         metavar=">0",
+        help="maximum index",
     )
     parser.add_argument(
         "--csv",
         type=Path,
+        default=DEFAULT_CSV,
         metavar="PATH",
         help="output CSV",
     )
     parser.add_argument(
         "--plot",
         type=Path,
+        default=DEFAULT_PLOT,
         metavar="PATH",
         help="output PNG",
     )
     args = parser.parse_args(namespace=Arguments())
-    if not FUNCTION_PATTERN.fullmatch(args.function):
-        parser.error("--function must be a source-language name")
     if args.max_index < 0:
         parser.error("--max-index must be nonnegative")
     if args.max_steps <= 0:
         parser.error("--max-steps must be positive")
-    if args.csv is None:
-        args.csv = args.directory / "index-vs-steps.csv"
-    if args.plot is None:
-        args.plot = args.directory / "index-vs-steps.png"
+    if args.csv is DEFAULT_CSV:
+        args.csv = args.directory / DEFAULT_CSV.name
+    if args.plot is DEFAULT_PLOT:
+        args.plot = args.directory / DEFAULT_PLOT.name
     return args
 
 
 def main() -> None:
     args = parse_args()
-    assert args.csv is not None and args.plot is not None
+
     samples = measure(
-        args.directory, args.function, args.decode, args.max_index, args.max_steps
+        args.directory,
+        args.function,
+        args.decode,
+        args.max_index,
+        args.max_steps,
     )
     write_csv(args.csv, samples)
     plot(samples, args.plot)

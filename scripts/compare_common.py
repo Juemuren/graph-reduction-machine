@@ -1,8 +1,9 @@
 """Shared compiler and interpreter calls for example comparisons."""
 
+import csv
 import re
 import subprocess
-from collections.abc import Callable
+from collections.abc import Callable, Iterable, Mapping
 from dataclasses import dataclass
 from pathlib import Path
 
@@ -107,3 +108,13 @@ def measure_algorithms(
     if not samples:
         raise ValueError("no successful measurements")
     return samples
+
+
+def write_csv_rows(
+    path: Path, fields: tuple[str, ...], rows: Iterable[Mapping[str, str | int]]
+) -> None:
+    path.parent.mkdir(parents=True, exist_ok=True)
+    with path.open("w", encoding="utf-8", newline="") as output:
+        writer = csv.DictWriter(output, fieldnames=fields)
+        writer.writeheader()
+        writer.writerows(rows)
