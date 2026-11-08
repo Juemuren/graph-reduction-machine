@@ -4,12 +4,7 @@ const path = require("node:path");
 const textmate = require("vscode-textmate");
 const oniguruma = require("vscode-oniguruma");
 
-const grammarPath = path.join(
-  __dirname,
-  "../syntaxes/core-lambda.tmLanguage.json",
-);
-
-const grammarPromise = (async () => {
+const registryPromise = (async () => {
   const wasm = fs.readFileSync(
     require.resolve("vscode-oniguruma/release/onig.wasm"),
   );
@@ -21,31 +16,40 @@ const grammarPromise = (async () => {
       createOnigScanner: (patterns) => new oniguruma.OnigScanner(patterns),
       createOnigString: (source) => new oniguruma.OnigString(source),
     }),
-    loadGrammar: async () =>
-      textmate.parseRawGrammar(
+    loadGrammar: async (scopeName) => {
+      const grammarPath = path.join(
+        __dirname,
+        "../syntaxes",
+        `${scopeName.replace(/^source\./, "")}.tmLanguage.json`,
+      );
+      return textmate.parseRawGrammar(
         fs.readFileSync(grammarPath, "utf8"),
         grammarPath,
-      ),
+      );
+    },
   });
-  return registry.loadGrammar("source.core-lambda");
+  return registry;
 })();
 
-async function tokenizeFixture(name) {
-  const source = fs.readFileSync(
-    path.join(__dirname, "fixtures", name),
-    "utf8",
-  );
-  const lines = source.split(/\r?\n/);
-  if (lines.at(-1) === "") lines.pop();
+function tokenizeFixture(scopeName) {
+  return async (name) => {
+    const source = fs.readFileSync(
+      path.join(__dirname, "fixtures", name),
+      "utf8",
+    );
+    const lines = source.split(/\r?\n/);
+    if (lines.at(-1) === "") lines.pop();
 
-  const grammar = await grammarPromise;
-  let stack = textmate.INITIAL;
-  const tokens = lines.map((line) => {
-    const result = grammar.tokenizeLine(line, stack);
-    stack = result.ruleStack;
-    return result.tokens;
-  });
-  return { lines, tokens };
+    const registry = await registryPromise;
+    const grammar = await registry.loadGrammar(scopeName);
+    let stack = textmate.INITIAL;
+    const tokens = lines.map((line) => {
+      const result = grammar.tokenizeLine(line, stack);
+      stack = result.ruleStack;
+      return result.tokens;
+    });
+    return { lines, tokens };
+  };
 }
 
 function scopesAt({ lines, tokens }, lineIndex, text) {

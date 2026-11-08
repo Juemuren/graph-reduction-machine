@@ -1,6 +1,7 @@
 const assert = require('node:assert/strict');
 const test = require('node:test');
-const { tokenizeFixture, scopesAt, assertScope } = require('./utils.cjs');
+const { tokenizeFixture: tokenizeFixtureFor, scopesAt, assertScope } = require('./utils.cjs');
+const tokenizeFixture = tokenizeFixtureFor('source.core-lambda');
 
 test('highlights directives, definitions, lambda parameters, names, and numbers', async () => {
   const fixture = await tokenizeFixture('highlights.lambda');
