@@ -1,6 +1,10 @@
 # Natural
 
-# Church-encoded naturals: construction
+# ---
+# Church-encoded
+# ---
+
+# Construction
 
 @> ZERO = \f -> \x -> x;
 @> SUCC = \n -> \f -> \x -> f (n f x);
@@ -85,9 +89,32 @@ divMod = \m -> \n ->
 @> GT = \m -> \n -> NOT (LEQ m n);
 @> GEQ = \m -> \n -> LEQ n m;
 
-# Scott-encoded naturals: construction and deconstruction
+# ---
+# Scott-encoded
+# ---
+
+# Construction
 
 @> ZERO_S = \zero -> \successor -> zero;
 @> SUCC_S = \n -> \zero -> \successor -> successor n;
+
+# Unary operations
+
 @> PRED_S = \n -> n ZERO_S (\predecessor -> predecessor);
+
+# Symmetric binary operations
+
+@> ADD_S = Y (\add -> \m -> \n ->
+    m n (\predecessor -> SUCC_S (add predecessor n))
+);
+
+# Asymmetric binary operations
+
+@> SUB_S = Y (\sub -> \m -> \n ->
+    n m (\predecessor -> sub (PRED_S m) predecessor)
+);
+
+# Comparison
+
 @> ISZERO_S = \n -> n TRUE (\predecessor -> FALSE);
+
