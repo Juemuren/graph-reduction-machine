@@ -51,8 +51,6 @@
 @> SUB = \m -> \n -> n PRED m;
 @> POW = \m -> \n -> n m;
 
-# Division helpers
-
 divModStep = \divisor -> \quotient_remainder ->
     IF (LEQ divisor (SUCC (SND quotient_remainder)))
         (PAIR
@@ -67,9 +65,9 @@ divMod = \m -> \n ->
     IF (ISZERO n)
         (PAIR ZERO m)
         (m (divModStep n) (PAIR ZERO ZERO));
-
 @> DIV = \m -> \n -> FST (divMod m n);
 @> MOD = \m -> \n -> SND (divMod m n);
+
 @> LOG = \base -> \number ->
     FST (WHILE
         (\state -> GEQ (SND state) base)
@@ -107,14 +105,28 @@ divMod = \m -> \n ->
 @> ADD_S = Y (\add -> \m -> \n ->
     m n (\predecessor -> SUCC_S (add predecessor n))
 );
+@> MUL_S = Y (\mul -> \m -> \n ->
+    m ZERO_S (\predecessor -> ADD_S n (mul predecessor n))
+);
 
 # Asymmetric binary operations
 
 @> SUB_S = Y (\sub -> \m -> \n ->
     n m (\predecessor -> sub (PRED_S m) predecessor)
 );
+@> DIV_S = Y (\div -> \m -> \n ->
+    (ISZERO_S n)
+    ZERO_S
+    ((LT_S m n)
+        ZERO_S
+        (SUCC_S (div (SUB_S m n) n)))
+);
 
 # Comparison
 
 @> ISZERO_S = \n -> n TRUE (\predecessor -> FALSE);
+@> LT_S = Y (\lt -> \m -> \n ->
+    m (n FALSE (\t -> TRUE))
+    (\p -> n FALSE (\q -> lt p q))
+);
 

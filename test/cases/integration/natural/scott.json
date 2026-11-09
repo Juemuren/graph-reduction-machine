@@ -1,7 +1,7 @@
 {
   "cases": [
     {
-      "name": "zero-s",
+      "name": "zero_s",
       "language": "lambda",
       "source": "@! ISZERO_S ZERO_S;\n",
       "stage": "decode",
@@ -13,7 +13,7 @@
       }
     },
     {
-      "name": "successor-s",
+      "name": "succ_s",
       "language": "lambda",
       "source": "@! ISZERO_S (SUCC_S ZERO_S);\n",
       "stage": "decode",
@@ -25,7 +25,7 @@
       }
     },
     {
-      "name": "predecessor-s",
+      "name": "pred_s",
       "language": "lambda",
       "source": "@! ISZERO_S (PRED_S (SUCC_S ZERO_S));\n",
       "stage": "decode",
@@ -37,7 +37,7 @@
       }
     },
     {
-      "name": "predecessor-two-s",
+      "name": "pred_s-two",
       "language": "lambda",
       "source": "@! ISZERO_S (PRED_S (SUCC_S (SUCC_S ZERO_S)));\n",
       "stage": "decode",
@@ -49,7 +49,7 @@
       }
     },
     {
-      "name": "predecessor-zero-s",
+      "name": "pred_s-zero",
       "language": "lambda",
       "source": "@! ISZERO_S (PRED_S ZERO_S);\n",
       "stage": "decode",
@@ -59,6 +59,150 @@
       "expect": {
         "value": "True"
       }
+    },
+    {
+      "name": "add_s",
+      "language": "lambda",
+      "source": "@! ADD_S 2 3;\n",
+      "stage": "decode",
+      "options": { "encode": "scott", "decode": "scott-natural" },
+      "expect": { "value": "5" }
+    },
+    {
+      "name": "add_s-zero",
+      "language": "lambda",
+      "source": "@! ADD_S 0 2;\n",
+      "stage": "decode",
+      "options": { "encode": "scott", "decode": "scott-natural" },
+      "expect": { "value": "2" }
+    },
+    {
+      "name": "mul_s",
+      "language": "lambda",
+      "source": "@! MUL_S 2 3;\n",
+      "stage": "decode",
+      "options": { "encode": "scott", "decode": "scott-natural" },
+      "expect": { "value": "6" }
+    },
+    {
+      "name": "mul_s-zero-second",
+      "language": "lambda",
+      "source": "@! MUL_S 3 0;\n",
+      "stage": "decode",
+      "options": { "encode": "scott", "decode": "scott-natural" },
+      "expect": { "value": "0" }
+    },
+    {
+      "name": "mul_s-zero-first",
+      "language": "lambda",
+      "source": "@! MUL_S 0 3;\n",
+      "stage": "decode",
+      "options": { "encode": "scott", "decode": "scott-natural" },
+      "expect": { "value": "0" }
+    },
+    {
+      "name": "sub_s",
+      "language": "lambda",
+      "source": "@! SUB_S 3 2;\n",
+      "stage": "decode",
+      "options": { "encode": "scott", "decode": "scott-natural" },
+      "expect": { "value": "1" }
+    },
+    {
+      "name": "sub_s-underflow",
+      "language": "lambda",
+      "source": "@! SUB_S 2 3;\n",
+      "stage": "decode",
+      "options": { "encode": "scott", "decode": "scott-natural" },
+      "expect": { "value": "0" }
+    },
+    {
+      "name": "div_s",
+      "language": "lambda",
+      "source": "@! DIV_S 7 2;\n",
+      "stage": "decode",
+      "options": { "encode": "scott", "decode": "scott-natural" },
+      "expect": { "value": "3" }
+    },
+    {
+      "name": "div_s-exact",
+      "language": "lambda",
+      "source": "@! DIV_S 4 2;\n",
+      "stage": "decode",
+      "options": { "encode": "scott", "decode": "scott-natural" },
+      "expect": { "value": "2" }
+    },
+    {
+      "name": "div_s-less",
+      "language": "lambda",
+      "source": "@! DIV_S 1 2;\n",
+      "stage": "decode",
+      "options": { "encode": "scott", "decode": "scott-natural" },
+      "expect": { "value": "0" }
+    },
+    {
+      "name": "div_s-zero-dividend",
+      "language": "lambda",
+      "source": "@! DIV_S 0 2;\n",
+      "stage": "decode",
+      "options": { "encode": "scott", "decode": "scott-natural" },
+      "expect": { "value": "0" }
+    },
+    {
+      "name": "div_s-zero-divisor",
+      "language": "lambda",
+      "source": "@! DIV_S 2 0;\n",
+      "stage": "decode",
+      "options": { "encode": "scott", "decode": "scott-natural" },
+      "expect": { "value": "0" }
+    },
+    {
+      "name": "lt_s-zero-both",
+      "language": "lambda",
+      "source": "@! LT_S 0 0;\n",
+      "stage": "decode",
+      "options": { "encode": "scott", "decode": "boolean" },
+      "expect": { "value": "False" }
+    },
+    {
+      "name": "lt_s-zero-first",
+      "language": "lambda",
+      "source": "@! LT_S 0 2;\n",
+      "stage": "decode",
+      "options": { "encode": "scott", "decode": "boolean" },
+      "expect": { "value": "True" }
+    },
+    {
+      "name": "lt_s-zero-second",
+      "language": "lambda",
+      "source": "@! LT_S 2 0;\n",
+      "stage": "decode",
+      "options": { "encode": "scott", "decode": "boolean" },
+      "expect": { "value": "False" }
+    },
+    {
+      "name": "lt_s-less",
+      "language": "lambda",
+      "source": "@! LT_S 1 2;\n",
+      "stage": "decode",
+      "options": { "encode": "scott", "decode": "boolean" },
+      "expect": { "value": "True" }
+    },
+    {
+      "name": "lt_s-equal",
+      "language": "lambda",
+      "source": "@! LT_S 2 2;\n",
+      "stage": "decode",
+      "options": { "encode": "scott", "decode": "boolean" },
+      "expect": { "value": "False" }
+    },
+    {
+      "name": "lt_s-greater",
+      "language": "lambda",
+      "source": "@! LT_S 2 1;\n",
+      "stage": "decode",
+      "options": { "encode": "scott", "decode": "boolean" },
+      "expect": { "value": "False" }
     }
   ]
 }
