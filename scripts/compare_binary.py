@@ -32,6 +32,7 @@ from compare_common import (
 from jsonschema import validate
 from matplotlib.colors import SymLogNorm
 
+FIELDS = ("method", "m", "n", "steps", "value", "status")
 FIGURE_SIZE = (11, 7)
 
 
@@ -86,15 +87,17 @@ class Sample:
 
 
 def input_pairs(spec: Input) -> list[tuple[int, int]]:
-    if spec["kind"] == "grid":
-        return [
-            (m, n) for m in range(spec["maxM"] + 1) for n in range(spec["maxN"] + 1)
-        ]
-    if spec["kind"] == "diagonal":
-        return [(index, index) for index in range(spec["maxIndex"] + 1)]
-    if spec["kind"] == "fixed-m":
-        return [(spec["fixed"], index) for index in range(spec["maxIndex"] + 1)]
-    return [(index, spec["fixed"]) for index in range(spec["maxIndex"] + 1)]
+    match spec["kind"]:
+        case "grid":
+            return [
+                (m, n) for m in range(spec["maxM"] + 1) for n in range(spec["maxN"] + 1)
+            ]
+        case "diagonal":
+            return [(index, index) for index in range(spec["maxIndex"] + 1)]
+        case "fixed-m":
+            return [(spec["fixed"], index) for index in range(spec["maxIndex"] + 1)]
+        case "fixed-n":
+            return [(index, spec["fixed"]) for index in range(spec["maxIndex"] + 1)]
 
 
 def entry_source_binary(source: Path, function: str, m: int, n: int) -> str:
@@ -158,7 +161,7 @@ def measure_case(
 def write_config_csv(path: Path, samples: list[Sample]) -> None:
     write_csv_rows(
         path,
-        ("method", "m", "n", "steps", "value", "status"),
+        FIELDS,
         (
             (
                 sample.method,
