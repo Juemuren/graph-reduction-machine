@@ -1,0 +1,27 @@
+# Scott numerals and their arithmetic.
+zero = \z -> \s -> z;
+succ = \n -> \z -> \s -> s n;
+pred = \n -> n zero (\p -> p);
+
+isZero = \n -> n TRUE (\p -> FALSE);
+lt = \m -> \n -> NOT (isZero (sub n m));
+
+addRecur = \r -> \m -> \n ->
+    n m (\p -> succ (r m p));
+@> add = Y addRecur;
+
+subRecur = \r -> \m -> \n ->
+    n m (\p -> pred (r m p));
+@> sub = Y subRecur;
+
+mulRecur = \r -> \m -> \n ->
+    n zero (\p -> add (r m p) m);
+@> mul = Y mulRecur;
+
+divRecur = \r -> \m -> \n ->
+    IF (isZero n)
+        zero
+        (IF (lt m n)
+            zero
+            (succ (r (sub m n) n)));
+@> div = Y divRecur;

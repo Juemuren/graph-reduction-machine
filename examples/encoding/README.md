@@ -4,8 +4,6 @@
 
 丘奇编码通过反复应用函数来表示数据，强调数据的迭代或折叠行为。
 
-<!-- TODO 尚未实现 -->
-
 丘奇编码及相关运算实现在 [church.lambda](church.lambda) 中。
 
 ### 丘奇编码的自然数构造
@@ -143,45 +141,7 @@ $$
 
 丘奇编码的除法会更加复杂。
 
-一种方法是用递归：
-
-$$
-\mathrm{DIV}_C(m,n)=
-\begin{cases}
-    0 & n=0 \\
-    0 & n \ge 1 \land m \lt n \\
-    \mathrm{DIV}_C(m-n,n)+1 & n \ge 1 \land m\ge n
-\end{cases}
-$$
-
-先表示递归的部分：
-
-$$
-\boxed{
-\begin{aligned}
-\mathrm{recur}
-=&
-\lambda r.\lambda m.\lambda n. \\
-& \mathrm{IF}\ (\mathrm{ISZERO}_C\ n) \\
-&\quad \mathrm{ZERO}_C \\
-&\quad \mathrm{IF}\ (\mathrm{LT}_C\ m\ n) \\
-&\qquad \mathrm{ZERO}_C \\
-&\qquad (\mathrm{SUCC}_C\ (r\ (\mathrm{SUB}_C\ m\ n)\ n)) \\
-\end{aligned}
-}
-$$
-
-然后使用 Y 组合子构造递归：
-
-$$
-\boxed{
-\mathrm{DIV}_C
-=
-\mathrm{Y}\ \mathrm{recur}
-}
-$$
-
-另一种方法是用迭代。
+一种方法是用迭代。
 
 把状态表示为一个有序对，第一个数是商，第二个数是余数：
 
@@ -266,11 +226,11 @@ $$
 }
 $$
 
+另一种方法是用递归。不过这和斯科特编码中的除法基本相同，故不再重复。
+
 ## 斯科特编码
 
 斯科特编码通过选择构造器对应的分支来表示数据，强调模式匹配和数据结构的拆解。
-
-<!-- TODO 尚未实现 -->
 
 斯科特编码及相关运算实现在 [scott.lambda](scott.lambda) 中。
 
