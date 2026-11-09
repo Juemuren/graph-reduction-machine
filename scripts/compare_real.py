@@ -29,6 +29,7 @@ from compare_common import (
     sources_in,
     write_csv_rows,
 )
+from matplotlib.axes import Axes
 
 DEFAULT_CSV = PurePosixPath("DIR/steps-vs-error.csv")
 DEFAULT_PLOT = PurePosixPath("DIR/steps-vs-error.png")
@@ -156,17 +157,11 @@ def plot_coordinates(
     return steps, errors
 
 
-def plot(samples: list[Sample], output: Path) -> None:
+def plot_scatter(axis: Axes, samples: list[Sample], zero_floor: float) -> None:
     grouped: dict[str, list[Sample]] = defaultdict(list)
     for sample in samples:
         grouped[sample.method].append(sample)
 
-    positive_errors = [float(sample.error) for sample in samples if sample.error > 0]
-    zero_floor = (
-        min(positive_errors) / 10 if positive_errors else DEFAULT_ZERO_ERROR_FLOOR
-    )
-
-    figure, axis = plt.subplots(figsize=FIGURE_SIZE)
     colors = plt.get_cmap("tab10")
     for number, (method, points) in enumerate(sorted(grouped.items())):
         points = sorted(points, key=lambda item: item.index)
@@ -195,6 +190,8 @@ def plot(samples: list[Sample], output: Path) -> None:
                 textcoords="offset points",
             )
 
+
+def plot_pareto_frontier(axis: Axes, samples: list[Sample], zero_floor: float) -> None:
     frontier_steps, frontier_errors = plot_coordinates(
         pareto_frontier(samples), zero_floor
     )
@@ -209,6 +206,17 @@ def plot(samples: list[Sample], output: Path) -> None:
         label="Pareto frontier",
         zorder=FRONTIER_ZORDER,
     )
+
+
+def plot(samples: list[Sample], output: Path) -> None:
+    positive_errors = [float(sample.error) for sample in samples if sample.error > 0]
+    zero_floor = (
+        min(positive_errors) / 10 if positive_errors else DEFAULT_ZERO_ERROR_FLOOR
+    )
+
+    figure, axis = plt.subplots(figsize=FIGURE_SIZE)
+    plot_scatter(axis, samples, zero_floor)
+    plot_pareto_frontier(axis, samples, zero_floor)
     axis.set(
         xscale="log",
         yscale="log",
