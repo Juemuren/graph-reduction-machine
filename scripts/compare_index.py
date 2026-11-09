@@ -17,12 +17,12 @@ import matplotlib.pyplot as plt
 from compare_common import (
     COMPILER,
     INTERPRETER,
-    ROOT,
     Measurement,
     MethodSpec,
     check_agreement,
     compile_example,
     decode,
+    entry_source,
     executable,
     measure_methods,
     sources_in,
@@ -36,22 +36,13 @@ FIELDS = ("method", "n", "steps", "value")
 FIGURE_SIZE = (11, 7)
 
 
-def entry_source(source: Path, function: str, index: int) -> str:
-    resolved = source.resolve()
-    try:
-        import_path = "./" + resolved.relative_to(ROOT).as_posix()
-    except ValueError:
-        import_path = resolved.as_posix()
-    return f'@< "{import_path}" ({function}); @! {function} {index};'
-
-
 def method_spec(
     source: Path, function: str, mode: str, compiler: str, interpreter: str
 ) -> MethodSpec[int]:
     def probe(index: int, limit: int) -> tuple[int, str] | None:
         graph = compile_example(
             compiler,
-            entry_source(source, function, index),
+            entry_source(source, function, [index]),
             f"{source} n={index}",
         )
         return decode(

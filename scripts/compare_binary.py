@@ -20,11 +20,11 @@ import matplotlib.pyplot as plt
 from compare_common import (
     COMPILER,
     INTERPRETER,
-    ROOT,
     MethodSpec,
     check_agreement,
     compile_example,
     decode,
+    entry_source,
     executable,
     measure_methods,
     write_csv_rows,
@@ -100,15 +100,6 @@ def input_pairs(spec: Input) -> list[tuple[int, int]]:
             return [(index, spec["fixed"]) for index in range(spec["maxIndex"] + 1)]
 
 
-def entry_source_binary(source: Path, function: str, m: int, n: int) -> str:
-    resolved = source.resolve()
-    try:
-        import_path = "./" + resolved.relative_to(ROOT).as_posix()
-    except ValueError:
-        import_path = resolved.as_posix()
-    return f'@< "{import_path}" ({function}); @! {function} {m} {n};'
-
-
 def method_spec(
     method: Method, base: Path, case_name: str, compiler: str, interpreter: str
 ) -> MethodSpec[tuple[int, int]]:
@@ -120,7 +111,7 @@ def method_spec(
         context = f"{case_name}/{method_name} m={m} n={n}"
         graph = compile_example(
             compiler,
-            entry_source_binary(source, method["function"], m, n),
+            entry_source(source, method["function"], [m, n]),
             context,
             method["encode"],
         )

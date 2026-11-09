@@ -135,6 +135,18 @@ def sources_in(directory: Path) -> list[Path]:
     return sources
 
 
+def entry_source(source: Path, function: str, arguments: list[int]) -> str:
+    """Build a source entry that imports and applies ``function``."""
+
+    resolved = source.resolve()
+    try:
+        import_path = "./" + resolved.relative_to(ROOT).as_posix()
+    except ValueError:
+        import_path = resolved.as_posix()
+    args = " ".join(map(str, arguments))
+    return f'@< "{import_path}" ({function}); @! {function} {args};'
+
+
 def measure_methods(
     methods: Iterable[MethodSpec[Point]],
     inputs: Sequence[Point],
