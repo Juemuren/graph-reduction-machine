@@ -456,12 +456,3 @@ $$
 \mathrm{Y}\ \mathrm{recur}
 }
 $$
-
-## 比较
-
-比较编译得到的 SKI 图
-
-```sh
-echo "@! 1;" | lambda-compiler --encode=church
-echo "@! 1;" | lambda-compiler --encode=scott
-```

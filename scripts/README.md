@@ -51,7 +51,7 @@ Invoke-Compiler -File "examples/e/factorial.lambda"
 ```pwsh
 '#0 = I;' | Invoke-Interpreter -Options @("--show-steps", "--decode=natural")
 Invoke-Interpreter -Source '#0 = I;'
-Invoke-Interpreter -File "examples/encoding/church.ski" -Options @("--decode=natural")
+Invoke-Interpreter -File "examples/ski/church.ski" -Options @("--decode=natural")
 ```
 
 ### Invoke-LambdaStage
@@ -143,7 +143,7 @@ invoke_compiler -f examples/e/factorial.lambda
 ```sh
 printf '%s\n' '#0 = I;' | invoke_interpreter -- --show-steps --decode=natural
 invoke_interpreter -s '#0 = I;'
-invoke_interpreter -f examples/encoding/church.ski -- --decode=natural
+invoke_interpreter -f examples/ski/church.ski -- --decode=natural
 ```
 
 ### invoke_lambda_stage
