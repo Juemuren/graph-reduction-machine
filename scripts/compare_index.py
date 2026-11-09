@@ -90,6 +90,15 @@ def measure(
     ]
     if not samples:
         raise ValueError("no successful measurements")
+    values: dict[int, Measurement] = {}
+    for sample in samples:
+        previous = values.get(sample.index)
+        if previous is not None and previous.value != sample.value:
+            raise ValueError(
+                f"methods disagree at n={sample.index}: "
+                f"{previous.method}={previous.value}, {sample.method}={sample.value}"
+            )
+        values[sample.index] = sample
     return samples
 
 
