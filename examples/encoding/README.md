@@ -456,3 +456,11 @@ $$
 \mathrm{Y}\ \mathrm{recur}
 }
 $$
+
+## 比较并绘图
+
+在仓库根目录运行：
+
+```sh
+uv run scripts/compare_binary.py examples/encoding/compare.json
+```

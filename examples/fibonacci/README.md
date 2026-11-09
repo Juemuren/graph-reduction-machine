@@ -38,7 +38,5 @@ $$
 在仓库根目录运行：
 
 ```sh
-uv run scripts/compare_index.py examples/fibonacci \
-    --function fib --decode natural \
-    --max-index 10 --max-steps 1000000
+uv run scripts/compare_index.py examples/fibonacci/compare.json
 ```
