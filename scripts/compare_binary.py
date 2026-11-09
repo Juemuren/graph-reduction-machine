@@ -128,9 +128,7 @@ def method_spec(
     return MethodSpec(method_name, probe, label)
 
 
-def measure_case(
-    case: Case, base: Path, compiler: str, interpreter: str
-) -> tuple[list[Sample], list[str]]:
+def measure_case(case: Case, base: Path) -> tuple[list[Sample], list[str]]:
     name = case["name"]
     pairs = input_pairs(case["input"])
     max_steps = case["maxSteps"]
@@ -141,7 +139,13 @@ def measure_case(
             raise ValueError(f"{name}: duplicate method {method_name}")
         method_names.append(method_name)
     methods = (
-        method_spec(method, base, name, compiler, interpreter)
+        method_spec(
+            method,
+            base,
+            name,
+            executable(COMPILER),
+            executable(INTERPRETER),
+        )
         for method in case["methods"]
     )
     results = measure_methods(methods, pairs, max_steps, on_limit="record")
@@ -153,7 +157,7 @@ def measure_case(
     return samples, method_names
 
 
-def write_config_csv(path: Path, samples: list[Sample]) -> None:
+def write_csv(path: Path, samples: list[Sample]) -> None:
     write_csv_rows(
         path,
         FIELDS,
@@ -260,7 +264,7 @@ def plot_lines(
     return figure
 
 
-def plot_case(
+def plot(
     samples: list[Sample],
     method_names: list[str],
     spec: Input,
@@ -289,19 +293,12 @@ def run_config(path: Path) -> None:
     schema = json.loads(schema_path.read_text(encoding="utf-8"))
     validate(data, schema)
     config = cast(Config, data)
-    compiler = executable(COMPILER)
-    interpreter = executable(INTERPRETER)
-    names: set[str] = set()
     for case in config["cases"]:
-        name = case["name"]
-        if name in names:
-            raise ValueError(f"duplicate case {name}")
-        samples, methods = measure_case(case, path.parent, compiler, interpreter)
-        names.add(name)
+        samples, methods = measure_case(case, path.parent)
         csv_path = path.parent / case["csv"]
         png_path = path.parent / case["png"]
-        write_config_csv(csv_path, samples)
-        plot_case(samples, methods, case["input"], png_path, name)
+        write_csv(csv_path, samples)
+        plot(samples, methods, case["input"], png_path, case["name"])
         print(f"Saved {csv_path} and {png_path}")
 
 
@@ -317,7 +314,7 @@ def parse_args() -> Arguments:
     parser.add_argument(
         "config",
         type=Path,
-        metavar="NAME",
+        metavar="PATH",
         help="comparison JSON file",
     )
     args = parser.parse_args(namespace=Arguments())
