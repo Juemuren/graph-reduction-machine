@@ -10,7 +10,6 @@ Compare binary algorithms from a JSON configuration and plot reduction steps.
 """
 
 import argparse
-import json
 from collections import defaultdict
 from dataclasses import dataclass
 from pathlib import Path
@@ -20,16 +19,12 @@ import matplotlib.pyplot as plt
 from compare_common import (
     COMPILER,
     INTERPRETER,
-    MethodSpec,
     check_agreement,
-    compile_example,
-    decode,
-    entry_source,
     executable,
     measure_methods,
     write_csv_rows,
 )
-from jsonschema import validate
+from compare_config import Method, load_config, method_names, method_spec
 from matplotlib.colors import SymLogNorm
 from matplotlib.figure import Figure
 
@@ -58,14 +53,6 @@ class GridInput(TypedDict):
 
 
 Input: TypeAlias = DiagonalInput | FixedInput | GridInput
-
-
-class Method(TypedDict):
-    name: str
-    file: str
-    function: str
-    encode: Literal["church", "scott"]
-    decode: Literal["natural", "scott-natural", "integer", "rational", "boolean"]
 
 
 class Case(TypedDict):
@@ -104,57 +91,34 @@ def input_pairs(spec: Input) -> list[tuple[int, int]]:
             return [(index, spec["fixed"]) for index in range(spec["maxIndex"] + 1)]
 
 
-def method_spec(
-    method: Method, base: Path, case_name: str, compiler: str, interpreter: str
-) -> MethodSpec[tuple[int, int]]:
-    source = base / method["file"]
-    method_name = method["name"]
-
-    def probe(pair: tuple[int, int], limit: int) -> tuple[int, str] | None:
-        m, n = pair
-        context = f"{case_name}/{method_name} m={m} n={n}"
-        graph = compile_example(
-            compiler,
-            entry_source(source, method["function"], [m, n]),
-            context,
-            method["encode"],
-        )
-        return decode(interpreter, graph, method["decode"], limit, context)
-
-    def label(pair: tuple[int, int]) -> str:
-        m, n = pair
-        return f"{case_name}/{method_name} m={m} n={n}"
-
-    return MethodSpec(method_name, probe, label)
-
-
 def measure_case(case: Case, base: Path) -> tuple[list[Sample], list[str]]:
     name = case["name"]
-    pairs = input_pairs(case["input"])
-    max_steps = case["maxSteps"]
-    method_names: list[str] = []
-    for method in case["methods"]:
-        method_name = method["name"]
-        if method_name in method_names:
-            raise ValueError(f"{name}: duplicate method {method_name}")
-        method_names.append(method_name)
+    names = method_names(case["methods"], name)
     methods = (
         method_spec(
             method,
             base,
-            name,
             executable(COMPILER),
             executable(INTERPRETER),
+            lambda pair: [pair[0], pair[1]],
+            lambda pair, method_name=method["name"]: (
+                f"{name}/{method_name} m={pair[0]} n={pair[1]}"
+            ),
         )
         for method in case["methods"]
     )
-    results = measure_methods(methods, pairs, max_steps, on_limit="record")
+    results = measure_methods(
+        methods,
+        input_pairs(case["input"]),
+        case["maxSteps"],
+        on_limit="record",
+    )
     check_agreement(results, name, lambda pair: f"m={pair[0]}, n={pair[1]}")
     samples = [
         Sample(result.method, *result.input, result.steps, result.value)
         for result in results
     ]
-    return samples, method_names
+    return samples, names
 
 
 def write_csv(path: Path, samples: list[Sample]) -> None:
@@ -212,7 +176,11 @@ def plot_grid(
             aspect="auto",
         )
         axis.set(title=method, xlabel="n", ylabel="m")
-    figure.colorbar(image, ax=axes[0].tolist(), label="Reduction steps")
+    figure.colorbar(
+        image,
+        ax=axes[0].tolist(),
+        label="Reduction steps",
+    )
     figure.suptitle(title)
     return figure
 
@@ -288,11 +256,7 @@ def plot(
 
 
 def run_config(path: Path) -> None:
-    data = json.loads(path.read_text(encoding="utf-8"))
-    schema_path = Path(__file__).with_suffix(".schema.json")
-    schema = json.loads(schema_path.read_text(encoding="utf-8"))
-    validate(data, schema)
-    config = cast(Config, data)
+    config = cast(Config, load_config(path, Path(__file__).with_suffix(".schema.json")))
     for case in config["cases"]:
         samples, methods = measure_case(case, path.parent)
         csv_path = path.parent / case["csv"]

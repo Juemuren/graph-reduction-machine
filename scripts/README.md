@@ -224,34 +224,75 @@ uv run scripts/compare_real.py examples/pi \
 使用示例：
 
 ```sh
-uv run scripts/compare_index.py examples/fibonacci \
-  --function fib --decode natural \
-  --max-index 10 --max-steps 1000000
+uv run scripts/compare_index.py examples/fibonacci/compare.json
 ```
 
 脚本会：
 
-1. 逐个导入指定目录中每个 `.lambda` 文件导出的指定函数
-2. 为从零到最大索引的每个索引生成程序入口并编译和解码
-3. 记录步数和解码的结果；超过步数上限会停止当前算法的记录
-4. 检查同一索引下各算法解码的结果是否一致
-5. 写入 CSV 表格
-6. 绘制 PNG 图片
+1. 读取配置文件 `cases` 中的每个用例
+2. 为从零到用例 `maxIndex` 的每个索引生成输入
+3. 为用例 `methods` 中的每个算法导入指定文件中的指定函数并编译和解码
+4. 记录步数和解码的结果；超出步数上限会停止当前算法的记录
+5. 检查同一索引下各算法解码的结果是否一致
+6. 为每个用例写入 CSV 表格
+7. 为每个用例绘制 PNG 图片
 
 各输出为：
 
 - 表格包含 `method,n,steps,value` 四列
-- 图片使用半对数坐标，以索引为线性横轴，归约步数为对数纵轴。图片包含各算法的收敛曲线和散点图
+- 图片使用半对数坐标，以索引为线性横轴，归约步数为对数纵轴。图片包含各算法的折线和散点
 
-各参数为：
+参数为：
 
-- `directory` 指定目录。是位置参数，必填
-- `--function` 指定各算法共同导出的函数名，必填
-- `--decode` 指定解码方式，默认为 `natural`
-- `--max-index` 设置最大索引，默认为 `10`
-- `--max-steps` 设置每次解码的最大归约步数，默认为 `1000000`
-- `--csv` 指定输出的 CSV 文件。默认为 `directory/index-vs-steps.csv`
-- `--plot` 指定输出的 PNG 文件。默认为 `directory/index-vs-steps.png`
+- `config` 指定 JSON 配置文件路径。是位置参数，必填
+
+配置示例为：
+
+```json
+{
+  "cases": [
+    {
+      "name": "fibonacci",
+      "methods": [
+        {
+          "name": "loop",
+          "file": "loop.lambda",
+          "function": "fib",
+          "encode": "church",
+          "decode": "natural"
+        },
+        {
+          "name": "recursive-theta",
+          "file": "recursive-theta.lambda",
+          "function": "fib",
+          "encode": "church",
+          "decode": "natural"
+        }
+      ],
+      "maxIndex": 10,
+      "maxSteps": 1000000,
+      "csv": "index-vs-steps.csv",
+      "png": "index-vs-steps.png"
+    }
+  ]
+}
+```
+
+其中：
+
+- `cases` 为要运行的用例数组。对每个用例：
+  - `name` 是用例名称
+  - `maxIndex` 是最大索引，输入范围为 `0..maxIndex`
+  - `maxSteps` 是步数上限
+  - `csv` / `png` 分别为表格和图片的相对路径，以配置文件所在目录为基准
+- `methods` 为待比较的方法数组。对每个方法：
+  - `name` 是方法名称
+  - `file` 是 `.lambda` 文件的相对路径，以配置文件所在目录为基准
+  - `function` 是函数名
+  - `encode` 是输入的编码方式，可为 `church` / `scott`
+  - `decode` 是输出的解码方式，可为 `natural` / `scott-natural` / `integer` / `rational` / `boolean`
+
+完整的 JSON Schema 见 [compare_index.schema.json](compare_index.schema.json)。
 
 ## compare_binary.py
 

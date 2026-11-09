@@ -1,0 +1,41 @@
+{
+  "cases": [
+    {
+      "name": "fibonacci",
+      "methods": [
+        {
+          "name": "loop",
+          "file": "loop.lambda",
+          "function": "fib",
+          "encode": "church",
+          "decode": "natural"
+        },
+        {
+          "name": "recursive-theta",
+          "file": "recursive-theta.lambda",
+          "function": "fib",
+          "encode": "church",
+          "decode": "natural"
+        },
+        {
+          "name": "recursive-y",
+          "file": "recursive-y.lambda",
+          "function": "fib",
+          "encode": "church",
+          "decode": "natural"
+        },
+        {
+          "name": "recursive-z",
+          "file": "recursive-z.lambda",
+          "function": "fib",
+          "encode": "church",
+          "decode": "natural"
+        }
+      ],
+      "maxIndex": 10,
+      "maxSteps": 1000000,
+      "csv": "index-vs-steps.csv",
+      "png": "index-vs-steps.png"
+    }
+  ]
+}
