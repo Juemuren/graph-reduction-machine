@@ -7,9 +7,9 @@
 $$
 \boxed{
 \begin{cases}
-    P_0=(0,1) \\
-    P_{n+1}=T(P_n) \\
-    T(a,b)=(b,a+b) \\
+    P_0 = (0,1) \\
+    P_{n+1} = T(P_n) \\
+    T(a,b) = (b,a+b) \\
     \operatorname{fib}(n) = \pi_1(P_n)
 \end{cases}
 }
