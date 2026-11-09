@@ -8,6 +8,7 @@ import subprocess
 from collections.abc import Callable, Iterable, Sequence
 from dataclasses import dataclass
 from pathlib import Path
+from typing import Generic, Literal, TypeVar
 
 ROOT = Path(__file__).resolve().parents[1]
 COMPILER = "lambda-compiler"
@@ -24,11 +25,36 @@ class Measurement:
     value: str
 
 
-Probe = Callable[[int, int], tuple[int, str] | None]
-Prepare = Callable[[Path, str, str], Probe]
+Point = TypeVar("Point")
+Result = tuple[int, str] | None
+
+
+@dataclass(frozen=True)
+class MethodSpec(Generic[Point]):
+    """Describe one method for ``measure_methods``.
+
+    ``probe`` takes an input and step limit, returning (steps, value) or None.
+    ``label`` formats that input for progress output.
+    """
+
+    name: str
+    probe: Callable[[Point, int], Result]
+    label: Callable[[Point], str]
+
+
+@dataclass(frozen=True)
+class Measured(Generic[Point]):
+    """Hold one result; steps and value are None when the limit was reached."""
+
+    method: str
+    input: Point
+    steps: int | None
+    value: str | None
 
 
 def executable(name: str) -> str:
+    """Find the built Cabal executable named by ``name``."""
+
     result = subprocess.run(
         ["cabal", "list-bin", f"exe:{name}"],
         cwd=ROOT,
@@ -45,6 +71,8 @@ def compile_example(
     context: str,
     encode: str | None = None,
 ) -> str:
+    """Compile source text, using ``context`` to identify failures."""
+
     options = [compiler]
     if encode is not None:
         options.append(f"--encode={encode}")
@@ -69,6 +97,12 @@ def decode(
     context: str,
     precision: int | None = None,
 ) -> tuple[int, str] | None:
+    """Decode a graph and return (steps, value), or None at the step limit.
+
+    ``precision`` sets real-number decoding precision.
+    ``context`` labels errors.
+    """
+
     options = [interpreter, f"--decode={mode}"]
     if precision is not None:
         options.append(f"--precision-real={precision}")
@@ -92,37 +126,50 @@ def decode(
 
 
 def sources_in(directory: Path) -> list[Path]:
+    """List the directory's .lambda files, failing if there are none."""
+
     sources = sorted(directory.glob("*.lambda"))
     if not sources:
         raise ValueError(f"no .lambda algorithms in {directory}")
     return sources
 
 
-def measure_algorithms(
-    directory: Path, max_index: int, max_steps: int, prepare: Prepare
-) -> list[Measurement]:
-    sources = sources_in(directory)
-    compiler = executable(COMPILER)
-    interpreter = executable(INTERPRETER)
-    samples = []
-    for source in sources:
-        probe = prepare(source, compiler, interpreter)
-        for index in range(max_index + 1):
-            result = probe(index, max_steps)
+def measure_methods(
+    methods: Iterable[MethodSpec[Point]],
+    inputs: Sequence[Point],
+    max_steps: int,
+    *,
+    on_limit: Literal["stop", "record"],
+) -> list[Measured[Point]]:
+    """Measure every method over ``inputs`` in order and print each outcome.
+
+    The same input sequence is reused for each method.
+    ``on_limit="stop"`` skips the failed input and stops that method.
+    ``on_limit="record"`` keeps a failed sample and continues to the next input.
+    """
+
+    samples: list[Measured[Point]] = []
+    for method in methods:
+        for point in inputs:
+            label = method.label(point)
+            result = method.probe(point, max_steps)
             if result is None:
-                print(f"{source.stem} n={index}: exceeded {max_steps} steps")
-                break
-            steps, value = result
-            print(f"{source.stem} n={index}: {steps} steps, {value}")
-            samples.append(Measurement(source.stem, index, steps, value))
-    if not samples:
-        raise ValueError("no successful measurements")
+                print(f"{label}: exceeded {max_steps} steps")
+                if on_limit == "stop":
+                    break
+                samples.append(Measured(method.name, point, None, None))
+            else:
+                steps, value = result
+                print(f"{label}: {steps} steps, {value}")
+                samples.append(Measured(method.name, point, steps, value))
     return samples
 
 
 def write_csv_rows(
     path: Path, fields: tuple[str, ...], rows: Iterable[Sequence[str | int]]
 ) -> None:
+    """Write a CSV header and rows, creating the output directory if needed."""
+
     path.parent.mkdir(parents=True, exist_ok=True)
     with path.open("w", encoding="utf-8", newline="") as output:
         writer = csv.writer(output)

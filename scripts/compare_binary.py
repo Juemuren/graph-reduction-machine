@@ -21,9 +21,11 @@ from compare_common import (
     COMPILER,
     INTERPRETER,
     ROOT,
+    MethodSpec,
     compile_example,
     decode,
     executable,
+    measure_methods,
     write_csv_rows,
 )
 from jsonschema import validate
@@ -103,36 +105,51 @@ def entry_source_binary(source: Path, function: str, m: int, n: int) -> str:
     return f'@< "{import_path}" ({function}); @! {function} {m} {n};'
 
 
+def method_spec(
+    method: Method, base: Path, case_name: str, compiler: str, interpreter: str
+) -> MethodSpec[tuple[int, int]]:
+    source = base / method["file"]
+    method_name = method["name"]
+
+    def probe(pair: tuple[int, int], limit: int) -> tuple[int, str] | None:
+        m, n = pair
+        context = f"{case_name}/{method_name} m={m} n={n}"
+        graph = compile_example(
+            compiler,
+            entry_source_binary(source, method["function"], m, n),
+            context,
+            method["encode"],
+        )
+        return decode(interpreter, graph, method["decode"], limit, context)
+
+    def label(pair: tuple[int, int]) -> str:
+        m, n = pair
+        return f"{case_name}/{method_name} m={m} n={n}"
+
+    return MethodSpec(method_name, probe, label)
+
+
 def measure_case(
     case: Case, base: Path, compiler: str, interpreter: str
 ) -> tuple[list[Sample], list[str]]:
     name = case["name"]
     pairs = input_pairs(case["input"])
     max_steps = case["maxSteps"]
-    samples: list[Sample] = []
     method_names: list[str] = []
     for method in case["methods"]:
         method_name = method["name"]
         if method_name in method_names:
             raise ValueError(f"{name}: duplicate method {method_name}")
         method_names.append(method_name)
-        source = base / method["file"]
-        for m, n in pairs:
-            context = f"{name}/{method_name} m={m} n={n}"
-            graph = compile_example(
-                compiler,
-                entry_source_binary(source, method["function"], m, n),
-                context,
-                method["encode"],
-            )
-            result = decode(interpreter, graph, method["decode"], max_steps, context)
-            if result is None:
-                print(f"{context}: exceeded {max_steps} steps")
-                samples.append(Sample(method_name, m, n, None, None))
-            else:
-                steps, value = result
-                print(f"{context}: {steps} steps, {value}")
-                samples.append(Sample(method_name, m, n, steps, value))
+    methods = (
+        method_spec(method, base, name, compiler, interpreter)
+        for method in case["methods"]
+    )
+    results = measure_methods(methods, pairs, max_steps, on_limit="record")
+    samples = [
+        Sample(result.method, *result.input, result.steps, result.value)
+        for result in results
+    ]
     values: dict[tuple[int, int], str] = {}
     for sample in samples:
         if sample.value is None:

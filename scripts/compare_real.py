@@ -18,11 +18,15 @@ from pathlib import Path, PurePosixPath
 
 import matplotlib.pyplot as plt
 from compare_common import (
+    COMPILER,
+    INTERPRETER,
     Measurement,
-    Probe,
+    MethodSpec,
     compile_example,
     decode,
-    measure_algorithms,
+    executable,
+    measure_methods,
+    sources_in,
     write_csv_rows,
 )
 
@@ -39,19 +43,50 @@ POINT_ZORDER = 3
 FRONTIER_ZORDER = 4
 
 
-def measure(directory: Path, max_index: int, max_steps: int) -> list[Measurement]:
-    def prepare(source: Path, compiler: str, interpreter: str) -> Probe:
-        graph = compile_example(
-            compiler, source.read_text(encoding="utf-8"), str(source)
+def method_spec(source: Path, compiler: str, interpreter: str) -> MethodSpec[int]:
+    graph = compile_example(
+        compiler,
+        source.read_text(encoding="utf-8"),
+        str(source),
+    )
+
+    def probe(index: int, limit: int) -> tuple[int, str] | None:
+        return decode(
+            interpreter,
+            graph,
+            "real",
+            limit,
+            f"{source} n={index}",
+            index,
         )
 
-        def probe(index: int, limit: int) -> tuple[int, str] | None:
-            context = f"{source} n={index}"
-            return decode(interpreter, graph, "real", limit, context, index)
+    return MethodSpec(
+        source.stem,
+        probe,
+        lambda index: f"{source.stem} n={index}",
+    )
 
-        return probe
 
-    return measure_algorithms(directory, max_index, max_steps, prepare)
+def measure(directory: Path, max_index: int, max_steps: int) -> list[Measurement]:
+    compiler = executable(COMPILER)
+    interpreter = executable(INTERPRETER)
+    methods = (
+        method_spec(source, compiler, interpreter) for source in sources_in(directory)
+    )
+    results = measure_methods(
+        methods,
+        range(max_index + 1),
+        max_steps,
+        on_limit="stop",
+    )
+    samples = [
+        Measurement(result.method, result.input, result.steps, result.value)
+        for result in results
+        if result.steps is not None and result.value is not None
+    ]
+    if not samples:
+        raise ValueError("no successful measurements")
+    return samples
 
 
 @dataclass(frozen=True)
