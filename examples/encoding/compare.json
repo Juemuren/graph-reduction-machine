@@ -1,0 +1,188 @@
+{
+    "cases": [
+        {
+            "name": "church-vs-scott-add-diag",
+            "methods": [
+                {
+                    "name": "church-add",
+                    "file": "church.lambda",
+                    "function": "add",
+                    "encode": "church",
+                    "decode": "natural"
+                },
+                {
+                    "name": "scott-add",
+                    "file": "scott.lambda",
+                    "function": "add",
+                    "encode": "scott",
+                    "decode": "scott-natural"
+                }
+            ],
+            "input": { "kind": "diagonal", "maxIndex": 100 },
+            "maxSteps": 10000,
+            "csv": "add-diag.csv",
+            "png": "add-diag.png"
+        },
+        {
+            "name": "church-vs-scott-add-grid",
+            "methods": [
+                {
+                    "name": "church-add",
+                    "file": "church.lambda",
+                    "function": "add",
+                    "encode": "church",
+                    "decode": "natural"
+                },
+                {
+                    "name": "scott-add",
+                    "file": "scott.lambda",
+                    "function": "add",
+                    "encode": "scott",
+                    "decode": "scott-natural"
+                }
+            ],
+            "input": { "kind": "grid", "maxM": 10, "maxN": 10 },
+            "maxSteps": 10000,
+            "csv": "add-grid.csv",
+            "png": "add-grid.png"
+        },
+        {
+            "name": "church-vs-scott-sub-diag",
+            "methods": [
+                {
+                    "name": "church-sub",
+                    "file": "church.lambda",
+                    "function": "sub",
+                    "encode": "church",
+                    "decode": "natural"
+                },
+                {
+                    "name": "scott-sub",
+                    "file": "scott.lambda",
+                    "function": "sub",
+                    "encode": "scott",
+                    "decode": "scott-natural"
+                }
+            ],
+            "input": { "kind": "diagonal", "maxIndex": 100 },
+            "maxSteps": 10000,
+            "csv": "sub-diag.csv",
+            "png": "sub-diag.png"
+        },
+        {
+            "name": "church-vs-scott-sub-grid",
+            "methods": [
+                {
+                    "name": "church-sub",
+                    "file": "church.lambda",
+                    "function": "sub",
+                    "encode": "church",
+                    "decode": "natural"
+                },
+                {
+                    "name": "scott-sub",
+                    "file": "scott.lambda",
+                    "function": "sub",
+                    "encode": "scott",
+                    "decode": "scott-natural"
+                }
+            ],
+            "input": { "kind": "grid", "maxM": 10, "maxN": 10 },
+            "maxSteps": 10000,
+            "csv": "sub-grid.csv",
+            "png": "sub-grid.png"
+        },
+        {
+            "name": "church-vs-scott-mul-diag",
+            "methods": [
+                {
+                    "name": "church-mul",
+                    "file": "church.lambda",
+                    "function": "mul",
+                    "encode": "church",
+                    "decode": "natural"
+                },
+                {
+                    "name": "scott-mul",
+                    "file": "scott.lambda",
+                    "function": "mul",
+                    "encode": "scott",
+                    "decode": "scott-natural"
+                }
+            ],
+            "input": { "kind": "diagonal", "maxIndex": 100 },
+            "maxSteps": 10000,
+            "csv": "mul-diag.csv",
+            "png": "mul-diag.png"
+        },
+        {
+            "name": "church-vs-scott-mul-grid",
+            "methods": [
+                {
+                    "name": "church-mul",
+                    "file": "church.lambda",
+                    "function": "mul",
+                    "encode": "church",
+                    "decode": "natural"
+                },
+                {
+                    "name": "scott-mul",
+                    "file": "scott.lambda",
+                    "function": "mul",
+                    "encode": "scott",
+                    "decode": "scott-natural"
+                }
+            ],
+            "input": { "kind": "grid", "maxM": 10, "maxN": 10 },
+            "maxSteps": 10000,
+            "csv": "mul-grid.csv",
+            "png": "mul-grid.png"
+        },
+        {
+            "name": "church-vs-scott-div-diag",
+            "methods": [
+                {
+                    "name": "church-div",
+                    "file": "church.lambda",
+                    "function": "div",
+                    "encode": "church",
+                    "decode": "natural"
+                },
+                {
+                    "name": "scott-div",
+                    "file": "scott.lambda",
+                    "function": "div",
+                    "encode": "scott",
+                    "decode": "scott-natural"
+                }
+            ],
+            "input": { "kind": "diagonal", "maxIndex": 100 },
+            "maxSteps": 10000,
+            "csv": "div-diag.csv",
+            "png": "div-diag.png"
+        },
+        {
+            "name": "church-vs-scott-div-grid",
+            "methods": [
+                {
+                    "name": "church-div",
+                    "file": "church.lambda",
+                    "function": "div",
+                    "encode": "church",
+                    "decode": "natural"
+                },
+                {
+                    "name": "scott-div",
+                    "file": "scott.lambda",
+                    "function": "div",
+                    "encode": "scott",
+                    "decode": "scott-natural"
+                }
+            ],
+            "input": { "kind": "grid", "maxM": 10, "maxN": 10 },
+            "maxSteps": 10000,
+            "csv": "div-grid.csv",
+            "png": "div-grid.png"
+        }
+    ]
+}
