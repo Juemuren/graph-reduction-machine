@@ -22,6 +22,7 @@ from compare_common import (
     INTERPRETER,
     ROOT,
     MethodSpec,
+    check_agreement,
     compile_example,
     decode,
     executable,
@@ -146,18 +147,11 @@ def measure_case(
         for method in case["methods"]
     )
     results = measure_methods(methods, pairs, max_steps, on_limit="record")
+    check_agreement(results, name, lambda pair: f"m={pair[0]}, n={pair[1]}")
     samples = [
         Sample(result.method, *result.input, result.steps, result.value)
         for result in results
     ]
-    values: dict[tuple[int, int], str] = {}
-    for sample in samples:
-        if sample.value is None:
-            continue
-        pair = (sample.m, sample.n)
-        if pair in values and values[pair] != sample.value:
-            raise ValueError(f"{name}: methods disagree at m={sample.m}, n={sample.n}")
-        values[pair] = sample.value
     return samples, method_names
 
 

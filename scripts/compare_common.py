@@ -5,7 +5,7 @@ Shared compiler and interpreter calls for example comparisons.
 import csv
 import re
 import subprocess
-from collections.abc import Callable, Iterable, Sequence
+from collections.abc import Callable, Hashable, Iterable, Sequence
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Generic, Literal, TypeVar
@@ -26,6 +26,7 @@ class Measurement:
 
 
 Point = TypeVar("Point")
+Key = TypeVar("Key", bound=Hashable)
 Result = tuple[int, str] | None
 
 
@@ -163,6 +164,29 @@ def measure_methods(
                 print(f"{label}: {steps} steps, {value}")
                 samples.append(Measured(method.name, point, steps, value))
     return samples
+
+
+def check_agreement(
+    results: Iterable[Measured[Key]], context: str, input_label: Callable[[Key], str]
+) -> None:
+    """Require successful methods to decode each input to the same value.
+
+    Limit results have no value and are skipped.
+    ``input_label`` formats the input coordinates for a disagreement error.
+    """
+
+    values: dict[Key, Measured[Key]] = {}
+    for result in results:
+        if result.value is None:
+            continue
+        previous = values.get(result.input)
+        if previous is not None and previous.value != result.value:
+            raise ValueError(
+                f"{context}: methods disagree at {input_label(result.input)}: "
+                f"{previous.method}={previous.value}, "
+                f"{result.method}={result.value}"
+            )
+        values[result.input] = result
 
 
 def write_csv_rows(

@@ -20,6 +20,7 @@ from compare_common import (
     ROOT,
     Measurement,
     MethodSpec,
+    check_agreement,
     compile_example,
     decode,
     executable,
@@ -83,6 +84,7 @@ def measure(
         max_steps,
         on_limit="stop",
     )
+    check_agreement(results, str(directory), lambda index: f"n={index}")
     samples = [
         Measurement(result.method, result.input, result.steps, result.value)
         for result in results
@@ -90,15 +92,6 @@ def measure(
     ]
     if not samples:
         raise ValueError("no successful measurements")
-    values: dict[int, Measurement] = {}
-    for sample in samples:
-        previous = values.get(sample.index)
-        if previous is not None and previous.value != sample.value:
-            raise ValueError(
-                f"methods disagree at n={sample.index}: "
-                f"{previous.method}={previous.value}, {sample.method}={sample.value}"
-            )
-        values[sample.index] = sample
     return samples
 
 
