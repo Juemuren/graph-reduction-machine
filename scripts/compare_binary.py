@@ -31,9 +31,13 @@ from compare_common import (
 )
 from jsonschema import validate
 from matplotlib.colors import SymLogNorm
+from matplotlib.figure import Figure
 
 FIELDS = ("method", "m", "n", "steps", "value", "status")
-FIGURE_SIZE = (11, 7)
+LINE_FIGURE_SIZE = (11, 7)
+GRID_MIN_WIDTH = 6
+GRID_WIDTH_PER_METHOD = 5
+GRID_HEIGHT = 5
 
 
 class DiagonalInput(TypedDict):
@@ -167,6 +171,95 @@ def write_config_csv(path: Path, samples: list[Sample]) -> None:
     )
 
 
+def plot_grid(
+    grouped: dict[str, list[Sample]],
+    method_names: list[str],
+    spec: GridInput,
+    max_steps: int,
+    title: str,
+) -> Figure:
+    figure, axes = plt.subplots(
+        1,
+        len(method_names),
+        figsize=(
+            max(GRID_MIN_WIDTH, GRID_WIDTH_PER_METHOD * len(method_names)),
+            GRID_HEIGHT,
+        ),
+        sharex=True,
+        sharey=True,
+        squeeze=False,
+    )
+    color_map = plt.get_cmap("viridis").copy()
+    color_map.set_bad("lightgray")
+    norm = SymLogNorm(linthresh=1, vmin=0, vmax=max(1, max_steps))
+    for axis, method in zip(axes[0], method_names):
+        grid = [
+            [float("nan") for _ in range(spec["maxN"] + 1)]
+            for _ in range(spec["maxM"] + 1)
+        ]
+        for sample in grouped[method]:
+            if sample.steps is not None:
+                grid[sample.m][sample.n] = sample.steps
+        image = axis.imshow(
+            grid,
+            origin="lower",
+            cmap=color_map,
+            norm=norm,
+            aspect="auto",
+        )
+        axis.set(title=method, xlabel="n", ylabel="m")
+    figure.colorbar(image, ax=axes[0].tolist(), label="Reduction steps")
+    figure.suptitle(title)
+    return figure
+
+
+def plot_lines(
+    grouped: dict[str, list[Sample]],
+    method_names: list[str],
+    spec: DiagonalInput | FixedInput,
+    title: str,
+) -> Figure:
+    figure, axis = plt.subplots(figsize=LINE_FIGURE_SIZE)
+
+    for method in method_names:
+        points = [
+            point
+            for point in grouped[method]
+            if point.steps is not None and point.steps > 0
+        ]
+        if points:
+            match spec["kind"]:
+                case "diagonal":
+                    x_values = [point.m for point in points]
+                case "fixed-m":
+                    x_values = [point.n for point in points]
+                case "fixed-n":
+                    x_values = [point.m for point in points]
+            axis.plot(
+                x_values,
+                [point.steps for point in points],
+                marker="o",
+                label=method,
+            )
+    match spec["kind"]:
+        case "diagonal":
+            x_label = "m = n"
+        case "fixed-m":
+            x_label = "n"
+        case "fixed-n":
+            x_label = "m"
+    axis.set(
+        yscale="log",
+        xlabel=x_label,
+        ylabel="Reduction steps",
+        title=title,
+    )
+    axis.grid(True, which="both", alpha=0.25)
+    axis.legend()
+    figure.tight_layout()
+    return figure
+
+
 def plot_case(
     samples: list[Sample],
     method_names: list[str],
@@ -174,66 +267,18 @@ def plot_case(
     output: Path,
     title: str,
 ) -> None:
+    successful = [sample.steps for sample in samples if sample.steps is not None]
+    if not successful:
+        raise ValueError(f"{title}: no successful measurements")
     grouped: dict[str, list[Sample]] = defaultdict(list)
     for sample in samples:
         grouped[sample.method].append(sample)
+
     if spec["kind"] == "grid":
-        max_m = spec["maxM"]
-        max_n = spec["maxN"]
-        successful = [sample.steps for sample in samples if sample.steps is not None]
-        if not successful:
-            raise ValueError(f"{title}: no successful measurements")
-        figure, axes = plt.subplots(
-            1,
-            len(method_names),
-            figsize=(max(6, 5 * len(method_names)), 5),
-            sharex=True,
-            sharey=True,
-            squeeze=False,
-        )
-        color_map = plt.get_cmap("viridis").copy()
-        color_map.set_bad("lightgray")
-        norm = SymLogNorm(linthresh=1, vmin=0, vmax=max(1, max(successful)))
-        for axis, method in zip(axes[0], method_names):
-            grid = [[float("nan") for _ in range(max_n + 1)] for _ in range(max_m + 1)]
-            for sample in grouped[method]:
-                if sample.steps is not None:
-                    grid[sample.m][sample.n] = sample.steps
-            image = axis.imshow(
-                grid, origin="lower", cmap=color_map, norm=norm, aspect="auto"
-            )
-            axis.set(title=method, xlabel="n", ylabel="m")
-        figure.colorbar(image, ax=axes[0].tolist(), label="Reduction steps")
-        figure.suptitle(title)
+        figure = plot_grid(grouped, method_names, spec, max(successful), title)
     else:
-        kind = spec["kind"]
-        if not any(sample.steps is not None for sample in samples):
-            raise ValueError(f"{title}: no successful measurements")
-        figure, axis = plt.subplots(figsize=FIGURE_SIZE)
-        for method in method_names:
-            points = [
-                point
-                for point in grouped[method]
-                if point.steps is not None and point.steps > 0
-            ]
-            if points:
-                axis.plot(
-                    [point.m if kind == "fixed-n" else point.n for point in points],
-                    [point.steps for point in points],
-                    marker="o",
-                    label=method,
-                )
-        axis.set(
-            yscale="log",
-            xlabel="m" if kind == "fixed-n" else "n",
-            ylabel="Reduction steps",
-            title=title,
-        )
-        axis.grid(True, which="both", alpha=0.25)
-        axis.legend()
+        figure = plot_lines(grouped, method_names, spec, title)
     output.parent.mkdir(parents=True, exist_ok=True)
-    if spec["kind"] != "grid":
-        figure.tight_layout()
     figure.savefig(output, dpi=180, bbox_inches="tight")
     plt.close(figure)
 
