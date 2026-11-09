@@ -247,8 +247,88 @@ uv run scripts/compare_index.py examples/fibonacci \
 - `--decode` 指定解码方式，默认为 `natural`
 - `--max-index` 设置最大索引，默认为 `10`
 - `--max-steps` 设置每次解码的最大归约步数，默认为 `1000000`
-- `--csv` 指定输出的 CSV 文件。默认为 `directory/index-vs-error.csv`
-- `--plot` 指定输出的 PNG 文件。默认为 `directory/index-vs-error.png`
+- `--csv` 指定输出的 CSV 文件。默认为 `directory/index-vs-steps.csv`
+- `--plot` 指定输出的 PNG 文件。默认为 `directory/index-vs-steps.png`
+
+## compare_binary.py
+
+使用示例：
+
+```sh
+uv run scripts/compare_binary.py examples/encoding/compare.json
+```
+
+脚本会：
+
+1. 读取配置文件 `cases` 中的每个用例
+2. 按用例的 `input` 生成二元自然数输入
+2. 为用例 `methods` 中的每个方法导入指定文件中的函数并编译和解码
+3. 检查同一输入下各方法成功解码的结果是否一致；超出步数上限的输入继续记录为 `limit`
+4. 为每个用例写入 CSV 表格
+5. 为每个用例绘制 PNG 图片
+
+各输出为：
+
+- 表格包含 `method,m,n,steps,value,status` 六列
+- 图片依据采用方式分为两种
+  - 对角线取样和固定参数取样生成半对数折线图
+  - 网格取样生成热力图
+
+参数为：
+
+- `config` 指定 JSON 配置文件路径。是位置参数，必填
+
+配置示例为：
+
+```json
+{
+  "cases": [
+    {
+      "name": "church-vs-scott-add",
+      "methods": [
+        {
+          "name": "church-add",
+          "file": "church.lambda",
+          "function": "add",
+          "encode": "church",
+          "decode": "natural"
+        },
+        {
+          "name": "scott-add",
+          "file": "scott.lambda",
+          "function": "add",
+          "encode": "scott",
+          "decode": "scott-natural"
+        }
+      ],
+      "input": { "kind": "diagonal", "maxIndex": 10 },
+      "maxSteps": 10000,
+      "csv": "add.csv",
+      "png": "add.png"
+    }
+  ]
+}
+```
+
+其中：
+
+- `cases` 为要运行的用例数组。对每个用例：
+  - `name` 是用例名称
+  - `maxSteps` 是步数上限
+  - `csv` / `png` 分别为表格和图片的相对路径，以配置文件所在目录为基准
+- `methods` 为待比较的方法数组。对每个方法：
+  - `name` 是方法名称
+  - `file` 是 `.lambda` 文件的相对路径，以配置文件所在目录为基准
+  - `function` 是函数名
+  - `encode` 是输入的编码方式，可为 `church` / `scott`
+  - `decode` 是输出的解码方式，可为 `natural` / `scott-natural` / `integer` / `rational` / `boolean`
+- `input` 为输入的取样方式。包含以下类型：
+  - `{ "kind": "diagonal", "maxIndex": 10 }`：从 `(0,0)` 至 `(10,10)`
+  - `{ "kind": "fixed-m", "fixed": 3, "maxIndex": 10 }`：`m` 固定为 `3`，`n` 为 `0..10`
+  - `{ "kind": "fixed-n", "fixed": 3, "maxIndex": 10 }`：`n` 固定为 `3`，`m` 为 `0..10`
+  - `{ "kind": "grid", "maxM": 3, "maxN": 4 }`：计算 `0..3` 和 `0..4` 的笛卡尔积
+
+完整的 JSON Schema 见 [compare_binary.schema.json](compare_binary.schema.json)。
 
 ## align-bnfc.py
 

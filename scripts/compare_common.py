@@ -39,9 +39,17 @@ def executable(name: str) -> str:
     return result.stdout.strip()
 
 
-def compile_example(compiler: str, source: str, context: str) -> str:
+def compile_example(
+    compiler: str,
+    source: str,
+    context: str,
+    encode: str | None = None,
+) -> str:
+    options = [compiler]
+    if encode is not None:
+        options.append(f"--encode={encode}")
     result = subprocess.run(
-        [compiler],
+        options,
         cwd=ROOT,
         input=source,
         capture_output=True,
