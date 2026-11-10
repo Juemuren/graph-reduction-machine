@@ -91,9 +91,8 @@ def input_pairs(spec: Input) -> list[tuple[int, int]]:
             return [(index, spec["fixed"]) for index in range(spec["maxIndex"] + 1)]
 
 
-def measure_case(case: Case, base: Path) -> tuple[list[Sample], list[str]]:
+def measure_case(case: Case, base: Path) -> list[Sample]:
     name = case["name"]
-    names = method_names(case["methods"], name)
     methods = (
         method_spec(
             method,
@@ -118,7 +117,7 @@ def measure_case(case: Case, base: Path) -> tuple[list[Sample], list[str]]:
         Sample(result.method, *result.input, result.steps, result.value)
         for result in results
     ]
-    return samples, names
+    return samples
 
 
 def write_csv(path: Path, samples: list[Sample]) -> None:
@@ -258,7 +257,8 @@ def plot(
 def run_config(path: Path) -> None:
     config = cast(Config, load_config(path, Path(__file__).with_suffix(".schema.json")))
     for case in config["cases"]:
-        samples, methods = measure_case(case, path.parent)
+        methods = method_names(case["methods"], case["name"])
+        samples = measure_case(case, path.parent)
         csv_path = path.parent / case["csv"]
         png_path = path.parent / case["png"]
         write_csv(csv_path, samples)

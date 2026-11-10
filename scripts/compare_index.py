@@ -44,7 +44,6 @@ class Config(TypedDict):
 
 
 def measure_case(case: Case, base: Path) -> list[Measurement]:
-    method_names(case["methods"], case["name"])
     methods = (
         method_spec(
             method,
@@ -89,18 +88,24 @@ def write_csv(path: Path, samples: list[Measurement]) -> None:
     )
 
 
-def plot(samples: list[Measurement], output: Path, title: str) -> None:
+def plot(
+    samples: list[Measurement], method_names: list[str], output: Path, title: str
+) -> None:
     grouped: dict[str, list[Measurement]] = defaultdict(list)
     for sample in samples:
         grouped[sample.method].append(sample)
 
     figure, axis = plt.subplots(figsize=FIGURE_SIZE)
-    for method, points in sorted(grouped.items()):
-        positive = [point for point in points if point.steps > 0]
-        if positive:
+    for method in method_names:
+        points = [
+            point
+            for point in grouped[method]
+            if point.steps is not None and point.steps > 0
+        ]
+        if points:
             axis.plot(
-                [point.index for point in positive],
-                [point.steps for point in positive],
+                [point.index for point in points],
+                [point.steps for point in points],
                 marker="o",
                 label=method,
             )
@@ -121,11 +126,12 @@ def plot(samples: list[Measurement], output: Path, title: str) -> None:
 def run_config(path: Path) -> None:
     config = cast(Config, load_config(path, Path(__file__).with_suffix(".schema.json")))
     for case in config["cases"]:
+        methods = method_names(case["methods"], case["name"])
         samples = measure_case(case, path.parent)
         csv_path = path.parent / case["csv"]
         png_path = path.parent / case["png"]
         write_csv(csv_path, samples)
-        plot(samples, png_path, case["name"])
+        plot(samples, methods, png_path, case["name"])
         print(f"Saved {csv_path} and {png_path}")
 
 

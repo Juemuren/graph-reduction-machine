@@ -32,6 +32,8 @@ Point = TypeVar("Point")
 
 
 def load_config(path: Path, schema_path: Path) -> object:
+    """Load a JSON comparison config and validate it against its schema."""
+
     data: object = json.loads(path.read_text(encoding="utf-8"))
     schema = json.loads(schema_path.read_text(encoding="utf-8"))
     validate(data, schema)
@@ -39,6 +41,8 @@ def load_config(path: Path, schema_path: Path) -> object:
 
 
 def method_names(methods: list[Method], case_name: str) -> list[str]:
+    """Return method names in config order, rejecting duplicates within a case."""
+
     names = [method["name"] for method in methods]
     if len(names) != len(set(names)):
         raise ValueError(f"{case_name}: duplicate method name")
@@ -53,6 +57,8 @@ def method_spec(
     arguments: Callable[[Point], list[int]],
     label: Callable[[Point], str],
 ) -> MethodSpec[Point]:
+    """Build a measurement method that compiles and decodes each input point."""
+
     source = base / method["file"]
 
     def probe(point: Point, limit: int) -> tuple[int, str] | None:
