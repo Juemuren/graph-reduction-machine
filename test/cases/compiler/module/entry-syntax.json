@@ -1,0 +1,32 @@
+{
+  "cases": [
+    {
+      "name": "explicit-entry-with-semicolon",
+      "language": "lambda",
+      "source": "identity = \\x -> x; @! identity;",
+      "stage": "reduce",
+      "expect": { "value": "\\x -> x" }
+    },
+    {
+      "name": "explicit-entry-without-semicolon",
+      "language": "lambda",
+      "source": "identity = \\x -> x; @! identity",
+      "stage": "reduce",
+      "expect": { "value": "\\x -> x" }
+    },
+    {
+      "name": "implicit-entry-with-semicolon",
+      "language": "lambda",
+      "source": "identity = \\x -> x; identity;",
+      "stage": "reduce",
+      "expect": { "value": "\\x -> x" }
+    },
+    {
+      "name": "implicit-entry-without-semicolon",
+      "language": "lambda",
+      "source": "identity = \\x -> x; identity",
+      "stage": "reduce",
+      "expect": { "value": "\\x -> x" }
+    }
+  ]
+}

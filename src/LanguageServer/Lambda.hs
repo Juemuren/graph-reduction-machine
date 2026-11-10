@@ -16,6 +16,7 @@ module LanguageServer.Lambda (
 
 import Compiler.Expand (standardLibrarySources)
 import Control.Monad (guard)
+import qualified CoreLambda.Abs as CoreAbs
 import qualified CoreLambda.Lex as CoreLex
 import qualified CoreLambda.Par as Core
 import Data.Char (isAlphaNum, isAsciiLower, isAsciiUpper, isSpace)
@@ -59,19 +60,28 @@ coreTokensOf source =
           _ -> CoreLex.tokenText (CoreLex.PT (CoreLex.Pn start 0 0) value)
   ]
 
-validCoreStatement :: String -> [Token] -> Int -> Bool
-validCoreStatement source tokens end = case tokens of
+validCoreStatement :: String -> [Token] -> Int -> Bool -> Bool
+validCoreStatement source tokens end isFinal = case tokens of
   [] -> False
-  first : _ -> case Core.pProgram (Core.myLexer (slice (tokenStart first) end source)) of
-    Right _ -> True
-    Left _ -> False
+  first : _ ->
+    let input = slice (tokenStart first) end source
+     in case Core.pProgram (Core.myLexer input) of
+          Right program -> isFinal || isComplete program
+          Left _ -> False
+ where
+  isComplete program = case program of
+    CoreAbs.PImport _ _ CoreAbs.PEmpty -> True
+    CoreAbs.PExport _ _ CoreAbs.PEmpty -> True
+    CoreAbs.PDefinition _ _ CoreAbs.PEmpty -> True
+    CoreAbs.PEntry _ (CoreAbs.EContinue CoreAbs.PEmpty) -> True
+    _ -> False
 
 analyzeCore :: String -> CoreAnalysis
 analyzeCore source =
   let tokens = coreTokensOf source
       parts = statements source tokens
       declarations = concatMap declarationIn parts
-      expressions = concatMap expressionIn parts
+      expressions = concatMap (uncurry expressionIn) (zip (finalFlags parts) parts)
       parameters = concatMap (parametersIn tokens) expressions
    in CoreAnalysis tokens declarations parameters expressions
  where
@@ -98,15 +108,24 @@ analyzeCore source =
       name
       (trim (slice start end source))
       Nothing
-  expressionIn (tokens, end, terminated) = case tokens of
+  expressionIn isFinal (tokens, end, terminated) = case tokens of
     directive : name : equals : _
       | tokenText directive == "@>" && tokenText equals == "=" ->
           [spanAfter equals (Just (tokenText name))]
     name : equals : _ | tokenText equals == "=" -> [spanAfter equals (Just (tokenText name))]
     directive : _ | tokenText directive == "@!" -> [spanAfter directive Nothing]
+    first : _
+      | isFinal && isBareExpression tokens ->
+          [Expression (tokenStart first) (if terminated then end - 1 else end) Nothing]
     _ -> []
    where
     spanAfter token = Expression (tokenEnd token) (if terminated then end - 1 else end)
+    isBareExpression =
+      all
+        (\token -> tokenText token /= "=" && tokenText token `notElem` ["@<", "@>", "@!"])
+
+finalFlags :: [a] -> [Bool]
+finalFlags items = replicate (length items - 1) False ++ [True | not (null items)]
 
 unquote :: String -> String
 unquote value = case reads value of
@@ -428,11 +447,12 @@ coreDiagnostics :: String -> [(Range, String)]
 coreDiagnostics source = syntaxProblems ++ duplicateProblems ++ unknownProblems
  where
   analysis = analyzeCore source
+  parts = statements source (coreTokens analysis)
   declarations = coreDeclarations analysis
   syntaxProblems =
     [ (tokenRange source first, "Invalid Core Lambda statement")
-    | (tokens, end, _) <- statements source (coreTokens analysis)
-    , not (validCoreStatement source tokens end)
+    | (isFinal, (tokens, end, _)) <- zip (finalFlags parts) parts
+    , not (validCoreStatement source tokens end isFinal)
     , first : _ <- [tokens]
     ]
   duplicateProblems =

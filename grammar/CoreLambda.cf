@@ -1,12 +1,17 @@
 -- Lambda expressions and modules. BNFC generates CoreLambda.*.
 entrypoints Exp, Program;
 
-PModule.     Program   ::= [Statement] ;
-SImport.     Statement ::= "@<" String "(" [NameRef] ")" ";" ;
-SExport.     Statement ::= "@>" NameRef "=" Exp ";" ;
-SDefinition. Statement ::= NameRef "=" Exp ";" ;
-SEntry.      Statement ::= "@!" Exp ";" ;
-terminator Statement "" ;
+PEmpty.      Program   ::= ;
+PImport.     Program   ::= "@<" String "(" [NameRef] ")" ";" Program ;
+PExport.     Program   ::= "@>" NameRef "=" Exp ";" Program ;
+PDefinition. Program   ::= NameRef "=" Exp ";" Program ;
+PEntry.      Program   ::= "@!" Exp EntryTail ;
+PImplicit.   Program   ::= Exp FinalSemi ;
+
+EEnd.        EntryTail ::= ;
+EContinue.   EntryTail ::= ";" Program ;
+FNone.       FinalSemi ::= ;
+FPresent.    FinalSemi ::= ";" ;
 separator NameRef "," ;
 
 NVariable.   NameRef   ::= Name ;

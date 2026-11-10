@@ -1,6 +1,17 @@
 {
   "cases": [
     {
+      "name": "implicit-entry-without-semicolon",
+      "command": "lambda-compiler",
+      "args": ["--stop-after=expand"],
+      "stdin": "\\x -> x",
+      "expect": {
+        "exitCode": 0,
+        "stdout": "\\ x -> x\n",
+        "stderr": ""
+      }
+    },
+    {
       "name": "church-numeral",
       "command": "lambda-compiler",
       "args": ["--stop-after=expand", "--encode=church"],

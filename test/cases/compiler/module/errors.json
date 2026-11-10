@@ -55,9 +55,27 @@
       }
     },
     {
-      "name": "missing-semicolon",
+      "name": "missing-final-definition-semicolon",
       "language": "lambda",
       "source": "name = ONE",
+      "stage": "compile",
+      "expect": {
+        "error": "syntax error at end of file"
+      }
+    },
+    {
+      "name": "missing-final-export-semicolon",
+      "language": "lambda",
+      "source": "@! identity; @> identity = \\x -> x",
+      "stage": "compile",
+      "expect": {
+        "error": "syntax error at end of file"
+      }
+    },
+    {
+      "name": "missing-final-import-semicolon",
+      "language": "lambda",
+      "source": "@! identity; @< \"./defs.lambda\" (identity)",
       "stage": "compile",
       "expect": {
         "error": "syntax error at end of file"
@@ -79,6 +97,24 @@
       "stage": "compile",
       "expect": {
         "error": "duplicate program entry"
+      }
+    },
+    {
+      "name": "explicit-and-implicit-entry",
+      "language": "lambda",
+      "source": "@! ONE; TWO",
+      "stage": "compile",
+      "expect": {
+        "error": "duplicate program entry"
+      }
+    },
+    {
+      "name": "bare-expression-before-final-statement",
+      "language": "lambda",
+      "source": "value = 0; value; @! value;",
+      "stage": "compile",
+      "expect": {
+        "error": "syntax error at line 1, column 19 before `@!'"
       }
     }
   ]

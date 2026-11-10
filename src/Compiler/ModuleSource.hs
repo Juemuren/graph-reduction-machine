@@ -14,33 +14,51 @@ data Module = Module
   , moduleExpression :: Maybe Core.Exp
   }
 
+data ModulePart
+  = ImportPart FilePath [Core.NameRef]
+  | ExportPart Core.NameRef Core.Exp
+  | DefinitionPart Core.NameRef Core.Exp
+  | EntryPart Core.Exp
+
 parseModule :: String -> Either String Module
 parseModule source = do
-  Core.PModule statements <- Core.pProgram (Core.myLexer source)
+  program <- Core.pProgram (Core.myLexer source)
   (imports, exports, definitions, expression) <-
-    foldl collect (Right ([], [], [], Nothing)) statements
+    foldl collect (Right ([], [], [], Nothing)) (programParts program)
   let names = map fst definitions
   checkUnique "export" exports
   checkUnique "definition" names
   pure
     (Module (reverse imports) (reverse exports) (reverse definitions) expression)
  where
-  collect result statement = do
+  collect result part = do
     (imports, exports, definitions, expression) <- result
-    case statement of
-      Core.SImport path expressions -> do
+    case part of
+      ImportPart path expressions -> do
         names <- mapM expressionName expressions
         when (null path) $ Left "import path must not be empty"
         pure (Import path names : imports, exports, definitions, expression)
-      Core.SExport name body -> do
+      ExportPart name body -> do
         text <- expressionName name
         pure (imports, text : exports, (text, body) : definitions, expression)
-      Core.SDefinition nameRef body -> do
+      DefinitionPart nameRef body -> do
         name <- expressionName nameRef
         pure (imports, exports, (name, body) : definitions, expression)
-      Core.SEntry body -> case expression of
+      EntryPart body -> case expression of
         Just _ -> Left "duplicate program entry"
         Nothing -> pure (imports, exports, definitions, Just body)
+
+programParts :: Core.Program -> [ModulePart]
+programParts program = case program of
+  Core.PEmpty -> []
+  Core.PImport path names rest -> ImportPart path names : programParts rest
+  Core.PExport name body rest -> ExportPart name body : programParts rest
+  Core.PDefinition name body rest -> DefinitionPart name body : programParts rest
+  Core.PEntry body tail ->
+    EntryPart body : case tail of
+      Core.EEnd -> []
+      Core.EContinue rest -> programParts rest
+  Core.PImplicit body _ -> [EntryPart body]
 
 expressionName :: Core.NameRef -> Either String String
 expressionName expression = case expression of

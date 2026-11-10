@@ -175,7 +175,9 @@ main = do
       (any (contains "Undefined name: NOT_EXPORTED" . show) missingBuiltinIssues)
     topLevel <- openDoc "test/cases/lsp/top-level.lambda" "core-lambda"
     topLevelItems <- getCompletions topLevel (Position 1 1)
-    assert "no top-level name completion" (null topLevelItems)
+    assert
+      "implicit entry offers top-level name completion"
+      (hasLabel "divMod" topLevelItems)
     anonymous <- openDoc "test/cases/lsp/anonymous.lambda" "core-lambda"
     anonymousItems <- getCompletions anonymous (Position 0 10)
     assert
@@ -287,8 +289,35 @@ main = do
     _ <- waitForDiagnostics
     missingSemicolonIssues <- getCurrentDiagnostics missingSemicolon
     assert
-      "missing final semicolon diagnostic"
-      (any (contains "Invalid Core Lambda statement" . show) missingSemicolonIssues)
+      "final entry without semicolon is valid"
+      (null missingSemicolonIssues)
+    implicitEntry <- openDoc "test/cases/lsp/implicit-entry.lambda" "core-lambda"
+    _ <- waitForDiagnostics
+    implicitIssues <- getCurrentDiagnostics implicitEntry
+    assert "implicit entry without semicolon is valid" (null implicitIssues)
+    implicitCompletion <- getCompletions implicitEntry (Position 1 3)
+    assert
+      "implicit entry offers definition completion"
+      (hasLabel "value" implicitCompletion)
+    implicitEntrySemi <-
+      openDoc "test/cases/lsp/implicit-entry-semicolon.lambda" "core-lambda"
+    _ <- waitForDiagnostics
+    implicitSemiIssues <- getCurrentDiagnostics implicitEntrySemi
+    assert "implicit entry with semicolon is valid" (null implicitSemiIssues)
+    finalDefinition <-
+      openDoc "test/cases/lsp/final-definition.lambda" "core-lambda"
+    _ <- waitForDiagnostics
+    finalDefinitionIssues <- getCurrentDiagnostics finalDefinition
+    assert
+      "final definition still requires semicolon"
+      (any (contains "Invalid Core Lambda statement" . show) finalDefinitionIssues)
+    invalidMiddle <-
+      openDoc "test/cases/lsp/invalid-middle-expression.lambda" "core-lambda"
+    _ <- waitForDiagnostics
+    middleIssues <- getCurrentDiagnostics invalidMiddle
+    assert
+      "middle expression without entry marker is invalid"
+      (any (contains "Invalid Core Lambda statement" . show) middleIssues)
     entryFirst <- openDoc "test/cases/lsp/entry-first.lambda" "core-lambda"
     _ <- waitForDiagnostics
     firstEntryIssues <- getCurrentDiagnostics entryFirst
