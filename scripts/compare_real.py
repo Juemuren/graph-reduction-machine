@@ -9,7 +9,6 @@
 Compare real-number algorithms from a JSON configuration and plot their accuracy.
 """
 
-import argparse
 from collections import defaultdict
 from dataclasses import dataclass
 from decimal import Decimal, localcontext
@@ -26,7 +25,13 @@ from compare_common import (
     measure_methods,
     write_csv_rows,
 )
-from compare_config import load_config, method_names, method_spec
+from compare_config import (
+    load_config,
+    method_names,
+    method_spec,
+    parse_config_path,
+    run_cases,
+)
 from matplotlib.axes import Axes
 
 MIN_DECIMAL_PRECISION = 50
@@ -242,41 +247,22 @@ def plot(
 
 def run_config(path: Path) -> None:
     config = cast(Config, load_config(path, Path(__file__).with_suffix(".schema.json")))
-    for case in config["cases"]:
-        methods = method_names(case["methods"], case["name"])
-        samples = make_samples(
-            measure_case(case, path.parent), Decimal(case["exactValue"])
-        )
-        csv_path = path.parent / case["csv"]
-        png_path = path.parent / case["png"]
-        write_csv(csv_path, samples)
-        plot(samples, methods, png_path, case["name"])
-        print(f"Saved {csv_path} and {png_path}")
-
-
-class Arguments(argparse.Namespace):
-    config: Path
-
-
-def parse_args() -> Arguments:
-    parser = argparse.ArgumentParser(
-        description=__doc__,
-        formatter_class=argparse.ArgumentDefaultsHelpFormatter,
+    run_cases(
+        config["cases"],
+        path.parent,
+        names=lambda case: method_names(case["methods"], case["name"]),
+        measure=lambda case, base: make_samples(
+            measure_case(case, base), Decimal(case["exactValue"])
+        ),
+        write_csv=write_csv,
+        plot=lambda case, samples, methods, output: plot(
+            samples, methods, output, case["name"]
+        ),
     )
-    parser.add_argument(
-        "config",
-        type=Path,
-        metavar="PATH",
-        help="comparison JSON file",
-    )
-    args = parser.parse_args(namespace=Arguments())
-    return args
 
 
 def main() -> None:
-    args = parse_args()
-
-    run_config(args.config)
+    run_config(parse_config_path(__doc__))
 
 
 if __name__ == "__main__":

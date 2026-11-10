@@ -9,7 +9,6 @@
 Measure indexed algorithms and plot reduction steps against the index.
 """
 
-import argparse
 from collections import defaultdict
 from pathlib import Path
 from typing import TypeAlias, TypedDict, cast
@@ -20,12 +19,18 @@ from compare_common import (
     INTERPRETER,
     Measurement,
     check_agreement,
-    entry_source,
     executable,
     measure_methods,
     write_csv_rows,
 )
-from compare_config import Method, load_config, method_names, method_spec
+from compare_config import (
+    Method,
+    entry_method_spec,
+    load_config,
+    method_names,
+    parse_config_path,
+    run_cases,
+)
 
 FIELDS = ("method", "n", "steps", "value")
 FIGURE_SIZE = (11, 7)
@@ -48,17 +53,16 @@ Sample: TypeAlias = Measurement[int]
 
 
 def measure_case(case: Case, base: Path) -> list[Sample]:
+    compiler = executable(COMPILER)
+    interpreter = executable(INTERPRETER)
     methods = (
-        method_spec(
-            method["name"],
-            executable(COMPILER),
-            executable(INTERPRETER),
-            lambda index, method=method: entry_source(
-                base / method["file"], method["function"], [index]
-            ),
-            method["decode"],
-            lambda index, name=method["name"]: f"{case['name']}/{name} n={index}",
-            encode=method["encode"],
+        entry_method_spec(
+            method,
+            base,
+            compiler,
+            interpreter,
+            lambda index: [index],
+            lambda name, index: f"{case['name']}/{name} n={index}",
         )
         for method in case["methods"]
     )
@@ -133,38 +137,20 @@ def plot(
 
 def run_config(path: Path) -> None:
     config = cast(Config, load_config(path, Path(__file__).with_suffix(".schema.json")))
-    for case in config["cases"]:
-        methods = method_names(case["methods"], case["name"])
-        samples = measure_case(case, path.parent)
-        csv_path = path.parent / case["csv"]
-        png_path = path.parent / case["png"]
-        write_csv(csv_path, samples)
-        plot(samples, methods, png_path, case["name"])
-        print(f"Saved {csv_path} and {png_path}")
-
-
-class Arguments(argparse.Namespace):
-    config: Path
-
-
-def parse_args() -> Arguments:
-    parser = argparse.ArgumentParser(
-        description=__doc__,
-        formatter_class=argparse.ArgumentDefaultsHelpFormatter,
+    run_cases(
+        config["cases"],
+        path.parent,
+        names=lambda case: method_names(case["methods"], case["name"]),
+        measure=measure_case,
+        write_csv=write_csv,
+        plot=lambda case, samples, methods, output: plot(
+            samples, methods, output, case["name"]
+        ),
     )
-    parser.add_argument(
-        "config",
-        type=Path,
-        metavar="PATH",
-        help="comparison JSON file",
-    )
-    args = parser.parse_args(namespace=Arguments())
-    return args
 
 
 def main() -> None:
-    args = parse_args()
-    run_config(args.config)
+    run_config(parse_config_path(__doc__))
 
 
 if __name__ == "__main__":

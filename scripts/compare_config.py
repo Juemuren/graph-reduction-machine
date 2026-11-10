@@ -6,12 +6,13 @@
 # ///
 """Shared JSON configuration and method setup for comparison scripts."""
 
+import argparse
 import json
 from collections.abc import Callable, Sequence
 from pathlib import Path
 from typing import Literal, TypedDict, TypeVar
 
-from compare_common import MethodSpec, compile_example, decode
+from compare_common import MethodSpec, compile_example, decode, entry_source
 from jsonschema import validate
 
 
@@ -28,6 +29,18 @@ class Method(TypedDict):
 
 
 Point = TypeVar("Point")
+CaseType = TypeVar("CaseType", bound="CasePaths")
+Sample = TypeVar("Sample")
+
+
+class CasePaths(TypedDict):
+    name: str
+    csv: str
+    png: str
+
+
+class Arguments(argparse.Namespace):
+    config: Path
 
 
 def load_config(path: Path, schema_path: Path) -> object:
@@ -46,6 +59,43 @@ def method_names(methods: Sequence[MethodName], case_name: str) -> list[str]:
     if len(names) != len(set(names)):
         raise ValueError(f"{case_name}: duplicate method name")
     return names
+
+
+def parse_config_path(description: str) -> Path:
+    """Parse the common configuration path argument."""
+
+    parser = argparse.ArgumentParser(
+        description=description,
+        formatter_class=argparse.ArgumentDefaultsHelpFormatter,
+    )
+    parser.add_argument(
+        "config",
+        type=Path,
+        metavar="PATH",
+        help="comparison JSON file",
+    )
+    return parser.parse_args(namespace=Arguments()).config
+
+
+def run_cases(
+    cases: Sequence[CaseType],
+    base: Path,
+    *,
+    names: Callable[[CaseType], list[str]],
+    measure: Callable[[CaseType, Path], list[Sample]],
+    write_csv: Callable[[Path, list[Sample]], None],
+    plot: Callable[[CaseType, list[Sample], list[str], Path], None],
+) -> None:
+    """Run each case in order, leaving measurement and rendering to callers."""
+
+    for case in cases:
+        methods = names(case)
+        samples = measure(case, base)
+        csv_path = base / case["csv"]
+        png_path = base / case["png"]
+        write_csv(csv_path, samples)
+        plot(case, samples, methods, png_path)
+        print(f"Saved {csv_path} and {png_path}")
 
 
 def method_spec(
@@ -85,3 +135,27 @@ def method_spec(
         )
 
     return MethodSpec(name, probe, label)
+
+
+def entry_method_spec(
+    method: Method,
+    base: Path,
+    compiler: str,
+    interpreter: str,
+    arguments: Callable[[Point], list[int]],
+    label: Callable[[str, Point], str],
+) -> MethodSpec[Point]:
+    """Build a method that compiles an imported function for each input."""
+
+    name = method["name"]
+    return method_spec(
+        name,
+        compiler,
+        interpreter,
+        lambda point: entry_source(
+            base / method["file"], method["function"], arguments(point)
+        ),
+        method["decode"],
+        lambda point: label(name, point),
+        encode=method["encode"],
+    )
