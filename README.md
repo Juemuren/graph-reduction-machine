@@ -2,14 +2,6 @@
 
 实现一个可运行 λ 演算的图归约机。
 
-## 文档
-
-- 架构文档为 [architecture.md](docs/architecture.md)
-- 语法文档为 [syntax.md](docs/syntax.md)
-- 构建文档为 [build.md](docs/build.md)
-- 测试文档为 [test.md](docs/test.md)
-- 代码质量文档为 [quality.md](docs/quality.md)
-
 ## 使用
 
 ### 编译 λ 表达式
@@ -59,3 +51,20 @@ cabal exec -- ski-interpreter --decode=natural example.ski
 ```
 
 解释器的所有参数请参考 [interpreter.md#解释器选项](docs/interpreter.md#解释器选项)。
+
+## 示例
+
+- [λ 表达式编译为 SKI 图](examples/ski/README.md)
+- [Church 编码和 Scott 编码](examples/encoding/README.md)
+- [斐波那契数列](examples/fibonacci/README.md)
+- [圆周率 $\pi$ 的构造](examples/pi/README.md)
+- [自然常数 $e$ 的构造](examples/e/README.md)
+- [符号微积分](examples/calculus/README.md)
+
+## 文档
+
+- 架构文档为 [architecture.md](docs/architecture.md)
+- 语法文档为 [syntax.md](docs/syntax.md)
+- 构建文档为 [build.md](docs/build.md)
+- 测试文档为 [test.md](docs/test.md)
+- 代码质量文档为 [quality.md](docs/quality.md)
