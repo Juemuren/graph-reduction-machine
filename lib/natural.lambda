@@ -8,16 +8,16 @@
 
 @> ZERO = \f -> \x -> x;
 @> SUCC = \n -> \f -> \x -> f (n f x);
-@> ONE = SUCC ZERO;
-@> TWO = SUCC ONE;
-@> THREE = SUCC TWO;
-@> FOUR = SUCC THREE;
-@> FIVE = SUCC FOUR;
-@> SIX = SUCC FIVE;
-@> SEVEN = SUCC SIX;
-@> EIGHT = SUCC SEVEN;
-@> NINE = SUCC EIGHT;
-@> TEN = SUCC NINE;
+@> ONE = \f -> \x -> f x;
+@> TWO = \f -> \x -> f (f x);
+@> THREE = \f -> \x -> f (f (f x));
+@> FOUR = \f -> \x -> f (f (f (f x)));
+@> FIVE = \f -> \x -> f (f (f (f (f x))));
+@> SIX = \f -> \x -> f (f (f (f (f (f x)))));
+@> SEVEN = \f -> \x -> f (f (f (f (f (f (f x))))));
+@> EIGHT = \f -> \x -> f (f (f (f (f (f (f (f x)))))));
+@> NINE = \f -> \x -> f (f (f (f (f (f (f (f (f x))))))));
+@> TEN = \f -> \x -> f (f (f (f (f (f (f (f (f (f x)))))))));
 
 # Unary operations
 
