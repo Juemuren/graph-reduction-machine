@@ -464,3 +464,65 @@ $$
 ```sh
 uv run scripts/compare_binary.py examples/encoding/compare.json
 ```
+
+每种运算生成两个表格和两张图片，分别为对角线采样和网格采样。
+
+### 加法比较结果
+
+得到的表格为：
+
+- 对角线 [add-diag.csv](add-diag.csv)
+- 网格 [add-grid.csv](add-grid.csv)
+
+得到的图片为：
+
+![add-diag](add-diag.png)
+
+![add-grid](add-grid.png)
+
+可知对于加法，丘奇编码的归约效率更好。
+
+### 乘法比较结果
+
+得到的表格为：
+
+- 对角线 [mul-diag.csv](mul-diag.csv)
+- 网格 [mul-grid.csv](mul-grid.csv)
+
+得到的图片为：
+
+![mul-diag](mul-diag.png)
+
+![mul-grid](mul-grid.png)
+
+可知对于乘法，丘奇编码的归约效率更好。
+
+### 减法比较结果
+
+得到的表格为：
+
+- 对角线 [sub-diag.csv](sub-diag.csv)
+- 网格 [sub-grid.csv](sub-grid.csv)
+
+得到的图片为：
+
+![sub-diag](sub-diag.png)
+
+![sub-grid](sub-grid.png)
+
+可知对于减法，斯科特编码的归约效率更好。
+
+### 除法比较结果
+
+得到的表格为：
+
+- 对角线 [div-diag.csv](div-diag.csv)
+- 网格 [div-grid.csv](div-grid.csv)
+
+得到的图片为：
+
+![div-diag](div-diag.png)
+
+![div-grid](div-grid.png)
+
+可知对于除法，斯科特编码的归约效率更好。

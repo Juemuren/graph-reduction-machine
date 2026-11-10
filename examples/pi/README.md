@@ -1,6 +1,6 @@
 # 圆周率构造算法比较
 
-## 反正切构造
+## 反正切级数构造
 
 第 $n$ 项为：
 
@@ -47,3 +47,13 @@ uv run scripts/compare_real.py examples/pi \
   --exact-value 3.1415926535897932384626433832795028841971693993751 \
   --max-index 10 --max-steps 1000000
 ```
+
+得到的表格为：
+
+[steps-vs-error.csv](steps-vs-error.csv)
+
+得到的图片为：
+
+![steps-vs-error](steps-vs-error.png)
+
+可知按精度与步数之比来评估，最好的是反正切级数构造算法。

@@ -40,3 +40,15 @@ $$
 ```sh
 uv run scripts/compare_index.py examples/fibonacci/compare.json
 ```
+
+得到的表格为：
+
+[index-vs-steps.csv](index-vs-steps.csv)
+
+得到的图片为：
+
+![index-vs-steps](index-vs-steps.png)
+
+可知按归约效率来说，迭代会比递归更好。
+
+这个例子看不出三种组合子在归约效率上的区别，因为三条曲线几乎重合了。

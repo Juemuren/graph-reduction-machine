@@ -45,3 +45,13 @@ uv run scripts/compare_real.py examples/e \
   --exact-value 2.71828182845904523536028747135266249775724709369996 \
   --max-index 10 --max-steps 1000000
 ```
+
+得到的表格为：
+
+[steps-vs-error.csv](steps-vs-error.csv)
+
+得到的图片为：
+
+![steps-vs-error](steps-vs-error.png)
+
+可知按精度与步数之比来评估，最好的是阶乘级数构造算法。
