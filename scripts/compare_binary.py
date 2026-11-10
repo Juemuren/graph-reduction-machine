@@ -11,7 +11,6 @@ Compare binary algorithms from a JSON configuration and plot reduction steps.
 
 import argparse
 from collections import defaultdict
-from dataclasses import dataclass
 from pathlib import Path
 from typing import Literal, TypeAlias, TypedDict, cast
 
@@ -19,6 +18,7 @@ import matplotlib.pyplot as plt
 from compare_common import (
     COMPILER,
     INTERPRETER,
+    Measurement,
     check_agreement,
     executable,
     measure_methods,
@@ -68,13 +68,7 @@ class Config(TypedDict):
     cases: list[Case]
 
 
-@dataclass(frozen=True)
-class Sample:
-    method: str
-    m: int
-    n: int
-    steps: int | None
-    value: str | None
+Sample: TypeAlias = Measurement[tuple[int, int]]
 
 
 def input_pairs(spec: Input) -> list[tuple[int, int]]:
@@ -113,11 +107,7 @@ def measure_case(case: Case, base: Path) -> list[Sample]:
         on_limit="record",
     )
     check_agreement(results, name, lambda pair: f"m={pair[0]}, n={pair[1]}")
-    samples = [
-        Sample(result.method, *result.input, result.steps, result.value)
-        for result in results
-    ]
-    return samples
+    return results
 
 
 def write_csv(path: Path, samples: list[Sample]) -> None:
@@ -127,8 +117,8 @@ def write_csv(path: Path, samples: list[Sample]) -> None:
         (
             (
                 sample.method,
-                sample.m,
-                sample.n,
+                sample.input[0],
+                sample.input[1],
                 sample.steps if sample.steps is not None else "",
                 sample.value if sample.value is not None else "",
                 "ok" if sample.steps is not None else "limit",
@@ -166,7 +156,7 @@ def plot_grid(
         ]
         for sample in grouped[method]:
             if sample.steps is not None:
-                grid[sample.m][sample.n] = sample.steps
+                grid[sample.input[0]][sample.input[1]] = sample.steps
         image = axis.imshow(
             grid,
             origin="lower",
@@ -201,11 +191,11 @@ def plot_lines(
         if points:
             match spec["kind"]:
                 case "diagonal":
-                    x_values = [point.m for point in points]
+                    x_values = [point.input[0] for point in points]
                 case "fixed-m":
-                    x_values = [point.n for point in points]
+                    x_values = [point.input[1] for point in points]
                 case "fixed-n":
-                    x_values = [point.m for point in points]
+                    x_values = [point.input[0] for point in points]
             axis.plot(
                 x_values,
                 [point.steps for point in points],

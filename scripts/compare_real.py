@@ -68,7 +68,7 @@ def method_spec(source: Path, compiler: str, interpreter: str) -> MethodSpec[int
     )
 
 
-def measure(directory: Path, max_index: int, max_steps: int) -> list[Measurement]:
+def measure(directory: Path, max_index: int, max_steps: int) -> list[Measurement[int]]:
     compiler = executable(COMPILER)
     interpreter = executable(INTERPRETER)
     methods = (
@@ -81,7 +81,7 @@ def measure(directory: Path, max_index: int, max_steps: int) -> list[Measurement
         on_limit="stop",
     )
     samples = [
-        Measurement(result.method, result.input, result.steps, result.value)
+        result
         for result in results
         if result.steps is not None and result.value is not None
     ]
@@ -99,9 +99,11 @@ class Sample:
     error: Decimal
 
 
-def make_samples(measurements: list[Measurement], exact: Decimal) -> list[Sample]:
+def make_samples(measurements: list[Measurement[int]], exact: Decimal) -> list[Sample]:
     samples = []
     for measurement in measurements:
+        if measurement.steps is None or measurement.value is None:
+            continue
         value = Fraction(measurement.value)
         with localcontext() as context:
             context.prec = max(
@@ -113,7 +115,7 @@ def make_samples(measurements: list[Measurement], exact: Decimal) -> list[Sample
         samples.append(
             Sample(
                 measurement.method,
-                measurement.index,
+                measurement.input,
                 measurement.steps,
                 measurement.value,
                 error,

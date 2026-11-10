@@ -12,7 +12,7 @@ Measure indexed algorithms and plot reduction steps against the index.
 import argparse
 from collections import defaultdict
 from pathlib import Path
-from typing import TypedDict, cast
+from typing import TypeAlias, TypedDict, cast
 
 import matplotlib.pyplot as plt
 from compare_common import (
@@ -43,7 +43,10 @@ class Config(TypedDict):
     cases: list[Case]
 
 
-def measure_case(case: Case, base: Path) -> list[Measurement]:
+Sample: TypeAlias = Measurement[int]
+
+
+def measure_case(case: Case, base: Path) -> list[Sample]:
     methods = (
         method_spec(
             method,
@@ -63,7 +66,7 @@ def measure_case(case: Case, base: Path) -> list[Measurement]:
     )
     check_agreement(results, case["name"], lambda index: f"n={index}")
     samples = [
-        Measurement(result.method, result.input, result.steps, result.value)
+        result
         for result in results
         if result.steps is not None and result.value is not None
     ]
@@ -72,26 +75,27 @@ def measure_case(case: Case, base: Path) -> list[Measurement]:
     return samples
 
 
-def write_csv(path: Path, samples: list[Measurement]) -> None:
+def write_csv(path: Path, samples: list[Sample]) -> None:
     write_csv_rows(
         path,
         FIELDS,
         (
             (
                 sample.method,
-                sample.index,
+                sample.input,
                 sample.steps,
                 sample.value,
             )
             for sample in samples
+            if sample.steps is not None and sample.value is not None
         ),
     )
 
 
 def plot(
-    samples: list[Measurement], method_names: list[str], output: Path, title: str
+    samples: list[Sample], method_names: list[str], output: Path, title: str
 ) -> None:
-    grouped: dict[str, list[Measurement]] = defaultdict(list)
+    grouped: dict[str, list[Sample]] = defaultdict(list)
     for sample in samples:
         grouped[sample.method].append(sample)
 
@@ -104,7 +108,7 @@ def plot(
         ]
         if points:
             axis.plot(
-                [point.index for point in points],
+                [point.input for point in points],
                 [point.steps for point in points],
                 marker="o",
                 label=method,

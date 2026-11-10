@@ -17,14 +17,6 @@ LIMIT_ERROR = "reduction exceeded step limit"
 STEPS_PATTERN = r"^steps: (\d+)$"
 
 
-@dataclass(frozen=True)
-class Measurement:
-    method: str
-    index: int
-    steps: int
-    value: str
-
-
 Point = TypeVar("Point")
 Key = TypeVar("Key", bound=Hashable)
 Result = tuple[int, str] | None
@@ -44,7 +36,7 @@ class MethodSpec(Generic[Point]):
 
 
 @dataclass(frozen=True)
-class Measured(Generic[Point]):
+class Measurement(Generic[Point]):
     """Hold one result; steps and value are None when the limit was reached."""
 
     method: str
@@ -153,7 +145,7 @@ def measure_methods(
     max_steps: int,
     *,
     on_limit: Literal["stop", "record"],
-) -> list[Measured[Point]]:
+) -> list[Measurement[Point]]:
     """Measure every method over ``inputs`` in order and print each outcome.
 
     The same input sequence is reused for each method.
@@ -161,7 +153,7 @@ def measure_methods(
     ``on_limit="record"`` keeps a failed sample and continues to the next input.
     """
 
-    samples: list[Measured[Point]] = []
+    samples: list[Measurement[Point]] = []
     for method in methods:
         for point in inputs:
             label = method.label(point)
@@ -170,16 +162,16 @@ def measure_methods(
                 print(f"{label}: exceeded {max_steps} steps")
                 if on_limit == "stop":
                     break
-                samples.append(Measured(method.name, point, None, None))
+                samples.append(Measurement(method.name, point, None, None))
             else:
                 steps, value = result
                 print(f"{label}: {steps} steps, {value}")
-                samples.append(Measured(method.name, point, steps, value))
+                samples.append(Measurement(method.name, point, steps, value))
     return samples
 
 
 def check_agreement(
-    results: Iterable[Measured[Key]], context: str, input_label: Callable[[Key], str]
+    results: Iterable[Measurement[Key]], context: str, input_label: Callable[[Key], str]
 ) -> None:
     """Require successful methods to decode each input to the same value.
 
@@ -187,7 +179,7 @@ def check_agreement(
     ``input_label`` formats the input coordinates for a disagreement error.
     """
 
-    values: dict[Key, Measured[Key]] = {}
+    values: dict[Key, Measurement[Key]] = {}
     for result in results:
         if result.value is None:
             continue
