@@ -1,10 +1,8 @@
-# 组合子演示
+# SKI 组合子
 
 SKI 组合子是图灵完备的，即只用 SKI 三个组合子以及函数应用就可以表示任意可计算程序。
 
-λ 演算也是图灵完备的，即只用 λ 抽象、变量以及函数应用就可以表示任意可以计算程序。
-
-SKI 组合子和 λ 演算在计算能力上是等价的，二者都可以模拟任意图灵机。因此可以用把由 λ 演算组成的程序编译为由 SKI 组合子组成的图。
+SKI 组合子和 λ 演算都可以模拟任意图灵机。因此可以把由 λ 演算组成的表达式编译为由 SKI 组合子组成的图。
 
 ## S 组合子
 
@@ -82,11 +80,22 @@ S K K = I
 }
 $$
 
-## 比较
+## 比较编译结果
 
 比较不同自然数编码在编译后得到的 SKI 图
 
 ```sh
-echo "@! 1;" | lambda-compiler --encode=church
-echo "@! 1;" | lambda-compiler --encode=scott
+echo "@! \f -> \x -> f x;" | lambda-compiler > examples/ski/church.ski
+echo "@! \z -> \s -> z;" | lambda-compiler > examples/ski/scott.ski
+```
+
+比较表达式归约后再编译得到的 SKI 图
+
+```sh
+echo "@! \f -> \x -> f x;" | lambda-compiler --enable-reduce=beta > examples/ski/church-beta.ski
+echo "@! \f -> \x -> f x;" | lambda-compiler --enable-reduce=eta > examples/ski/church-eta.ski
+echo "@! \f -> \x -> f x;" | lambda-compiler --enable-reduce=both > examples/ski/church-both.ski
+echo "@! \z -> \s -> z;" | lambda-compiler --enable-reduce=beta > examples/ski/scott-beta.ski
+echo "@! \z -> \s -> z;" | lambda-compiler --enable-reduce=eta > examples/ski/scott-eta.ski
+echo "@! \z -> \s -> z;" | lambda-compiler --enable-reduce=both > examples/ski/scott-both.ski
 ```

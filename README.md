@@ -12,21 +12,7 @@
 cabal exec -- lambda-compiler example.lambda
 ```
 
-不提供文件名时从标准输入读取。成功时结果写到标准输出；错误信息写到标准错误。
-
-默认进行完整编译。可用 `--stop-after` 指定完成后停止的阶段。比如在展开后停止
-
-```sh
-cabal exec -- lambda-compiler --stop-after=expand example.lambda
-```
-
-默认不执行表达式归约。可用 `--enable-reduce` 指定要启用的归约。比如启用 β 归约
-
-```sh
-cabal exec -- lambda-compiler --enable-reduce=beta example.lambda
-```
-
-编译器的所有参数请参考 [compiler.md#编译器选项](docs/compiler.md#编译器选项)。
+编译器的所有选项请参考 [compiler.md#编译器选项](docs/compiler.md#编译器选项)。
 
 ### 运行 SKI 图
 
@@ -36,29 +22,16 @@ cabal exec -- lambda-compiler --enable-reduce=beta example.lambda
 cabal exec -- ski-interpreter example.ski
 ```
 
-不提供文件名时从标准输入读取。成功时结果写到标准输出；错误信息写到标准错误。
-
-默认最多进行 `100000` 次归约。归约次数超过限制会报错。可用 `--max-steps` 调整归约限制
-
-```sh
-cabal exec -- ski-interpreter --max-steps=1000000 example.ski
-```
-
-默认不对输出的 SKI 图进行解码。可用 `--decode` 需要显式开启解码。比如尝试解码十进制自然数
-
-```sh
-cabal exec -- ski-interpreter --decode=natural example.ski
-```
-
-解释器的所有参数请参考 [interpreter.md#解释器选项](docs/interpreter.md#解释器选项)。
+解释器的所有选项请参考 [interpreter.md#解释器选项](docs/interpreter.md#解释器选项)。
 
 ## 示例
 
-- [λ 表达式编译为 SKI 图](examples/ski/README.md)
+- [λ 演算](examples/lambda/README.md)
+- [SKI 组合子](examples/ski/README.md)
 - [Church 编码和 Scott 编码](examples/encoding/README.md)
 - [斐波那契数列](examples/fibonacci/README.md)
-- [圆周率 $\pi$ 的构造](examples/pi/README.md)
-- [自然常数 $e$ 的构造](examples/e/README.md)
+- [圆周率](examples/pi/README.md)
+- [自然常数](examples/e/README.md)
 - [符号微积分](examples/calculus/README.md)
 
 ## 文档
