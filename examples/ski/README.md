@@ -80,16 +80,24 @@ S K K = I
 }
 $$
 
-## 比较编译结果
+## 示例
 
-比较不同自然数编码在编译后得到的 SKI 图
+比较 SKI 组合子编译得到的 SKI 图
+
+```sh
+echo "@! S;" | lambda-compiler > examples/ski/s.ski
+echo "@! K;" | lambda-compiler > examples/ski/k.ski
+echo "@! I;" | lambda-compiler > examples/ski/i.ski
+```
+
+比较不同自然数编码编译得到的 SKI 图
 
 ```sh
 echo "@! \f -> \x -> f x;" | lambda-compiler > examples/ski/church.ski
 echo "@! \z -> \s -> z;" | lambda-compiler > examples/ski/scott.ski
 ```
 
-比较表达式归约后再编译得到的 SKI 图
+比较不同自然数编码在归约后再编译得到的 SKI 图
 
 ```sh
 echo "@! \f -> \x -> f x;" | lambda-compiler --enable-reduce=beta > examples/ski/church-beta.ski

@@ -85,3 +85,21 @@ $$
 \longrightarrow_{\eta}
 I
 $$
+
+## 示例
+
+比较函数应用前和函数应用后的结果
+
+```sh
+echo "@! S K K;" | lambda-compiler --stop-after=expand > examples/lambda/apply.lambda
+echo "@! S K K;" | lambda-compiler --stop-after=reduce --enable-reduce=beta > examples/lambda/apply-beta.lambda
+echo "@! S K K;" | lambda-compiler --stop-after=reduce --enable-reduce=eta > examples/lambda/apply-eta.lambda
+```
+
+比较函数化简前和函数化简后的结果
+
+```sh
+echo "@! ONE;" | lambda-compiler --stop-after=expand > examples/lambda/simplify.lambda
+echo '@! ONE;' | lambda-compiler --stop-after=reduce --enable-reduce=beta > examples/lambda/simplify-beta.lambda
+echo '@! ONE;' | lambda-compiler --stop-after=reduce --enable-reduce=eta > examples/lambda/simplify-eta.lambda
+```
