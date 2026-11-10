@@ -41,9 +41,7 @@ $$
 在仓库根目录运行：
 
 ```sh
-uv run scripts/compare_real.py examples/e \
-  --exact-value 2.71828182845904523536028747135266249775724709369996 \
-  --max-index 10 --max-steps 1000000
+uv run scripts/compare_real.py examples/e/compare.json
 ```
 
 得到的表格为：

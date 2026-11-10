@@ -191,33 +191,68 @@ printf '%s\n' '@! ONE;' | ./scripts/run.sh -t expand,reduce,decode
 使用示例：
 
 ```sh
-uv run scripts/compare_real.py examples/pi \
-  --exact-value 3.1415926535897932384626433832795028841971693993751 \
-  --max-index 10 --max-steps 1000000
+uv run scripts/compare_real.py examples/pi/compare.json
 ```
 
 脚本会：
 
-1. 将指定目录中的每个 `.lambda` 文件编译一次
-2. 把从零到最大索引的每个索引作为自然数下标解码实数
-3. 记录步数和解码的结果；超过步数上限会停止当前文件的记录
-4. 根据传入的精确值计算误差
-5. 写入 CSV 表格
-6. 绘制 PNG 图片
+1. 读取配置文件 `cases` 中的每个用例
+2. 为从零到用例 `maxIndex` 的每个索引生成实数解码的自然数下标
+3. 将用例 `methods` 中的每个算法文件编译一次并对每个下标分别解码
+4. 记录步数和解码的结果；超出步数上限会停止当前算法的记录
+5. 根据用例的 `exactValue` 计算误差
+6. 为每个用例写入 CSV 表格
+7. 为每个用例绘制 PNG 图片
 
 各输出为：
 
 - 表格包含 `method,n,steps,value,abs_error` 五列
 - 图片使用对数坐标，以归约步数作为对数横轴，误差作为对数纵轴。图片包含各算法的收敛曲线、散点图和帕累托前沿
 
-各参数为：
+参数为：
 
-- `directory` 指定目录。是位置参数，必填
-- `--exact-value` 指定精确值。必填
-- `--max-index` 设置最大索引。默认为 `10`
-- `--max-steps` 设置最大步数。默认为 `1000000`
-- `--csv` 指定输出的 CSV 文件。默认为 `directory/steps-vs-error.csv`
-- `--plot` 指定输出的 PNG 文件。默认为 `directory/steps-vs-error.png`
+- `config` 指定 JSON 配置文件路径。是位置参数，必填
+
+配置示例为：
+
+```json
+{
+  "cases": [
+    {
+      "name": "Pi approximation",
+      "methods": [
+        {
+          "name": "arctan",
+          "file": "arctan.lambda"
+        },
+        {
+          "name": "leibniz",
+          "file": "leibniz.lambda"
+        }
+      ],
+      "exactValue": "3.1415926535897932384626433832795028841971693993751",
+      "maxIndex": 10,
+      "maxSteps": 1000000,
+      "csv": "steps-vs-error.csv",
+      "png": "steps-vs-error.png"
+    }
+  ]
+}
+```
+
+其中：
+
+- `cases` 为要运行的用例数组。对每个用例：
+  - `name` 是用例名称，也是图片标题
+  - `exactValue` 是精确值，使用十进制字符串避免 JSON 浮点数损失精度
+  - `maxIndex` 是最大实数解码精度，输入范围为 `0..maxIndex`
+  - `maxSteps` 是步数上限
+  - `csv` / `png` 分别为表格和图片的相对路径，以配置文件所在目录为基准
+- `methods` 为待比较的方法数组。对每个方法：
+  - `name` 是方法名称
+  - `file` 是包含实数入口表达式的 `.lambda` 文件的相对路径，以配置文件所在目录为基准
+
+完整的 JSON Schema 见 [compare_real.schema.json](compare_real.schema.json)。
 
 ## compare_index.py
 
@@ -231,7 +266,7 @@ uv run scripts/compare_index.py examples/fibonacci/compare.json
 
 1. 读取配置文件 `cases` 中的每个用例
 2. 为从零到用例 `maxIndex` 的每个索引生成输入
-3. 为用例 `methods` 中的每个算法导入指定文件中的指定函数并编译和解码
+3. 为用例 `methods` 中的每个算法导入指定文件中的指定函数并对每个输入分别编译和解码
 4. 记录步数和解码的结果；超出步数上限会停止当前算法的记录
 5. 检查同一索引下各算法解码的结果是否一致
 6. 为每个用例写入 CSV 表格
@@ -306,7 +341,7 @@ uv run scripts/compare_binary.py examples/encoding/compare.json
 
 1. 读取配置文件 `cases` 中的每个用例
 2. 按用例的 `input` 生成二元自然数输入
-3. 为用例 `methods` 中的每个算法导入指定文件中的指定函数并编译和解码
+3. 为用例 `methods` 中的每个算法导入指定文件中的指定函数并对每个输入分别编译和解码
 4. 记录步数和解码的结果；超出步数上限会继续当前算法的记录
 5. 检查同一输入下各算法解码的结果是否一致
 6. 为每个用例写入 CSV 表格

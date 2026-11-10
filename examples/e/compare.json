@@ -1,0 +1,17 @@
+{
+  "cases": [
+    {
+      "name": "E approximation",
+      "methods": [
+        { "name": "factorial", "file": "factorial.lambda" },
+        { "name": "binomial-lower", "file": "binomial-lower.lambda" },
+        { "name": "binomial-upper", "file": "binomial-upper.lambda" }
+      ],
+      "exactValue": "2.71828182845904523536028747135266249775724709369996",
+      "maxIndex": 10,
+      "maxSteps": 1000000,
+      "csv": "steps-vs-error.csv",
+      "png": "steps-vs-error.png"
+    }
+  ]
+}

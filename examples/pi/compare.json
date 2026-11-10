@@ -1,0 +1,17 @@
+{
+  "cases": [
+    {
+      "name": "PI approximation",
+      "methods": [
+        { "name": "arctan", "file": "arctan.lambda" },
+        { "name": "leibniz", "file": "leibniz.lambda" },
+        { "name": "polygon", "file": "polygon.lambda" }
+      ],
+      "exactValue": "3.1415926535897932384626433832795028841971693993751",
+      "maxIndex": 10,
+      "maxSteps": 1000000,
+      "csv": "steps-vs-error.csv",
+      "png": "steps-vs-error.png"
+    }
+  ]
+}

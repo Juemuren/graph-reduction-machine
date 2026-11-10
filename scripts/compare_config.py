@@ -7,7 +7,7 @@
 """Shared JSON configuration and method setup for comparison scripts."""
 
 import json
-from collections.abc import Callable
+from collections.abc import Callable, Sequence
 from pathlib import Path
 from typing import Literal, TypedDict, TypeVar
 
@@ -18,6 +18,10 @@ from compare_common import (
     entry_source,
 )
 from jsonschema import validate
+
+
+class MethodName(TypedDict):
+    name: str
 
 
 class Method(TypedDict):
@@ -40,7 +44,7 @@ def load_config(path: Path, schema_path: Path) -> object:
     return data
 
 
-def method_names(methods: list[Method], case_name: str) -> list[str]:
+def method_names(methods: Sequence[MethodName], case_name: str) -> list[str]:
     """Return method names in config order, rejecting duplicates within a case."""
 
     names = [method["name"] for method in methods]
