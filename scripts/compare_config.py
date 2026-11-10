@@ -11,12 +11,7 @@ from collections.abc import Callable, Sequence
 from pathlib import Path
 from typing import Literal, TypedDict, TypeVar
 
-from compare_common import (
-    MethodSpec,
-    compile_example,
-    decode,
-    entry_source,
-)
+from compare_common import MethodSpec, compile_example, decode
 from jsonschema import validate
 
 
@@ -54,25 +49,39 @@ def method_names(methods: Sequence[MethodName], case_name: str) -> list[str]:
 
 
 def method_spec(
-    method: Method,
-    base: Path,
+    name: str,
     compiler: str,
     interpreter: str,
-    arguments: Callable[[Point], list[int]],
+    source: str | Callable[[Point], str],
+    decode_mode: str,
     label: Callable[[Point], str],
+    *,
+    encode: str | None = None,
+    precision: Callable[[Point], int] | None = None,
+    compile_context: str | None = None,
 ) -> MethodSpec[Point]:
-    """Build a measurement method that compiles and decodes each input point."""
+    """Compile fixed source once, or generate and compile source for each input."""
 
-    source = base / method["file"]
+    if isinstance(source, str):
+        graph = compile_example(compiler, source, compile_context or name, encode)
+
+        def graph_for(point: Point) -> str:
+            return graph
+
+    else:
+
+        def graph_for(point: Point) -> str:
+            return compile_example(compiler, source(point), label(point), encode)
 
     def probe(point: Point, limit: int) -> tuple[int, str] | None:
         context = label(point)
-        graph = compile_example(
-            compiler,
-            entry_source(source, method["function"], arguments(point)),
+        return decode(
+            interpreter,
+            graph_for(point),
+            decode_mode,
+            limit,
             context,
-            method["encode"],
+            precision(point) if precision is not None else None,
         )
-        return decode(interpreter, graph, method["decode"], limit, context)
 
-    return MethodSpec(method["name"], probe, label)
+    return MethodSpec(name, probe, label)

@@ -20,6 +20,7 @@ from compare_common import (
     INTERPRETER,
     Measurement,
     check_agreement,
+    entry_source,
     executable,
     measure_methods,
     write_csv_rows,
@@ -49,12 +50,15 @@ Sample: TypeAlias = Measurement[int]
 def measure_case(case: Case, base: Path) -> list[Sample]:
     methods = (
         method_spec(
-            method,
-            base,
+            method["name"],
             executable(COMPILER),
             executable(INTERPRETER),
-            lambda index: [index],
+            lambda index, method=method: entry_source(
+                base / method["file"], method["function"], [index]
+            ),
+            method["decode"],
             lambda index, name=method["name"]: f"{case['name']}/{name} n={index}",
+            encode=method["encode"],
         )
         for method in case["methods"]
     )

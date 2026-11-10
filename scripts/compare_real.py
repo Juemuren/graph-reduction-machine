@@ -22,14 +22,11 @@ from compare_common import (
     COMPILER,
     INTERPRETER,
     Measurement,
-    MethodSpec,
-    compile_example,
-    decode,
     executable,
     measure_methods,
     write_csv_rows,
 )
-from compare_config import load_config, method_names
+from compare_config import load_config, method_names, method_spec
 from matplotlib.axes import Axes
 
 MIN_DECIMAL_PRECISION = 50
@@ -61,38 +58,20 @@ class Config(TypedDict):
     cases: list[Case]
 
 
-def method_spec(
-    method: Method, base: Path, compiler: str, interpreter: str, case_name: str
-) -> MethodSpec[int]:
-    source = base / method["file"]
-    graph = compile_example(
-        compiler,
-        source.read_text(encoding="utf-8"),
-        f"{case_name}/{method['name']}",
-    )
-
-    def probe(index: int, limit: int) -> tuple[int, str] | None:
-        return decode(
-            interpreter,
-            graph,
-            "real",
-            limit,
-            f"{case_name}/{method['name']} n={index}",
-            index,
-        )
-
-    return MethodSpec(
-        method["name"],
-        probe,
-        lambda index: f"{case_name}/{method['name']} n={index}",
-    )
-
-
 def measure_case(case: Case, base: Path) -> list[Measurement[int]]:
     compiler = executable(COMPILER)
     interpreter = executable(INTERPRETER)
     methods = (
-        method_spec(method, base, compiler, interpreter, case["name"])
+        method_spec(
+            method["name"],
+            compiler,
+            interpreter,
+            (base / method["file"]).read_text(encoding="utf-8"),
+            "real",
+            lambda index, name=method["name"]: f"{case['name']}/{name} n={index}",
+            precision=lambda index: index,
+            compile_context=f"{case['name']}/{method['name']}",
+        )
         for method in case["methods"]
     )
     results = measure_methods(
@@ -180,14 +159,18 @@ def plot_coordinates(
     return steps, errors
 
 
-def plot_scatter(axis: Axes, samples: list[Sample], zero_floor: float) -> None:
+def plot_scatter(
+    axis: Axes, samples: list[Sample], method_names: list[str], zero_floor: float
+) -> None:
     grouped: dict[str, list[Sample]] = defaultdict(list)
     for sample in samples:
         grouped[sample.method].append(sample)
 
     colors = plt.get_cmap("tab10")
-    for number, (method, points) in enumerate(sorted(grouped.items())):
-        points = sorted(points, key=lambda item: item.index)
+    for number, method in enumerate(method_names):
+        points = sorted(grouped[method], key=lambda item: item.index)
+        if not points:
+            continue
         steps, errors = plot_coordinates(points, zero_floor)
         color = colors(number % 10)
         axis.plot(
@@ -231,14 +214,16 @@ def plot_pareto_frontier(axis: Axes, samples: list[Sample], zero_floor: float) -
     )
 
 
-def plot(samples: list[Sample], output: Path, title: str) -> None:
+def plot(
+    samples: list[Sample], method_names: list[str], output: Path, title: str
+) -> None:
     positive_errors = [float(sample.error) for sample in samples if sample.error > 0]
     zero_floor = (
         min(positive_errors) / 10 if positive_errors else DEFAULT_ZERO_ERROR_FLOOR
     )
 
     figure, axis = plt.subplots(figsize=FIGURE_SIZE)
-    plot_scatter(axis, samples, zero_floor)
+    plot_scatter(axis, samples, method_names, zero_floor)
     plot_pareto_frontier(axis, samples, zero_floor)
     axis.set(
         xscale="log",
@@ -258,14 +243,14 @@ def plot(samples: list[Sample], output: Path, title: str) -> None:
 def run_config(path: Path) -> None:
     config = cast(Config, load_config(path, Path(__file__).with_suffix(".schema.json")))
     for case in config["cases"]:
-        method_names(case["methods"], case["name"])
+        methods = method_names(case["methods"], case["name"])
         samples = make_samples(
             measure_case(case, path.parent), Decimal(case["exactValue"])
         )
         csv_path = path.parent / case["csv"]
         png_path = path.parent / case["png"]
         write_csv(csv_path, samples)
-        plot(samples, png_path, case["name"])
+        plot(samples, methods, png_path, case["name"])
         print(f"Saved {csv_path} and {png_path}")
 
 
