@@ -76,7 +76,7 @@ $$
 
 $$
 \boxed{
-S K K = I
+S\ K\ K = I
 }
 $$
 
@@ -88,6 +88,12 @@ $$
 echo "@! S;" | lambda-compiler > examples/ski/s.ski
 echo "@! K;" | lambda-compiler > examples/ski/k.ski
 echo "@! I;" | lambda-compiler > examples/ski/i.ski
+```
+
+验证 `S K K` 等价于 `I`
+
+```sh
+echo "@! S K K;" | lambda-compiler --enable-reduce=both > examples/ski/skk.ski
 ```
 
 比较不同自然数编码编译得到的 SKI 图
