@@ -4,6 +4,8 @@
 
 ## 组合子
 
+组合子的实现位于 [combinator.lambda](../lib/combinator.lambda)。
+
 ### 基本组合子
 
 - `I x` 返回 `x`，是恒等组合子
@@ -29,6 +31,8 @@
 
 ## 高阶函数
 
+高阶函数的实现位于 [higher-order.lambda](../lib/higher-order.lambda)。
+
 - `ID x` 返回 `x`
 - `COMPOSE f g x` 返回 `f (g x)`，表示函数复合
 - `CONST x y` 返回 `x`，可用于构造常值函数
@@ -37,6 +41,8 @@
 - `UNCURRY f p` 返回 `f (FST p) (SND p)`，将二元函数改为接收有序对
 
 ## 控制
+
+控制的实现位于 [control.lambda](../lib/control.lambda)。
 
 ### 条件
 
@@ -53,6 +59,8 @@
 
 ## 布尔值
 
+布尔值的实现位于 [boolean.lambda](../lib/boolean.lambda)。
+
 ### 布尔值构造
 
 - `FALSE` 表示假值
@@ -66,6 +74,8 @@
 
 ## 有序对
 
+有序对的实现位于 [pairs.lambda](../lib/pairs.lambda)。
+
 ### 有序对构造
 
 - `PAIR a b` 构造第一个分量为 `a`、第二个分量为 `b` 的有序对
@@ -76,6 +86,8 @@
 - `SND p` 获取有序对 `p` 的第二个分量
 
 ## 自然数
+
+自然数的实现位于 [natural.lambda](../lib/natural.lambda)。
 
 自然数使用皮亚诺公理进行定义。
 
@@ -144,6 +156,8 @@ SUCC (SUCC ZERO)
 
 ## 整数
 
+整数的实现位于 [integer.lambda](../lib/integer.lambda)。
+
 整数用自然数有序对表示，值为第一个自然数减去第二个自然数。
 
 即整数表示为
@@ -204,6 +218,8 @@ $$
 
 ## 有理数
 
+有理数的实现位于 [rational.lambda](../lib/rational.lambda)。
+
 有理数用整数有序对表示，值为第一个整数除以第二个整数。
 
 即有理数表示为
@@ -263,6 +279,8 @@ $$
 - `QGT a b` / `QGEQ a b` 判断有理数 `a` 是否大于 / 大于或等于有理数 `b`
 
 ## 实数
+
+实数的实现位于 [real.lambda](../lib/real.lambda)。
 
 实数用柯西序列进行定义。
 
