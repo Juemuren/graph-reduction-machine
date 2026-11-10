@@ -25,14 +25,14 @@
 各参数为：
 
 - `-File` 文件路径
-- `-Source` 源代码内容
-- `-Options` 编译器选项。具体选项请参考 [compiler.md#编译器选项](../docs/compiler.md#编译器选项)
+- `-Source` 源代码内容，也可以通过管道传入
+- `--` 后为编译器选项，也可以通过 `-Options` 传入参数数组。具体选项请参考 [compiler.md#编译器选项](../docs/compiler.md#编译器选项)
 
 使用示例：
 
 ```pwsh
-'@! ONE;' | Invoke-Compiler -Options @("--stop-after=reduce", "--enable-reduce=both")
-Invoke-Compiler -Source '@! ONE;'
+'@! ONE;' | Invoke-Compiler -- --stop-after=reduce --enable-reduce=both
+Invoke-Compiler -Source '@! ONE;' -- --encode=scott
 Invoke-Compiler -File "examples/e/factorial.lambda"
 ```
 
@@ -43,15 +43,15 @@ Invoke-Compiler -File "examples/e/factorial.lambda"
 各参数为：
 
 - `-File` 文件路径
-- `-Source` 源代码内容
-- `-Options` 解释器选项。具体选项请参考 [interpreter.md#解释器选项](../docs/interpreter.md#解释器选项)
+- `-Source` 源代码内容，也可以通过管道传入
+- `--` 后为解释器选项，也可以通过 `-Options` 传入参数数组。具体选项请参考 [interpreter.md#解释器选项](../docs/interpreter.md#解释器选项)
 
 使用示例：
 
 ```pwsh
-'#0 = I;' | Invoke-Interpreter -Options @("--show-steps", "--decode=natural")
+'#0 = I;' | Invoke-Interpreter -- --show-steps --decode=natural
 Invoke-Interpreter -Source '#0 = I;'
-Invoke-Interpreter -File "examples/ski/church.ski" -Options @("--decode=natural")
+Invoke-Interpreter -File "examples/ski/church.ski" -- --decode=natural
 ```
 
 ### Invoke-LambdaStage
@@ -69,7 +69,7 @@ Invoke-LambdaStage -File "examples/e/factorial.lambda" -Stage decode -Decode rea
 各参数为：
 
 - `-File` 文件路径
-- `-Source` 源代码内容
+- `-Source` 源代码内容，也可以通过管道传入
 - `-Stage` 指定的一个阶段。可以为 `expand` / `reduce` / `compile` / `interpret` / `decode`。无默认值
 - `-Encode` 编译器编码方式。可以为 `church` / `scott`。默认为 `church`
 - `-Decode` 解释器解码方式。可以为 `natural` / `scott-natural` / `boolean` / `integer` / `rational` / `real`。默认为 `natural`
@@ -89,7 +89,7 @@ Invoke-LambdaStage -File "examples/e/factorial.lambda" -Stage decode -Decode rea
 参数为：
 
 - `-File` 文件路径
-- `-Source` 源代码内容
+- `-Source` 源代码内容，也可以通过管道传入
 - `-Stages` 指定的一个或多个阶段，用 `,` 连接。默认为 `decode`
 - `-Encode` 编译器编码方式。可以为 `church` / `scott`。默认为 `church`
 - `-Decode` 解释器解码方式。可以为 `natural` / `scott-natural` / `boolean` / `integer` / `rational` / `real`。默认为 `natural`
@@ -117,7 +117,7 @@ source ./scripts/functions.sh
 各参数为：
 
 - `-f` / `--file` 文件路径
-- `-s` / `--source` 源代码内容
+- `-s` / `--source` 源代码内容，也可以通过管道传入
 - `--` 后为编译器选项。具体选项请参考 [compiler.md#编译器选项](../docs/compiler.md#编译器选项)
 
 使用示例：
@@ -135,7 +135,7 @@ invoke_compiler -f examples/e/factorial.lambda
 各参数为：
 
 - `-f` / `--file` 文件路径
-- `-s` / `--source` 源代码内容
+- `-s` / `--source` 源代码内容，也可以通过管道传入
 - `--` 后为解释器选项。具体选项请参考 [interpreter.md#解释器选项](../docs/interpreter.md#解释器选项)
 
 使用示例：
@@ -161,7 +161,7 @@ invoke_lambda_stage -f examples/e/factorial.lambda -t decode -d real
 各参数为：
 
 - `-f` / `--file` 文件路径
-- `-s` / `--source` 源代码内容
+- `-s` / `--source` 源代码内容，也可以通过管道传入
 - `-t` / `--stage` 指定的一个阶段。可以为 `expand` / `reduce` / `compile` / `interpret` / `decode`。无默认值
 - `-e` / `--encode` 编译器编码方式。可以为 `church` / `scott`。默认为 `church`
 - `-d` / `--decode` 解释器解码方式。可以为 `natural` / `scott-natural` / `boolean` / `integer` / `rational` / `real`。默认为 `natural`
@@ -181,7 +181,7 @@ printf '%s\n' '@! ONE;' | ./scripts/run.sh -t expand,reduce,decode
 参数为：
 
 - `-f` / `--file` 文件路径
-- `-s` / `--source` 源代码内容
+- `-s` / `--source` 源代码内容，也可以通过管道传入
 - `-t` / `--stages` 指定的一个或多个阶段，用 `,` 连接。默认为 `decode`
 - `-e` / `--encode` 编译器编码方式。可以为 `church` / `scott`。默认为 `church`
 - `-d` / `--decode` 解释器解码方式。可以为 `natural` / `scott-natural` / `boolean` / `integer` / `rational` / `real`。默认为 `natural`

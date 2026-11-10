@@ -1,7 +1,11 @@
 function Invoke-Compiler {
+    [CmdletBinding(PositionalBinding = $false)]
     param(
         [string]$File,
+
         [string[]]$Source,
+
+        [Parameter(ValueFromRemainingArguments)]
         [string[]]$Options,
 
         [Parameter(ValueFromPipeline)]
@@ -37,9 +41,13 @@ function Invoke-Compiler {
 }
 
 function Invoke-Interpreter {
+    [CmdletBinding(PositionalBinding = $false)]
     param(
         [string]$File,
+
         [string[]]$Source,
+
+        [Parameter(ValueFromRemainingArguments)]
         [string[]]$Options,
 
         [Parameter(ValueFromPipeline)]
