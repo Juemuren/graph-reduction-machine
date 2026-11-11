@@ -72,11 +72,11 @@ const items = await examples();
 .hero {
   background: radial-gradient(
     circle at 78% 30%,
-    #254d7f 0,
-    #162b49 36%,
-    #10213a 85%
+    var(--surface-1) 0,
+    var(--mantle) 36%,
+    var(--crust) 85%
   );
-  color: #fff;
+  color: var(--body-text);
 }
 .hero-inner {
   display: grid;
@@ -94,7 +94,7 @@ const items = await examples();
   margin: 15px 0 22px;
 }
 .hero p {
-  color: #c6d5e9;
+  color: var(--subtext-1);
   line-height: 1.8;
   max-width: 620px;
   font-size: 17px;
@@ -106,27 +106,27 @@ const items = await examples();
   margin-top: 28px;
 }
 .flow {
-  border: 1px solid #6382a966;
+  border: 1px solid var(--overlay-0);
   border-radius: 18px;
   padding: 22px;
   display: grid;
   justify-items: center;
   gap: 10px;
-  background: #ffffff0a;
-  box-shadow: 0 20px 50px #07182b44;
+  background: var(--surface-0);
+  box-shadow: 0 20px 50px var(--shadow-hover);
 }
 .flow span {
   width: 100%;
   text-align: center;
   padding: 17px 12px;
-  border: 1px solid #7291b35c;
-  background: #ffffff10;
+  border: 1px solid var(--overlay-0);
+  background: var(--surface-1);
   border-radius: 8px;
   font-family: ui-monospace, monospace;
   font-size: 18px;
 }
 .flow b {
-  color: #d59a4e;
+  color: var(--accent);
   font-size: 21px;
 }
 .section-header {
@@ -145,7 +145,7 @@ const items = await examples();
   font-size: 14px;
 }
 .reference {
-  background: #eaf0f7;
+  background: var(--panel-bg);
   padding: 60px 0;
 }
 .reference-inner {
@@ -154,7 +154,7 @@ const items = await examples();
   gap: 45px;
 }
 .reference p {
-  color: #586a80;
+  color: var(--muted-text);
   max-width: 500px;
   line-height: 1.7;
 }
@@ -165,15 +165,15 @@ const items = await examples();
 .reference-links a {
   display: flex;
   justify-content: space-between;
-  background: #fff;
-  border: 1px solid #dce4ee;
+  background: var(--panel-bg);
+  border: 1px solid var(--border);
   padding: 16px 20px;
   border-radius: 8px;
   text-decoration: none;
   font-weight: 700;
 }
 .reference-links span {
-  color: #9aaac0;
+  color: var(--overlay-1);
 }
 @media (max-width: 700px) {
   .hero-inner,

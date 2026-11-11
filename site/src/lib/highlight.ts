@@ -25,7 +25,7 @@ const highlighter = Promise.all([
       { ...JSON.parse(lambda), name: "core-lambda" },
       { ...JSON.parse(ski), name: "ski-graph" },
     ],
-    themes: ["github-dark"],
+    themes: ["catppuccin-latte", "catppuccin-mocha"],
   }),
 );
 
@@ -38,18 +38,20 @@ export async function highlightedLines(
     return text.split("\n").map(escapeHtml);
 
   const tokenizer = await highlighter;
-  const lines = tokenizer.codeToTokens(text, {
+  const lines = tokenizer.codeToTokensWithThemes(text, {
     lang: (extension === "lambda"
       ? "core-lambda"
       : "ski-graph") as BundledLanguage,
-    theme: "github-dark",
-  }).tokens;
+    themes: { light: "catppuccin-latte", dark: "catppuccin-mocha" },
+  });
   return lines.map((tokens) =>
     tokens
       .map((token) => {
         const content = escapeHtml(token.content);
-        return token.color
-          ? `<span style="color:${token.color}">${content}</span>`
+        const light = token.variants.light?.color;
+        const dark = token.variants.dark?.color;
+        return light && dark
+          ? `<span style="--token-light:${light};--token-dark:${dark}">${content}</span>`
           : content;
       })
       .join(""),

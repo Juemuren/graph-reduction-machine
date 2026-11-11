@@ -90,6 +90,10 @@ deno task verify
 
 新增示例目录只要包含 `README.md`，构建时就会生成对应页面。
 
+## 样式
+
+Catppuccin Latte / Mocha 色板和可复用的 CSS 变量放在 `src/styles/theme.css`。公共样式放在 `src/styles/global.css`，由它引入主题变量；`src/layouts/Base.astro` 只需引入全局样式。亮暗模式跟随系统的 `prefers-color-scheme`。页面或组件的局部布局仍可写在各自的 `<style>` 中，颜色优先引用主题变量。
+
 ## 部署
 
 GitHub Pages 工作流在 PR 中运行检查，在推送到 `main` 时构建并部署到 `https://Juemuren.github.io/graph-reduction-machine/`。
