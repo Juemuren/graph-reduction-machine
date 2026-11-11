@@ -286,6 +286,19 @@ footer {
   font-size: 14px;
 }
 
+.prose .csv-table-details {
+  margin: 12px 0 24px;
+}
+
+.prose .csv-table-details > summary {
+  cursor: pointer;
+  color: var(--body-text);
+}
+
+.prose .csv-table-details > table {
+  margin-top: 12px;
+}
+
 .prose th,
 .prose td {
   border: 1px solid var(--border);

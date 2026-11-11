@@ -91,7 +91,7 @@ Deno.test("local CSV links keep downloads and render tables", async () => {
       assert.ok(position >= 0, `${slug}/${file}: download link`);
       assert.match(
         page.slice(position),
-        /^href="[^"]+"[^>]*>[^<]*<\/a><\/p>\s*<table>/,
+        /^href="[^"]+"[^>]*>[^<]*<\/a><\/p>\s*<details class="csv-table-details"><summary>查看表格（\d+ 行）<\/summary><table>/,
       );
     }
   }

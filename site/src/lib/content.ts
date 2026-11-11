@@ -41,6 +41,44 @@ interface MarkdownNode {
   url?: string;
   value?: string;
   children?: MarkdownNode[];
+  data?: { hProperties?: { dataCsvRows: number } };
+}
+
+interface HtmlNode {
+  type: string;
+  tagName?: string;
+  properties?: { dataCsvRows?: number; className?: string[] };
+  children?: HtmlNode[];
+  value?: string;
+}
+
+function collapseCsvTables() {
+  return (tree: HtmlNode) => {
+    const visit = (node: HtmlNode) => {
+      if (!node.children) return;
+      node.children = node.children.map((child) => {
+        visit(child);
+        const rows = child.properties?.dataCsvRows;
+        if (child.tagName !== "table" || typeof rows !== "number") return child;
+        delete child.properties?.dataCsvRows;
+        return {
+          type: "element",
+          tagName: "details",
+          properties: { className: ["csv-table-details"] },
+          children: [
+            {
+              type: "element",
+              tagName: "summary",
+              properties: {},
+              children: [{ type: "text", value: `查看表格（${rows} 行）` }],
+            },
+            child,
+          ],
+        };
+      });
+    };
+    visit(tree);
+  };
 }
 
 function renderCsvLinks(sourcePath: string) {
@@ -78,6 +116,7 @@ function renderCsvLinks(sourcePath: string) {
           if (rows.length === 0) continue;
           children.push({
             type: "table",
+            data: { hProperties: { dataCsvRows: rows.length - 1 } },
             children: rows.map((cells) => ({
               type: "tableRow",
               children: cells.map((value) => ({
@@ -249,6 +288,7 @@ export async function renderMarkdown(sourcePath: string) {
     .use(renderCsvLinks(sourcePath))
     .use(rewriteLinks(sourcePath))
     .use(remarkRehype)
+    .use(collapseCsvTables)
     .use(rehypeSlug)
     .use(collectHeadings(toc))
     .use(rehypeKatex)
