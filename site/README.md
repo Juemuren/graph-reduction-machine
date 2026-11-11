@@ -92,14 +92,12 @@ deno task verify
 
 ## 样式
 
-Catppuccin Latte / Mocha 色板和可复用的 CSS 变量放在 `src/styles/theme.css`。公共样式放在 `src/styles/global.css`，由它引入主题变量；`src/layouts/Base.astro` 只需引入全局样式。亮暗模式跟随系统的 `prefers-color-scheme`。页面或组件的局部布局仍可写在各自的 `<style>` 中，颜色优先引用主题变量。
+- 主题变量放在 `src/styles/theme.css`，颜色优先引用主题变量
+- 全局样式放在 `src/styles/global.css`，由 `src/layouts/Base.astro` 引入
+- 页面或组件的局部样式仍写在各自的 `<style>` 中
 
 ## 部署
 
-GitHub Pages 工作流在 PR 中运行检查，在推送到 `main` 时构建并部署到 `https://Juemuren.github.io/graph-reduction-machine/`。
+持续集成时用 `deno ci` 从锁文件 `deno.lock` 中安装依赖。
 
-启用前，需要在仓库的 **Settings → Pages → Build and deployment → Source** 中选择 **GitHub Actions**。
-
-部署时设置 `SITE_BASE=/graph-reduction-machine`，用于生成带仓库前缀的链接。
-
-依赖版本在 `deno.json` 中配置；修改依赖时同步提交 `deno.lock`。CI 使用 `deno ci` 从锁文件安装。
+GitHub Pages 工作流在 PR 中运行检查，在推送到 `main` 时构建并部署到 `https://Juemuren.github.io/graph-reduction-machine/`。部署时设置 `SITE_BASE=/graph-reduction-machine` 以生成带仓库前缀的链接。
