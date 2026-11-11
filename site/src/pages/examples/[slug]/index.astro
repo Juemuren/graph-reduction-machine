@@ -1,4 +1,5 @@
 ---
+import Breadcrumbs from "../../../components/Breadcrumbs.astro";
 import Base from "../../../layouts/Base.astro";
 import { examples, renderMarkdown } from "../../../lib/content";
 import { sitePath } from "../../../lib/urls";
@@ -15,16 +16,14 @@ const { title, html } = await renderMarkdown(`examples/${item.slug}/README.md`);
 <Base title={title}>
   <div class="container">
     <header class="page-head">
-      <div class="crumbs">
-        <a href={sitePath("/")}>首页</a>
-        <span>/</span>
-        <a href={sitePath("/examples/")}>示例</a>
-        <span>/</span>
-        <span>{item.label}</span>
-      </div>
-      <span class="eyebrow">Example /{item.slug}</span>
-      <h1>{item.label}</h1>
-      <p>{title}</p>
+      <Breadcrumbs
+        items={[
+          { label: "首页", href: "/" },
+          { label: "示例", href: "/examples/" },
+          { label: item.label },
+        ]}
+      />
+      <span class="eyebrow">Example | {item.slug}</span>
     </header>
     <div class="paper">
       <div class="prose" set:html={html} />

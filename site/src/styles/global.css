@@ -154,17 +154,20 @@ footer {
   margin: 0;
 }
 
-.crumbs {
+.page-head:has(> .eyebrow:last-child) {
   display: flex;
-  gap: 8px;
-  flex-wrap: wrap;
-  color: var(--muted-text);
-  font-size: 13px;
-  margin-bottom: 22px;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+  padding-bottom: 24px;
 }
 
-main .crumbs a {
-  text-decoration: none;
+.page-head:has(> .eyebrow:last-child) > .crumbs {
+  margin-bottom: 0;
+}
+
+.page-head:has(> .eyebrow:last-child) > .eyebrow {
+  white-space: nowrap;
 }
 
 .card-grid {

@@ -1,0 +1,42 @@
+---
+import { sitePath } from "../lib/urls";
+
+interface Breadcrumb {
+  label: string;
+  href?: string;
+}
+
+interface Props {
+  items: Breadcrumb[];
+}
+
+const { items } = Astro.props;
+---
+
+<nav class="crumbs" aria-label="面包屑">
+  {items.map((item, index) => (
+    <>
+      {index > 0 && <span aria-hidden="true">›</span>}
+      {item.href ? (
+        <a href={sitePath(item.href)}>{item.label}</a>
+      ) : (
+        <span aria-current="page">{item.label}</span>
+      )}
+    </>
+  ))}
+</nav>
+
+<style>
+.crumbs {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  color: var(--muted-text);
+  font-size: 13px;
+  margin-bottom: 22px;
+}
+
+.crumbs a {
+  text-decoration: none;
+}
+</style>

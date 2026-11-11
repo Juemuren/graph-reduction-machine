@@ -8,7 +8,7 @@
     "experimentalFullSupportEnabled": true,
     "formatter": {
       "enabled": true,
-      "whitespaceSensitivity": "ignore",
+      "whitespaceSensitivity": "css",
       "bracketSameLine": false
     }
   },
