@@ -86,7 +86,7 @@ deno task verify
 
 ## 内容
 
-参考文档列表和示例名称在 `src/config.ts` 中配置。
+参考文档列表和示例顺序在 `src/config.ts` 中配置。
 
 新增示例目录只要包含 `README.md`，构建时就会生成对应页面。
 

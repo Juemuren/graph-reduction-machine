@@ -28,7 +28,7 @@ cabal exec -- ski-interpreter example.ski
 
 - [λ 演算](examples/lambda/README.md)
 - [SKI 组合子](examples/ski/README.md)
-- [Church 编码和 Scott 编码](examples/encoding/README.md)
+- [自然数编码](examples/encoding/README.md)
 - [斐波那契数列](examples/fibonacci/README.md)
 - [圆周率](examples/pi/README.md)
 - [自然常数](examples/e/README.md)

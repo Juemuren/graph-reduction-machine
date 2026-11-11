@@ -8,7 +8,7 @@ import remarkMath from "remark-math";
 import remarkParse from "remark-parse";
 import remarkRehype from "remark-rehype";
 import { unified } from "unified";
-import { exampleNames, referenceDocs, root } from "../config";
+import { exampleOrder, referenceDocs, root } from "../config";
 import { sitePath } from "./urls";
 
 export interface Example {
@@ -38,9 +38,7 @@ export async function examples(): Promise<Example[]> {
       if (!files.includes("README.md")) return null;
       return {
         slug: name,
-        label:
-          exampleNames[name] ||
-          titleOf(await readSource(`examples/${name}/README.md`)),
+        label: titleOf(await readSource(`examples/${name}/README.md`)),
         files,
         sources: files.filter((file) => /\.(lambda|ski)$/.test(file)),
         images: files.filter((file) => file.endsWith(".png")),
@@ -52,10 +50,10 @@ export async function examples(): Promise<Example[]> {
     items
       .filter((item): item is Example => item !== null)
       .sort((a, b) => {
-        const position = (slug: string) =>
-          Object.keys(exampleNames).includes(slug)
-            ? Object.keys(exampleNames).indexOf(slug)
-            : Number.MAX_SAFE_INTEGER;
+        const position = (slug: string) => {
+          const index = exampleOrder.indexOf(slug);
+          return index === -1 ? Number.MAX_SAFE_INTEGER : index;
+        };
         return (
           position(a.slug) - position(b.slug) || a.slug.localeCompare(b.slug)
         );
