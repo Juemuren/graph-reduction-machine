@@ -1,0 +1,191 @@
+---
+import Base from "../layouts/Base.astro";
+import { examples } from "../lib/content";
+
+const items = await examples();
+---
+
+<Base title="首页">
+  <section class="hero">
+    <div class="container hero-inner">
+      <div>
+        <span class="eyebrow">Lambda Calculus · Graph Reduction</span>
+        <h1>从 λ 表达式<br>走向可观察的结果。</h1>
+        <p>
+          一个可运行 λ 演算的图归约机。阅读核心 λ 与 SKI
+          图的示例、源码和比较结果，沿着编译与归约的路径理解计算。
+        </p>
+        <div class="hero-actions">
+          <a class="button primary" href="/examples/">浏览示例 →</a
+          ><a class="button" href="/docs/">阅读文档</a>
+        </div>
+      </div>
+      <div class="flow">
+        <span>λ 源码</span><b>↓</b><span>SKI 图</span><b>↓</b
+        ><span>归约结果</span>
+      </div>
+    </div>
+  </section>
+  <section class="container">
+    <div class="section-header">
+      <div>
+        <span class="eyebrow">Explore</span>
+        <h2>沿着例子阅读</h2>
+      </div>
+      <a href="/examples/">查看全部 {items.length} 个示例 →</a>
+    </div>
+    <div class="card-grid">
+      {items.map((item, index) => (
+        <a class="card" href={`/examples/${item.slug}/`}>
+          <small>{String(index + 1).padStart(2, "0")} / EXAMPLE</small>
+          <h3>{item.label}</h3>
+          <p>
+            {item.sources.length} 个源码文件
+            {item.images.length ? ` · ${item.images.length} 张比较图` : ""}
+          </p>
+        </a>
+      ))}
+    </div>
+  </section>
+  <section class="reference">
+    <div class="container reference-inner">
+      <div>
+        <span class="eyebrow">Reference</span>
+        <h2>读懂语言与机器</h2>
+        <p>
+          从语法开始，了解编译器、解释器、语言服务器和标准库如何组成完整系统。
+        </p>
+      </div>
+      <div class="reference-links">
+        <a href="/docs/syntax/">语法规范 <span>↗</span></a
+        ><a href="/docs/architecture/">系统架构 <span>↗</span></a
+        ><a href="/docs/lib/">标准库 <span>↗</span></a>
+      </div>
+    </div>
+  </section>
+</Base>
+<style>
+.hero {
+  background: radial-gradient(
+    circle at 78% 30%,
+    #254d7f 0,
+    #162b49 36%,
+    #10213a 85%
+  );
+  color: #fff;
+}
+.hero-inner {
+  display: grid;
+  grid-template-columns: 1fr 270px;
+  align-items: center;
+  gap: 40px;
+  min-height: 480px;
+  padding-top: 64px;
+  padding-bottom: 70px;
+}
+.hero h1 {
+  font-size: clamp(42px, 6vw, 70px);
+  line-height: 1.08;
+  letter-spacing: -0.05em;
+  margin: 15px 0 22px;
+}
+.hero p {
+  color: #c6d5e9;
+  line-height: 1.8;
+  max-width: 620px;
+  font-size: 17px;
+}
+.hero-actions {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-top: 28px;
+}
+.flow {
+  border: 1px solid #6382a966;
+  border-radius: 18px;
+  padding: 22px;
+  display: grid;
+  justify-items: center;
+  gap: 10px;
+  background: #ffffff0a;
+  box-shadow: 0 20px 50px #07182b44;
+}
+.flow span {
+  width: 100%;
+  text-align: center;
+  padding: 17px 12px;
+  border: 1px solid #7291b35c;
+  background: #ffffff10;
+  border-radius: 8px;
+  font-family: ui-monospace, monospace;
+  font-size: 18px;
+}
+.flow b {
+  color: #d59a4e;
+  font-size: 21px;
+}
+.section-header {
+  display: flex;
+  align-items: end;
+  justify-content: space-between;
+  gap: 15px;
+  padding: 56px 0 24px;
+}
+.section-header h2,
+.reference h2 {
+  font-size: 34px;
+  margin: 8px 0 0;
+}
+.section-header > a {
+  font-size: 14px;
+}
+.reference {
+  background: #eaf0f7;
+  padding: 60px 0;
+}
+.reference-inner {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 45px;
+}
+.reference p {
+  color: #586a80;
+  max-width: 500px;
+  line-height: 1.7;
+}
+.reference-links {
+  display: grid;
+  gap: 9px;
+}
+.reference-links a {
+  display: flex;
+  justify-content: space-between;
+  background: #fff;
+  border: 1px solid #dce4ee;
+  padding: 16px 20px;
+  border-radius: 8px;
+  text-decoration: none;
+  font-weight: 700;
+}
+.reference-links span {
+  color: #9aaac0;
+}
+@media (max-width: 700px) {
+  .hero-inner,
+  .reference-inner {
+    grid-template-columns: 1fr;
+  }
+  .hero-inner {
+    padding-top: 55px;
+    padding-bottom: 50px;
+  }
+  .flow {
+    display: none;
+  }
+  .section-header {
+    align-items: start;
+    flex-direction: column;
+  }
+}
+</style>

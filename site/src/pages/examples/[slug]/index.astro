@@ -1,0 +1,66 @@
+---
+import Base from "../../../layouts/Base.astro";
+import { examples, renderMarkdown } from "../../../lib/content";
+export async function getStaticPaths() {
+  return (await examples()).map((item) => ({
+    params: { slug: item.slug },
+    props: { item },
+  }));
+}
+const { item } = Astro.props;
+const { title, html } = await renderMarkdown(`examples/${item.slug}/README.md`);
+---
+
+<Base title={title}
+  ><div class="container">
+    <header class="page-head">
+      <div class="crumbs">
+        <a href="/">首页</a><span>/</span><a href="/examples/">示例</a
+        ><span>/</span><span>{item.label}</span>
+      </div>
+      <span class="eyebrow">Example / {item.slug}</span>
+      <h1>{item.label}</h1>
+      <p>{title}</p>
+    </header>
+    <div class="paper">
+      <div class="prose" set:html={html} />
+      {item.sources.length > 0 && (
+        <>
+          <h2 class="section-title">源码</h2>
+          <div class="pill-list">
+            {item.sources.map((file) => (
+              <a href={`/examples/${item.slug}/${file}/`}>{file} ↗</a>
+            ))}
+          </div>
+        </>
+      )}{item.data.length > 0 && (
+        <>
+          <h2 class="section-title">比较数据</h2>
+          <div class="pill-list">
+            {item.data.map((file) => (
+              <a href={`/assets/examples/${item.slug}/${file}`} download>
+                {file} ↓
+              </a>
+            ))}
+          </div>
+        </>
+      )}{item.compare && (
+        <p class="compare-note">
+          比较方法由仓库中的{" "}
+          <a href={`/assets/examples/${item.slug}/compare.json`} download>
+            compare.json
+          </a>{" "}
+          定义。本站展示已有结果。
+        </p>
+      )}
+    </div>
+  </div></Base
+>
+<style>
+.compare-note {
+  font-size: 13px;
+  color: #66758b;
+  border-top: 1px solid #e5e9ef;
+  padding-top: 18px;
+}
+</style>

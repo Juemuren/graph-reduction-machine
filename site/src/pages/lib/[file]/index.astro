@@ -1,0 +1,13 @@
+---
+import SourceView from "../../../components/SourceView.astro";
+import { librarySources } from "../../../lib/content";
+export async function getStaticPaths() {
+  return (await librarySources()).map((file) => ({
+    params: { file },
+    props: { file },
+  }));
+}
+const { file } = Astro.props;
+---
+
+<SourceView relative={`lib/${file}`} back="/docs/lib/" backLabel="标准库文档" />

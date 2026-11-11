@@ -1,0 +1,19 @@
+---
+import SourceView from "../../../../components/SourceView.astro";
+import { examples } from "../../../../lib/content";
+export async function getStaticPaths() {
+  return (await examples()).flatMap((item) =>
+    item.sources.map((file) => ({
+      params: { slug: item.slug, file },
+      props: { item, file },
+    })),
+  );
+}
+const { item, file } = Astro.props;
+---
+
+<SourceView
+  relative={`examples/${item.slug}/${file}`}
+  back={`/examples/${item.slug}/`}
+  backLabel={`${item.label}示例`}
+/>

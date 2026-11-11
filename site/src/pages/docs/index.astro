@@ -1,0 +1,30 @@
+---
+import Base from "../../layouts/Base.astro";
+import { readSource, referenceDocs, titleOf } from "../../lib/content";
+
+const items = await Promise.all(
+  referenceDocs.map(async (slug) => ({
+    slug,
+    title: titleOf(await readSource(`docs/${slug}.md`)),
+  })),
+);
+---
+
+<Base title="文档"
+  ><div class="container">
+    <header class="page-head">
+      <span class="eyebrow">Documents</span>
+      <h1>参考文档</h1>
+      <p>语言语法、机器架构、编译与归约流程，以及语言服务和标准库。</p>
+    </header>
+    <div class="card-grid">
+      {items.map((item, index) => (
+        <a class="card" href={`/docs/${item.slug}/`}>
+          <small>{String(index + 1).padStart(2, "0")} / DOCUMENT</small>
+          <h2>{item.title}</h2>
+          <p>阅读 {item.slug}.md →</p>
+        </a>
+      ))}
+    </div>
+  </div></Base
+>

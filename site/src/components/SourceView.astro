@@ -1,0 +1,125 @@
+---
+import Base from "../layouts/Base.astro";
+import { readSource } from "../lib/content";
+import { highlightedLines } from "../lib/highlight";
+
+const { relative, back, backLabel } = Astro.props;
+const file = relative.split("/").at(-1);
+const source = await readSource(relative);
+const lines = await highlightedLines(source, file.split(".").at(-1));
+---
+
+<Base title={file}
+  ><div class="container">
+    <header class="page-head">
+      <div class="crumbs">
+        <a href="/">首页</a><span>/</span><a href={back}>{backLabel}</a
+        ><span>/</span><span>{file}</span>
+      </div>
+      <span class="eyebrow">Read-only source</span>
+      <h1>{file}</h1>
+      <p>{relative} · {lines.length} 行</p>
+    </header>
+    <div class="source-panel">
+      <div class="source-toolbar">
+        <span>源码</span>
+        <div>
+          <button class="button" id="copy-source" type="button">复制源码</button
+          ><a class="button" href={`/assets/${relative}`} download={file}
+            >下载原文件 ↓</a
+          >
+        </div>
+      </div>
+      <div class="source-scroll">
+        <pre
+          class="source-code"
+        ><code>{lines.map((line, index) => <span class="code-line"><span class="line-no" aria-hidden="true">{index + 1}</span><span class="line-content" set:html={line || ' '} /></span>)}</code></pre>
+      </div>
+      <textarea id="raw-source" hidden readonly>{source}</textarea>
+    </div>
+    <p class="back-link"><a href={back}>← 返回{backLabel}</a></p>
+  </div></Base
+>
+<script>
+const button = document.querySelector<HTMLButtonElement>("#copy-source");
+const field = document.querySelector<HTMLTextAreaElement>("#raw-source");
+button?.addEventListener("click", async () => {
+  if (!field) return;
+  const source = field.value;
+  try {
+    await navigator.clipboard.writeText(source);
+    button.textContent = "已复制";
+    setTimeout(() => {
+      button.textContent = "复制源码";
+    }, 1800);
+  } catch {
+    field.hidden = false;
+    field.select();
+    button.textContent = "请按 Ctrl+C 复制";
+  }
+});
+</script>
+<style>
+.source-panel {
+  border: 1px solid #dce4ed;
+  border-radius: 10px;
+  background: #14233b;
+  overflow: hidden;
+}
+.source-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 15px;
+  padding: 13px 17px;
+  background: #ecf1f7;
+  color: #52657c;
+  font-size: 13px;
+  font-weight: 700;
+}
+.source-toolbar > div {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+.source-toolbar .button {
+  padding: 7px 10px;
+}
+.source-scroll {
+  overflow-x: auto;
+}
+.source-code {
+  padding: 18px 0;
+  margin: 0;
+  min-width: max-content;
+  background: transparent;
+  border-radius: 0;
+}
+.code-line {
+  display: flex;
+  min-height: 1.65em;
+}
+.line-no {
+  color: #8094ae;
+  text-align: right;
+  min-width: 62px;
+  padding-right: 18px;
+  margin-right: 18px;
+  border-right: 1px solid #40526a;
+  user-select: none;
+}
+.line-content {
+  white-space: pre;
+  padding-right: 28px;
+}
+.back-link {
+  margin: 22px 0 60px;
+  font-size: 14px;
+}
+@media (max-width: 550px) {
+  .source-toolbar {
+    align-items: start;
+    flex-direction: column;
+  }
+}
+</style>

@@ -1,0 +1,23 @@
+---
+import Base from "../../../layouts/Base.astro";
+import { referenceDocs, renderMarkdown } from "../../../lib/content";
+export function getStaticPaths() {
+  return referenceDocs.map((slug) => ({ params: { slug } }));
+}
+const { slug } = Astro.params;
+const { title, html } = await renderMarkdown(`docs/${slug}.md`);
+---
+
+<Base title={title}
+  ><div class="container">
+    <header class="page-head">
+      <div class="crumbs">
+        <a href="/">首页</a><span>/</span><a href="/docs/">文档</a><span>/</span
+        ><span>{title}</span>
+      </div>
+      <span class="eyebrow">Document / {slug}</span>
+      <h1>{title}</h1>
+    </header>
+    <article class="paper prose" set:html={html} />
+  </div></Base
+>
