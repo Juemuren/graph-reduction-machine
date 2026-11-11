@@ -10,13 +10,13 @@ async function pages(dir: string): Promise<string[]> {
     await Promise.all(
       (
         await readdir(dir, { withFileTypes: true })
-      ).map(async (entry) => {
+      ).map((entry) => {
         const absolute = path.join(dir, entry.name);
         return entry.isDirectory()
           ? pages(absolute)
           : entry.name.endsWith(".html")
-            ? [absolute]
-            : [];
+          ? [absolute]
+          : [];
       }),
     )
   ).flat();
@@ -30,7 +30,9 @@ for (const page of await pages(dist)) {
     }
     const parsed = new URL(
       url,
-      `https://site.test${base}/${path.relative(dist, page).replaceAll("\\", "/")}`,
+      `https://site.test${base}/${
+        path.relative(dist, page).replaceAll("\\", "/")
+      }`,
     );
     if (base && !parsed.pathname.startsWith(`${base}/`)) {
       errors.push(`${path.relative(dist, page)}: link outside site ${url}`);
@@ -47,11 +49,13 @@ for (const page of await pages(dist)) {
       const result = await stat(candidate);
       if (!result.isFile()) throw new Error("not a file");
       if (parsed.hash && candidate.endsWith(".html")) {
-        const targetHtml =
-          candidate === page ? html : await readFile(candidate, "utf8");
+        const targetHtml = candidate === page
+          ? html
+          : await readFile(candidate, "utf8");
         const id = decodeURIComponent(parsed.hash.slice(1));
-        if (!targetHtml.includes(`id="${id}"`))
+        if (!targetHtml.includes(`id="${id}"`)) {
           errors.push(`${path.relative(dist, page)}: missing fragment ${url}`);
+        }
       }
     } catch {
       errors.push(`${path.relative(dist, page)}: missing target ${url}`);

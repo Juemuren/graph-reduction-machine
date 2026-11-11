@@ -24,15 +24,17 @@ Deno.test("content root resolves to the repository in dev and build", async () =
 
 Deno.test("seven examples are linked from the index and have readable pages", async () => {
   const index = await html("examples/index.html");
-  for (const slug of [
-    "lambda",
-    "ski",
-    "encoding",
-    "fibonacci",
-    "pi",
-    "e",
-    "calculus",
-  ]) {
+  for (
+    const slug of [
+      "lambda",
+      "ski",
+      "encoding",
+      "fibonacci",
+      "pi",
+      "e",
+      "calculus",
+    ]
+  ) {
     assert.match(index, new RegExp(`/examples/${slug}/`));
     assert.match(await html(`examples/${slug}/index.html`), /class="prose"/);
   }

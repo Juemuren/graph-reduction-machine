@@ -1,22 +1,101 @@
-# Graph Reduction Machine 站点
+# 图归约机演示站点
 
-第一版是纯静态阅读站点。页面直接从仓库根目录的 `examples/`、`docs/`、`lib/` 和 `grammar/` 读取内容；不需要 Haskell 编译器或解释器。不要在 `site/` 另建手工维护的示例副本。
+这是项目的静态阅读站点，用于展示示例、参考文档和源代码。
+
+站点的完整计划见 [website.md](../docs/website.md)。
+
+## 文件依赖
+
+此处的目录均为仓库根目录：
+
+- 示例来自 `examples/`
+- 文档来自 `docs/`
+- 标准库实现来自 `lib/`
+- 语法定义来自 `grammar/`
+- 代码高亮来自 `vscode-extension/syntaxes/`
+
+站点不需要 Haskell 运行环境，也不维护这些内容的副本。
+
+## 任务
+
+此处的命令均在本目录运行。
+
+先完成依赖的安装：
 
 ```sh
-cd site
 deno install
+```
+
+### 开发
+
+```sh
 deno task dev
 ```
 
-生成可部署到静态文件托管服务的文件：
+该任务会启动本地开发服务器。
+
+### 构建
 
 ```sh
 deno task build
+```
+
+该任务会将生成的站点文件保存在 `dist/` 中。
+
+构建完成后会自动检查页面中的链接和锚点。
+
+### 测试
+
+```sh
 deno task test
 ```
 
-输出位于 `site/dist/`。构建会检查 Markdown 相对链接，随后检查生成页面的站内链接与锚点。内容来源路径、参考文档列表和示例名称在 `src/config.ts` 中配置；增加示例目录后，只要包含 `README.md`，页面会按路径自动生成。源码页的语法高亮直接使用 `../vscode-extension/syntaxes/` 下的 TextMate 语法。
+该任务会读取 `dist/` 中的文件。
 
-GitHub Pages 从 `main` 分支的推送自动部署到 `https://Juemuren.github.io/graph-reduction-machine/`。先在仓库的 **Settings → Pages → Build and deployment → Source** 选择 **GitHub Actions**。PR 只运行检查；部署构建使用 `SITE_BASE=/graph-reduction-machine`，以生成带仓库前缀的内部链接。
+因此运行测试前需要先完成构建。
 
-修改站点代码后，运行 `deno task verify` 完成类型检查、Biome 检查、构建和测试；`deno task format` 格式化站点代码。依赖版本统一在 `deno.json` 中配置；提交依赖变更时同步提交 `deno.lock`。CI 使用 `deno ci` 从锁文件安装。
+### 类型检查
+
+```sh
+deno task typecheck
+```
+
+该任务会同时运行 Astro 和 Deno 的类型检查
+
+- Astro 检查 `src/` 中的代码
+- Deno 检查 `scripts/`、`test/` 中的代码
+
+### 静态检查和格式化
+
+```sh
+deno task check
+```
+
+该任务会同时运行 Biome 和 Deno 的静态检查和格式化
+
+- Biome 检查 `src/`、`astro.config.ts`、`biome.json`、`tsconfig.json` 中的代码并格式化
+- Deno 检查 `scripts/`、`test/`、`deno.json` 中的代码并格式化
+
+### 完整验证
+
+```sh
+deno task verify
+```
+
+该任务会依次运行类型检查、静态检查和格式化、构建、测试。
+
+## 内容
+
+参考文档列表和示例名称在 `src/config.ts` 中配置。
+
+新增示例目录只要包含 `README.md`，构建时就会生成对应页面。
+
+## 部署
+
+GitHub Pages 工作流在 PR 中运行检查，在推送到 `main` 时构建并部署到 `https://Juemuren.github.io/graph-reduction-machine/`。
+
+启用前，需要在仓库的 **Settings → Pages → Build and deployment → Source** 中选择 **GitHub Actions**。
+
+部署时设置 `SITE_BASE=/graph-reduction-machine`，用于生成带仓库前缀的链接。
+
+依赖版本在 `deno.json` 中配置；修改依赖时同步提交 `deno.lock`。CI 使用 `deno ci` 从锁文件安装。

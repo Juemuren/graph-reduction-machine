@@ -4,21 +4,33 @@
     "age": "P1D",
     "exclude": ["npm:astro"]
   },
-  "exclude": ["src/**", ".astro/**"],
+  "exclude": ["src/", ".astro/"],
+  "fmt": {
+    "include": ["scripts/", "test/", "deno.json"]
+  },
+  "lint": {
+    "include": ["scripts/", "test/"]
+  },
   "tasks": {
     "dev": "astro dev",
-    "build": "astro build && deno task check:links",
+    "build": {
+      "dependencies": ["build:astro"],
+      "command": "deno task check:links"
+    },
+    "build:astro": "astro build",
+    "check:links": "deno run --allow-read --allow-env=SITE_BASE scripts/check-links.ts",
     "typecheck": {
       "dependencies": ["typecheck:astro", "typecheck:deno"]
     },
     "typecheck:astro": "astro check",
-    "typecheck:deno": "deno check",
+    "typecheck:deno": "deno check scripts/ test/",
+    "check": {
+      "dependencies": ["check:biome", "check:deno"]
+    },
     "check:biome": "biome check .",
-    "check:links": "deno run --allow-read --allow-env=SITE_BASE scripts/check-links.ts",
-    "format": "biome format --write .",
-    "lint": "biome lint .",
+    "check:deno": "deno fmt && deno lint",
     "test": "deno test --allow-read --allow-env=SITE_BASE test/",
-    "verify": "deno task check && deno task lint && deno task build && deno task test"
+    "verify": "deno task typecheck && deno task check && deno task build && deno task test"
   },
   "imports": {
     "@astrojs/check": "npm:@astrojs/check@0.9.12",
