@@ -1,6 +1,7 @@
 ---
+import { referenceDocs } from "../../config";
 import Base from "../../layouts/Base.astro";
-import { readSource, referenceDocs, titleOf } from "../../lib/content";
+import { readSource, titleOf } from "../../lib/content";
 
 const items = await Promise.all(
   referenceDocs.map(async (slug) => ({

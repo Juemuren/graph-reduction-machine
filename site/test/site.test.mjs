@@ -3,7 +3,7 @@ import { readFile, stat } from "node:fs/promises";
 import path from "node:path";
 import test from "node:test";
 import { fileURLToPath } from "node:url";
-import { root } from "../src/lib/content.ts";
+import { root } from "../src/config.ts";
 
 const dist = fileURLToPath(new URL("../dist/", import.meta.url));
 const output = (relative) => path.join(dist, relative);

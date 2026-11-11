@@ -1,6 +1,7 @@
 ---
+import { referenceDocs } from "../../../config";
 import Base from "../../../layouts/Base.astro";
-import { referenceDocs, renderMarkdown } from "../../../lib/content";
+import { renderMarkdown } from "../../../lib/content";
 export function getStaticPaths() {
   return referenceDocs.map((slug) => ({ params: { slug } }));
 }

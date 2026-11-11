@@ -8,25 +8,7 @@ import remarkMath from "remark-math";
 import remarkParse from "remark-parse";
 import remarkRehype from "remark-rehype";
 import { unified } from "unified";
-
-export const root = path.resolve(process.cwd(), "..");
-export const referenceDocs = [
-  "syntax",
-  "architecture",
-  "compiler",
-  "interpreter",
-  "lsp",
-  "lib",
-];
-export const exampleNames: Record<string, string> = {
-  lambda: "λ 演算",
-  ski: "SKI 图",
-  encoding: "编码",
-  fibonacci: "斐波那契",
-  pi: "圆周率",
-  e: "自然常数",
-  calculus: "符号微积分",
-};
+import { exampleNames, referenceDocs, root } from "../config";
 
 export interface Example {
   slug: string;

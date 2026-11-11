@@ -1,7 +1,7 @@
 import { readFile } from "node:fs/promises";
 import path from "node:path";
 import { type BundledLanguage, createHighlighter } from "shiki";
-import { root } from "./content";
+import { root } from "../config";
 
 const escapeHtml = (value: string) =>
   value

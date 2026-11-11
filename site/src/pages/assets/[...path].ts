@@ -1,7 +1,8 @@
 import { readFile } from "node:fs/promises";
 import path from "node:path";
 import type { APIRoute } from "astro";
-import { assetFiles, root } from "../../lib/content";
+import { root } from "../../config";
+import { assetFiles } from "../../lib/content";
 
 export async function getStaticPaths() {
   return (await assetFiles()).map((name) => ({
