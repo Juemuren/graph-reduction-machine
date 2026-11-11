@@ -1,5 +1,6 @@
 ---
 import Breadcrumbs from "../../../components/Breadcrumbs.astro";
+import ReadingLayout from "../../../components/ReadingLayout.astro";
 import Base from "../../../layouts/Base.astro";
 import { examples, renderMarkdown } from "../../../lib/content";
 import { sitePath } from "../../../lib/urls";
@@ -10,7 +11,9 @@ export async function getStaticPaths() {
   }));
 }
 const { item } = Astro.props;
-const { title, html } = await renderMarkdown(`examples/${item.slug}/README.md`);
+const { title, html, toc } = await renderMarkdown(
+  `examples/${item.slug}/README.md`,
+);
 ---
 
 <Base title={title}>
@@ -25,46 +28,50 @@ const { title, html } = await renderMarkdown(`examples/${item.slug}/README.md`);
       />
       <span class="eyebrow">Example | {item.slug}</span>
     </header>
-    <div class="paper">
-      <div class="prose" set:html={html} />
-      {item.sources.length > 0 && (
-        <>
-          <h2 class="section-title">源码</h2>
-          <div class="pill-list">
-            {item.sources.map((file) => (
-              <a href={sitePath(`/examples/${item.slug}/${file}/`)}>{file} ↗</a>
-            ))}
-          </div>
-        </>
-      )}
-      {item.data.length > 0 && (
-        <>
-          <h2 class="section-title">比较数据</h2>
-          <div class="pill-list">
-            {item.data.map((file) => (
-              <a
-                href={sitePath(`/assets/examples/${item.slug}/${file}`)}
-                download
-              >
-                {file} ↓
-              </a>
-            ))}
-          </div>
-        </>
-      )}
-      {item.compare && (
-        <p class="compare-note">
-          比较方法由仓库中的{" "}
-          <a
-            href={sitePath(`/assets/examples/${item.slug}/compare.json`)}
-            download
-          >
-            compare.json
-          </a>{" "}
-          定义。本站展示已有结果。
-        </p>
-      )}
-    </div>
+    <ReadingLayout toc={toc}>
+      <article class="paper">
+        <div class="prose" set:html={html} />
+        {item.sources.length > 0 && (
+          <>
+            <h2 class="section-title">源码</h2>
+            <div class="pill-list">
+              {item.sources.map((file) => (
+                <a href={sitePath(`/examples/${item.slug}/${file}/`)}>
+                  {file} ↗
+                </a>
+              ))}
+            </div>
+          </>
+        )}
+        {item.data.length > 0 && (
+          <>
+            <h2 class="section-title">比较数据</h2>
+            <div class="pill-list">
+              {item.data.map((file) => (
+                <a
+                  href={sitePath(`/assets/examples/${item.slug}/${file}`)}
+                  download
+                >
+                  {file} ↓
+                </a>
+              ))}
+            </div>
+          </>
+        )}
+        {item.compare && (
+          <p class="compare-note">
+            比较方法由仓库中的{" "}
+            <a
+              href={sitePath(`/assets/examples/${item.slug}/compare.json`)}
+              download
+            >
+              compare.json
+            </a>{" "}
+            定义。本站展示已有结果。
+          </p>
+        )}
+      </article>
+    </ReadingLayout>
   </div>
 </Base>
 <style>

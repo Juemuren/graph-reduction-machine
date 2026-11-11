@@ -1,0 +1,41 @@
+---
+import type { TocEntry } from "../lib/content";
+import TableOfContents from "./TableOfContents.astro";
+
+const { toc } = Astro.props as { toc: TocEntry[] };
+---
+
+<div class:list={["reading-layout", { "has-toc": toc.length > 0 }]}>
+  <TableOfContents entries={toc} />
+  <div class="content"><slot /></div>
+</div>
+
+<style>
+.content {
+  min-width: 0;
+}
+
+.reading-layout.has-toc {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 240px;
+  gap: 24px;
+  align-items: start;
+}
+
+.reading-layout.has-toc > .content {
+  grid-column: 1;
+  grid-row: 1;
+}
+
+@media (max-width: 900px) {
+  .reading-layout.has-toc {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+
+  .reading-layout.has-toc > .content {
+    width: 100%;
+  }
+}
+</style>

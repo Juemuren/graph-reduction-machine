@@ -1,5 +1,6 @@
 ---
 import Breadcrumbs from "../../../components/Breadcrumbs.astro";
+import ReadingLayout from "../../../components/ReadingLayout.astro";
 import { referenceDocs } from "../../../config";
 import Base from "../../../layouts/Base.astro";
 import { renderMarkdown } from "../../../lib/content";
@@ -9,7 +10,7 @@ export function getStaticPaths() {
   }));
 }
 const { slug } = Astro.params;
-const { title, html } = await renderMarkdown(`docs/${slug}.md`);
+const { title, html, toc } = await renderMarkdown(`docs/${slug}.md`);
 ---
 
 <Base title={title}>
@@ -24,6 +25,8 @@ const { title, html } = await renderMarkdown(`docs/${slug}.md`);
       />
       <span class="eyebrow">Document | {slug}</span>
     </header>
-    <article class="paper prose" set:html={html} />
+    <ReadingLayout toc={toc}>
+      <article class="paper prose" set:html={html} />
+    </ReadingLayout>
   </div>
 </Base>

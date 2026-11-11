@@ -21,6 +21,39 @@ export interface Example {
   compare: boolean;
 }
 
+export interface TocEntry {
+  id: string;
+  text: string;
+  level: number;
+}
+
+interface HeadingNode {
+  type: string;
+  tagName?: string;
+  value?: string;
+  properties?: { id?: string };
+  children?: HeadingNode[];
+}
+
+function headingText(node: HeadingNode): string {
+  if (node.type === "text") return node.value ?? "";
+  return (node.children ?? []).map(headingText).join("");
+}
+
+function collectHeadings(headings: TocEntry[]) {
+  return () => (tree: HeadingNode) => {
+    const visit = (node: HeadingNode) => {
+      const match = /^h([2-6])$/.exec(node.tagName ?? "");
+      const id = node.properties?.id;
+      if (match && id) {
+        headings.push({ id, text: headingText(node), level: Number(match[1]) });
+      }
+      node.children?.forEach(visit);
+    };
+    visit(tree);
+  };
+}
+
 const scan = async (relative: string) =>
   (await readdir(path.join(root, relative), { withFileTypes: true }))
     .filter((entry) => entry.isFile())
@@ -155,15 +188,17 @@ function rewriteLinks(sourcePath: string) {
 
 export async function renderMarkdown(sourcePath: string) {
   const markdown = await readSource(sourcePath);
+  const toc: TocEntry[] = [];
   const result = await unified()
     .use(remarkParse)
     .use(remarkGfm)
     .use(remarkMath)
     .use(rewriteLinks(sourcePath))
     .use(remarkRehype)
-    .use(rehypeKatex)
     .use(rehypeSlug)
+    .use(collectHeadings(toc))
+    .use(rehypeKatex)
     .use(rehypeStringify)
     .process(markdown);
-  return { title: titleOf(markdown), html: String(result) };
+  return { title: titleOf(markdown), html: String(result), toc };
 }
