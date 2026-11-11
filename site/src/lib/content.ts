@@ -47,9 +47,55 @@ interface MarkdownNode {
 interface HtmlNode {
   type: string;
   tagName?: string;
-  properties?: { dataCsvRows?: number; className?: string[] };
+  properties?: {
+    dataCsvRows?: number;
+    className?: string[];
+    src?: string;
+    [key: string]: unknown;
+  };
   children?: HtmlNode[];
   value?: string;
+}
+
+function linkImages() {
+  return async (tree: HtmlNode) => {
+    const assetPrefix = sitePath("/assets/");
+    const visit = async (node: HtmlNode) => {
+      if (!node.children) return;
+      node.children = await Promise.all(
+        node.children.map(async (child) => {
+          await visit(child);
+          const src = child.properties?.src;
+          if (node.tagName === "a" || child.tagName !== "img" || !src)
+            return child;
+          const imagePath = src.split(/[?#]/, 1)[0];
+          if (!imagePath.startsWith(assetPrefix)) return child;
+          const relative = decodeURIComponent(
+            imagePath.slice(assetPrefix.length),
+          );
+          if (!relative.endsWith(".png") || relative.split("/").includes(".."))
+            return child;
+          const image = await readFile(path.join(root, relative));
+          if (
+            image.length < 24 ||
+            image.toString("hex", 0, 8) !== "89504e470d0a1a0a"
+          )
+            throw new Error(`无效的 PNG 图片: ${relative}`);
+          return {
+            type: "element",
+            tagName: "a",
+            properties: {
+              href: src,
+              "data-pswp-width": image.readUInt32BE(16),
+              "data-pswp-height": image.readUInt32BE(20),
+            },
+            children: [child],
+          };
+        }),
+      );
+    };
+    await visit(tree);
+  };
 }
 
 function collapseCsvTables() {
@@ -288,6 +334,7 @@ export async function renderMarkdown(sourcePath: string) {
     .use(renderCsvLinks(sourcePath))
     .use(rewriteLinks(sourcePath))
     .use(remarkRehype)
+    .use(linkImages)
     .use(collapseCsvTables)
     .use(rehypeSlug)
     .use(collectHeadings(toc))

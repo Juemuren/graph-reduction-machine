@@ -317,6 +317,10 @@ footer {
   margin: 20px 0;
 }
 
+.prose a[data-pswp-width] img {
+  cursor: zoom-in;
+}
+
 .prose .katex-display {
   overflow-x: auto;
   overflow-y: hidden;

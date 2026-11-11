@@ -82,6 +82,26 @@ Deno.test("Markdown math and example data appear in the generated site", async (
   }
 });
 
+Deno.test("Markdown images are linked as a navigable lightbox gallery", async () => {
+  for (const { slug, files } of await exampleFiles()) {
+    const imageFiles = files.filter((file) => file.endsWith(".png"));
+    const page = await html(`examples/${slug}/index.html`);
+    const images = [
+      ...page.matchAll(
+        /<a href="([^"]+\.png)" data-pswp-width="(\d+)" data-pswp-height="(\d+)"><img src="\1" alt="[^"]*"><\/a>/g,
+      ),
+    ];
+    assert.equal(images.length, imageFiles.length, slug);
+    for (const [, href, width, height] of images) {
+      assert.ok(href.startsWith(`${base}/assets/examples/${slug}/`), href);
+      const relative = href.slice(`${base}/assets/`.length);
+      const bytes = await readFile(path.join(root, relative));
+      assert.equal(Number(width), bytes.readUInt32BE(16), href);
+      assert.equal(Number(height), bytes.readUInt32BE(20), href);
+    }
+  }
+});
+
 Deno.test("local CSV links keep downloads and render tables", async () => {
   for (const { slug, files } of await exampleFiles()) {
     const page = await html(`examples/${slug}/index.html`);

@@ -10,6 +10,22 @@ const { toc } = Astro.props as { toc: TocEntry[] };
   <div class="content"><slot /></div>
 </div>
 
+<script>
+import PhotoSwipeLightbox from "photoswipe/lightbox";
+import "photoswipe/style.css";
+
+const lightbox = new PhotoSwipeLightbox({
+  gallery: ".prose",
+  children: "a[data-pswp-width]",
+  pswpModule: () => import("photoswipe"),
+  closeTitle: "关闭图片",
+  zoomTitle: "缩放图片",
+  arrowPrevTitle: "上一张图片",
+  arrowNextTitle: "下一张图片",
+});
+lightbox.init();
+</script>
+
 <style>
 .content {
   min-width: 0;
