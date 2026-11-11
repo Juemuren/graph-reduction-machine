@@ -11,14 +11,17 @@ const { item } = Astro.props;
 const { title, html } = await renderMarkdown(`examples/${item.slug}/README.md`);
 ---
 
-<Base title={title}
-  ><div class="container">
+<Base title={title}>
+  <div class="container">
     <header class="page-head">
       <div class="crumbs">
-        <a href="/">首页</a><span>/</span><a href="/examples/">示例</a
-        ><span>/</span><span>{item.label}</span>
+        <a href="/">首页</a>
+        <span>/</span>
+        <a href="/examples/">示例</a>
+        <span>/</span>
+        <span>{item.label}</span>
       </div>
-      <span class="eyebrow">Example / {item.slug}</span>
+      <span class="eyebrow">Example /{item.slug}</span>
       <h1>{item.label}</h1>
       <p>{title}</p>
     </header>
@@ -33,7 +36,8 @@ const { title, html } = await renderMarkdown(`examples/${item.slug}/README.md`);
             ))}
           </div>
         </>
-      )}{item.data.length > 0 && (
+      )}
+      {item.data.length > 0 && (
         <>
           <h2 class="section-title">比较数据</h2>
           <div class="pill-list">
@@ -44,7 +48,8 @@ const { title, html } = await renderMarkdown(`examples/${item.slug}/README.md`);
             ))}
           </div>
         </>
-      )}{item.compare && (
+      )}
+      {item.compare && (
         <p class="compare-note">
           比较方法由仓库中的{" "}
           <a href={`/assets/examples/${item.slug}/compare.json`} download>
@@ -54,8 +59,8 @@ const { title, html } = await renderMarkdown(`examples/${item.slug}/README.md`);
         </p>
       )}
     </div>
-  </div></Base
->
+  </div>
+</Base>
 <style>
 .compare-note {
   font-size: 13px;

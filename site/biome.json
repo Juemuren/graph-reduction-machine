@@ -8,14 +8,16 @@
       "test/**",
       "astro.config.mjs",
       "biome.json",
-      "package.json",
+      "deno.json",
       "tsconfig.json"
     ]
   },
   "html": {
     "experimentalFullSupportEnabled": true,
     "formatter": {
-      "enabled": true
+      "enabled": true,
+      "whitespaceSensitivity": "ignore",
+      "bracketSameLine": false
     }
   },
   "linter": {
