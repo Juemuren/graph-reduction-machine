@@ -170,52 +170,6 @@ footer {
   white-space: nowrap;
 }
 
-.card-grid {
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 16px;
-  margin: 0 0 64px;
-}
-
-.card {
-  display: block;
-  background: var(--panel-bg);
-  border: 1px solid var(--border);
-  border-radius: var(--card-radius);
-  padding: 24px;
-  text-decoration: none;
-  color: var(--body-text);
-  box-shadow: 0 3px 12px var(--shadow);
-  transition:
-    transform 0.15s,
-    box-shadow 0.15s;
-}
-
-.card:hover {
-  transform: translateY(-3px);
-  box-shadow: 0 10px 25px var(--shadow-hover);
-  color: var(--body-text);
-}
-
-.card small {
-  color: var(--accent);
-  font-weight: 800;
-  letter-spacing: 0.1em;
-}
-
-.card h2,
-.card h3 {
-  margin: 11px 0 8px;
-  font-size: 20px;
-}
-
-.card p {
-  margin: 0;
-  color: var(--muted-text);
-  font-size: 14px;
-  line-height: 1.6;
-}
-
 .paper {
   background: var(--panel-bg);
   border: 1px solid var(--border);
@@ -403,10 +357,6 @@ main .pill-list a {
 
   .page-head {
     padding: 36px 0 25px;
-  }
-
-  .card-grid {
-    grid-template-columns: 1fr;
   }
 
   .footer-inner {

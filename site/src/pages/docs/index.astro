@@ -1,8 +1,8 @@
 ---
+import CardGrid from "../../components/CardGrid.astro";
 import { referenceDocs } from "../../config";
 import Base from "../../layouts/Base.astro";
 import { readSource, titleOf } from "../../lib/content";
-import { sitePath } from "../../lib/urls";
 
 const items = await Promise.all(
   referenceDocs.map(async (slug) => ({
@@ -19,14 +19,13 @@ const items = await Promise.all(
       <h1>参考文档</h1>
       <p>语言语法、机器架构、编译与归约流程，以及语言服务和标准库。</p>
     </header>
-    <div class="card-grid">
-      {items.map((item, index) => (
-        <a class="card" href={sitePath(`/docs/${item.slug}/`)}>
-          <small>{String(index + 1).padStart(2, "0")} / DOCUMENT</small>
-          <h2>{item.title}</h2>
-          <p>阅读 {item.slug}.md →</p>
-        </a>
-      ))}
-    </div>
+    <CardGrid
+      kind="DOCUMENT"
+      items={items.map((item) => ({
+        href: `/docs/${item.slug}/`,
+        title: item.title,
+        description: `阅读 ${item.slug}.md →`,
+      }))}
+    />
   </div>
 </Base>

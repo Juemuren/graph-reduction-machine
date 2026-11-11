@@ -1,0 +1,88 @@
+---
+import { sitePath } from "../lib/urls";
+
+interface CardItem {
+  href: string;
+  title: string;
+  description: string;
+  extra?: string;
+}
+
+interface Props {
+  items: CardItem[];
+  kind: string;
+  headingLevel?: "h2" | "h3";
+}
+
+const { items, kind, headingLevel = "h2" } = Astro.props;
+const Heading = headingLevel;
+---
+
+<div class="card-grid">
+  {items.map((item, index) => (
+    <a class="card" href={sitePath(item.href)}>
+      <small>
+        {String(index + 1).padStart(2, "0")} / {kind}
+      </small>
+      <Heading>{item.title}</Heading>
+      <p>
+        {item.description}
+        {item.extra && <> · {item.extra}</>}
+      </p>
+    </a>
+  ))}
+</div>
+
+<style>
+.card-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 16px;
+  margin: 0 0 64px;
+}
+
+.card {
+  display: block;
+  background: var(--panel-bg);
+  border: 1px solid var(--border);
+  border-radius: var(--card-radius);
+  padding: 24px;
+  text-decoration: none;
+  color: var(--body-text);
+  box-shadow: 0 3px 12px var(--shadow);
+  transition:
+    transform 0.15s,
+    box-shadow 0.15s;
+}
+
+.card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 10px 25px var(--shadow-hover);
+  color: var(--body-text);
+}
+
+.card small {
+  color: var(--accent);
+  font-weight: 800;
+  letter-spacing: 0.1em;
+}
+
+.card h2,
+.card h3 {
+  margin: 11px 0 8px;
+  font-size: 20px;
+}
+
+.card p {
+  margin: 0;
+  color: var(--muted-text);
+  font-size: 14px;
+  line-height: 1.6;
+}
+
+@media (max-width: 700px) {
+  .card-grid {
+    grid-template-columns: 1fr;
+  }
+}
+</style>

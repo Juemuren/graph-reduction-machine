@@ -1,7 +1,7 @@
 ---
+import CardGrid from "../../components/CardGrid.astro";
 import Base from "../../layouts/Base.astro";
 import { examples } from "../../lib/content";
-import { sitePath } from "../../lib/urls";
 
 const items = await examples();
 ---
@@ -15,17 +15,14 @@ const items = await examples();
         七组示例保留仓库中的原始说明、公式、源码与已生成的比较结果。选择主题，继续阅读。
       </p>
     </header>
-    <div class="card-grid">
-      {items.map((item, index) => (
-        <a class="card" href={sitePath(`/examples/${item.slug}/`)}>
-          <small>{String(index + 1).padStart(2, "0")} / EXAMPLE</small>
-          <h2>{item.label}</h2>
-          <p>
-            {item.sources.length} 个源码文件
-            {item.data.length ? ` · ${item.data.length} 份比较数据` : ""}
-          </p>
-        </a>
-      ))}
-    </div>
+    <CardGrid
+      kind="EXAMPLE"
+      items={items.map((item) => ({
+        href: `/examples/${item.slug}/`,
+        title: item.label,
+        description: `${item.sources.length} 个源码文件`,
+        extra: item.data.length ? `${item.data.length} 份比较数据` : undefined,
+      }))}
+    />
   </div>
 </Base>

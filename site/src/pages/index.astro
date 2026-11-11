@@ -1,4 +1,5 @@
 ---
+import CardGrid from "../components/CardGrid.astro";
 import Base from "../layouts/Base.astro";
 import { examples } from "../lib/content";
 import { sitePath } from "../lib/urls";
@@ -38,18 +39,18 @@ const items = await examples();
       </div>
       <a href={sitePath("/examples/")}>查看全部 {items.length} 个示例 →</a>
     </div>
-    <div class="card-grid">
-      {items.map((item, index) => (
-        <a class="card" href={sitePath(`/examples/${item.slug}/`)}>
-          <small>{String(index + 1).padStart(2, "0")} / EXAMPLE</small>
-          <h3>{item.label}</h3>
-          <p>
-            {item.sources.length} 个源码文件
-            {item.images.length ? ` · ${item.images.length} 张比较图` : ""}
-          </p>
-        </a>
-      ))}
-    </div>
+    <CardGrid
+      kind="EXAMPLE"
+      headingLevel="h3"
+      items={items.map((item) => ({
+        href: `/examples/${item.slug}/`,
+        title: item.label,
+        description: `${item.sources.length} 个源码文件`,
+        extra: item.images.length
+          ? `${item.images.length} 张比较图`
+          : undefined,
+      }))}
+    />
   </section>
   <section class="reference">
     <div class="container reference-inner">
