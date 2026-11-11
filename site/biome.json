@@ -6,7 +6,7 @@
       "src/**",
       "scripts/**",
       "test/**",
-      "astro.config.mjs",
+      "astro.config.ts",
       "biome.json",
       "deno.json",
       "tsconfig.json"

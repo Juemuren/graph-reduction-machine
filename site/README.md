@@ -4,17 +4,17 @@
 
 ```sh
 cd site
-npm ci
-npm run dev
+deno install
+deno task dev
 ```
 
 生成可部署到静态文件托管服务的文件：
 
 ```sh
-npm run build
-npm test
+deno task build
+deno task test
 ```
 
 输出位于 `site/dist/`。构建会检查 Markdown 相对链接，随后检查生成页面的站内链接与锚点。内容来源路径、参考文档列表和示例名称在 `src/config.ts` 中配置；增加示例目录后，只要包含 `README.md`，页面会按路径自动生成。源码页的语法高亮直接使用 `../vscode-extension/syntaxes/` 下的 TextMate 语法。
 
-修改站点代码后，运行 `npm run check` 检查 TypeScript 和 Astro 类型，运行 `npm run lint` 检查 Biome；`npm run format` 格式化站点代码。
+修改站点代码后，运行 `deno task check` 检查 TypeScript 和 Astro 类型，运行 `deno task lint` 检查 Biome；`deno task format` 格式化站点代码。依赖与任务统一在 `deno.json` 中配置；提交依赖变更时同步提交 `deno.lock`，CI 使用 `deno ci` 从锁文件安装。

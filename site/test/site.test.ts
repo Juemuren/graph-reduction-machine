@@ -1,20 +1,19 @@
 import assert from "node:assert/strict";
 import { readFile, stat } from "node:fs/promises";
 import path from "node:path";
-import test from "node:test";
 import { fileURLToPath } from "node:url";
 import { root } from "../src/config.ts";
 
 const dist = fileURLToPath(new URL("../dist/", import.meta.url));
-const output = (relative) => path.join(dist, relative);
-const html = (relative) => readFile(output(relative), "utf8");
+const output = (relative: string) => path.join(dist, relative);
+const html = (relative: string) => readFile(output(relative), "utf8");
 
-test("content root resolves to the repository in dev and build", async () => {
+Deno.test("content root resolves to the repository in dev and build", async () => {
   assert.equal(path.basename(root), "graph-reduction-machine");
   assert.ok((await stat(path.join(root, "examples"))).isDirectory());
 });
 
-test("seven examples are linked from the index and have readable pages", async () => {
+Deno.test("seven examples are linked from the index and have readable pages", async () => {
   const index = await html("examples/index.html");
   for (const slug of [
     "lambda",
@@ -30,7 +29,7 @@ test("seven examples are linked from the index and have readable pages", async (
   }
 });
 
-test("math, comparison image and data are present in the generated site", async () => {
+Deno.test("math, comparison image and data are present in the generated site", async () => {
   const page = await html("examples/pi/index.html");
   assert.match(page, /class="katex"/);
   assert.match(page, /assets\/examples\/pi\/steps-vs-error\.png/);
@@ -42,7 +41,7 @@ test("math, comparison image and data are present in the generated site", async 
   );
 });
 
-test("source pages have line numbers, copy and raw download", async () => {
+Deno.test("source pages have line numbers, copy and raw download", async () => {
   const page = await html("examples/pi/arctan.lambda/index.html");
   assert.match(page, /class="code-line/);
   assert.match(page, /id="copy-source"/);
@@ -51,7 +50,7 @@ test("source pages have line numbers, copy and raw download", async () => {
   assert.match(page, /style="color:#[0-9A-Fa-f]{6}"/);
 });
 
-test("architecture, document links and standard library source resolve", async () => {
+Deno.test("architecture, document links and standard library source resolve", async () => {
   const compiler = await html("docs/compiler/index.html");
   assert.match(compiler, /\/docs\/architecture\/#/);
   assert.match(await html("docs/architecture/index.html"), /<article/);

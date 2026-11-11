@@ -3,8 +3,8 @@ import path from "node:path";
 import { fileURLToPath } from "node:url";
 
 const dist = fileURLToPath(new URL("../dist/", import.meta.url));
-const errors = [];
-async function pages(dir) {
+const errors: string[] = [];
+async function pages(dir: string): Promise<string[]> {
   return (
     await Promise.all(
       (
@@ -52,5 +52,5 @@ for (const page of await pages(dist)) {
 }
 if (errors.length) {
   console.error(errors.join("\n"));
-  process.exitCode = 1;
+  Deno.exit(1);
 } else console.log("All internal links and fragments resolve.");
