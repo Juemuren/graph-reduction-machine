@@ -1,67 +1,105 @@
 import assert from "node:assert/strict";
-import { readFile, stat } from "node:fs/promises";
+import { readdir, readFile, stat } from "node:fs/promises";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
-import { root } from "../src/config.ts";
+import { referenceDocs, root } from "../src/config.ts";
 
-const dist = fileURLToPath(new URL("../dist/", import.meta.url));
+const site = fileURLToPath(new URL("../", import.meta.url));
+const dist = path.join(site, "dist");
 const output = (relative: string) => path.join(dist, relative);
 const html = (relative: string) => readFile(output(relative), "utf8");
 const base = (Deno.env.get("SITE_BASE") ?? "/").replace(/\/$/, "");
 
-Deno.test("internal navigation uses the deployment base", async () => {
+interface ExampleFiles {
+  slug: string;
+  files: string[];
+}
+
+async function exampleFiles(): Promise<ExampleFiles[]> {
+  const entries = await readdir(path.join(root, "examples"), {
+    withFileTypes: true,
+  });
+  const directories = entries.filter((entry) => entry.isDirectory());
+  const contents = await Promise.all(
+    directories.map(async ({ name }) => ({
+      slug: name,
+      files: await readdir(path.join(root, "examples", name)),
+    })),
+  );
+  return contents.filter(({ files }) => files.includes("README.md"));
+}
+
+async function markdownPages() {
+  return [
+    ...referenceDocs.map((slug) => `docs/${slug}/index.html`),
+    ...(await exampleFiles()).map(({ slug }) => `examples/${slug}/index.html`),
+  ];
+}
+
+Deno.test("internal navigation and images use the deployment base", async () => {
   const index = await html("index.html");
   assert.ok(index.includes(`href="${base}/examples/"`));
   assert.ok(index.includes(`href="${base}/docs/"`));
-  const example = await html("examples/pi/index.html");
-  assert.ok(example.includes(`src="${base}/assets/examples/pi/`));
+
+  for (const page of await markdownPages()) {
+    const content = await html(page);
+    for (const [, source] of content.matchAll(/<img\b[^>]*\bsrc="([^"]+)"/g)) {
+      if (source.startsWith("/")) {
+        assert.ok(source.startsWith(`${base}/`), `${page}: ${source}`);
+      }
+    }
+  }
 });
 
-Deno.test("content root resolves to the repository in dev and build", async () => {
-  assert.equal(path.basename(root), "graph-reduction-machine");
+Deno.test("content root resolves to the repository", async () => {
+  assert.equal(root, path.resolve(site, ".."));
   assert.ok((await stat(path.join(root, "examples"))).isDirectory());
 });
 
-Deno.test("seven examples are linked from the index and have readable pages", async () => {
+Deno.test("every example README has a linked, readable page", async () => {
+  const examples = await exampleFiles();
+  assert.ok(examples.length > 0);
   const index = await html("examples/index.html");
-  for (
-    const slug of [
-      "lambda",
-      "ski",
-      "encoding",
-      "fibonacci",
-      "pi",
-      "e",
-      "calculus",
-    ]
-  ) {
-    assert.match(index, new RegExp(`/examples/${slug}/`));
+  for (const { slug } of examples) {
+    assert.ok(index.includes(`href="${base}/examples/${slug}/"`), slug);
     assert.match(await html(`examples/${slug}/index.html`), /class="prose"/);
   }
 });
 
-Deno.test("math, comparison image and data are present in the generated site", async () => {
-  const page = await html("examples/pi/index.html");
-  assert.match(page, /class="katex"/);
-  assert.match(page, /assets\/examples\/pi\/steps-vs-error\.png/);
-  assert.ok(
-    (await stat(output("assets/examples/pi/steps-vs-error.png"))).size > 0,
+Deno.test("Markdown math and example data appear in the generated site", async () => {
+  const pages = await Promise.all((await markdownPages()).map(html));
+  assert.ok(pages.some((page) => page.includes('class="katex"')));
+
+  const examples = await exampleFiles();
+  const assets = examples.flatMap(({ slug, files }) =>
+    files
+      .filter((file) => /\.(png|csv)$/.test(file))
+      .map((file) => `assets/examples/${slug}/${file}`)
   );
-  assert.ok(
-    (await stat(output("assets/examples/pi/steps-vs-error.csv"))).size > 0,
-  );
+  assert.ok(assets.length > 0);
+  for (const asset of assets) {
+    assert.ok((await stat(output(asset))).size > 0, asset);
+  }
 });
 
-Deno.test("source pages have line numbers, copy and raw download", async () => {
-  const page = await html("examples/pi/arctan.lambda/index.html");
-  assert.match(page, /class="code-line/);
-  assert.match(page, /id="copy-source"/);
-  assert.match(page, /assets\/examples\/pi\/arctan\.lambda/);
-  assert.ok((await stat(output("assets/examples/pi/arctan.lambda"))).size > 0);
-  assert.match(
-    page,
-    /style="--token-light:#[0-9A-Fa-f]{6};--token-dark:#[0-9A-Fa-f]{6}"/,
+Deno.test("every source page has line numbers, copy and raw download", async () => {
+  const examples = await exampleFiles();
+  const sources = examples.flatMap(({ slug, files }) =>
+    files
+      .filter((file) => /\.(lambda|ski)$/.test(file))
+      .map((file) => ({ slug, file }))
   );
+  assert.ok(sources.length > 0);
+  let foundHighlight = false;
+  for (const { slug, file } of sources) {
+    const page = await html(`examples/${slug}/${file}/index.html`);
+    assert.match(page, /class="code-line/);
+    assert.match(page, /id="copy-source"/);
+    assert.ok(page.includes(`${base}/assets/examples/${slug}/${file}`));
+    assert.ok((await stat(output(`assets/examples/${slug}/${file}`))).size > 0);
+    foundHighlight ||= /--token-light:#[0-9A-Fa-f]{6}/.test(page);
+  }
+  assert.ok(foundHighlight, "source syntax highlighting is present");
 });
 
 Deno.test("global stylesheet provides Latte and Mocha colors", async () => {
@@ -74,16 +112,41 @@ Deno.test("global stylesheet provides Latte and Mocha colors", async () => {
   assert.match(css, /prefers-color-scheme:\s*dark/);
 });
 
-Deno.test("architecture, document links and standard library source resolve", async () => {
-  const compiler = await html("docs/compiler/index.html");
-  assert.match(compiler, /\/docs\/architecture\/#/);
-  assert.match(await html("docs/architecture/index.html"), /<article/);
-  assert.match(
-    await html("docs/lib/index.html"),
-    /\/lib\/combinator\.lambda\//,
+Deno.test("configured documents and library sources have pages", async () => {
+  for (const slug of referenceDocs) {
+    assert.match(await html(`docs/${slug}/index.html`), /<article\b/);
+  }
+
+  const library = (await readdir(path.join(root, "lib"))).filter((file) =>
+    file.endsWith(".lambda")
   );
-  assert.match(
-    await html("lib/combinator.lambda/index.html"),
-    /id="copy-source"/,
-  );
+  assert.ok(library.length > 0);
+  const index = await html("docs/lib/index.html");
+  for (const file of library) {
+    assert.ok(index.includes(`${base}/lib/${file}/`), file);
+    assert.match(await html(`lib/${file}/index.html`), /id="copy-source"/);
+  }
+});
+
+Deno.test("every Markdown page lists exactly its heading anchors in the TOC", async () => {
+  for (const page of await markdownPages()) {
+    const content = await html(page);
+    const article = content.match(/<article\b[^>]*>([\s\S]*?)<\/article>/);
+    assert.ok(article, `${page} has an article`);
+    const headingIds = [
+      ...article[1].matchAll(/<h[2-6]\b[^>]*\bid="([^"]+)"/g),
+    ].map((match) => match[1]);
+    const fragmentNavigations = [
+      ...content.matchAll(/<nav\b[^>]*>([\s\S]*?)<\/nav>/g),
+    ]
+      .map((match) =>
+        [...match[1].matchAll(/href="#([^"]+)"/g)].map((link) => link[1])
+      )
+      .filter((ids) => ids.length > 0);
+    assert.deepEqual(
+      fragmentNavigations,
+      headingIds.length > 0 ? [headingIds] : [],
+      page,
+    );
+  }
 });
