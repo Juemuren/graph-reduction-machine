@@ -1,5 +1,6 @@
 import { readdir, readFile, stat } from "node:fs/promises";
 import path from "node:path";
+import { parse } from "@std/csv";
 import rehypeKatex from "rehype-katex";
 import rehypeSlug from "rehype-slug";
 import rehypeStringify from "rehype-stringify";
@@ -33,6 +34,64 @@ interface HeadingNode {
   value?: string;
   properties?: { id?: string };
   children?: HeadingNode[];
+}
+
+interface MarkdownNode {
+  type: string;
+  url?: string;
+  value?: string;
+  children?: MarkdownNode[];
+}
+
+function renderCsvLinks(sourcePath: string) {
+  return () => async (tree: MarkdownNode) => {
+    const visit = async (node: MarkdownNode) => {
+      if (!node.children) return;
+      const children: MarkdownNode[] = [];
+      for (const child of node.children) {
+        await visit(child);
+        children.push(child);
+        if (child.type !== "paragraph") continue;
+        for (const link of child.children ?? []) {
+          if (
+            link.type !== "link" ||
+            !link.url ||
+            /^(?:[a-z][a-z\d+.-]*:|\/|#)/i.test(link.url)
+          )
+            continue;
+          const target = link.url.split(/[?#]/, 1)[0];
+          if (!target.toLowerCase().endsWith(".csv")) continue;
+          const resolved = path.posix.normalize(
+            path.posix.join(
+              path.posix.dirname(sourcePath),
+              decodeURIComponent(target),
+            ),
+          );
+          if (resolved.startsWith("../") || path.posix.isAbsolute(resolved))
+            throw new Error(`链接越过仓库: ${sourcePath} -> ${link.url}`);
+          const rows = parse(
+            (await readSource(resolved)).replace(/^\uFEFF/, ""),
+            {
+              fieldsPerRecord: 0,
+            },
+          );
+          if (rows.length === 0) continue;
+          children.push({
+            type: "table",
+            children: rows.map((cells) => ({
+              type: "tableRow",
+              children: cells.map((value) => ({
+                type: "tableCell",
+                children: [{ type: "text", value }],
+              })),
+            })),
+          });
+        }
+      }
+      node.children = children;
+    };
+    await visit(tree);
+  };
 }
 
 function headingText(node: HeadingNode): string {
@@ -193,6 +252,7 @@ export async function renderMarkdown(sourcePath: string) {
     .use(remarkParse)
     .use(remarkGfm)
     .use(remarkMath)
+    .use(renderCsvLinks(sourcePath))
     .use(rewriteLinks(sourcePath))
     .use(remarkRehype)
     .use(rehypeSlug)

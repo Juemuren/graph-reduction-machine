@@ -82,6 +82,21 @@ Deno.test("Markdown math and example data appear in the generated site", async (
   }
 });
 
+Deno.test("local CSV links keep downloads and render tables", async () => {
+  for (const { slug, files } of await exampleFiles()) {
+    const page = await html(`examples/${slug}/index.html`);
+    for (const file of files.filter((name) => name.endsWith(".csv"))) {
+      const link = `href="${base}/assets/examples/${slug}/${file}"`;
+      const position = page.indexOf(link);
+      assert.ok(position >= 0, `${slug}/${file}: download link`);
+      assert.match(
+        page.slice(position),
+        /^href="[^"]+"[^>]*>[^<]*<\/a><\/p>\s*<table>/,
+      );
+    }
+  }
+});
+
 Deno.test("every source page has line numbers, copy and raw download", async () => {
   const examples = await exampleFiles();
   const sources = examples.flatMap(({ slug, files }) =>

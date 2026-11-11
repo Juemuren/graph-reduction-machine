@@ -471,8 +471,9 @@ uv run scripts/compare_binary.py examples/encoding/compare.json
 
 得到的表格为：
 
-- 对角线 [add-diag.csv](add-diag.csv)
-- 网格 [add-grid.csv](add-grid.csv)
+[add-diag.csv](add-diag.csv)
+
+[add-grid.csv](add-grid.csv)
 
 得到的图片为：
 
@@ -486,8 +487,9 @@ uv run scripts/compare_binary.py examples/encoding/compare.json
 
 得到的表格为：
 
-- 对角线 [mul-diag.csv](mul-diag.csv)
-- 网格 [mul-grid.csv](mul-grid.csv)
+[mul-diag.csv](mul-diag.csv)
+
+[mul-grid.csv](mul-grid.csv)
 
 得到的图片为：
 
@@ -501,8 +503,9 @@ uv run scripts/compare_binary.py examples/encoding/compare.json
 
 得到的表格为：
 
-- 对角线 [sub-diag.csv](sub-diag.csv)
-- 网格 [sub-grid.csv](sub-grid.csv)
+[sub-diag.csv](sub-diag.csv)
+
+[sub-grid.csv](sub-grid.csv)
 
 得到的图片为：
 
@@ -516,8 +519,9 @@ uv run scripts/compare_binary.py examples/encoding/compare.json
 
 得到的表格为：
 
-- 对角线 [div-diag.csv](div-diag.csv)
-- 网格 [div-grid.csv](div-grid.csv)
+[div-diag.csv](div-diag.csv)
+
+[div-grid.csv](div-grid.csv)
 
 得到的图片为：
 

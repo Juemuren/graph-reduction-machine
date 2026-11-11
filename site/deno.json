@@ -1,5 +1,6 @@
 {
   "nodeModulesDir": "auto",
+  "jsrDepsInNodeModules": true,
   "minimumDependencyAge": {
     "age": "P1D",
     "exclude": ["npm:astro"]
@@ -35,6 +36,7 @@
   "imports": {
     "@astrojs/check": "npm:@astrojs/check@0.9.12",
     "@biomejs/biome": "npm:@biomejs/biome@2.6.6",
+    "@std/csv": "jsr:@std/csv@1.0.6",
     "@types/node": "npm:@types/node@26.6.6",
     "astro": "npm:astro@7.4.10",
     "katex": "npm:katex@0.16.22",
