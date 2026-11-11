@@ -1,0 +1,54 @@
+---
+import type { Example } from "../../lib/content";
+import { sitePath } from "../../lib/urls";
+import CardGrid from "../CardGrid.astro";
+
+interface Props {
+  items: Example[];
+}
+
+const { items } = Astro.props;
+---
+
+<section class="container">
+  <div class="section-header">
+    <div>
+      <span class="eyebrow">Explore</span>
+      <h2>沿着例子阅读</h2>
+    </div>
+    <a href={sitePath("/examples/")}>查看全部 {items.length} 个示例 →</a>
+  </div>
+  <CardGrid
+    kind="EXAMPLE"
+    headingLevel="h3"
+    items={items.map((item) => ({
+      href: `/examples/${item.slug}/`,
+      title: item.label,
+      description: `${item.sources.length} 个源码文件`,
+      extra: item.images.length ? `${item.images.length} 张比较图` : undefined,
+    }))}
+  />
+</section>
+
+<style>
+.section-header {
+  display: flex;
+  align-items: end;
+  justify-content: space-between;
+  gap: 15px;
+  padding: 56px 0 24px;
+}
+.section-header h2 {
+  font-size: 34px;
+  margin: 8px 0 0;
+}
+.section-header > a {
+  font-size: 14px;
+}
+@media (max-width: 700px) {
+  .section-header {
+    align-items: start;
+    flex-direction: column;
+  }
+}
+</style>

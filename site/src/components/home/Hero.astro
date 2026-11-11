@@ -1,0 +1,100 @@
+---
+import { sitePath } from "../../lib/urls";
+---
+
+<section class="hero">
+  <div class="container hero-inner">
+    <div>
+      <span class="eyebrow">Lambda Calculus · Graph Reduction</span>
+      <h1>从 λ 表达式<br>走向可观察的结果。</h1>
+      <p>
+        一个可运行 λ 演算的图归约机。阅读核心 λ 与 SKI
+        图的示例、源码和比较结果，沿着编译与归约的路径理解计算。
+      </p>
+      <div class="hero-actions">
+        <a class="button primary" href={sitePath("/examples/")}>浏览示例 →</a>
+        <a class="button" href={sitePath("/docs/")}>阅读文档</a>
+      </div>
+    </div>
+    <div class="flow">
+      <span>λ 源码</span>
+      <b>↓</b>
+      <span>SKI 图</span>
+      <b>↓</b>
+      <span>归约结果</span>
+    </div>
+  </div>
+</section>
+
+<style>
+.hero {
+  background: radial-gradient(
+    circle at 78% 30%,
+    var(--surface-1) 0,
+    var(--mantle) 36%,
+    var(--crust) 85%
+  );
+  color: var(--body-text);
+}
+.hero-inner {
+  display: grid;
+  grid-template-columns: 1fr 270px;
+  align-items: center;
+  gap: 40px;
+  min-height: 480px;
+  padding-top: 64px;
+  padding-bottom: 70px;
+}
+.hero h1 {
+  font-size: clamp(42px, 6vw, 70px);
+  line-height: 1.08;
+  letter-spacing: -0.05em;
+  margin: 15px 0 22px;
+}
+.hero p {
+  color: var(--subtext-1);
+  line-height: 1.8;
+  max-width: 620px;
+  font-size: 17px;
+}
+.hero-actions {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-top: 28px;
+}
+.flow {
+  border: 1px solid var(--overlay-0);
+  border-radius: 18px;
+  padding: 22px;
+  display: grid;
+  justify-items: center;
+  gap: 10px;
+  background: var(--surface-0);
+  box-shadow: 0 20px 50px var(--shadow-hover);
+}
+.flow span {
+  width: 100%;
+  text-align: center;
+  padding: 17px 12px;
+  border: 1px solid var(--overlay-0);
+  background: var(--surface-1);
+  border-radius: 8px;
+  font-family: ui-monospace, monospace;
+  font-size: 18px;
+}
+.flow b {
+  color: var(--accent);
+  font-size: 21px;
+}
+@media (max-width: 700px) {
+  .hero-inner {
+    grid-template-columns: 1fr;
+    padding-top: 55px;
+    padding-bottom: 50px;
+  }
+  .flow {
+    display: none;
+  }
+}
+</style>

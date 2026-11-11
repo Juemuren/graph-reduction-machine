@@ -1,0 +1,63 @@
+---
+import { sitePath } from "../../lib/urls";
+---
+
+<section class="reference">
+  <div class="container reference-inner">
+    <div>
+      <span class="eyebrow">Reference</span>
+      <h2>读懂语言与机器</h2>
+      <p>
+        从语法开始，了解编译器、解释器、语言服务器和标准库如何组成完整系统。
+      </p>
+    </div>
+    <div class="reference-links">
+      <a href={sitePath("/docs/syntax/")}>语法规范<span>↗</span></a>
+      <a href={sitePath("/docs/architecture/")}>系统架构<span>↗</span></a>
+      <a href={sitePath("/docs/lib/")}>标准库<span>↗</span></a>
+    </div>
+  </div>
+</section>
+
+<style>
+.reference h2 {
+  font-size: 34px;
+  margin: 8px 0 0;
+}
+.reference {
+  background: var(--panel-bg);
+  padding: 60px 0;
+}
+.reference-inner {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 45px;
+}
+.reference p {
+  color: var(--muted-text);
+  max-width: 500px;
+  line-height: 1.7;
+}
+.reference-links {
+  display: grid;
+  gap: 9px;
+}
+.reference-links a {
+  display: flex;
+  justify-content: space-between;
+  background: var(--panel-bg);
+  border: 1px solid var(--border);
+  padding: 16px 20px;
+  border-radius: 8px;
+  text-decoration: none;
+  font-weight: 700;
+}
+.reference-links span {
+  color: var(--overlay-1);
+}
+@media (max-width: 700px) {
+  .reference-inner {
+    grid-template-columns: 1fr;
+  }
+}
+</style>
