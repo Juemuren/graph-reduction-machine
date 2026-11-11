@@ -128,7 +128,7 @@ Deno.test("configured documents and library sources have pages", async () => {
   }
 });
 
-Deno.test("every Markdown page lists exactly its heading anchors in the TOC", async () => {
+Deno.test("desktop and mobile TOCs list the article headings", async () => {
   for (const page of await markdownPages()) {
     const content = await html(page);
     const article = content.match(/<article\b[^>]*>([\s\S]*?)<\/article>/);
@@ -145,8 +145,12 @@ Deno.test("every Markdown page lists exactly its heading anchors in the TOC", as
       .filter((ids) => ids.length > 0);
     assert.deepEqual(
       fragmentNavigations,
-      headingIds.length > 0 ? [headingIds] : [],
+      headingIds.length > 0 ? [headingIds, headingIds] : [],
       page,
     );
+    if (headingIds.length > 0) {
+      assert.match(content, /class="toc-trigger"[^>]*aria-haspopup="dialog"/);
+      assert.match(content, /<dialog\b[^>]*id="mobile-toc"/);
+    }
   }
 });

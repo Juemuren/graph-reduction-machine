@@ -5,20 +5,67 @@ const { entries } = Astro.props as { entries: TocEntry[] };
 ---
 
 {entries.length > 0 && (
-  <nav class="toc" aria-label="文章目录">
-    <h2>目录</h2>
-    <ol>
-      {entries.map(({ id, text, level }) => (
-        <li style={`--toc-depth: ${level - 2}`}>
-          <a href={`#${id}`}>{text}</a>
-        </li>
-      ))}
-    </ol>
-  </nav>
+  <>
+    <nav class="toc toc-desktop" aria-label="文章目录">
+      <h2>目录</h2>
+      <ol>
+        {entries.map(({ id, text, level }) => (
+          <li style={`--toc-depth: ${level - 2}`}>
+            <a href={`#${id}`}>{text}</a>
+          </li>
+        ))}
+      </ol>
+    </nav>
+    <button
+      class="toc-trigger"
+      type="button"
+      aria-haspopup="dialog"
+      aria-controls="mobile-toc"
+    >
+      ☰
+    </button>
+    <dialog
+      class="toc-dialog"
+      id="mobile-toc"
+      aria-labelledby="mobile-toc-title"
+    >
+      <div class="toc-dialog-head">
+        <h2 id="mobile-toc-title">目录</h2>
+        <button class="toc-close" type="button" aria-label="关闭目录">
+          ×
+        </button>
+      </div>
+      <nav class="toc toc-mobile" aria-label="文章目录">
+        <ol>
+          {entries.map(({ id, text, level }) => (
+            <li style={`--toc-depth: ${level - 2}`}>
+              <a href={`#${id}`}>{text}</a>
+            </li>
+          ))}
+        </ol>
+      </nav>
+    </dialog>
+  </>
 )}
 
+<script>
+const trigger = document.querySelector<HTMLButtonElement>(".toc-trigger");
+const dialog = document.querySelector<HTMLDialogElement>(".toc-dialog");
+const close = dialog?.querySelector<HTMLButtonElement>(".toc-close");
+const links = dialog?.querySelectorAll<HTMLAnchorElement>("a[href^='#']");
+
+trigger?.addEventListener("click", () => dialog?.showModal());
+close?.addEventListener("click", () => dialog?.close());
+links?.forEach((link) => {
+  link.addEventListener("click", () => dialog?.close());
+});
+window.matchMedia("(min-width: 901px)").addEventListener("change", (event) => {
+  if (event.matches) dialog?.close();
+});
+</script>
+
 <style>
-.toc {
+.toc-desktop {
   grid-column: 2;
   grid-row: 1;
   position: sticky;
@@ -32,7 +79,8 @@ const { entries } = Astro.props as { entries: TocEntry[] };
   font-size: 14px;
 }
 
-.toc h2 {
+.toc-desktop h2,
+.toc-dialog-head h2 {
   margin: 0 0 12px;
   font-size: 15px;
 }
@@ -60,11 +108,75 @@ const { entries } = Astro.props as { entries: TocEntry[] };
   color: var(--link);
 }
 
+.toc-trigger,
+.toc-dialog {
+  display: none;
+}
+
 @media (max-width: 900px) {
-  .toc {
-    position: static;
-    max-height: 320px;
+  .toc-desktop {
+    display: none;
+  }
+
+  .toc-trigger {
+    display: block;
+    position: fixed;
+    right: max(18px, env(safe-area-inset-right));
+    bottom: max(18px, env(safe-area-inset-bottom));
+    z-index: 10;
+    padding: 11px 16px;
+    border: 1px solid var(--border);
+    border-radius: 999px;
+    background: var(--primary-bg);
+    color: var(--primary-text);
+    box-shadow: 0 5px 18px var(--shadow-hover);
+    font: inherit;
+    font-size: 14px;
+    font-weight: 700;
+    cursor: pointer;
+  }
+
+  .toc-dialog[open] {
+    display: block;
+    position: fixed;
+    inset: auto 0 0;
     width: 100%;
+    max-width: none;
+    max-height: min(70dvh, 560px);
+    margin: 0;
+    padding: 20px max(20px, env(safe-area-inset-right))
+      max(20px, env(safe-area-inset-bottom))
+      max(20px, env(safe-area-inset-left));
+    overflow-y: auto;
+    border: 1px solid var(--border);
+    border-radius: 16px 16px 0 0;
+    background: var(--panel-bg);
+    color: var(--body-text);
+  }
+
+  .toc-dialog::backdrop {
+    background: rgb(0 0 0 / 50%);
+  }
+
+  .toc-dialog-head {
+    display: flex;
+    align-items: start;
+    justify-content: space-between;
+    gap: 16px;
+  }
+
+  .toc-close {
+    border: 0;
+    background: transparent;
+    color: var(--body-text);
+    font: inherit;
+    font-size: 25px;
+    line-height: 1;
+    cursor: pointer;
+  }
+
+  .toc-mobile a {
+    padding: 8px 0;
   }
 }
 </style>
