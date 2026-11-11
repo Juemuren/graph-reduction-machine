@@ -1,16 +1,20 @@
 {
   "nodeModulesDir": "auto",
   "jsrDepsInNodeModules": true,
+  "unstable": ["sloppy-imports"],
   "minimumDependencyAge": {
     "age": "P1D",
     "exclude": ["npm:astro"]
   },
-  "exclude": ["src/", ".astro/"],
+  "exclude": [".astro/"],
   "fmt": {
     "include": ["scripts/", "test/", "deno.json"]
   },
   "lint": {
-    "include": ["scripts/", "test/"]
+    "include": ["scripts/", "test/", "src/**/*.ts"],
+    "rules": {
+      "exclude": ["no-sloppy-imports"]
+    }
   },
   "tasks": {
     "dev": "astro dev",
@@ -24,7 +28,7 @@
       "dependencies": ["typecheck:astro", "typecheck:deno"]
     },
     "typecheck:astro": "astro check",
-    "typecheck:deno": "deno check scripts/ test/",
+    "typecheck:deno": "deno check scripts/ test/ src/",
     "check": {
       "dependencies": ["check:biome", "check:deno"]
     },

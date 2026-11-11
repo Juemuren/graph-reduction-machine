@@ -63,7 +63,7 @@ deno task typecheck
 该任务会同时运行 Astro 和 Deno 的类型检查
 
 - Astro 检查 `src/` 中的代码
-- Deno 检查 `scripts/`、`test/` 中的代码
+- Deno 检查 `src/`、`scripts/`、`test/` 中的代码
 
 ### 静态检查和格式化
 
@@ -73,8 +73,8 @@ deno task check
 
 该任务会同时运行 Biome 和 Deno 的静态检查和格式化
 
-- Biome 检查 `src/`、`astro.config.ts`、`biome.json`、`tsconfig.json` 中的代码并格式化
-- Deno 检查 `scripts/`、`test/`、`deno.json` 中的代码并格式化
+- Biome 检查 `src/`、`astro.config.ts`、`biome.json`、`tsconfig.json` 中的代码，格式化 `src/`、`astro.config.ts`、`biome.json`、`tsconfig.json` 中的代码
+- Deno 检查 `src/`、`scripts/`、`test/`、`deno.json` 中的代码，格式化 `scripts/`、`test/`、`deno.json` 中的代码
 
 ### 完整验证
 

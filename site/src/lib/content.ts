@@ -158,17 +158,11 @@ export async function librarySources() {
 }
 
 export async function assetFiles() {
-  const all = (
-    await Promise.all(
-      (
-        await examples()
-      ).map(async (example) =>
-        example.files
-          .filter((file) => /\.(lambda|ski|png|csv|json)$/.test(file))
-          .map((file) => `examples/${example.slug}/${file}`),
-      ),
-    )
-  ).flat();
+  const all = (await examples()).flatMap((example) =>
+    example.files
+      .filter((file) => /\.(lambda|ski|png|csv|json)$/.test(file))
+      .map((file) => `examples/${example.slug}/${file}`),
+  );
   all.push(...(await librarySources()).map((file) => `lib/${file}`));
   all.push(
     ...(await scan("grammar"))
@@ -178,7 +172,7 @@ export async function assetFiles() {
   return all;
 }
 
-export async function readSource(relative: string) {
+export function readSource(relative: string) {
   return readFile(path.join(root, relative), "utf8");
 }
 
