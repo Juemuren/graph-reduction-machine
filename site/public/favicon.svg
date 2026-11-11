@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+  <rect width="64" height="64" rx="15" fill="#181825"/>
+  <!-- SKI -->
+  <path
+    d="M32 9 12 53h40Z"
+    fill="none"
+    stroke="#585b70"
+    stroke-width="3"
+    stroke-linecap="round"
+    stroke-linejoin="round"
+  />
+  <circle cx="32" cy="9" r="5" fill="#cba6f7"/>
+  <circle cx="12" cy="53" r="5" fill="#94e2d5"/>
+  <circle cx="52" cy="53" r="5" fill="#89b4fa"/>
+  <!-- λ -->
+  <path
+    d="M511 794 214 0H24L418 1042L260 1466H450L998 0H808Z"
+    transform="translate(18.2 52) scale(.027 -.027)"
+    fill="#fab387"
+  />
+</svg>

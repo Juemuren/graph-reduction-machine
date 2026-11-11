@@ -51,6 +51,19 @@ Deno.test("internal navigation and images use the deployment base", async () => 
   }
 });
 
+Deno.test("every page links to the published favicon", async () => {
+  const favicon = await html("favicon.svg");
+  assert.match(favicon, /<svg\b/);
+  for (const page of ["index.html", ...(await markdownPages())]) {
+    assert.ok(
+      (await html(page)).includes(
+        `<link rel="icon" type="image/svg+xml" href="${base}/favicon.svg">`,
+      ),
+      page,
+    );
+  }
+});
+
 Deno.test("content root resolves to the repository", async () => {
   assert.equal(root, path.resolve(site, ".."));
   assert.ok((await stat(path.join(root, "examples"))).isDirectory());
