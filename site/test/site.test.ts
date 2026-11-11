@@ -7,6 +7,15 @@ import { root } from "../src/config.ts";
 const dist = fileURLToPath(new URL("../dist/", import.meta.url));
 const output = (relative: string) => path.join(dist, relative);
 const html = (relative: string) => readFile(output(relative), "utf8");
+const base = (Deno.env.get("SITE_BASE") ?? "/").replace(/\/$/, "");
+
+Deno.test("internal navigation uses the deployment base", async () => {
+  const index = await html("index.html");
+  assert.ok(index.includes(`href="${base}/examples/"`));
+  assert.ok(index.includes(`href="${base}/docs/"`));
+  const example = await html("examples/pi/index.html");
+  assert.ok(example.includes(`src="${base}/assets/examples/pi/`));
+});
 
 Deno.test("content root resolves to the repository in dev and build", async () => {
   assert.equal(path.basename(root), "graph-reduction-machine");

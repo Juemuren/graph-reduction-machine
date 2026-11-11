@@ -17,4 +17,6 @@ deno task test
 
 输出位于 `site/dist/`。构建会检查 Markdown 相对链接，随后检查生成页面的站内链接与锚点。内容来源路径、参考文档列表和示例名称在 `src/config.ts` 中配置；增加示例目录后，只要包含 `README.md`，页面会按路径自动生成。源码页的语法高亮直接使用 `../vscode-extension/syntaxes/` 下的 TextMate 语法。
 
-修改站点代码后，运行 `deno task check` 检查 TypeScript 和 Astro 类型，运行 `deno task lint` 检查 Biome；`deno task format` 格式化站点代码。依赖与任务统一在 `deno.json` 中配置；提交依赖变更时同步提交 `deno.lock`，CI 使用 `deno ci` 从锁文件安装。
+GitHub Pages 从 `main` 分支的推送自动部署到 `https://Juemuren.github.io/graph-reduction-machine/`。先在仓库的 **Settings → Pages → Build and deployment → Source** 选择 **GitHub Actions**。PR 只运行检查；部署构建使用 `SITE_BASE=/graph-reduction-machine`，以生成带仓库前缀的内部链接。
+
+修改站点代码后，运行 `deno task verify` 完成类型检查、Biome 检查、构建和测试；`deno task format` 格式化站点代码。依赖版本统一在 `deno.json` 中配置；提交依赖变更时同步提交 `deno.lock`。CI 使用 `deno ci` 从锁文件安装。

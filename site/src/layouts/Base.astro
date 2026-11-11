@@ -1,5 +1,6 @@
 ---
 import "katex/dist/katex.min.css";
+import { sitePath } from "../lib/urls";
 
 const { title, description = "λ 演算图归约机的示例、源码与参考文档" } =
   Astro.props;
@@ -17,14 +18,14 @@ const { title, description = "λ 演算图归约机的示例、源码与参考�
     <a class="skip-link" href="#main">跳到正文</a>
     <header class="topbar">
       <div class="topbar-inner">
-        <a class="brand" href="/" aria-label="首页">
+        <a class="brand" href={sitePath("/")} aria-label="首页">
           <span class="brand-mark">λ</span>
           <span>Graph Reduction Machine</span>
         </a>
         <nav aria-label="主导航">
-          <a href="/examples/">示例</a>
-          <a href="/docs/">文档</a>
-          <a href="/docs/lib/">标准库</a>
+          <a href={sitePath("/examples/")}>示例</a>
+          <a href={sitePath("/docs/")}>文档</a>
+          <a href={sitePath("/docs/lib/")}>标准库</a>
         </nav>
       </div>
     </header>

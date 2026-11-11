@@ -1,6 +1,7 @@
 ---
 import Base from "../layouts/Base.astro";
 import { examples } from "../lib/content";
+import { sitePath } from "../lib/urls";
 
 const items = await examples();
 ---
@@ -16,8 +17,8 @@ const items = await examples();
           图的示例、源码和比较结果，沿着编译与归约的路径理解计算。
         </p>
         <div class="hero-actions">
-          <a class="button primary" href="/examples/">浏览示例 →</a>
-          <a class="button" href="/docs/">阅读文档</a>
+          <a class="button primary" href={sitePath("/examples/")}>浏览示例 →</a>
+          <a class="button" href={sitePath("/docs/")}>阅读文档</a>
         </div>
       </div>
       <div class="flow">
@@ -35,11 +36,11 @@ const items = await examples();
         <span class="eyebrow">Explore</span>
         <h2>沿着例子阅读</h2>
       </div>
-      <a href="/examples/">查看全部{items.length} 个示例 →</a>
+      <a href={sitePath("/examples/")}>查看全部{items.length} 个示例 →</a>
     </div>
     <div class="card-grid">
       {items.map((item, index) => (
-        <a class="card" href={`/examples/${item.slug}/`}>
+        <a class="card" href={sitePath(`/examples/${item.slug}/`)}>
           <small>{String(index + 1).padStart(2, "0")} / EXAMPLE</small>
           <h3>{item.label}</h3>
           <p>
@@ -60,9 +61,9 @@ const items = await examples();
         </p>
       </div>
       <div class="reference-links">
-        <a href="/docs/syntax/">语法规范<span>↗</span></a>
-        <a href="/docs/architecture/">系统架构<span>↗</span></a>
-        <a href="/docs/lib/">标准库<span>↗</span></a>
+        <a href={sitePath("/docs/syntax/")}>语法规范<span>↗</span></a>
+        <a href={sitePath("/docs/architecture/")}>系统架构<span>↗</span></a>
+        <a href={sitePath("/docs/lib/")}>标准库<span>↗</span></a>
       </div>
     </div>
   </section>

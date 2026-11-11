@@ -1,6 +1,7 @@
 ---
 import Base from "../../../layouts/Base.astro";
 import { examples, renderMarkdown } from "../../../lib/content";
+import { sitePath } from "../../../lib/urls";
 export async function getStaticPaths() {
   return (await examples()).map((item) => ({
     params: { slug: item.slug },
@@ -15,9 +16,9 @@ const { title, html } = await renderMarkdown(`examples/${item.slug}/README.md`);
   <div class="container">
     <header class="page-head">
       <div class="crumbs">
-        <a href="/">首页</a>
+        <a href={sitePath("/")}>首页</a>
         <span>/</span>
-        <a href="/examples/">示例</a>
+        <a href={sitePath("/examples/")}>示例</a>
         <span>/</span>
         <span>{item.label}</span>
       </div>
@@ -32,7 +33,7 @@ const { title, html } = await renderMarkdown(`examples/${item.slug}/README.md`);
           <h2 class="section-title">源码</h2>
           <div class="pill-list">
             {item.sources.map((file) => (
-              <a href={`/examples/${item.slug}/${file}/`}>{file} ↗</a>
+              <a href={sitePath(`/examples/${item.slug}/${file}/`)}>{file} ↗</a>
             ))}
           </div>
         </>
@@ -42,7 +43,10 @@ const { title, html } = await renderMarkdown(`examples/${item.slug}/README.md`);
           <h2 class="section-title">比较数据</h2>
           <div class="pill-list">
             {item.data.map((file) => (
-              <a href={`/assets/examples/${item.slug}/${file}`} download>
+              <a
+                href={sitePath(`/assets/examples/${item.slug}/${file}`)}
+                download
+              >
                 {file} ↓
               </a>
             ))}
@@ -52,7 +56,10 @@ const { title, html } = await renderMarkdown(`examples/${item.slug}/README.md`);
       {item.compare && (
         <p class="compare-note">
           比较方法由仓库中的{" "}
-          <a href={`/assets/examples/${item.slug}/compare.json`} download>
+          <a
+            href={sitePath(`/assets/examples/${item.slug}/compare.json`)}
+            download
+          >
             compare.json
           </a>{" "}
           定义。本站展示已有结果。

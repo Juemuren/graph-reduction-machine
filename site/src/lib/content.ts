@@ -9,6 +9,7 @@ import remarkParse from "remark-parse";
 import remarkRehype from "remark-rehype";
 import { unified } from "unified";
 import { exampleNames, referenceDocs, root } from "../config";
+import { sitePath } from "./urls";
 
 export interface Example {
   slug: string;
@@ -141,7 +142,7 @@ function rewriteLinks(sourcePath: string) {
         )
           throw new Error(`文档尚未纳入站点: ${sourcePath} -> ${node.url}`);
         node.url =
-          routeFor(resolved) +
+          sitePath(routeFor(resolved)) +
           (query ? `?${query}` : "") +
           (fragment ? `#${fragment}` : "");
       }

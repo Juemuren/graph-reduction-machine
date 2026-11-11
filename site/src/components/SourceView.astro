@@ -2,6 +2,7 @@
 import Base from "../layouts/Base.astro";
 import { readSource } from "../lib/content";
 import { highlightedLines } from "../lib/highlight";
+import { sitePath } from "../lib/urls";
 
 const { relative, back, backLabel } = Astro.props;
 const file = relative.split("/").at(-1);
@@ -13,9 +14,9 @@ const lines = await highlightedLines(source, file.split(".").at(-1));
   <div class="container">
     <header class="page-head">
       <div class="crumbs">
-        <a href="/">首页</a>
+        <a href={sitePath("/")}>首页</a>
         <span>/</span>
-        <a href={back}>{backLabel}</a>
+        <a href={sitePath(back)}>{backLabel}</a>
         <span>/</span>
         <span>{file}</span>
       </div>
@@ -30,7 +31,11 @@ const lines = await highlightedLines(source, file.split(".").at(-1));
           <button class="button" id="copy-source" type="button">
             复制源码
           </button>
-          <a class="button" href={`/assets/${relative}`} download={file}>
+          <a
+            class="button"
+            href={sitePath(`/assets/${relative}`)}
+            download={file}
+          >
             下载原文件 ↓
           </a>
         </div>
@@ -48,7 +53,7 @@ const lines = await highlightedLines(source, file.split(".").at(-1));
       <textarea id="raw-source" hidden readonly>{source}</textarea>
     </div>
     <p class="back-link">
-      <a href={back}>← 返回{backLabel}</a>
+      <a href={sitePath(back)}>← 返回{backLabel}</a>
     </p>
   </div>
 </Base>

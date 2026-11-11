@@ -3,6 +3,7 @@ import path from "node:path";
 import { fileURLToPath } from "node:url";
 
 const dist = fileURLToPath(new URL("../dist/", import.meta.url));
+const base = (Deno.env.get("SITE_BASE") ?? "/").replace(/\/$/, "");
 const errors: string[] = [];
 async function pages(dir: string): Promise<string[]> {
   return (
@@ -29,10 +30,17 @@ for (const page of await pages(dist)) {
     }
     const parsed = new URL(
       url,
-      `https://site.test/${path.relative(dist, page).replaceAll("\\", "/")}`,
+      `https://site.test${base}/${path.relative(dist, page).replaceAll("\\", "/")}`,
     );
-    const target = path.join(dist, decodeURIComponent(parsed.pathname));
-    const candidate = parsed.pathname.endsWith("/")
+    if (base && !parsed.pathname.startsWith(`${base}/`)) {
+      errors.push(`${path.relative(dist, page)}: link outside site ${url}`);
+      continue;
+    }
+    const pathname = base
+      ? parsed.pathname.slice(base.length)
+      : parsed.pathname;
+    const target = path.join(dist, decodeURIComponent(pathname));
+    const candidate = pathname.endsWith("/")
       ? path.join(target, "index.html")
       : target;
     try {
