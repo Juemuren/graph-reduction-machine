@@ -86,12 +86,7 @@ img {
 }
 
 .paper {
-  background: var(--panel-bg);
-  border: 1px solid var(--border);
-  border-radius: var(--card-radius);
-  padding: clamp(22px, 4vw, 48px);
   margin-bottom: 56px;
-  box-shadow: 0 5px 24px var(--shadow);
 }
 
 .prose {
