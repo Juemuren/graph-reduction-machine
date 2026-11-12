@@ -1,54 +1,41 @@
 ---
-import { sitePath } from "../../lib/urls";
+import { sitePath } from "../../lib/urls.ts";
 ---
 
-<section class="hero">
-  <div class="container hero-inner">
-    <div>
-      <span class="eyebrow">Lambda Calculus · Graph Reduction</span>
-      <h1>从 λ 演算到 SKI 图</h1>
-      <p>一个可运行 λ 演算的图归约机，拥有和图灵机相同的计算能力。</p>
-      <div class="hero-actions">
-        <a class="button primary" href={sitePath("/examples/")}>浏览示例 →</a>
-        <a class="button" href={sitePath("/docs/")}>阅读文档</a>
-      </div>
+<section class="container hero-section">
+  <div>
+    <span class="eyebrow">Lambda Calculus · Graph Reduction</span>
+    <h1>从 λ 演算到 SKI 图</h1>
+    <p>一个可运行 λ 演算的图归约机，拥有和图灵机相同的计算能力。</p>
+    <div class="hero-actions">
+      <a class="button primary" href={sitePath("/examples/")}>浏览示例</a>
+      <a class="button" href={sitePath("/docs/")}>阅读文档</a>
     </div>
-    <img
-      class="hero-mark"
-      src={sitePath("/favicon.svg")}
-      alt="λ 演算与 SKI 图的项目标志"
-      width="240"
-      height="240"
-    >
   </div>
+  <img
+    class="hero-mark"
+    src={sitePath("/favicon.svg")}
+    alt="λ 演算与 SKI 图的项目标志"
+    width="240"
+    height="240"
+  >
 </section>
 
 <style>
-.hero {
-  background: radial-gradient(
-    circle at 78% 30%,
-    var(--surface-1) 0,
-    var(--mantle) 36%,
-    var(--crust) 85%
-  );
-  color: var(--body-text);
-}
-.hero-inner {
+.hero-section {
   display: grid;
   grid-template-columns: 1fr 270px;
   align-items: center;
   gap: 40px;
-  min-height: 480px;
-  padding-top: 64px;
-  padding-bottom: 70px;
+  color: var(--body-text);
 }
-.hero h1 {
+.hero-section h1 {
   font-size: clamp(42px, 6vw, 70px);
   line-height: 1.08;
   letter-spacing: -0.05em;
   margin: 15px 0 22px;
 }
-.hero p {
+.hero-section p {
   color: var(--subtext-1);
   line-height: 1.8;
   max-width: 620px;
@@ -68,12 +55,9 @@ import { sitePath } from "../../lib/urls";
 }
 
 @media (max-width: 700px) {
-  .hero-inner {
+  .hero-section {
     grid-template-columns: 1fr;
     gap: 28px;
-    min-height: 0;
-    padding-top: 55px;
-    padding-bottom: 50px;
   }
 
   .hero-mark {

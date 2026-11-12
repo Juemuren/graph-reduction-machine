@@ -1,6 +1,7 @@
 ---
 import ExampleSection from "../components/home/ExampleSection.astro";
-import Hero from "../components/home/Hero.astro";
+import FlowSection from "../components/home/FlowSection.astro";
+import HeroSection from "../components/home/Hero.astro";
 import ReferenceSection from "../components/home/ReferenceSection.astro";
 import Base from "../layouts/Base.astro";
 import { examples } from "../lib/content";
@@ -9,7 +10,35 @@ const items = await examples();
 ---
 
 <Base title="首页">
-  <Hero />
-  <ExampleSection items={items} />
-  <ReferenceSection />
+  <div class="home-band home-band--hero"><HeroSection /></div>
+  <div class="home-band home-band--panel"><FlowSection /></div>
+  <div class="home-band home-band--page"><ExampleSection items={items} /></div>
+  <div class="home-band home-band--panel"><ReferenceSection /></div>
 </Base>
+
+<style>
+.home-band {
+  display: flow-root;
+  padding-block: 64px;
+}
+.home-band--hero {
+  background: radial-gradient(
+    circle at 78% 30%,
+    var(--surface-1) 0,
+    var(--mantle) 36%,
+    var(--crust) 85%
+  );
+}
+.home-band--panel {
+  background: var(--panel-bg);
+}
+.home-band--page {
+  background: var(--page-bg);
+}
+
+@media (max-width: 700px) {
+  .home-band {
+    padding-block: 48px;
+  }
+}
+</style>

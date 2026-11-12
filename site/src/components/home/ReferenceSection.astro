@@ -1,56 +1,37 @@
 ---
 import { sitePath } from "../../lib/urls";
-import FlowDiagram from "./FlowDiagram.astro";
 ---
 
-<section class="reference">
-  <div class="container reference-inner">
-    <div class="reference-intro">
-      <div>
-        <span class="eyebrow">Reference</span>
-        <h2>阅读文档</h2>
-        <p>语法、编译器、解释器和标准库构成了完整的图归约机系统。</p>
-      </div>
-      <div class="reference-flow"><FlowDiagram /></div>
-    </div>
-    <div class="reference-links">
-      <a href={sitePath("/docs/syntax/")}>语法规范<span>↗</span></a>
-      <a href={sitePath("/docs/architecture/")}>系统架构<span>↗</span></a>
-      <a href={sitePath("/docs/lib/")}>标准库<span>↗</span></a>
-    </div>
+<section class="container reference-section">
+  <div class="reference-header">
+    <span class="eyebrow">Reference</span>
+    <h2>阅读文档</h2>
+    <p>语法、编译器、解释器和标准库构成了完整的图归约机系统。</p>
+  </div>
+  <div class="reference-links">
+    <a href={sitePath("/docs/syntax/")}>语法规范<span>↗</span></a>
+    <a href={sitePath("/docs/architecture/")}>系统架构<span>↗</span></a>
+    <a href={sitePath("/docs/lib/")}>标准库<span>↗</span></a>
   </div>
 </section>
 
 <style>
-.reference h2 {
-  font-size: 34px;
-  margin: 8px 0 0;
-}
-.reference {
-  background: var(--panel-bg);
-  padding: 60px 0;
-}
-.reference p {
-  color: var(--muted-text);
-  max-width: 500px;
-  line-height: 1.7;
-  margin-bottom: 0;
-}
-
-.reference-inner {
+.reference-section {
   display: grid;
   grid-template-columns: minmax(0, 1fr) 280px;
   align-items: center;
   gap: 56px;
 }
-.reference-intro {
-  display: grid;
-  gap: 28px;
-  min-width: 0;
-}
 
-.reference-flow {
-  width: min(100%, 520px);
+.reference-header > h2 {
+  font-size: 34px;
+  margin: 8px 0 0;
+}
+.reference-header > p {
+  color: var(--muted-text);
+  max-width: 500px;
+  line-height: 1.7;
+  margin-bottom: 0;
 }
 
 .reference-links {
@@ -73,7 +54,7 @@ import FlowDiagram from "./FlowDiagram.astro";
 }
 
 @media (max-width: 800px) {
-  .reference-inner {
+  .reference-section {
     grid-template-columns: 1fr;
     gap: 32px;
   }

@@ -1,0 +1,37 @@
+---
+import FlowDiagram from "./FlowDiagram.astro";
+---
+
+<section class="container flow-section">
+  <div class="flow-intro">
+    <span class="eyebrow">Pipeline</span>
+    <h2 id="flow-title">计算流程</h2>
+    <p>源码先展开为 λ 表达式，然后编译成 SKI 组合子，最后归约得到结果。</p>
+  </div>
+  <FlowDiagram />
+</section>
+
+<style>
+.flow-section {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 340px);
+  align-items: center;
+  gap: 64px;
+}
+.flow-intro h2 {
+  font-size: 34px;
+  margin: 8px 0 0;
+}
+.flow-intro p {
+  color: var(--muted-text);
+  max-width: 440px;
+  line-height: 1.7;
+  margin: 16px 0 0;
+}
+@media (max-width: 700px) {
+  .flow-section {
+    grid-template-columns: 1fr;
+    gap: 36px;
+  }
+}
+</style>

@@ -10,8 +10,8 @@ interface Props {
 const { items } = Astro.props;
 ---
 
-<section class="container">
-  <div class="section-header">
+<section class="container example-section">
+  <div class="example-header">
     <div>
       <span class="eyebrow">Explore</span>
       <h2>浏览示例</h2>
@@ -31,22 +31,27 @@ const { items } = Astro.props;
 </section>
 
 <style>
-.section-header {
+.example-section :global(.card-grid) {
+  margin-bottom: 0;
+}
+
+.example-header {
   display: flex;
   align-items: end;
   justify-content: space-between;
   gap: 15px;
-  padding: 56px 0 24px;
+  padding-bottom: 24px;
 }
-.section-header h2 {
+.example-header h2 {
   font-size: 34px;
   margin: 8px 0 0;
 }
-.section-header > a {
+.example-header > a {
   font-size: 14px;
 }
+
 @media (max-width: 700px) {
-  .section-header {
+  .example-header {
     align-items: start;
     flex-direction: column;
   }

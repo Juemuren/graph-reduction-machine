@@ -1,27 +1,47 @@
 <ol class="flow" aria-label="计算流程">
   <li>
-    <span class="node">λ 表达式</span>
-    <div class="edge">
-      <span class="edge-label">编译</span>
-      <span class="edge-arrow" aria-hidden="true">→</span>
-    </div>
+    <span class="node">
+      <span class="step" aria-hidden="true">01</span>源码
+    </span>
+    <span class="edge edge-right" aria-hidden="true">
+      <span>展开</span>
+      <b>→</b>
+    </span>
   </li>
   <li>
-    <span class="node">SKI 组合子</span>
-    <div class="edge">
-      <span class="edge-label">归约</span>
-      <span class="edge-arrow" aria-hidden="true">→</span>
-    </div>
+    <span class="node">
+      <span class="step" aria-hidden="true">02</span>λ 表达式
+    </span>
+    <span class="edge edge-down" aria-hidden="true">
+      <span>编译</span>
+      <b>↓</b>
+    </span>
   </li>
-  <li><span class="node">结果</span></li>
+  <li>
+    <span class="node">
+      <span class="step" aria-hidden="true">03</span>SKI 组合子
+    </span>
+    <span class="edge edge-left" aria-hidden="true">
+      <span>归约</span>
+      <b>←</b>
+    </span>
+  </li>
+  <li>
+    <span class="node">
+      <span class="step" aria-hidden="true">04</span>结果
+    </span>
+  </li>
 </ol>
 
 <style>
 .flow {
-  --flow-gap: 42px;
+  --column-gap: clamp(48px, 10vw, 56px);
+  --row-gap: 54px;
   display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: var(--flow-gap);
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  column-gap: var(--column-gap);
+  row-gap: var(--row-gap);
+  max-width: 340px;
   margin: 0;
   padding: 0;
   list-style: none;
@@ -30,47 +50,93 @@
   position: relative;
   min-width: 0;
 }
-.node {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  min-height: 52px;
-  padding: 10px 6px;
-  border: 1px solid var(--border);
-  border-radius: 8px;
-  text-align: center;
-  font-family: ui-monospace, monospace;
-  font-size: 14px;
+.flow > li:nth-child(1) {
+  grid-column: 1;
+  grid-row: 1;
 }
-.edge {
-  position: absolute;
-  top: 50%;
-  left: 100%;
+.flow > li:nth-child(2) {
+  grid-column: 2;
+  grid-row: 1;
+}
+.flow > li:nth-child(3) {
+  grid-column: 2;
+  grid-row: 2;
+}
+.flow > li:nth-child(4) {
+  grid-column: 1;
+  grid-row: 2;
+}
+
+.node {
   display: flex;
   flex-direction: column;
   align-items: center;
-  width: var(--flow-gap);
-  transform: translateY(-50%);
+  justify-content: center;
+  gap: 8px;
+  min-height: 108px;
+  padding: 8px;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  background: var(--page-bg);
+  text-align: center;
+  font-size: 14px;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.flow > li:last-child .node {
+  border-color: var(--accent);
   color: var(--accent);
 }
-.edge-label {
+
+.step {
+  color: var(--muted-text);
+  font-family: ui-monospace, monospace;
+  font-size: 11px;
+  font-weight: 500;
+}
+
+.edge {
+  position: absolute;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--accent);
   font-size: 11px;
   font-weight: 700;
-}
-.edge-arrow {
-  font-size: 18px;
   line-height: 1;
 }
+.edge b {
+  font-size: 22px;
+  font-weight: 400;
+}
+.edge-right,
+.edge-left {
+  top: 50%;
+  width: var(--column-gap);
+  flex-direction: column;
+  gap: 3px;
+  transform: translateY(-50%);
+}
+.edge-right {
+  left: 100%;
+}
+.edge-left {
+  right: 100%;
+}
+.edge-down {
+  top: 100%;
+  left: 50%;
+  height: var(--row-gap);
+  gap: 5px;
+  transform: translateX(-50%);
+}
+
 @media (max-width: 520px) {
-  .flow {
-    --flow-gap: 26px;
-  }
   .node {
-    padding: 8px 3px;
+    gap: 5px;
+    padding: 6px;
     font-size: 12px;
-  }
-  .edge-label {
-    font-size: 10px;
   }
 }
 </style>

@@ -152,9 +152,11 @@ Deno.test("every source page has line numbers, copy and raw download", async () 
 
 Deno.test("global stylesheet provides Latte and Mocha colors", async () => {
   const index = await html("index.html");
-  const stylesheet = index.match(/href="([^"]+\.css)"/);
-  assert.ok(stylesheet);
-  const css = await html(stylesheet[1].replace(`${base}/`, ""));
+  const stylesheets = [...index.matchAll(/href="([^"]+\.css)"/g)];
+  assert.ok(stylesheets.length > 0);
+  const css = (await Promise.all(
+    stylesheets.map(([, href]) => html(href.replace(`${base}/`, ""))),
+  )).join("\n");
   assert.match(css, /--base:\s*#eff1f5/);
   assert.match(css, /--base:\s*#1e1e2e/);
   assert.match(css, /prefers-color-scheme:\s*dark/);
