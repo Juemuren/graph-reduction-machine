@@ -1,0 +1,9 @@
+# recur
+
+@> fibRecur = \fib -> \n ->
+    IF (LEQ n ONE)
+    n
+    (ADD
+        (fib (PRED n))
+        (fib (PRED (PRED n)))
+    );

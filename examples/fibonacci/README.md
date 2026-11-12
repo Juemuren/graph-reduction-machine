@@ -31,7 +31,7 @@ $$
 }
 $$
 
-实现在 [recursive-y.lambda](recursive-y.lambda) / [recursive-z.lambda](recursive-z.lambda) / [recursive-theta.lambda](recursive-theta.lambda) 中。分别使用 `Y` 组合子 / `Z` 组合子 / `THETA` 组合子
+递归逻辑实现在 [recursive.lambda](recursive.lambda) 中，而 [recursive-y.lambda](recursive-y.lambda) / [recursive-z.lambda](recursive-z.lambda) / [recursive-theta.lambda](recursive-theta.lambda) 分别使用 `Y` 组合子 / `Z` 组合子 / `THETA` 组合子构造递归程序。
 
 ## 比较并绘图
 
