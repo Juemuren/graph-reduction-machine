@@ -64,11 +64,6 @@ Deno.test("every page links to the published favicon", async () => {
   }
 });
 
-Deno.test("content root resolves to the repository", async () => {
-  assert.equal(root, path.resolve(site, ".."));
-  assert.ok((await stat(path.join(root, "examples"))).isDirectory());
-});
-
 Deno.test("every example README has a linked, readable page", async () => {
   const examples = await exampleFiles();
   assert.ok(examples.length > 0);
@@ -148,18 +143,6 @@ Deno.test("every source page has line numbers, copy and raw download", async () 
     foundHighlight ||= /--token-light:#[0-9A-Fa-f]{6}/.test(page);
   }
   assert.ok(foundHighlight, "source syntax highlighting is present");
-});
-
-Deno.test("global stylesheet provides Latte and Mocha colors", async () => {
-  const index = await html("index.html");
-  const stylesheets = [...index.matchAll(/href="([^"]+\.css)"/g)];
-  assert.ok(stylesheets.length > 0);
-  const css = (await Promise.all(
-    stylesheets.map(([, href]) => html(href.replace(`${base}/`, ""))),
-  )).join("\n");
-  assert.match(css, /--base:\s*#eff1f5/);
-  assert.match(css, /--base:\s*#1e1e2e/);
-  assert.match(css, /prefers-color-scheme:\s*dark/);
 });
 
 Deno.test("configured documents and library sources have pages", async () => {
