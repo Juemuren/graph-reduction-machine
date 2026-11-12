@@ -59,26 +59,19 @@ const { title, html, toc } = await renderMarkdown(
           </>
         )}
         {item.compare && (
-          <p class="compare-note">
-            比较方法由仓库中的{" "}
-            <a
-              href={sitePath(`/assets/examples/${item.slug}/compare.json`)}
-              download
-            >
-              compare.json
-            </a>{" "}
-            定义。本站展示已有结果。
-          </p>
+          <>
+            <h2 class="section-title">比较配置</h2>
+            <div class="pill-list">
+              <a
+                href={sitePath(`/assets/examples/${item.slug}/compare.json`)}
+                download
+              >
+                compare.json ↓
+              </a>
+            </div>
+          </>
         )}
       </article>
     </ReadingLayout>
   </div>
 </Base>
-<style>
-.compare-note {
-  font-size: 13px;
-  color: var(--muted-text);
-  border-top: 1px solid var(--border);
-  padding-top: 18px;
-}
-</style>
