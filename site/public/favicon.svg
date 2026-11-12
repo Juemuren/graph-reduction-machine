@@ -1,10 +1,24 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" role="img" aria-label="Lambda calculus and SKI graph favicon">
   <defs>
+    <style>
+      .lambda-begin { stop-color: #7287fd; }
+      .lambda-middle { stop-color: #8839ef; }
+      .lambda-end { stop-color: #df8e1d; }
+      .graph-edge { stroke: #df8e1d; }
+      .graph-node { fill: #df8e1d; }
+
+      @media (prefers-color-scheme: dark) {
+        .lambda-begin { stop-color: #b4befe; }
+        .lambda-middle { stop-color: #cba6f7; }
+        .lambda-end { stop-color: #f9e2af; }
+        .graph-edge { stroke: #f9e2af; }
+        .graph-node { fill: #f9e2af; }
+      }
+    </style>
     <linearGradient id="lambda" x1="20" y1="38" x2="75" y2="75" gradientUnits="userSpaceOnUse">
-      <stop offset="0" stop-color="#E6D5FF"/>
-      <stop offset="0.64" stop-color="#C4A7F5"/>
-      <stop offset="0.78" stop-color="#FFD1B3"/>
-      <stop offset="1" stop-color="#FFD45A"/>
+      <stop class="lambda-begin" offset="0"/>
+      <stop class="lambda-middle" offset="0.8"/>
+      <stop class="lambda-end" offset="1"/>
     </linearGradient>
     <mask id="ring-holes" maskUnits="userSpaceOnUse" x="0" y="0" width="128" height="128">
       <rect width="128" height="128" fill="white"/>
@@ -15,7 +29,7 @@
   </defs>
   <g mask="url(#ring-holes)">
   <!-- Application-graph edges, centered on the circular node geometry -->
-  <g fill="none" stroke="#FFD451" stroke-width="4.8" stroke-linecap="round">
+  <g class="graph-edge" fill="none" stroke-width="4.8" stroke-linecap="round">
     <path d="
       M72.7 73.8
       L101.6 49.6
@@ -50,7 +64,7 @@
   />
   <!-- Circular nodes with transparent holes -->
   <circle cx="72.7" cy="73.8" r="8.8" fill="url(#lambda)"/>
-  <g fill="#FFD451">
+  <g class="graph-node">
     <circle cx="101.6" cy="49.6" r="9.5"/>
     <circle cx="100.6" cy="86.1" r="9.4"/>
   </g>
