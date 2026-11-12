@@ -1,21 +1,58 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
-  <rect width="64" height="64" rx="15" fill="#181825"/>
-  <!-- SKI -->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" role="img" aria-label="Lambda calculus and SKI graph favicon">
+  <defs>
+    <linearGradient id="lambda" x1="20" y1="38" x2="75" y2="75" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#E6D5FF"/>
+      <stop offset="0.64" stop-color="#C4A7F5"/>
+      <stop offset="0.78" stop-color="#FFD1B3"/>
+      <stop offset="1" stop-color="#FFD45A"/>
+    </linearGradient>
+    <mask id="ring-holes" maskUnits="userSpaceOnUse" x="0" y="0" width="128" height="128">
+      <rect width="128" height="128" fill="white"/>
+      <circle cx="72.7" cy="73.8" r="5.1" fill="black"/>
+      <circle cx="101.6" cy="49.6" r="5.1" fill="black"/>
+      <circle cx="100.6" cy="86.1" r="5.1" fill="black"/>
+    </mask>
+  </defs>
+  <g mask="url(#ring-holes)">
+  <!-- Application-graph edges, centered on the circular node geometry -->
+  <g fill="none" stroke="#FFD451" stroke-width="4.8" stroke-linecap="round">
+    <path d="
+      M72.7 73.8
+      L101.6 49.6
+      M72.7 73.8
+      L100.6 86.1
+      "
+    />
+  </g>
+  <!-- Lambda silhouette, with its lower stroke flowing into the center node -->
   <path
-    d="M32 9 12 53h40Z"
-    fill="none"
-    stroke="#585b70"
-    stroke-width="3"
-    stroke-linecap="round"
-    stroke-linejoin="round"
+    fill="url(#lambda)"
+    d="
+      M 18.7 83.3
+      L 40.4 47.6
+      L 38.3 42.1
+      C 36.9 38.4 35.4 37.5 32.8 38
+      C 29.9 38.4 26.0 42.6 23.6 43.6
+      C 26.8 34.3 31.4 29.6 36.4 29.6
+      C 42.5 29.6 44.4 33 46.8 41.8
+      L 52.6 61.5
+      C 54.8 69.4 58.2 70.5 61 70.6
+      C 62.5 70.7 64.6 70.3 65 69.54
+      L 72 70
+      L 72 77
+      L 65.5 78.86
+      C 64.8 77.9 62.8 78.4 61 78.4
+      C 52.7 78.4 48.9 72.9 46 64.2
+      L 42.9 54.7
+      L 29.8 83.3
+      Z
+    "
   />
-  <circle cx="32" cy="9" r="5" fill="#cba6f7"/>
-  <circle cx="12" cy="53" r="5" fill="#94e2d5"/>
-  <circle cx="52" cy="53" r="5" fill="#89b4fa"/>
-  <!-- λ -->
-  <path
-    d="M511 794 214 0H24L418 1042L260 1466H450L998 0H808Z"
-    transform="translate(18.2 52) scale(.027 -.027)"
-    fill="#fab387"
-  />
+  <!-- Circular nodes with transparent holes -->
+  <circle cx="72.7" cy="73.8" r="8.8" fill="url(#lambda)"/>
+  <g fill="#FFD451">
+    <circle cx="101.6" cy="49.6" r="9.5"/>
+    <circle cx="100.6" cy="86.1" r="9.4"/>
+  </g>
+  </g>
 </svg>
