@@ -1,0 +1,70 @@
+<ol class="flow" aria-label="计算流程">
+  <li>
+    <span class="node">λ 表达式</span>
+    <div class="edge">
+      <span class="edge-label">编译</span>
+      <span class="edge-arrow" aria-hidden="true">↓</span>
+    </div>
+  </li>
+  <li>
+    <span class="node">SKI 组合子</span>
+    <div class="edge">
+      <span class="edge-label">归约</span>
+      <span class="edge-arrow" aria-hidden="true">↓</span>
+    </div>
+  </li>
+  <li><span class="node">结果</span></li>
+</ol>
+
+<style>
+.flow {
+  width: 100%;
+  margin: 0;
+  padding: 22px;
+  list-style: none;
+  border: 1px solid var(--overlay-0);
+  border-radius: 18px;
+  background: var(--surface-0);
+  box-shadow: 0 20px 50px var(--shadow-hover);
+}
+.node {
+  display: block;
+  width: 100%;
+  padding: 17px 12px;
+  border: 1px solid var(--overlay-0);
+  border-radius: 8px;
+  background: var(--surface-1);
+  text-align: center;
+  font-family: ui-monospace, monospace;
+  font-size: 18px;
+}
+.edge {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 7px 0;
+  color: var(--accent);
+}
+.edge-label {
+  font-size: 13px;
+  font-weight: 700;
+}
+.edge-arrow {
+  font-size: 21px;
+  line-height: 1;
+}
+@media (max-width: 700px) {
+  .flow {
+    width: min(100%, 360px);
+    justify-self: center;
+    padding: 16px;
+  }
+  .node {
+    padding: 12px;
+    font-size: 16px;
+  }
+  .edge {
+    padding: 4px 0;
+  }
+}
+</style>
