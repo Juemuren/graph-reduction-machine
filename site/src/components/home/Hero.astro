@@ -1,6 +1,5 @@
 ---
 import { sitePath } from "../../lib/urls";
-import FlowDiagram from "./FlowDiagram.astro";
 ---
 
 <section class="hero">
@@ -8,15 +7,19 @@ import FlowDiagram from "./FlowDiagram.astro";
     <div>
       <span class="eyebrow">Lambda Calculus · Graph Reduction</span>
       <h1>从 λ 演算到 SKI 图</h1>
-      <p>
-        一个可运行 λ 演算的图归约机，拥有和图灵机相同的计算能力。
-      </p>
+      <p>一个可运行 λ 演算的图归约机，拥有和图灵机相同的计算能力。</p>
       <div class="hero-actions">
         <a class="button primary" href={sitePath("/examples/")}>浏览示例 →</a>
         <a class="button" href={sitePath("/docs/")}>阅读文档</a>
       </div>
     </div>
-    <FlowDiagram />
+    <img
+      class="hero-mark"
+      src={sitePath("/favicon.svg")}
+      alt="λ 演算与 SKI 图的项目标志"
+      width="240"
+      height="240"
+    >
   </div>
 </section>
 
@@ -57,6 +60,13 @@ import FlowDiagram from "./FlowDiagram.astro";
   flex-wrap: wrap;
   margin-top: 28px;
 }
+.hero-mark {
+  display: block;
+  width: 320px;
+  height: 320px;
+  justify-self: center;
+}
+
 @media (max-width: 700px) {
   .hero-inner {
     grid-template-columns: 1fr;
@@ -64,6 +74,10 @@ import FlowDiagram from "./FlowDiagram.astro";
     min-height: 0;
     padding-top: 55px;
     padding-bottom: 50px;
+  }
+
+  .hero-mark {
+    display: none;
   }
 }
 </style>

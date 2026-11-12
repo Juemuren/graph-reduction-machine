@@ -1,15 +1,17 @@
 ---
 import { sitePath } from "../../lib/urls";
+import FlowDiagram from "./FlowDiagram.astro";
 ---
 
 <section class="reference">
   <div class="container reference-inner">
-    <div>
-      <span class="eyebrow">Reference</span>
-      <h2>阅读文档</h2>
-      <p>
-        语法、编译器、解释器和标准库构成了完整的图归约机系统。
-      </p>
+    <div class="reference-intro">
+      <div>
+        <span class="eyebrow">Reference</span>
+        <h2>阅读文档</h2>
+        <p>语法、编译器、解释器和标准库构成了完整的图归约机系统。</p>
+      </div>
+      <div class="reference-flow"><FlowDiagram /></div>
     </div>
     <div class="reference-links">
       <a href={sitePath("/docs/syntax/")}>语法规范<span>↗</span></a>
@@ -28,24 +30,38 @@ import { sitePath } from "../../lib/urls";
   background: var(--panel-bg);
   padding: 60px 0;
 }
-.reference-inner {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 45px;
-}
 .reference p {
   color: var(--muted-text);
   max-width: 500px;
   line-height: 1.7;
+  margin-bottom: 0;
 }
+
+.reference-inner {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 280px;
+  align-items: center;
+  gap: 56px;
+}
+.reference-intro {
+  display: grid;
+  gap: 28px;
+  min-width: 0;
+}
+
+.reference-flow {
+  width: min(100%, 520px);
+}
+
 .reference-links {
   display: grid;
-  gap: 9px;
+  gap: 10px;
 }
 .reference-links a {
   display: flex;
   justify-content: space-between;
-  background: var(--panel-bg);
+  gap: 12px;
+  background: var(--page-bg);
   border: 1px solid var(--border);
   padding: 16px 20px;
   border-radius: 8px;
@@ -55,9 +71,14 @@ import { sitePath } from "../../lib/urls";
 .reference-links span {
   color: var(--overlay-1);
 }
-@media (max-width: 700px) {
+
+@media (max-width: 800px) {
   .reference-inner {
     grid-template-columns: 1fr;
+    gap: 32px;
+  }
+  .reference-links {
+    max-width: 520px;
   }
 }
 </style>
