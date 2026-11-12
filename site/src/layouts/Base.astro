@@ -1,6 +1,8 @@
 ---
 import "katex/dist/katex.min.css";
 import "../styles/global.css";
+import Footer from "../components/Footer.astro";
+import Header from "../components/Header.astro";
 import { sitePath } from "../lib/urls";
 
 const { title, description = "λ 演算图归约机的示例、源码与参考文档" } =
@@ -17,137 +19,14 @@ const { title, description = "λ 演算图归约机的示例、源码与参考�
     <title>{title} · Graph Reduction Machine</title>
   </head>
   <body>
-    <a class="skip-link" href="#main">跳到正文</a>
-    <header class="topbar">
-      <div class="topbar-inner">
-        <a class="brand" href={sitePath("/")} aria-label="首页">
-          <span class="brand-mark">λ</span>
-          <span>Graph Reduction Machine</span>
-        </a>
-        <nav aria-label="主导航">
-          <a href={sitePath("/examples/")}>示例</a>
-          <a href={sitePath("/docs/")}>文档</a>
-          <a href={sitePath("/docs/lib/")}>标准库</a>
-        </nav>
-      </div>
-    </header>
+    <Header />
     <main id="main"><slot /></main>
-    <footer>
-      <div class="container footer-inner">
-        <span>Graph Reduction Machine</span>
-        <span>从 λ 演算到 SKI 图</span>
-      </div>
-    </footer>
+    <Footer />
   </body>
 </html>
 
 <style>
 main {
   min-height: calc(100vh - 170px);
-}
-
-.topbar {
-  background: var(--header-bg);
-  color: var(--header-text);
-}
-
-.topbar-inner {
-  max-width: var(--content-width);
-  margin: auto;
-  padding: 0 var(--page-gutter);
-  min-height: 72px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 24px;
-}
-
-.brand {
-  color: var(--header-text);
-  text-decoration: none;
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  font-weight: 750;
-  letter-spacing: 0.01em;
-}
-
-.brand:hover,
-.topbar nav a:hover {
-  color: var(--header-text);
-}
-
-.brand-mark {
-  display: grid;
-  place-items: center;
-  width: 34px;
-  height: 34px;
-  border: 1px solid var(--blue);
-  border-radius: 8px;
-  color: var(--text);
-  font-family: Georgia, serif;
-  font-size: 24px;
-}
-
-.topbar nav {
-  display: flex;
-  gap: 24px;
-}
-
-.topbar nav a {
-  color: var(--subtext-1);
-  text-decoration: none;
-  font-size: 14px;
-}
-
-.skip-link {
-  position: absolute;
-  top: -100px;
-  left: 12px;
-  background: var(--panel-bg);
-  padding: 10px;
-  z-index: 5;
-}
-
-.skip-link:focus {
-  top: 12px;
-}
-
-footer {
-  border-top: 1px solid var(--border);
-  color: var(--muted-text);
-  font-size: 13px;
-}
-
-.footer-inner {
-  display: flex;
-  justify-content: space-between;
-  gap: 16px;
-  padding-top: 28px;
-  padding-bottom: 28px;
-}
-
-@media (max-width: 700px) {
-  .topbar-inner {
-    min-height: 64px;
-    align-items: flex-start;
-    flex-direction: column;
-    justify-content: center;
-    padding-top: 12px;
-    padding-bottom: 12px;
-    gap: 8px;
-  }
-
-  .brand {
-    font-size: 14px;
-  }
-
-  .topbar nav {
-    gap: 18px;
-  }
-
-  .footer-inner {
-    flex-direction: column;
-  }
 }
 </style>
