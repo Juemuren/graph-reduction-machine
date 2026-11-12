@@ -22,7 +22,7 @@ const Heading = headingLevel;
   {items.map((item, index) => (
     <a class="card" href={sitePath(item.href)}>
       <small>
-        {String(index + 1).padStart(2, "0")} / {kind}
+        {String(index + 1).padStart(2, "0")} | {kind}
       </small>
       <Heading>{item.title}</Heading>
       <p>
