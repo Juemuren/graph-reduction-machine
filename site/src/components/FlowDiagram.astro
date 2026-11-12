@@ -1,32 +1,32 @@
 <ol class="flow" aria-label="计算流程">
-  <li>
+  <li class="source">
     <span class="node">
       <span class="step" aria-hidden="true">01</span>源码
     </span>
-    <span class="edge edge-right" aria-hidden="true">
+    <span class="edge edge-horizontal edge-right" aria-hidden="true">
       <span>展开</span>
       <b>→</b>
     </span>
   </li>
-  <li>
+  <li class="lambda">
     <span class="node">
       <span class="step" aria-hidden="true">02</span>λ 表达式
     </span>
-    <span class="edge edge-down" aria-hidden="true">
+    <span class="edge edge-vertical edge-down" aria-hidden="true">
       <span>编译</span>
       <b>↓</b>
     </span>
   </li>
-  <li>
+  <li class="ski">
     <span class="node">
       <span class="step" aria-hidden="true">03</span>SKI 组合子
     </span>
-    <span class="edge edge-left" aria-hidden="true">
+    <span class="edge edge-horizontal edge-left" aria-hidden="true">
       <span>归约</span>
       <b>←</b>
     </span>
   </li>
-  <li>
+  <li class="result">
     <span class="node">
       <span class="step" aria-hidden="true">04</span>结果
     </span>
@@ -35,9 +35,12 @@
 
 <style>
 .flow {
-  --column-gap: clamp(48px, 10vw, 56px);
-  --row-gap: 54px;
+  --column-gap: 72px;
+  --row-gap: 72px;
   display: grid;
+  grid-template-areas:
+    "source lambda"
+    "result ski";
   grid-template-columns: repeat(2, minmax(0, 1fr));
   column-gap: var(--column-gap);
   row-gap: var(--row-gap);
@@ -50,21 +53,22 @@
   position: relative;
   min-width: 0;
 }
-.flow > li:nth-child(1) {
-  grid-column: 1;
-  grid-row: 1;
+
+.source {
+  grid-area: source;
+  --node-color: var(--blue);
 }
-.flow > li:nth-child(2) {
-  grid-column: 2;
-  grid-row: 1;
+.lambda {
+  grid-area: lambda;
+  --node-color: var(--teal);
 }
-.flow > li:nth-child(3) {
-  grid-column: 2;
-  grid-row: 2;
+.ski {
+  grid-area: ski;
+  --node-color: var(--peach);
 }
-.flow > li:nth-child(4) {
-  grid-column: 1;
-  grid-row: 2;
+.result {
+  grid-area: result;
+  --node-color: var(--red);
 }
 
 .node {
@@ -72,21 +76,16 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
+  padding: 24px;
   gap: 8px;
-  min-height: 108px;
-  padding: 8px;
-  border: 1px solid var(--border);
+  border: 1px solid var(--node-color);
   border-radius: 10px;
   background: var(--page-bg);
+  color: var(--node-color);
   text-align: center;
   font-size: 14px;
   font-weight: 700;
   white-space: nowrap;
-}
-
-.flow > li:last-child .node {
-  border-color: var(--accent);
-  color: var(--accent);
 }
 
 .step {
@@ -101,41 +100,84 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  color: var(--accent);
+  color: var(--muted-text);
   font-size: 11px;
+  gap: 4px;
   font-weight: 700;
-  line-height: 1;
+}
+.edge span {
+  color: var(--body-text);
 }
 .edge b {
-  font-size: 22px;
-  font-weight: 400;
+  position: relative;
+  display: block;
+  flex: none;
+  font-size: 0;
 }
-.edge-right,
-.edge-left {
+.edge b::after {
+  position: absolute;
+  content: "";
+}
+
+.edge-horizontal {
   top: 50%;
   width: var(--column-gap);
   flex-direction: column;
-  gap: 3px;
   transform: translateY(-50%);
 }
+.edge-horizontal b {
+  height: 2px;
+  width: calc(100% - 16px);
+  background: currentColor;
+}
+.edge-horizontal b::after {
+  top: -3px;
+  border-top: 4px solid transparent;
+  border-bottom: 4px solid transparent;
+}
+.edge-vertical {
+  left: 50%;
+  height: var(--row-gap);
+  flex-direction: row;
+  transform: translateX(-50%);
+}
+.edge-vertical b {
+  width: 2px;
+  height: calc(100% - 16px);
+  background: currentColor;
+}
+.edge-vertical b::after {
+  left: -3px;
+  border-right: 4px solid transparent;
+  border-left: 4px solid transparent;
+}
+
 .edge-right {
   left: 100%;
+}
+.edge-right b::after {
+  right: -1px;
+  border-left: 7px solid currentColor;
 }
 .edge-left {
   right: 100%;
 }
+.edge-left b::after {
+  left: -1px;
+  border-right: 7px solid currentColor;
+}
 .edge-down {
   top: 100%;
-  left: 50%;
-  height: var(--row-gap);
-  gap: 5px;
-  transform: translateX(-50%);
+}
+.edge-down b::after {
+  bottom: -1px;
+  border-top: 7px solid currentColor;
 }
 
 @media (max-width: 520px) {
   .node {
-    gap: 5px;
-    padding: 6px;
+    padding: 16px;
+    gap: 6px;
     font-size: 12px;
   }
 }
