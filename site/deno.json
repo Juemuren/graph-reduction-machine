@@ -18,12 +18,10 @@
   },
   "tasks": {
     "dev": "astro dev",
-    "build": {
-      "dependencies": ["build:astro"],
-      "command": "deno task check:links"
-    },
+    "preview": "astro preview",
+    "build": "deno task build:astro && deno task build:search",
     "build:astro": "astro build",
-    "check:links": "deno run --allow-read --allow-env=SITE_BASE scripts/check-links.ts",
+    "build:search": "pagefind --site dist",
     "typecheck": {
       "dependencies": ["typecheck:astro", "typecheck:deno"]
     },
@@ -34,6 +32,7 @@
     },
     "check:biome": "biome check . --fix",
     "check:deno": "deno fmt && deno lint",
+    "check:links": "deno run --allow-read --allow-env=SITE_BASE scripts/check-links.ts",
     "test": "deno test --allow-read --allow-env=SITE_BASE test/",
     "verify": "deno task typecheck && deno task check && deno task build && deno task test"
   },
@@ -44,6 +43,7 @@
     "@types/node": "npm:@types/node@26.6.6",
     "astro": "npm:astro@7.4.10",
     "katex": "npm:katex@0.16.22",
+    "pagefind": "npm:pagefind@^1.6.0",
     "photoswipe": "npm:photoswipe@5.4.4",
     "rehype-katex": "npm:rehype-katex@7.0.1",
     "rehype-slug": "npm:rehype-slug@6.0.0",

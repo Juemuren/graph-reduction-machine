@@ -5,8 +5,11 @@ import Footer from "../components/Footer.astro";
 import Header from "../components/Header.astro";
 import { sitePath } from "../lib/urls";
 
-const { title, description = "λ 演算图归约机的示例、源码与参考文档" } =
-  Astro.props;
+const {
+  title,
+  description = "λ 演算图归约机的示例、源码与参考文档",
+  search = false,
+} = Astro.props;
 ---
 
 <!doctype html>
@@ -15,12 +18,28 @@ const { title, description = "λ 演算图归约机的示例、源码与参考�
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="description" content={description}>
+    <meta data-pagefind-meta="title[content]" content={title}>
     <link rel="icon" type="image/svg+xml" href={sitePath("/favicon.svg")}>
+    {search && (
+      <>
+        <link
+          rel="stylesheet"
+          href={sitePath("/pagefind/pagefind-component-ui.css")}
+        >
+        <script
+          is:inline
+          type="module"
+          src={sitePath("/pagefind/pagefind-component-ui.js")}
+        ></script>
+      </>
+    )}
     <title>{title} · Graph Reduction Machine</title>
   </head>
   <body>
     <Header />
-    <main id="main"><slot /></main>
+    <main id="main" data-pagefind-body={!search ? true : undefined}>
+      <slot />
+    </main>
     <Footer />
   </body>
 </html>

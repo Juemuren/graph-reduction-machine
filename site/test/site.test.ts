@@ -40,6 +40,7 @@ Deno.test("internal navigation and images use the deployment base", async () => 
   const index = await html("index.html");
   assert.ok(index.includes(`href="${base}/examples/"`));
   assert.ok(index.includes(`href="${base}/docs/"`));
+  assert.ok(index.includes(`href="${base}/search/"`));
 
   for (const page of await markdownPages()) {
     const content = await html(page);
@@ -49,6 +50,26 @@ Deno.test("internal navigation and images use the deployment base", async () => 
       }
     }
   }
+});
+
+Deno.test("Pagefind indexes Chinese content and loads only on the search page", async () => {
+  const index = await html("index.html");
+  const search = await html("search/index.html");
+  const document = await html(`docs/${referenceDocs[0]}/index.html`);
+  const entry = JSON.parse(await html("pagefind/pagefind-entry.json"));
+
+  assert.match(index, /<main\b[^>]*data-pagefind-body/);
+  assert.match(document, /<main\b[^>]*data-pagefind-body/);
+  assert.doesNotMatch(search, /<main\b[^>]*data-pagefind-body/);
+  assert.ok(search.includes(`bundle-path="${base}/pagefind/"`));
+  assert.ok(search.includes(`base-url="${base}/"`));
+  assert.ok(search.includes(`src="${base}/pagefind/pagefind-component-ui.js"`));
+  assert.ok(
+    search.includes(`href="${base}/pagefind/pagefind-component-ui.css"`),
+  );
+  assert.doesNotMatch(index, /pagefind-component-ui/);
+  assert.ok(entry.languages["zh-cn"].page_count >= referenceDocs.length);
+  assert.ok((await stat(output("pagefind/pagefind-component-ui.js"))).size > 0);
 });
 
 Deno.test("every page links to the published favicon", async () => {

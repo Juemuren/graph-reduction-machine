@@ -1,0 +1,57 @@
+---
+import Base from "../../layouts/Base.astro";
+import { sitePath } from "../../lib/urls";
+---
+
+<Base title="搜索" description="搜索图归约机站点中的示例、源码与文档" search>
+  <div class="container search-page">
+    <header class="page-head">
+      <span class="eyebrow">Search</span>
+      <h1>全站搜索</h1>
+      <p>搜索示例、源码和文档。</p>
+    </header>
+    <div class="search-panel">
+      <pagefind-config
+        bundle-path={sitePath("/pagefind/")}
+        base-url={sitePath("/")}
+      ></pagefind-config>
+      <pagefind-input placeholder="输入关键词搜索"></pagefind-input>
+      <pagefind-summary></pagefind-summary>
+      <pagefind-results></pagefind-results>
+    </div>
+  </div>
+</Base>
+
+<style>
+.search-page {
+  padding-bottom: 64px;
+}
+
+.search-panel {
+  max-width: 800px;
+  --pf-text: var(--body-text);
+  --pf-text-secondary: var(--muted-text);
+  --pf-text-muted: var(--muted-text);
+  --pf-background: var(--panel-bg);
+  --pf-border: var(--border);
+  --pf-border-focus: var(--link);
+  --pf-hover: var(--panel-hover);
+  --pf-skeleton: var(--surface-0);
+  --pf-skeleton-shine: var(--surface-1);
+  --pf-outline-focus: var(--accent);
+  --pf-font: inherit;
+  --pf-input-height: 46px;
+  --pf-result-title-font-size: 17px;
+  --pf-result-excerpt-font-size: 14px;
+}
+
+.search-panel pagefind-input,
+.search-panel pagefind-summary,
+.search-panel pagefind-results {
+  display: block;
+}
+
+.search-panel pagefind-summary {
+  margin-top: 20px;
+}
+</style>
