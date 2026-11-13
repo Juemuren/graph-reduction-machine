@@ -34,15 +34,23 @@ deno task dev
 
 该任务会启动本地开发服务器。
 
+### 预览
+
+```sh
+deno task preview
+```
+
+该任务会启动本地预览服务器。
+
 ### 构建
 
 ```sh
 deno task build
 ```
 
-该任务会将生成的站点文件保存在 `dist/` 中。
+该任务会将生成的站点文件和索引文件保存在 `dist/` 中。
 
-构建完成后会自动检查页面中的链接和锚点。
+运行 `deno task dev` 不会生成搜索索引；本地验证搜索功能需要先完成构建，再运行 `deno task preview`。
 
 ### 测试
 
@@ -50,7 +58,7 @@ deno task build
 deno task test
 ```
 
-该任务会读取 `dist/` 中的文件。
+该任务会读取 `dist/` 中的文件，检查生成页面的内容、链接和锚点。
 
 因此运行测试前需要先完成构建。
 
@@ -63,7 +71,7 @@ deno task typecheck
 该任务会同时运行 Astro 和 Deno 的类型检查
 
 - Astro 检查 `src/` 中的代码
-- Deno 检查 `src/`、`scripts/`、`test/` 中的代码
+- Deno 检查 `src/`、`test/` 中的代码
 
 ### 静态检查和格式化
 
@@ -74,7 +82,7 @@ deno task check
 该任务会同时运行 Biome 和 Deno 的静态检查和格式化
 
 - Biome 检查 `src/`、`astro.config.ts`、`biome.json`、`tsconfig.json` 中的代码，格式化 `src/`、`astro.config.ts`、`biome.json`、`tsconfig.json` 中的代码
-- Deno 检查 `src/`、`scripts/`、`test/`、`deno.json` 中的代码，格式化 `scripts/`、`test/`、`deno.json` 中的代码
+- Deno 检查 `src/`、`test/`、`deno.json` 中的代码，格式化 `test/`、`deno.json` 中的代码
 
 ### 完整验证
 

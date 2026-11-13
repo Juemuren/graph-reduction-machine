@@ -8,10 +8,10 @@
   },
   "exclude": [".astro/"],
   "fmt": {
-    "include": ["scripts/", "test/", "deno.json"]
+    "include": ["test/", "deno.json"]
   },
   "lint": {
-    "include": ["scripts/", "test/", "src/**/*.ts"],
+    "include": ["test/", "src/**/*.ts"],
     "rules": {
       "exclude": ["no-sloppy-imports"]
     }
@@ -26,13 +26,12 @@
       "dependencies": ["typecheck:astro", "typecheck:deno"]
     },
     "typecheck:astro": "astro check",
-    "typecheck:deno": "deno check scripts/ test/ src/",
+    "typecheck:deno": "deno check test/ src/",
     "check": {
       "dependencies": ["check:biome", "check:deno"]
     },
     "check:biome": "biome check . --fix",
     "check:deno": "deno fmt && deno lint",
-    "check:links": "deno run --allow-read --allow-env=SITE_BASE scripts/check-links.ts",
     "test": "deno test --allow-read --allow-env=SITE_BASE test/",
     "verify": "deno task typecheck && deno task check && deno task build && deno task test"
   },
