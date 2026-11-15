@@ -11,7 +11,7 @@ import remarkMath from "remark-math";
 import remarkParse from "remark-parse";
 import remarkRehype from "remark-rehype";
 import { unified } from "unified";
-import { exampleOrder, referenceDocs, root } from "../config";
+import { exampleNames, docNames, root } from "../config";
 import { sitePath } from "./urls";
 
 export interface Example {
@@ -281,7 +281,7 @@ export async function examples(): Promise<Example[]> {
       .filter((item): item is Example => item !== null)
       .sort((a, b) => {
         const position = (slug: string) => {
-          const index = exampleOrder.indexOf(slug);
+          const index = exampleNames.indexOf(slug);
           return index === -1 ? Number.MAX_SAFE_INTEGER : index;
         };
         return (
@@ -360,7 +360,7 @@ function rewriteLinks(sourcePath: string) {
         if (
           resolved.startsWith("docs/") &&
           resolved.endsWith(".md") &&
-          !referenceDocs.includes(path.posix.basename(resolved, ".md"))
+          !docNames.includes(path.posix.basename(resolved, ".md"))
         )
           throw new Error(`文档尚未纳入站点: ${sourcePath} -> ${node.url}`);
         node.url =

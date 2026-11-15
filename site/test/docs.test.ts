@@ -1,11 +1,11 @@
 import assert from "node:assert/strict";
 import { readdir } from "node:fs/promises";
 import path from "node:path";
-import { referenceDocs, root } from "../src/config.ts";
+import { docNames, root } from "../src/config.ts";
 import { base, html, markdownPages } from "./helpers.ts";
 
 Deno.test("configured documents and library sources have pages", async () => {
-  for (const slug of referenceDocs) {
+  for (const slug of docNames) {
     assert.match(await html(`docs/${slug}/index.html`), /<article\b/);
   }
 

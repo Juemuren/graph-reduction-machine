@@ -4,7 +4,7 @@ import path from "node:path";
 export const root = path.resolve(process.cwd(), "..");
 
 // Documents shown in /docs/ and accepted as internal Markdown links.
-export const referenceDocs = [
+export const docNames = [
   "syntax",
   "architecture",
   "compiler",
@@ -14,10 +14,10 @@ export const referenceDocs = [
 ];
 
 // Known examples appear in this order; new examples follow by directory name.
-export const exampleOrder = [
+export const exampleNames = [
   "lambda",
   "ski",
-  "encoding",
+  "natural",
   "fibonacci",
   "pi",
   "e",

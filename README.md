@@ -26,13 +26,7 @@ cabal exec -- ski-interpreter example.ski
 
 ## 示例
 
-- [λ 演算](examples/lambda/README.md)
-- [SKI 组合子](examples/ski/README.md)
-- [自然数编码](examples/encoding/README.md)
-- [斐波那契数列](examples/fibonacci/README.md)
-- [圆周率](examples/pi/README.md)
-- [自然常数](examples/e/README.md)
-- [符号微积分](examples/calculus/README.md)
+见 <https://juemuren.github.io/graph-reduction-machine/examples/>。
 
 ## 文档
 

@@ -1,7 +1,7 @@
 import { readdir, readFile } from "node:fs/promises";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
-import { referenceDocs, root } from "../src/config.ts";
+import { docNames, root } from "../src/config.ts";
 
 export const dist = fileURLToPath(new URL("../dist/", import.meta.url));
 export const base = (Deno.env.get("SITE_BASE") ?? "/").replace(/\/$/, "");
@@ -29,7 +29,7 @@ export async function exampleFiles(): Promise<ExampleFiles[]> {
 
 export async function markdownPages() {
   return [
-    ...referenceDocs.map((slug) => `docs/${slug}/index.html`),
+    ...docNames.map((slug) => `docs/${slug}/index.html`),
     ...(await exampleFiles()).map(({ slug }) => `examples/${slug}/index.html`),
   ];
 }
