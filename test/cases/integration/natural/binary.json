@@ -1,0 +1,28 @@
+{
+  "cases": [
+    {
+      "name": "succ_b-zero",
+      "language": "lambda",
+      "source": "@! SUCC_B 0;",
+      "stage": "decode",
+      "options": { "encode": "binary", "decode": "binary-natural" },
+      "expect": { "value": "1" }
+    },
+    {
+      "name": "succ_b-ont",
+      "language": "lambda",
+      "source": "@! SUCC_B 1;",
+      "stage": "decode",
+      "options": { "encode": "binary", "decode": "binary-natural" },
+      "expect": { "value": "2" }
+    },
+    {
+      "name": "succ_b-two",
+      "language": "lambda",
+      "source": "@! SUCC_B 2;",
+      "stage": "decode",
+      "options": { "encode": "binary", "decode": "binary-natural" },
+      "expect": { "value": "3" }
+    }
+  ]
+}

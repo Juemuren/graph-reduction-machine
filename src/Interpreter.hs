@@ -9,6 +9,9 @@ module Interpreter (
   decodeScottNaturalSource,
   decodeScottNaturalSourceWithSteps,
   decodeScottNatural,
+  decodeBinaryNaturalSource,
+  decodeBinaryNaturalSourceWithSteps,
+  decodeBinaryNatural,
   decodeBooleanSource,
   decodeBooleanSourceWithSteps,
   decodeBoolean,
@@ -23,6 +26,11 @@ module Interpreter (
   decodeReal,
 ) where
 
+import Interpreter.Binary (
+  decodeBinaryNatural,
+  decodeBinaryNaturalSource,
+  decodeBinaryNaturalSourceWithSteps,
+ )
 import Interpreter.Church (
   decodeBoolean,
   decodeBooleanSource,

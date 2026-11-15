@@ -23,7 +23,7 @@
 
 对于字面量的展开：
 
-- 十进制自然数字面量被替换为对应的数字编码，提供 Church 编码和 Scott 编码
+- 十进制自然数字面量被替换为对应的数字编码，提供 Church / Scott / Binary 编码
 
 ### 表达式归约
 
@@ -65,3 +65,4 @@
 
 - 使用 `--encode=church` 选择 Church 编码
 - 使用 `--encode=scott` 选择 Scott 编码
+- 使用 `--encode=binary` 选择三分支的二进制编码，外层构造器表示最低有效位

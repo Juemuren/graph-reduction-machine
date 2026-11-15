@@ -36,9 +36,9 @@
         "name": { "type": "string", "minLength": 1 },
         "file": { "type": "string", "minLength": 1 },
         "function": { "type": "string", "minLength": 1 },
-        "encode": { "enum": ["church", "scott"] },
+        "encode": { "enum": ["church", "scott", "binary"] },
         "decode": {
-          "enum": ["natural", "scott-natural", "integer", "rational", "boolean"]
+          "enum": ["natural", "scott-natural", "binary-natural", "integer", "rational", "boolean"]
         }
       },
       "additionalProperties": false

@@ -36,7 +36,10 @@ runCase :: String -> TestCase -> IO ()
 runCase label (TestCase _ (Input language source modules) spec expected) = do
   void (caseLimit label 100000 spec)
   reduction <- unwrap label (parseReduction (runEnableReduce spec))
-  let encoding = if runEncode spec == Just "scott" then Scott else Church
+  let encoding = case runEncode spec of
+        Just "scott" -> Scott
+        Just "binary" -> Binary
+        _ -> Church
   case (language, runStage spec, expected) of
     ("lambda", "parse", ExpectedValue value) ->
       assertParsed label source value

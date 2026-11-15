@@ -66,6 +66,17 @@
    - 若 `n` 解码失败，则 Scott 自然数解码失败
 - 若归约结果不符合以上两种形式，则解码失败
 
+使用 Binary 自然数解码时，解释器把根表达式应用到符号参数 `z`、`e` 和 `o`，再归约所得表达式：
+
+- 若归约结果为 `z`，则解码得到 `0`
+- 若归约结果为 `e n`，则按 Binary 自然数递归解码 `n`
+   - 若 `n` 解码成功，则把 `2n` 作为解码得到 Binary 自然数
+   - 若 `n` 解码失败，则 Binary 自然数解码失败
+- 若归约结果为 `o n`，则按 Binary 自然数递归解码 `n`
+   - 若 `n` 解码成功，则把 `2n+1` 作为解码得到 Binary 自然数
+   - 若 `n` 解码失败，则 Binary 自然数解码失败
+- 若归约结果不符合以上三种形式，则解码失败
+
 #### 整数解码
 
 使用整数解码时，解释器会把输入图的根表达式应用到符号参数 `f`，再将表达式归约到 `f a b` 形式，然后分别按 Church 自然数解码 `a` 和 `b`：
@@ -102,6 +113,7 @@
 - 用 `--decode=boolean` 解码布尔值
 - 用 `--decode=natural` 解码 Church 自然数
 - 用 `--decode=scott-natural` 解码 Scott 自然数
+- 用 `--decode=binary-natural` 解码二进制自然数
 - 用 `--decode=integer` 解码整数
 - 用 `--decode=rational` 解码有理数
 - 用 `--decode=real` 解码实数，用 `--precision-real=N` 指定解码时使用的自然数下标为 `N`

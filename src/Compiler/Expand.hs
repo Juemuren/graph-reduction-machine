@@ -34,7 +34,7 @@ standardIndex = foldM addModule Map.empty (Map.toList sources)
     | Map.member name index = Left ("duplicate standard library export: " ++ name)
     | otherwise = Right (Map.insert name path index)
 
-data Encoding = Church | Scott deriving (Eq, Show)
+data Encoding = Church | Scott | Binary deriving (Eq, Show)
 
 -- | Keep the expression API available to callers that already have an AST.
 expand :: Core.Exp -> Either String Pure.Exp
@@ -158,10 +158,17 @@ encodeNatural :: Encoding -> Integer -> Pure.Exp
 encodeNatural encoding number = case encoding of
   Church -> absName "f" (absName "x" (iterateN number (app (var "f")) (var "x")))
   Scott -> iterateN number successor zero
+  Binary -> binary number
  where
   zero = absName "zero" (absName "successor" (var "zero"))
   successor predecessor =
     absName "zero" (absName "successor" (app (var "successor") predecessor))
+  binary 0 = absName "zero" (absName "even" (absName "odd" (var "zero")))
+  binary n =
+    let branch = if even n then "even" else "odd"
+     in absName
+          "zero"
+          (absName "even" (absName "odd" (app (var branch) (binary (n `div` 2)))))
   iterateN 0 _ base = base
   iterateN n step base = step (iterateN (n - 1) step base)
   var = Pure.EVar . Pure.Name

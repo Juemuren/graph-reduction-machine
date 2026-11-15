@@ -32,6 +32,22 @@
       "expect": { "value": "\\zero -> \\successor -> successor (\\zero -> \\successor -> successor (\\zero -> \\successor -> zero))" }
     },
     {
+      "name": "zero-binary",
+      "language": "lambda",
+      "source": "0",
+      "stage": "expand",
+      "options": { "encode": "binary" },
+      "expect": { "value": "\\zero -> \\even -> \\odd -> zero" }
+    },
+    {
+      "name": "two-binary",
+      "language": "lambda",
+      "source": "2",
+      "stage": "expand",
+      "options": { "encode": "binary" },
+      "expect": { "value": "\\zero -> \\even -> \\odd -> even (\\zero -> \\even -> \\odd -> odd (\\zero -> \\even -> \\odd -> zero))" }
+    },
+    {
       "name": "numeral-in-definition-and-application",
       "language": "lambda",
       "source": "value = 2; @! (\\n -> n) value;",

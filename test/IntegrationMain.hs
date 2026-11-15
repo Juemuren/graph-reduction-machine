@@ -5,6 +5,7 @@ import Compiler.Expand (Encoding (..))
 import Control.Monad (void)
 import Data.Ratio (denominator, numerator)
 import Interpreter (
+  decodeBinaryNatural,
   decodeBoolean,
   decodeInteger,
   decodeNatural,
@@ -35,7 +36,10 @@ main = runSuite "integration" runCase
 runCase :: String -> TestCase -> IO ()
 runCase label (TestCase _ (Input language source modules) spec expected) = do
   reduction <- unwrap label (parseReduction (runEnableReduce spec))
-  let encoding = if runEncode spec == Just "scott" then Scott else Church
+  let encoding = case runEncode spec of
+        Just "scott" -> Scott
+        Just "binary" -> Binary
+        _ -> Church
   limit <- caseLimit label 100000 spec
   case (language, runStage spec, expected) of
     ("lambda", "interpret", ExpectedValue graph) ->
@@ -65,6 +69,7 @@ decodeGraph :: RunSpec -> Int -> Graph.Graph -> Either String String
 decodeGraph spec limit graph = case runDecode spec of
   Just "natural" -> showDecoded "Natural" show (decodeNatural limit graph)
   Just "scott-natural" -> showScottDecoded (decodeScottNatural limit graph)
+  Just "binary-natural" -> showBinaryDecoded (decodeBinaryNatural limit graph)
   Just "boolean" -> showDecoded "Boolean" show (decodeBoolean limit graph)
   Just "integer" -> showDecoded "Integer" show (decodeInteger limit graph)
   Just "rational" -> showDecoded "Rational" renderRational (decodeRational limit graph)
@@ -82,6 +87,9 @@ decodeGraph spec limit graph = case runDecode spec of
   showScottDecoded result = do
     value <- result
     maybe (Left "not a Scott Natural") (Right . show) value
+  showBinaryDecoded result = do
+    value <- result
+    maybe (Left "not a Binary Natural") (Right . show) value
 
 renderRational :: Rational -> String
 renderRational value = show (numerator value) ++ "/" ++ show (denominator value)

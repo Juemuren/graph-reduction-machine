@@ -48,6 +48,7 @@ library
     , Compiler.LibrarySource
     , Compiler.ModuleSource
     , Interpreter.Church
+    , Interpreter.Binary
     , Interpreter.Machine
     , Interpreter.Scott
     , LanguageServer.Common

@@ -58,9 +58,9 @@ cabal test
 - `stage` 是要进行到的阶段。可以为 `parse` / `expand` / `reduce` / `compile` / `interpret` / `decode`
 - `options`
   - `options.enableReduce` 是编译器启用的归约类型。可以为 `beta` / `eta` / `both`
-  - `options.encode` 是字面量的编码。可以为 `church` / `scott`
+  - `options.encode` 是字面量的编码。可以为 `church` / `scott` / `binary`
   - `options.maxSteps` 是解释器的归约步数上限。为正整数
-  - `options.decode` 是解释器的解码方式。可以为 `natural` / `scott-natural` / `boolean` / `integer` / `rational` / `real`
+  - `options.decode` 是解释器的解码方式。可以为 `natural` / `scott-natural` / `binary-natural` / `boolean` / `integer` / `rational` / `real`
   - `options.precisionReal` 是实数解码精度。为非负整数
 - `expect` 是预期的值。只能是 `value` / `error` 之一
   - `expect.value` 对于 `parse` / `expand` / `reduce` 比较语法树，对于 `compile` / `interpret` 比较图，对于 `decode` 比较文本

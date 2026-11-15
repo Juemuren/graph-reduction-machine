@@ -49,7 +49,7 @@ parseArgs = go Nothing Nothing Nothing Nothing
       [ "usage: lambda-compiler"
       , "[--stop-after=expand|reduce]"
       , "[--enable-reduce=beta|eta|both]"
-      , "[--encode=church|scott]"
+      , "[--encode=church|scott|binary]"
       , "[FILE]"
       ]
   go mode reduction encoding path [] =
@@ -66,6 +66,7 @@ parseArgs = go Nothing Nothing Nothing Nothing
   go mode Nothing encoding path ("--enable-reduce=both" : rest) = go mode (Just BetaEta) encoding path rest
   go mode reduction Nothing path ("--encode=church" : rest) = go mode reduction (Just Church) path rest
   go mode reduction Nothing path ("--encode=scott" : rest) = go mode reduction (Just Scott) path rest
+  go mode reduction Nothing path ("--encode=binary" : rest) = go mode reduction (Just Binary) path rest
   go mode reduction encoding Nothing (value@(first : _) : rest)
     | first /= '-' = go mode reduction encoding (Just value) rest
   go _ _ _ _ _ = Left usage

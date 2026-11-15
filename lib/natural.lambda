@@ -130,3 +130,21 @@ divMod = \m -> \n ->
     (\p -> n FALSE (\q -> lt p q))
 );
 
+# ---
+# Binary-encoded
+# ---
+
+@> ZERO_B = \zero -> \even -> \odd -> zero;
+@> EVEN_B = \n -> \zero -> \even -> \odd -> even n;
+@> ODD_B = \n -> \zero -> \even -> \odd -> odd n;
+
+@> BIT_0 = EVEN_B;
+@> BIT_1 = ODD_B;
+
+@> SUCC_B = Y (\s -> \n ->
+    n
+    (BIT_1 ZERO_B)
+    (\k -> BIT_1 k)
+    (\k -> BIT_0 (s k))
+);
+

@@ -7,6 +7,7 @@ import Data.List (stripPrefix)
 import Data.Maybe (fromMaybe, isNothing)
 import Data.Ratio (denominator, numerator)
 import Interpreter (
+  decodeBinaryNaturalSourceWithSteps,
   decodeBooleanSourceWithSteps,
   decodeIntegerSourceWithSteps,
   decodeNaturalSourceWithSteps,
@@ -36,6 +37,9 @@ main = do
           ScottNatural ->
             decodeScottNaturalSourceWithSteps limit source
               >>= renderDecoded "not a Scott Natural" show
+          BinaryNatural ->
+            decodeBinaryNaturalSourceWithSteps limit source
+              >>= renderDecoded "not a Binary Natural" show
           Boolean ->
             decodeBooleanSourceWithSteps limit source
               >>= renderDecoded "not a Church Boolean" (map toUpper . show)
@@ -68,6 +72,7 @@ data DecodeMode
   = Raw
   | Natural
   | ScottNatural
+  | BinaryNatural
   | Boolean
   | Integer
   | Rational
@@ -83,7 +88,7 @@ parseArgs = go Nothing False Raw Nothing Nothing
       [ "usage: ski-interpreter"
       , "[--max-steps=N|--no-step-limit]"
       , "[--show-steps]"
-      , "[--decode=natural|scott-natural|boolean|integer|rational|real]"
+      , "[--decode=natural|scott-natural|binary-natural|boolean|integer|rational|real]"
       , "[--precision-real=N]"
       , "[FILE]"
       ]
@@ -97,6 +102,7 @@ parseArgs = go Nothing False Raw Nothing Nothing
         case name of
           "natural" -> go limit showSteps Natural precision path rest
           "scott-natural" -> go limit showSteps ScottNatural precision path rest
+          "binary-natural" -> go limit showSteps BinaryNatural precision path rest
           "boolean" -> go limit showSteps Boolean precision path rest
           "integer" -> go limit showSteps Integer precision path rest
           "rational" -> go limit showSteps Rational precision path rest

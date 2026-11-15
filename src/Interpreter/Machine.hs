@@ -32,6 +32,7 @@ data Node
   | Indirect Address
   | ProbeFunction
   | ProbeValue
+  | ProbeBit
   | ChurchNumeral Natural
 
 data Machine = Machine
@@ -244,4 +245,5 @@ serialize root = do
           Indirect _ -> lift (Left "internal error: unresolved indirection")
           ProbeFunction -> lift (Left "internal error: cannot serialize probe function")
           ProbeValue -> lift (Left "internal error: cannot serialize probe value")
+          ProbeBit -> lift (Left "internal error: cannot serialize bit probe")
           ChurchNumeral _ -> lift (Left "internal error: cannot serialize Church numeral")
