@@ -16,12 +16,13 @@
 @> FOLDR = \f -> \initial -> \list -> list f initial;
 @> FOLDL = \f -> \initial -> \list ->
     list (\item -> \rest -> \acc -> rest (f acc item)) (\acc -> acc) initial;
+
+# Transformation
+
 @> MAP = \f -> \list -> \c -> \n -> list (\item -> \rest -> c (f item) rest) n;
-
-# Selection
-
 @> FILTER = \predicate -> \list -> \c -> \n ->
     list (\item -> \rest -> IF (predicate item) (c item rest) rest) n;
+@> REVERSE = \list -> FOLDL (\acc -> \item -> CONS item acc) NIL list;
 
 # Deconstruction
 
@@ -38,14 +39,25 @@
                 IF (ISZERO remaining) item (rest (PRED remaining)))
             (\remaining -> default)
             (PRED n));
+@> TAKE = \n -> \list -> \c -> \empty ->
+    list
+        (\item -> \rest -> \remaining ->
+            IF (ISZERO remaining)
+                empty
+                (c item (rest (PRED remaining))))
+        (\remaining -> empty)
+        n;
+@> DROP = \n -> \list -> n TAIL list;
+@> UNCONS = \list -> PAIR (HEAD list NIL) (TAIL list);
+@> CASE = \list -> \empty -> \cons ->
+    IF (ISNIL list)
+        empty
+        (cons (HEAD list NIL) (TAIL list));
 
 # Combination
 
 @> APPEND = \left -> \right -> left CONS right;
-
-# Reordering
-
-@> REVERSE = \list -> FOLDL (\acc -> \item -> CONS item acc) NIL list;
+@> CONCAT = \lists -> lists APPEND NIL;
 
 # Measurement
 

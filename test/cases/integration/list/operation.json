@@ -151,6 +151,126 @@
       "stage": "decode",
       "options": { "decode": "natural" },
       "expect": { "value": "2" }
+    },
+    {
+      "name": "take-zero",
+      "language": "lambda",
+      "source": "@! ISNIL (TAKE ZERO (CONS ONE NIL));\n",
+      "stage": "decode",
+      "options": { "decode": "boolean" },
+      "expect": { "value": "True" }
+    },
+    {
+      "name": "take-prefix-order",
+      "language": "lambda",
+      "source": "@! FOLDR (\\x -> \\rest -> ADD x (MUL TEN rest)) ZERO (TAKE TWO (CONS ONE (CONS TWO (CONS THREE NIL))));\n",
+      "stage": "decode",
+      "options": { "decode": "natural" },
+      "expect": { "value": "21" }
+    },
+    {
+      "name": "take-beyond-length",
+      "language": "lambda",
+      "source": "@! LENGTH (TAKE FIVE (CONS ONE (CONS TWO NIL)));\n",
+      "stage": "decode",
+      "options": { "decode": "natural" },
+      "expect": { "value": "2" }
+    },
+    {
+      "name": "take-empty",
+      "language": "lambda",
+      "source": "@! ISNIL (TAKE TWO NIL);\n",
+      "stage": "decode",
+      "options": { "decode": "boolean" },
+      "expect": { "value": "True" }
+    },
+    {
+      "name": "drop-zero",
+      "language": "lambda",
+      "source": "@! HEAD (DROP ZERO (CONS ONE NIL)) ZERO;\n",
+      "stage": "decode",
+      "options": { "decode": "natural" },
+      "expect": { "value": "1" }
+    },
+    {
+      "name": "drop-prefix",
+      "language": "lambda",
+      "source": "@! HEAD (DROP TWO (CONS ONE (CONS TWO (CONS THREE NIL)))) ZERO;\n",
+      "stage": "decode",
+      "options": { "decode": "natural" },
+      "expect": { "value": "3" }
+    },
+    {
+      "name": "drop-beyond-length",
+      "language": "lambda",
+      "source": "@! ISNIL (DROP FIVE (CONS ONE (CONS TWO NIL)));\n",
+      "stage": "decode",
+      "options": { "decode": "boolean" },
+      "expect": { "value": "True" }
+    },
+    {
+      "name": "drop-empty",
+      "language": "lambda",
+      "source": "@! ISNIL (DROP TWO NIL);\n",
+      "stage": "decode",
+      "options": { "decode": "boolean" },
+      "expect": { "value": "True" }
+    },
+    {
+      "name": "uncons-head",
+      "language": "lambda",
+      "source": "@! FST (UNCONS (CONS TWO (CONS THREE NIL)));\n",
+      "stage": "decode",
+      "options": { "decode": "natural" },
+      "expect": { "value": "2" }
+    },
+    {
+      "name": "uncons-tail",
+      "language": "lambda",
+      "source": "@! HEAD (SND (UNCONS (CONS TWO (CONS THREE NIL)))) ZERO;\n",
+      "stage": "decode",
+      "options": { "decode": "natural" },
+      "expect": { "value": "3" }
+    },
+    {
+      "name": "uncons-empty",
+      "language": "lambda",
+      "source": "@! AND (ISNIL (FST (UNCONS NIL))) (ISNIL (SND (UNCONS NIL)));\n",
+      "stage": "decode",
+      "options": { "decode": "boolean" },
+      "expect": { "value": "True" }
+    },
+    {
+      "name": "case-empty",
+      "language": "lambda",
+      "source": "@! CASE NIL FOUR (\\head -> \\tail -> ZERO);\n",
+      "stage": "decode",
+      "options": { "decode": "natural" },
+      "expect": { "value": "4" }
+    },
+    {
+      "name": "case-cons",
+      "language": "lambda",
+      "source": "@! CASE (CONS TWO (CONS THREE NIL)) ZERO (\\head -> \\tail -> ADD head (LENGTH tail));\n",
+      "stage": "decode",
+      "options": { "decode": "natural" },
+      "expect": { "value": "3" }
+    },
+    {
+      "name": "concat-empty",
+      "language": "lambda",
+      "source": "@! ISNIL (CONCAT NIL);\n",
+      "stage": "decode",
+      "options": { "decode": "boolean" },
+      "expect": { "value": "True" }
+    },
+    {
+      "name": "concat-order-with-empty-inner-list",
+      "language": "lambda",
+      "source": "@! FOLDR (\\x -> \\rest -> ADD x (MUL TEN rest)) ZERO (CONCAT (CONS (CONS ONE NIL) (CONS NIL (CONS (CONS TWO (CONS THREE NIL)) NIL))));\n",
+      "stage": "decode",
+      "options": { "decode": "natural" },
+      "expect": { "value": "321" }
     }
   ]
 }
