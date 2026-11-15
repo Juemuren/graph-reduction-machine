@@ -2,7 +2,7 @@
 
 # Source this file to use the compiler, interpreter and integration functions.
 
-_lambda_tool() (
+_grm_tool() (
     local target=$1 file='' source='' input=stdin executable
     local -a options=()
     shift
@@ -46,11 +46,11 @@ _lambda_tool() (
 )
 
 invoke_compiler() {
-    _lambda_tool lambda-compiler "$@"
+    _grm_tool lambda-compiler "$@"
 }
 
 invoke_interpreter() {
-    _lambda_tool ski-interpreter "$@"
+    _grm_tool ski-interpreter "$@"
 }
 
 invoke_integration_stage() (
@@ -183,7 +183,7 @@ invoke_integration_sequence() (
     done
 )
 
-_lambda_stage_completions() {
+_grm_stage_completions() {
     local current=$1 multiple=$2 prefix='' fragment=$1 index
     if [[ $multiple == yes && $current == *,* ]]; then
         prefix=${current%,*},
@@ -196,11 +196,11 @@ _lambda_stage_completions() {
     done
 }
 
-_lambda_encode_completions() {
+_grm_encode_completions() {
     mapfile -t COMPREPLY < <(compgen -W 'church scott binary' -- "$1")
 }
 
-_lambda_decode_completions() {
+_grm_decode_completions() {
     local rest=$1 prefix='' expected='type' candidate top
     local -a stack=()
     local -a types=(natural scott-natural binary-natural boolean integer rational string 'list<' 'pair<')
@@ -266,20 +266,20 @@ _lambda_decode_completions() {
     fi
 }
 
-_lambda_option_completions() {
+_grm_option_completions() {
     local command=$1 current=$2 value index
     COMPREPLY=()
 
     case $command:$current in
         invoke_compiler:--encode=*)
             value=${current#--encode=}
-            _lambda_encode_completions "$value"
+            _grm_encode_completions "$value"
             for index in "${!COMPREPLY[@]}"; do
                 COMPREPLY[index]="--encode=${COMPREPLY[index]}"
             done
             ;;
         invoke_interpreter:--decode=*)
-            _lambda_decode_completions "${current#--decode=}"
+            _grm_decode_completions "${current#--decode=}"
             for index in "${!COMPREPLY[@]}"; do
                 COMPREPLY[index]="--decode=${COMPREPLY[index]}"
             done
@@ -289,7 +289,7 @@ _lambda_option_completions() {
     compopt -o nospace
 }
 
-_lambda_tool_completion() {
+_grm_tool_completion() {
     local current=${COMP_WORDS[COMP_CWORD]}
     local previous=${COMP_WORDS[COMP_CWORD - 1]}
     local command=${COMP_WORDS[0]}
@@ -306,7 +306,7 @@ _lambda_tool_completion() {
         *)
             for word in "${COMP_WORDS[@]:1:COMP_CWORD-1}"; do
                 if [[ $word == -- ]]; then
-                    _lambda_option_completions "$command" "$current"
+                    _grm_option_completions "$command" "$current"
                     return
                 fi
             done
@@ -329,18 +329,18 @@ _lambda_tool_completion() {
         case $previous in
             -t | --stage | --stages)
                 if [[ $command == invoke_integration_sequence ]]; then
-                    _lambda_stage_completions "$current" yes
+                    _grm_stage_completions "$current" yes
                 else
-                    _lambda_stage_completions "$current" no
+                    _grm_stage_completions "$current" no
                 fi
                 return
                 ;;
             -e | --encode)
-                _lambda_encode_completions "$current"
+                _grm_encode_completions "$current"
                 return
                 ;;
             -d | --decode)
-                _lambda_decode_completions "$current"
+                _grm_decode_completions "$current"
                 compopt -o nospace
                 return
                 ;;
@@ -350,4 +350,4 @@ _lambda_tool_completion() {
     mapfile -t COMPREPLY < <(compgen -W "$option_words" -- "$current")
 }
 
-complete -F _lambda_tool_completion invoke_compiler invoke_interpreter invoke_integration_stage invoke_integration_sequence
+complete -F _grm_tool_completion invoke_compiler invoke_interpreter invoke_integration_stage invoke_integration_sequence

@@ -1,3 +1,12 @@
+[Diagnostics.CodeAnalysis.SuppressMessageAttribute(
+    'PSUseApprovedVerbs',
+    '',
+    Scope = 'Function',
+    Target = '_GRM_GET-.*',
+    Justification = 'Internal helper namespace'
+)]
+param()
+
 function Invoke-Compiler {
     [CmdletBinding(PositionalBinding = $false)]
     param(
@@ -7,7 +16,7 @@ function Invoke-Compiler {
 
         [Parameter(ValueFromRemainingArguments)]
         [ArgumentCompleter({
-                Get-ToolOptionCompletion 'Invoke-Compiler' ([string]$args[2])
+                _GRM_GET-OptionCompletion 'Invoke-Compiler' ([string]$args[2])
             })]
         [string[]]$Options,
 
@@ -48,7 +57,7 @@ function Invoke-Interpreter {
 
         [Parameter(ValueFromRemainingArguments)]
         [ArgumentCompleter({
-                Get-ToolOptionCompletion 'Invoke-Interpreter' ([string]$args[2])
+                _GRM_GET-OptionCompletion 'Invoke-Interpreter' ([string]$args[2])
             })]
         [string[]]$Options,
 
@@ -186,7 +195,7 @@ function Invoke-IntegrationSequence {
     }
 
     end {
-        foreach ($stage in @(Get-IntegrationStageCompletion '')) {
+        foreach ($stage in @(_GRM_GET-StageCompletion '')) {
             if ($Stages -contains $stage) {
                 Invoke-IntegrationStage -File $File -Source $inputSource `
                     -Stage $stage `
@@ -197,7 +206,7 @@ function Invoke-IntegrationSequence {
     }
 }
 
-function Get-IntegrationStageCompletion {
+function _GRM_GET-StageCompletion {
     param([string]$Prefix)
 
     foreach ($stage in @('expand', 'reduce', 'compile', 'interpret', 'decode')) {
@@ -207,7 +216,7 @@ function Get-IntegrationStageCompletion {
     }
 }
 
-function Get-EncodeTypeCompletion {
+function _GRM_GET-EncodeCompletion {
     param([string]$Prefix)
 
     foreach ($type in @('church', 'scott', 'binary')) {
@@ -217,7 +226,7 @@ function Get-EncodeTypeCompletion {
     }
 }
 
-function Get-DecodeTypeCompletion {
+function _GRM_GET-DecodeCompletion {
     param([string]$InputType)
 
     $remaining = $InputType
@@ -286,7 +295,7 @@ function Get-DecodeTypeCompletion {
     }
 }
 
-function Get-ToolOptionCompletion {
+function _GRM_GET-OptionCompletion {
     param(
         [string]$CommandName,
         [string]$Word
@@ -294,10 +303,10 @@ function Get-ToolOptionCompletion {
 
     $word = $Word.Trim("'`"")
     if ($CommandName -eq 'Invoke-Compiler' -and $word.StartsWith('--encode=')) {
-        $values = Get-EncodeTypeCompletion $word.Substring(9) | ForEach-Object { "--encode=$_" }
+        $values = _GRM_GET-EncodeCompletion $word.Substring(9) | ForEach-Object { "--encode=$_" }
     }
     elseif ($CommandName -eq 'Invoke-Interpreter' -and $word.StartsWith('--decode=')) {
-        $values = Get-DecodeTypeCompletion $word.Substring(9) | ForEach-Object { "--decode=$_" }
+        $values = _GRM_GET-DecodeCompletion $word.Substring(9) | ForEach-Object { "--decode=$_" }
     }
     else {
         return
@@ -311,19 +320,19 @@ function Get-ToolOptionCompletion {
 # Arguments after -- use native completion; -Options uses the parameter completers above.
 Register-ArgumentCompleter -Native -CommandName Invoke-Compiler, Invoke-Interpreter -ScriptBlock {
     $commandName = $args[1].CommandElements[0].Value
-    Get-ToolOptionCompletion $commandName ([string]$args[0])
+    _GRM_GET-OptionCompletion $commandName ([string]$args[0])
 }
 
 Register-ArgumentCompleter -CommandName Invoke-IntegrationStage, Invoke-IntegrationSequence -ParameterName Encode -ScriptBlock {
     $prefix = ([string]$args[2]).Trim("'`"")
-    foreach ($completion in Get-EncodeTypeCompletion $prefix) {
+    foreach ($completion in _GRM_GET-EncodeCompletion $prefix) {
         [System.Management.Automation.CompletionResult]::new($completion, $completion, 'ParameterValue', $completion)
     }
 }
 
 Register-ArgumentCompleter -CommandName Invoke-IntegrationStage, Invoke-IntegrationSequence -ParameterName Decode -ScriptBlock {
     $prefix = ([string]$args[2]).Trim("'`"")
-    foreach ($completion in Get-DecodeTypeCompletion $prefix) {
+    foreach ($completion in _GRM_GET-DecodeCompletion $prefix) {
         [System.Management.Automation.CompletionResult]::new("'$completion'", $completion, 'ParameterValue', $completion)
     }
 }
@@ -331,7 +340,7 @@ Register-ArgumentCompleter -CommandName Invoke-IntegrationStage, Invoke-Integrat
 foreach ($parameter in @('Stage', 'Stages')) {
     Register-ArgumentCompleter -CommandName Invoke-IntegrationStage, Invoke-IntegrationSequence -ParameterName $parameter -ScriptBlock {
         $prefix = ([string]$args[2]).Trim("'`"")
-        foreach ($completion in Get-IntegrationStageCompletion $prefix) {
+        foreach ($completion in _GRM_GET-StageCompletion $prefix) {
             [System.Management.Automation.CompletionResult]::new($completion, $completion, 'ParameterValue', $completion)
         }
     }
