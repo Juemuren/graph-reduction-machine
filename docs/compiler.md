@@ -63,6 +63,6 @@
 
 指定字面量的编码：
 
-- 使用 `--encode=church` 选择 Church 编码
-- 使用 `--encode=scott` 选择 Scott 编码
-- 使用 `--encode=binary` 选择三分支的二进制编码，外层构造器表示最低有效位
+- 使用 `--encode=church` 选择 Church 自然数编码
+- 使用 `--encode=scott` 选择 Scott 自然数编码
+- 使用 `--encode=binary` 选择 Binary 自然数编码

@@ -1,0 +1,156 @@
+{
+  "cases": [
+    {
+      "name": "nil-is-empty",
+      "language": "lambda",
+      "source": "@! ISNIL NIL;\n",
+      "stage": "decode",
+      "options": { "decode": "boolean" },
+      "expect": { "value": "True" }
+    },
+    {
+      "name": "cons-is-not-empty",
+      "language": "lambda",
+      "source": "@! ISNIL (CONS ONE NIL);\n",
+      "stage": "decode",
+      "options": { "decode": "boolean" },
+      "expect": { "value": "False" }
+    },
+    {
+      "name": "length",
+      "language": "lambda",
+      "source": "@! LENGTH (CONS ONE (CONS TWO NIL));\n",
+      "stage": "decode",
+      "options": { "decode": "natural" },
+      "expect": { "value": "2" }
+    },
+    {
+      "name": "foldr-order",
+      "language": "lambda",
+      "source": "@! FOLDR SUB ZERO (CONS THREE (CONS ONE NIL));\n",
+      "stage": "decode",
+      "options": { "decode": "natural" },
+      "expect": { "value": "2" }
+    },
+    {
+      "name": "foldl-order",
+      "language": "lambda",
+      "source": "@! FOLDL SUB THREE (CONS ONE (CONS TWO NIL));\n",
+      "stage": "decode",
+      "options": { "decode": "natural" },
+      "expect": { "value": "0" }
+    },
+    {
+      "name": "head",
+      "language": "lambda",
+      "source": "@! HEAD (CONS TWO (CONS THREE NIL)) ZERO;\n",
+      "stage": "decode",
+      "options": { "decode": "natural" },
+      "expect": { "value": "2" }
+    },
+    {
+      "name": "head-empty",
+      "language": "lambda",
+      "source": "@! HEAD NIL THREE;\n",
+      "stage": "decode",
+      "options": { "decode": "natural" },
+      "expect": { "value": "3" }
+    },
+    {
+      "name": "tail",
+      "language": "lambda",
+      "source": "@! HEAD (TAIL (CONS ONE (CONS TWO NIL))) ZERO;\n",
+      "stage": "decode",
+      "options": { "decode": "natural" },
+      "expect": { "value": "2" }
+    },
+    {
+      "name": "tail-empty",
+      "language": "lambda",
+      "source": "@! ISNIL (TAIL NIL);\n",
+      "stage": "decode",
+      "options": { "decode": "boolean" },
+      "expect": { "value": "True" }
+    },
+    {
+      "name": "index-first",
+      "language": "lambda",
+      "source": "@! INDEX ONE ZERO (CONS TWO (CONS THREE NIL));\n",
+      "stage": "decode",
+      "options": { "decode": "natural" },
+      "expect": { "value": "2" }
+    },
+    {
+      "name": "index-middle",
+      "language": "lambda",
+      "source": "@! INDEX TWO ZERO (CONS ONE (CONS THREE (CONS TWO NIL)));\n",
+      "stage": "decode",
+      "options": { "decode": "natural" },
+      "expect": { "value": "3" }
+    },
+    {
+      "name": "index-last",
+      "language": "lambda",
+      "source": "@! INDEX THREE ZERO (CONS ONE (CONS TWO (CONS FOUR NIL)));\n",
+      "stage": "decode",
+      "options": { "decode": "natural" },
+      "expect": { "value": "4" }
+    },
+    {
+      "name": "index-beyond-length",
+      "language": "lambda",
+      "source": "@! INDEX THREE FOUR (CONS ONE (CONS TWO NIL));\n",
+      "stage": "decode",
+      "options": { "decode": "natural" },
+      "expect": { "value": "4" }
+    },
+    {
+      "name": "index-zero",
+      "language": "lambda",
+      "source": "@! INDEX ZERO FOUR (CONS ONE NIL);\n",
+      "stage": "decode",
+      "options": { "decode": "natural" },
+      "expect": { "value": "4" }
+    },
+    {
+      "name": "index-empty",
+      "language": "lambda",
+      "source": "@! INDEX ONE FOUR NIL;\n",
+      "stage": "decode",
+      "options": { "decode": "natural" },
+      "expect": { "value": "4" }
+    },
+    {
+      "name": "append-order",
+      "language": "lambda",
+      "source": "@! FOLDR (\\x -> \\rest -> ADD x (MUL TEN rest)) ZERO (APPEND (CONS ONE NIL) (CONS TWO NIL));\n",
+      "stage": "decode",
+      "options": { "decode": "natural" },
+      "expect": { "value": "21" }
+    },
+    {
+      "name": "map-order",
+      "language": "lambda",
+      "source": "@! HEAD (TAIL (MAP SUCC (CONS ONE (CONS TWO NIL)))) ZERO;\n",
+      "stage": "decode",
+      "options": { "decode": "natural" },
+      "expect": { "value": "3" }
+    },
+    {
+      "name": "filter-order",
+      "language": "lambda",
+      "source": "@! HEAD (FILTER (\\x -> GT x ONE) (CONS ONE (CONS THREE (CONS TWO NIL)))) ZERO;\n",
+      "stage": "decode",
+      "options": { "decode": "natural" },
+      "expect": { "value": "3" }
+    },
+    {
+      "name": "reverse-order",
+      "language": "lambda",
+      "source": "@! HEAD (REVERSE (CONS ONE (CONS TWO NIL))) ZERO;\n",
+      "stage": "decode",
+      "options": { "decode": "natural" },
+      "expect": { "value": "2" }
+    }
+  ]
+}

@@ -1,0 +1,56 @@
+# Lists
+
+# ---
+# Church encoding
+# ---
+
+# Construction
+
+@> NIL = \c -> \n -> n;
+@> CONS = \head -> \tail -> \c -> \n -> c head (tail c n);
+
+# Operations
+
+# Traversal
+
+@> FOLDR = \f -> \initial -> \list -> list f initial;
+@> FOLDL = \f -> \initial -> \list ->
+    list (\item -> \rest -> \acc -> rest (f acc item)) (\acc -> acc) initial;
+@> MAP = \f -> \list -> \c -> \n -> list (\item -> \rest -> c (f item) rest) n;
+
+# Selection
+
+@> FILTER = \predicate -> \list -> \c -> \n ->
+    list (\item -> \rest -> IF (predicate item) (c item rest) rest) n;
+
+# Deconstruction
+
+@> HEAD = \list -> \default -> list (\item -> \rest -> item) default;
+@> TAIL = \list ->
+    FST (list
+        (\item -> \pair -> PAIR (SND pair) (CONS item (SND pair)))
+        (PAIR NIL NIL));
+@> INDEX = \n -> \default -> \list ->
+    IF (ISZERO n)
+        default
+        (list
+            (\item -> \rest -> \remaining ->
+                IF (ISZERO remaining) item (rest (PRED remaining)))
+            (\remaining -> default)
+            (PRED n));
+
+# Combination
+
+@> APPEND = \left -> \right -> left CONS right;
+
+# Reordering
+
+@> REVERSE = \list -> FOLDL (\acc -> \item -> CONS item acc) NIL list;
+
+# Measurement
+
+@> LENGTH = \list -> list (\item -> \rest -> SUCC rest) ZERO;
+
+# Comparison
+
+@> ISNIL = \list -> list (\item -> \rest -> FALSE) TRUE;
