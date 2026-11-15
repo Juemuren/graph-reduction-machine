@@ -41,7 +41,7 @@
       "expect": {
         "exitCode": 1,
         "stdout": "",
-        "stderr": "usage: lambda-compiler [--stop-after=expand|reduce] [--enable-reduce=beta|eta|both] [--encode=church|scott] [FILE]\n"
+        "stderr": "usage: lambda-compiler [--stop-after=expand|reduce] [--enable-reduce=beta|eta|both] [--encode=church|scott|binary] [FILE]\n"
       }
     }
   ]

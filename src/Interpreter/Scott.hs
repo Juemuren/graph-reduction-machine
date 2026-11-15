@@ -3,6 +3,7 @@ module Interpreter.Scott (
   decodeScottNaturalSource,
   decodeScottNaturalSourceWithSteps,
   decodeScottNatural,
+  decodeScottNaturalAt,
 ) where
 
 import Interpreter.Machine

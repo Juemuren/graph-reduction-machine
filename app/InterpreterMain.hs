@@ -7,14 +7,17 @@ import Data.List (stripPrefix)
 import Data.Maybe (fromMaybe, isNothing)
 import Data.Ratio (denominator, numerator)
 import Interpreter (
+  DecodeType (..),
   decodeBinaryNaturalSourceWithSteps,
   decodeBooleanSourceWithSteps,
+  decodeCompositeSourceWithSteps,
   decodeIntegerSourceWithSteps,
   decodeNaturalSourceWithSteps,
   decodeRationalSourceWithSteps,
   decodeRealSourceWithSteps,
   decodeScottNaturalSourceWithSteps,
   interpretSourceWithSteps,
+  parseDecodeType,
  )
 import Numeric.Natural (Natural)
 import Ski.Print (printTree)
@@ -52,6 +55,9 @@ main = do
           Real precision ->
             decodeRealSourceWithSteps limit precision source
               >>= renderDecoded "not a Church Real" renderRational
+          Composite kind ->
+            decodeCompositeSourceWithSteps limit kind source
+              >>= renderDecoded "not a value of the requested type" id
   case result of
     Left message -> do
       hPutStrLn stderr message
@@ -77,6 +83,7 @@ data DecodeMode
   | Integer
   | Rational
   | Real Natural
+  | Composite DecodeType
   deriving (Eq)
 
 parseArgs ::
@@ -88,7 +95,7 @@ parseArgs = go Nothing False Raw Nothing Nothing
       [ "usage: ski-interpreter"
       , "[--max-steps=N|--no-step-limit]"
       , "[--show-steps]"
-      , "[--decode=natural|scott-natural|binary-natural|boolean|integer|rational|real]"
+      , "[--decode=natural|scott-natural|binary-natural|boolean|integer|rational|real|list<T>|pair<A,B>]"
       , "[--precision-real=N]"
       , "[FILE]"
       ]
@@ -107,7 +114,11 @@ parseArgs = go Nothing False Raw Nothing Nothing
           "integer" -> go limit showSteps Integer precision path rest
           "rational" -> go limit showSteps Rational precision path rest
           "real" -> go limit showSteps (Real 0) precision path rest
-          _ -> Left usage
+          _ ->
+            maybe
+              (Left usage)
+              (\kind -> go limit showSteps (Composite kind) precision path rest)
+              (parseComposite name)
   go limit showSteps mode precision path (value : rest)
     | value == "--no-step-limit" && isNothing limit =
         go (Just Nothing) showSteps mode precision path rest
@@ -131,3 +142,8 @@ parseArgs = go Nothing False Raw Nothing Nothing
   go limit showSteps mode precision Nothing (value@(first : _) : rest)
     | first /= '-' = go limit showSteps mode precision (Just value) rest
   go _ _ _ _ _ _ = Left usage
+
+  parseComposite name = case parseDecodeType name of
+    Just kind@(ListType _) -> Just kind
+    Just kind@(PairType _ _) -> Just kind
+    _ -> Nothing

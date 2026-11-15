@@ -17,6 +17,7 @@ import TestSupport (
   normalizeError,
   normalizeGraph,
   runSuite,
+  testExecutable,
   unwrap,
  )
 
@@ -45,8 +46,9 @@ assertDecodeCliError label source spec limit expected = do
   let options =
         ["--max-steps=" ++ show limit, "--decode=" ++ decodeType]
           ++ maybe [] (\index -> ["--precision-real=" ++ show index]) (runPrecisionReal spec)
+  executable <- testExecutable "ski-interpreter"
   (status, output, problem) <-
-    readProcessWithExitCode "ski-interpreter" options source
+    readProcessWithExitCode executable options source
   unless (status == ExitFailure 1 && null output) $
     die
       ( label

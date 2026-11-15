@@ -5,14 +5,17 @@ import Compiler.Expand (Encoding (..))
 import Control.Monad (void)
 import Data.Ratio (denominator, numerator)
 import Interpreter (
+  DecodeType (..),
   decodeBinaryNatural,
   decodeBoolean,
+  decodeComposite,
   decodeInteger,
   decodeNatural,
   decodeRational,
   decodeReal,
   decodeScottNatural,
   interpret,
+  parseDecodeType,
  )
 import qualified Ski.Abs as Graph
 import System.Exit (die)
@@ -79,6 +82,12 @@ decodeGraph spec limit graph = case runDecode spec of
       then Left "precisionReal must be nonnegative"
       else
         showDecoded "Real" renderRational (decodeReal limit (fromInteger index) graph)
+  Just name -> case parseDecodeType name of
+    Just kind@(ListType _) ->
+      showComposite (decodeComposite limit kind graph)
+    Just kind@(PairType _ _) ->
+      showComposite (decodeComposite limit kind graph)
+    _ -> Left "unknown or missing decode type"
   _ -> Left "unknown or missing decode type"
  where
   showDecoded kind render result = do
@@ -90,6 +99,9 @@ decodeGraph spec limit graph = case runDecode spec of
   showBinaryDecoded result = do
     value <- result
     maybe (Left "not a Binary Natural") (Right . show) value
+  showComposite result = do
+    value <- result
+    maybe (Left "not a value of the requested type") Right value
 
 renderRational :: Rational -> String
 renderRational value = show (numerator value) ++ "/" ++ show (denominator value)

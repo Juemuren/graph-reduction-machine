@@ -50,7 +50,7 @@
         "enableReduce": { "enum": ["beta", "eta", "both"] },
         "encode": { "enum": ["church", "scott", "binary"] },
         "maxSteps": { "type": "integer", "minimum": 1 },
-        "decode": { "enum": ["natural", "scott-natural", "binary-natural", "boolean", "integer", "rational", "real"] },
+        "decode": { "type": "string", "minLength": 1 },
         "precisionReal": { "type": "integer", "minimum": 0 }
       },
       "additionalProperties": false,

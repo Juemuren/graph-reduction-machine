@@ -24,6 +24,10 @@ module Interpreter (
   decodeRealSource,
   decodeRealSourceWithSteps,
   decodeReal,
+  DecodeType (..),
+  parseDecodeType,
+  decodeComposite,
+  decodeCompositeSourceWithSteps,
 ) where
 
 import Interpreter.Binary (
@@ -47,6 +51,12 @@ import Interpreter.Church (
   decodeReal,
   decodeRealSource,
   decodeRealSourceWithSteps,
+ )
+import Interpreter.Composite (
+  DecodeType (..),
+  decodeComposite,
+  decodeCompositeSourceWithSteps,
+  parseDecodeType,
  )
 import Interpreter.Machine (normalize, runGraph, runGraphWithSteps, serialize)
 import Interpreter.Scott (

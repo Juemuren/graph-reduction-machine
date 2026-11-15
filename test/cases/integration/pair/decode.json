@@ -1,0 +1,20 @@
+{
+  "cases": [
+    {
+      "name": "pair",
+      "language": "lambda",
+      "source": "@! PAIR TRUE TWO;\n",
+      "stage": "decode",
+      "options": { "decode": "pair<boolean,natural>" },
+      "expect": { "value": "(TRUE, 2)" }
+    },
+    {
+      "name": "nested",
+      "language": "lambda",
+      "source": "@! PAIR (CONS ONE (CONS TWO NIL)) (PAIR FALSE THREE);\n",
+      "stage": "decode",
+      "options": { "decode": "pair<list<natural>,pair<boolean,natural>>" },
+      "expect": { "value": "([1, 2], (FALSE, 3))" }
+    }
+  ]
+}

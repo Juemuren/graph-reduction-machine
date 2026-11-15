@@ -3,6 +3,7 @@ module Interpreter.Binary (
   decodeBinaryNaturalSource,
   decodeBinaryNaturalSourceWithSteps,
   decodeBinaryNatural,
+  decodeBinaryNaturalAt,
 ) where
 
 import Interpreter.Machine

@@ -16,6 +16,7 @@ module TestSupport (
   unwrap,
   normalizeGraph,
   normalizeError,
+  testExecutable,
 )
 where
 
@@ -39,9 +40,23 @@ import qualified Data.Map.Strict as Map
 import Data.Maybe (catMaybes, fromMaybe, isJust)
 import qualified Ski.Abs as Graph
 import Ski.Print (printTree)
-import System.Directory (doesDirectoryExist, listDirectory)
+import System.Directory (doesDirectoryExist, doesFileExist, listDirectory)
+import System.Environment (getExecutablePath)
 import System.Exit (die)
-import System.FilePath (takeExtension, (</>))
+import System.FilePath (takeDirectory, takeExtension, (<.>), (</>))
+
+-- | Prefer executables built beside the test suite over older PATH entries.
+testExecutable :: String -> IO FilePath
+testExecutable name = do
+  testPath <- getExecutablePath
+  let base = takeDirectory (takeDirectory testPath) </> name </> name
+      windowsPath = base <.> "exe"
+  windowsExists <- doesFileExist windowsPath
+  if windowsExists
+    then pure windowsPath
+    else do
+      unixExists <- doesFileExist base
+      pure (if unixExists then base else name)
 
 newtype CaseFile a = CaseFile [a]
 

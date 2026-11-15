@@ -1,0 +1,36 @@
+{
+  "cases": [
+    {
+      "name": "nil",
+      "language": "lambda",
+      "source": "@! NIL;\n",
+      "stage": "decode",
+      "options": { "decode": "list<natural>" },
+      "expect": { "value": "[]" }
+    },
+    {
+      "name": "cons",
+      "language": "lambda",
+      "source": "@! CONS TWO (CONS THREE NIL);\n",
+      "stage": "decode",
+      "options": { "decode": "list<natural>" },
+      "expect": { "value": "[2, 3]" }
+    },
+    {
+      "name": "nested",
+      "language": "lambda",
+      "source": "@! CONS (CONS ONE NIL) (CONS NIL NIL);\n",
+      "stage": "decode",
+      "options": { "decode": "list<list<natural>>" },
+      "expect": { "value": "[[1], []]" }
+    },
+    {
+      "name": "element-type-mismatch",
+      "language": "lambda",
+      "source": "@! CONS TRUE NIL;\n",
+      "stage": "decode",
+      "options": { "decode": "list<pair<natural,natural>>" },
+      "expect": { "error": "not a value of the requested type" }
+    }
+  ]
+}
