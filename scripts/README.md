@@ -14,7 +14,8 @@
 
 - `Invoke-Compiler`
 - `Invoke-Interpreter`
-- `Invoke-LambdaStage`
+- `Invoke-IntegrationStage`
+- `Invoke-IntegrationSequence`
 
 并且脚本为这些函数的参数提供了补全。
 
@@ -54,16 +55,16 @@ Invoke-Interpreter -Source '#0 = I;'
 Invoke-Interpreter -File "examples/ski/church.ski" -- --decode=natural
 ```
 
-### Invoke-LambdaStage
+### Invoke-IntegrationStage
 
-`Invoke-LambdaStage` 调用编译器和解释器至指定的阶段后停止。
+`Invoke-IntegrationStage` 调用编译器和解释器至指定的阶段后停止。
 
 使用示例：
 
 ```pwsh
-'@! ONE;' | Invoke-LambdaStage -Stage expand
-Invoke-LambdaStage -Source '@! ONE;' -Stage expand
-Invoke-LambdaStage -File "examples/e/factorial.lambda" -Stage decode -Decode real
+'@! ONE;' | Invoke-IntegrationStage -Stage expand
+Invoke-IntegrationStage -Source '@! ONE;' -Stage expand
+Invoke-IntegrationStage -File "examples/e/factorial.lambda" -Stage decode -Decode real
 ```
 
 各参数为：
@@ -74,25 +75,25 @@ Invoke-LambdaStage -File "examples/e/factorial.lambda" -Stage decode -Decode rea
 - `-Encode` 编译器编码方式。详见 [compiler.md#编译器选项](../docs/compiler.md#编译器选项)。默认为 `church`
 - `-Decode` 解释器解码方式，详见 [interpreter.md#解释器选项](../docs/interpreter.md#解释器选项)。默认为 `natural`
 
-## run.ps1
+### Invoke-IntegrationSequence
 
 使用示例：
 
 ```pwsh
-'@! ONE;' | ./scripts/run.ps1 -Stages expand,reduce,decode
-./scripts/run.ps1 -Source '@! ONE;' -Stages compile,decode
-./scripts/run.ps1 -File "examples/e/factorial.lambda" -Stages decode -Decode real
+'@! ONE;' | Invoke-IntegrationSequence -Stages expand,reduce,decode
+Invoke-IntegrationSequence -Source '@! ONE;' -Stages compile,decode
+Invoke-IntegrationSequence -File "examples/e/factorial.lambda" -Stages decode -Decode real
 ```
 
-脚本会按 `expand` / `reduce` / `compile` / `interpret` / `decode` 的顺序依次运行至选中的阶段。
+`Invoke-IntegrationSequence` 按 `expand` / `reduce` / `compile` / `interpret` / `decode` 的顺序依次运行选中的阶段。
 
 参数为：
 
 - `-File` 文件路径
 - `-Source` 源代码内容，也可以通过管道传入
 - `-Stages` 指定的一个或多个阶段，用 `,` 连接。默认为 `decode`
-- `-Encode` 编译器编码方式。可以为 `church` / `scott`。默认为 `church`
-- `-Decode` 解释器解码方式。可以为 `natural` / `scott-natural` / `boolean` / `integer` / `rational` / `real`。默认为 `natural`
+- `-Encode` 编译器编码方式。详见 [compiler.md#编译器选项](../docs/compiler.md#编译器选项)。默认为 `church`
+- `-Decode` 解释器解码方式。详见 [interpreter.md#解释器选项](../docs/interpreter.md#解释器选项)。默认为 `natural`
 
 ## functions.sh
 
@@ -106,7 +107,8 @@ source ./scripts/functions.sh
 
 - `invoke_compiler`
 - `invoke_interpreter`
-- `invoke_lambda_stage`
+- `invoke_integration_stage`
+- `invoke_integration_sequence`
 
 并且脚本为这些函数的参数提供了补全。
 
@@ -146,16 +148,16 @@ invoke_interpreter -s '#0 = I;'
 invoke_interpreter -f examples/ski/church.ski -- --decode=natural
 ```
 
-### invoke_lambda_stage
+### invoke_integration_stage
 
-`invoke_lambda_stage` 调用编译器和解释器至指定的阶段后停止。
+`invoke_integration_stage` 调用编译器和解释器至指定的阶段后停止。
 
 使用示例：
 
 ```sh
-printf '%s\n' '@! ONE;' | invoke_lambda_stage -t expand
-invoke_lambda_stage -s '@! ONE;' -t expand
-invoke_lambda_stage -f examples/e/factorial.lambda -t decode -d real
+printf '%s\n' '@! ONE;' | invoke_integration_stage -t expand
+invoke_integration_stage -s '@! ONE;' -t expand
+invoke_integration_stage -f examples/e/factorial.lambda -t decode -d real
 ```
 
 各参数为：
@@ -166,25 +168,25 @@ invoke_lambda_stage -f examples/e/factorial.lambda -t decode -d real
 - `-e` / `--encode` 编译器编码方式。详见 [compiler.md#编译器选项](../docs/compiler.md#编译器选项)。默认为 `church`
 - `-d` / `--decode` 解释器解码方式。详见 [interpreter.md#解释器选项](../docs/interpreter.md#解释器选项)。默认为 `natural`
 
-## run.sh
+### invoke_integration_sequence
 
 使用示例：
 
 ```sh
-printf '%s\n' '@! ONE;' | ./scripts/run.sh -t expand,reduce,decode
-./scripts/run.sh -s '@! ONE;' -t compile,decode
-./scripts/run.sh -f examples/e/factorial.lambda -t decode -d real
+printf '%s\n' '@! ONE;' | invoke_integration_sequence -t expand,reduce,decode
+invoke_integration_sequence -s '@! ONE;' -t compile,decode
+invoke_integration_sequence -f examples/e/factorial.lambda -t decode -d real
 ```
 
-脚本会按 `expand` / `reduce` / `compile` / `interpret` / `decode` 的顺序依次运行至选中的阶段。
+`invoke_integration_sequence` 按 `expand` / `reduce` / `compile` / `interpret` / `decode` 的顺序依次运行选中的阶段。
 
 参数为：
 
 - `-f` / `--file` 文件路径
 - `-s` / `--source` 源代码内容，也可以通过管道传入
 - `-t` / `--stages` 指定的一个或多个阶段，用 `,` 连接。默认为 `decode`
-- `-e` / `--encode` 编译器编码方式。可以为 `church` / `scott`。默认为 `church`
-- `-d` / `--decode` 解释器解码方式。可以为 `natural` / `scott-natural` / `boolean` / `integer` / `rational` / `real`。默认为 `natural`
+- `-e` / `--encode` 编译器编码方式。详见 [compiler.md#编译器选项](../docs/compiler.md#编译器选项)。默认为 `church`
+- `-d` / `--decode` 解释器解码方式。详见 [interpreter.md#解释器选项](../docs/interpreter.md#解释器选项)。默认为 `natural`
 
 ## compare_real.py
 

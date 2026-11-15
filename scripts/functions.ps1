@@ -80,28 +80,17 @@ function Invoke-Interpreter {
     }
 }
 
-function Invoke-LambdaStage {
+function Invoke-IntegrationStage {
     param(
         [string]$File,
 
         [string[]]$Source,
 
         [Parameter(Mandatory)]
-        [ValidateSet('expand', 'reduce', 'compile', 'interpret', 'decode')]
         [string]$Stage,
 
-        [ArgumentCompleter({
-                foreach ($completion in Get-EncodeTypeCompletion ([string]$args[2]).Trim("'`"")) {
-                    [System.Management.Automation.CompletionResult]::new($completion, $completion, 'ParameterValue', $completion)
-                }
-            })]
         [string]$Encode = 'church',
 
-        [ArgumentCompleter({
-                foreach ($completion in Get-DecodeTypeCompletion ([string]$args[2]).Trim("'`"")) {
-                    [System.Management.Automation.CompletionResult]::new("'$completion'", $completion, 'ParameterValue', $completion)
-                }
-            })]
         [string]$Decode = 'natural',
 
         [Parameter(ValueFromPipeline)]
@@ -162,6 +151,58 @@ function Invoke-LambdaStage {
                     "--decode=$Decode"
                 )
             }
+        }
+    }
+}
+
+function Invoke-IntegrationSequence {
+    param(
+        [Parameter(Position = 0)]
+        [string]$File,
+
+        [string[]]$Source,
+
+        [string[]]$Stages = @('decode'),
+
+        [string]$Encode = 'church',
+
+        [string]$Decode = 'natural',
+
+        [Parameter(ValueFromPipeline)]
+        [string]$PipelineItem
+    )
+
+    begin {
+        $inputSource = [System.Collections.Generic.List[string]]::new()
+        if ($Source) {
+            $inputSource.AddRange($Source)
+        }
+    }
+
+    process {
+        if ($PSBoundParameters.ContainsKey('PipelineItem')) {
+            $inputSource.Add($PipelineItem)
+        }
+    }
+
+    end {
+        foreach ($stage in @(Get-IntegrationStageCompletion '')) {
+            if ($Stages -contains $stage) {
+                Invoke-IntegrationStage -File $File -Source $inputSource `
+                    -Stage $stage `
+                    -Encode $Encode `
+                    -Decode $Decode
+            }
+        }
+    }
+}
+
+function Get-IntegrationStageCompletion {
+    param([string]$Prefix)
+
+    foreach ($stage in @('expand', 'reduce', 'compile', 'interpret', 'decode')) {
+        if ($stage.StartsWith($Prefix, [System.StringComparison]::OrdinalIgnoreCase)) {
+            $stage
         }
     }
 }
@@ -271,4 +312,27 @@ function Get-ToolOptionCompletion {
 Register-ArgumentCompleter -Native -CommandName Invoke-Compiler, Invoke-Interpreter -ScriptBlock {
     $commandName = $args[1].CommandElements[0].Value
     Get-ToolOptionCompletion $commandName ([string]$args[0])
+}
+
+Register-ArgumentCompleter -CommandName Invoke-IntegrationStage, Invoke-IntegrationSequence -ParameterName Encode -ScriptBlock {
+    $prefix = ([string]$args[2]).Trim("'`"")
+    foreach ($completion in Get-EncodeTypeCompletion $prefix) {
+        [System.Management.Automation.CompletionResult]::new($completion, $completion, 'ParameterValue', $completion)
+    }
+}
+
+Register-ArgumentCompleter -CommandName Invoke-IntegrationStage, Invoke-IntegrationSequence -ParameterName Decode -ScriptBlock {
+    $prefix = ([string]$args[2]).Trim("'`"")
+    foreach ($completion in Get-DecodeTypeCompletion $prefix) {
+        [System.Management.Automation.CompletionResult]::new("'$completion'", $completion, 'ParameterValue', $completion)
+    }
+}
+
+foreach ($parameter in @('Stage', 'Stages')) {
+    Register-ArgumentCompleter -CommandName Invoke-IntegrationStage, Invoke-IntegrationSequence -ParameterName $parameter -ScriptBlock {
+        $prefix = ([string]$args[2]).Trim("'`"")
+        foreach ($completion in Get-IntegrationStageCompletion $prefix) {
+            [System.Management.Automation.CompletionResult]::new($completion, $completion, 'ParameterValue', $completion)
+        }
+    }
 }

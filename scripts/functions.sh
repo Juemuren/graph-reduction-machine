@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-# Source this file to use invoke_compiler, invoke_interpreter and invoke_lambda_stage.
+# Source this file to use the compiler, interpreter and integration functions.
 
 _lambda_tool() (
     local target=$1 file='' source='' input=stdin executable
@@ -53,7 +53,7 @@ invoke_interpreter() {
     _lambda_tool ski-interpreter "$@"
 }
 
-invoke_lambda_stage() (
+invoke_integration_stage() (
     local stage='' encode=church decode=natural
     local -a input=()
 
@@ -123,6 +123,78 @@ invoke_lambda_stage() (
             ;;
     esac
 )
+
+invoke_integration_sequence() (
+    local file='' source='' input_kind='' stages=decode encode=church decode=natural stage selected
+    local -a input=() selected_stages=()
+
+    while (($#)); do
+        case $1 in
+            -f | --file)
+                file=$2
+                input_kind='file'
+                shift 2
+                ;;
+            -s | --source)
+                source=$2
+                input_kind='source'
+                shift 2
+                ;;
+            -t | --stages)
+                stages=$2
+                shift 2
+                ;;
+            -e | --encode)
+                encode=$2
+                shift 2
+                ;;
+            -d | --decode)
+                decode=$2
+                shift 2
+                ;;
+            *)
+                file=$1
+                input_kind='file'
+                shift
+                ;;
+        esac
+    done
+
+    case $input_kind in
+        file) input=(--file "$file") ;;
+        source) input=(--source "$source") ;;
+        *)
+            source=$(cat)
+            input=(--source "$source")
+            ;;
+    esac
+
+    IFS=, read -r -a selected_stages <<< "$stages"
+    for stage in expand reduce compile interpret decode; do
+        for selected in "${selected_stages[@]}"; do
+            if [[ $selected == "$stage" ]]; then
+                invoke_integration_stage "${input[@]}" \
+                    --stage "$stage" \
+                    --encode "$encode" \
+                    --decode "$decode"
+                break
+            fi
+        done
+    done
+)
+
+_lambda_stage_completions() {
+    local current=$1 multiple=$2 prefix='' fragment=$1 index
+    if [[ $multiple == yes && $current == *,* ]]; then
+        prefix=${current%,*},
+        fragment=${current##*,}
+    fi
+
+    mapfile -t COMPREPLY < <(compgen -W 'expand reduce compile interpret decode' -- "$fragment")
+    for index in "${!COMPREPLY[@]}"; do
+        COMPREPLY[index]="$prefix${COMPREPLY[index]}"
+    done
+}
 
 _lambda_encode_completions() {
     mapfile -t COMPREPLY < <(compgen -W 'church scott binary' -- "$1")
@@ -224,17 +296,23 @@ _lambda_tool_completion() {
     local option_words='-f --file -s --source'
     local word
 
-    if [[ $command != invoke_lambda_stage ]]; then
-        for word in "${COMP_WORDS[@]:1:COMP_CWORD-1}"; do
-            if [[ $word == -- ]]; then
-                _lambda_option_completions "$command" "$current"
-                return
-            fi
-        done
-        option_words+=' --'
-    else
-        option_words+=' -t --stage -e --encode -d --decode'
-    fi
+    case $command in
+        invoke_integration_stage)
+            option_words+=' -t --stage -e --encode -d --decode'
+            ;;
+        invoke_integration_sequence)
+            option_words+=' -t --stages -e --encode -d --decode'
+            ;;
+        *)
+            for word in "${COMP_WORDS[@]:1:COMP_CWORD-1}"; do
+                if [[ $word == -- ]]; then
+                    _lambda_option_completions "$command" "$current"
+                    return
+                fi
+            done
+            option_words+=' --'
+            ;;
+    esac
 
     case $previous in
         -f | --file)
@@ -247,10 +325,14 @@ _lambda_tool_completion() {
             ;;
     esac
 
-    if [[ $command == invoke_lambda_stage ]]; then
+    if [[ $command == invoke_integration_stage || $command == invoke_integration_sequence ]]; then
         case $previous in
-            -t | --stage)
-                mapfile -t COMPREPLY < <(compgen -W 'expand reduce compile interpret decode' -- "$current")
+            -t | --stage | --stages)
+                if [[ $command == invoke_integration_sequence ]]; then
+                    _lambda_stage_completions "$current" yes
+                else
+                    _lambda_stage_completions "$current" no
+                fi
                 return
                 ;;
             -e | --encode)
@@ -268,4 +350,4 @@ _lambda_tool_completion() {
     mapfile -t COMPREPLY < <(compgen -W "$option_words" -- "$current")
 }
 
-complete -F _lambda_tool_completion invoke_compiler invoke_interpreter invoke_lambda_stage
+complete -F _lambda_tool_completion invoke_compiler invoke_interpreter invoke_integration_stage invoke_integration_sequence
