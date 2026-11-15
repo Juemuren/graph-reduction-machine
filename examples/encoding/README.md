@@ -175,7 +175,7 @@ $$
 从而除法表示为：
 
 $$
-\mathrm{DIV}_C(m,n)
+\mathrm{div}(m,n)
 =
 \begin{cases}
     0 & n=0 \\
@@ -236,18 +236,7 @@ $$
 
 ### 斯科特编码的自然数构造
 
-斯科特编码将自然数 $n$ 表示为函数递归 $n$ 次：
-
-$$
-\begin{aligned}
-0_S &= \lambda z.\lambda s.z \\
-1_S &= \lambda z.\lambda s.s\ 0_S \\
-2_S &= \lambda z.\lambda s.s\ 1_S \\
-3_S &= \lambda z.\lambda s.s\ 2_S
-\end{aligned}
-$$
-
-因此按照皮亚诺公理，斯科特编码的零和后继分别为：
+斯科特编码需要两个基本定义：
 
 $$
 \boxed{
@@ -258,7 +247,27 @@ $$
 }
 $$
 
-前驱可以表示为：
+这分别表示：
+
+$$
+\begin{cases}
+0 \\
+n+1 \\
+\end{cases}
+$$
+
+由此可以按照皮亚诺公理递归定义所有自然数：
+
+$$
+\begin{aligned}
+0_S &= \mathrm{ZERO}_S \\
+1_S &= \mathrm{SUCC}_S(0_S) \\
+2_S &= \mathrm{SUCC}_S(1_S) \\
+3_S &= \mathrm{SUCC}_S(2_S)
+\end{aligned}
+$$
+
+斯科特编码的前驱可以表示为：
 
 $$
 \mathrm{PRED}_S=\lambda n.n\ \mathrm{ZERO}_S\ (\lambda p.p)
@@ -298,7 +307,10 @@ n\ a\ b
 \end{cases}
 $$
 
-即 $n\ a\ b$ 表示当 $n=0$ 时执行 $a$，当 $n\ge 1$ 时执行 $b\ (n-1)$。
+即 $n\ a\ b$ 表示
+
+- 当 $n=0$ 时执行 $a$
+- 当 $n\ge 1$ 时执行 $b\ (n-1)$
 
 ### 斯科特编码的自然数运算
 
@@ -307,11 +319,11 @@ $$
 斯科特编码的加法可以使用递归实现：
 
 $$
-\mathrm{ADD}_S(m, n)
+\mathrm{add}(m, n)
 =
 \begin{cases}
     m & n = 0 \\
-    \mathrm{ADD}_S(m,n-1)+1 & n \ge 1 \\
+    \mathrm{add}(m,n-1)+1 & n \ge 1 \\
 \end{cases}
 $$
 
@@ -345,11 +357,11 @@ $$
 斯科特编码的减法可以使用递归实现：
 
 $$
-\mathrm{SUB}_S(m, n)
+\mathrm{sub}(m, n)
 =
 \begin{cases}
     m & n = 0 \\
-    \mathrm{SUB}_S(m,n-1)-1 & n \ge 1 \\
+    \mathrm{sub}(m,n-1)-1 & n \ge 1 \\
 \end{cases}
 $$
 
@@ -383,11 +395,11 @@ $$
 斯科特编码的乘法可以使用递归实现：
 
 $$
-\mathrm{MUL}_S(m, n)
+\mathrm{mul}(m, n)
 =
 \begin{cases}
     0 & n = 0 \\
-    \mathrm{MUL}_S(m,n-1)+m & n \ge 1 \\
+    \mathrm{mul}(m,n-1)+m & n \ge 1 \\
 \end{cases}
 $$
 
@@ -421,12 +433,12 @@ $$
 斯科特编码的除法可以使用分段递归实现：
 
 $$
-\mathrm{DIV}_S(m, n)
+\mathrm{div}(m, n)
 =
 \begin{cases}
 0 & n = 0 \\
 0 & n \ge 1 \land m < n \\
-\mathrm{DIV}_S(m-n,n)+1 & n \ge 1 \land m\ge n
+\mathrm{div}(m-n,n)+1 & n \ge 1 \land m\ge n
 \end{cases}
 $$
 
@@ -454,6 +466,153 @@ $$
 \mathrm{DIV}_S
 =
 \mathrm{Y}\ \mathrm{recur}
+}
+$$
+
+## 二进制编码
+
+皮亚诺公理可以认为是一种一进制编码：无论采用丘奇编码还是斯科特编码，对于 $n$ 都需要 $O(n)$ 的表示长度。而二进制编码则只需要 $O(\log n)$ 的表示长度。
+
+二进制编码也存在不同风格的实现方式。一种是利用丘奇布尔值和丘奇列表实现，另一种是利用斯科特风格的递归实现。
+
+二进制编码及相关运算实现在 [binary.lambda](binary.lambda) 中。
+
+### 二进制编码的自然数构造
+
+<!-- TODO 二进制编码 -->
+
+斯科特风格的二进制编码需要三个基本定义：
+
+$$
+\boxed{
+\begin{aligned}
+\mathrm{ZERO}_B &= \lambda z.\lambda e.\lambda o.z \\
+\mathrm{EVEN}_B &= \lambda n.\lambda z.\lambda e.\lambda o.e\ n\\
+\mathrm{ODD}_B &= \lambda n.\lambda z.\lambda e.\lambda o.o\ n
+\end{aligned}
+}
+$$
+
+这分别表示：
+
+$$
+\begin{cases}
+0 \\
+2k \\
+2k+1
+\end{cases}
+$$
+
+由此可以递归定义所有自然数：
+
+$$
+\begin{aligned}
+0_B &= \mathrm{ZERO}_B \\
+1_B &= \mathrm{ODD}_B(\mathrm{ZERO}_B) \\
+2_B &= \mathrm{EVEN}_B(1_B) \\
+3_B &= \mathrm{ODD}_B(1_B) \\
+4_B &= \mathrm{EVEN}_B(2_B) \\
+5_B &= \mathrm{ODD}_B(2_B) \\
+6_B &= \mathrm{EVEN}_B(3_B) \\
+7_B &= \mathrm{ODD}_B(3_B) \\
+\end{aligned}
+$$
+
+如果把 $\mathrm{EVEN}_B$ 换成 $\mathrm{BIT}_0$，把 $\mathrm{ODD}_B$ 换成 $\mathrm{BIT}_1$，就得到了更为熟悉的二进制编码：
+
+$$
+\begin{aligned}
+0_B &= \mathrm{ZERO}_B\\
+1_B &= \mathrm{BIT}_1(\mathrm{ZERO}_B) \\
+2_B &= \mathrm{BIT}_0(1_B) = \mathrm{BIT}_0(\mathrm{BIT}_1(\mathrm{ZERO}_B)) \\
+3_B &= \mathrm{BIT}_1(1_B) = \mathrm{BIT}_1(\mathrm{BIT}_1(\mathrm{ZERO}_B)) \\
+4_B &= \mathrm{BIT}_0(2_B) = \mathrm{BIT}_0(\mathrm{BIT}_0(\mathrm{BIT}_1(\mathrm{ZERO}_B))) \\
+5_B &= \mathrm{BIT}_1(2_B) = \mathrm{BIT}_1(\mathrm{BIT}_0(\mathrm{BIT}_1(\mathrm{ZERO}_B))) \\
+6_B &= \mathrm{BIT}_0(3_B) = \mathrm{BIT}_0(\mathrm{BIT}_1(\mathrm{BIT}_1(\mathrm{ZERO}_B))) \\
+7_B &= \mathrm{BIT}_1(3_B) = \mathrm{BIT}_1(\mathrm{BIT}_1(\mathrm{BIT}_1(\mathrm{ZERO}_B))) \\
+\end{aligned}
+$$
+
+这是从最低有效位到最高有效位的二进制表示。
+
+斯科特风格的二进制自然数同样可用于表示模式匹配：
+
+- 当 $n=\mathrm{ZERO}_B$ 时，$n\ a\ b\ c$ 被归约为
+
+    $$
+    \begin{aligned}
+    \mathrm{ZERO}_B\ a\ b\ c
+    &= (\lambda z.\lambda e.\lambda o.z)\ a\ b\ c\\
+    &\to a
+    \end{aligned}
+    $$
+
+- 当 $n=\mathrm{EVEN}_B\ p$ 时，$n\ a\ b\ c$ 被归约为
+
+    $$
+    \begin{aligned}
+    (\mathrm{EVEN}_B\ p)\ a\ b\ c
+    &=((\lambda n.\lambda z.\lambda e.\lambda o.e\ n)\ p)\ a\ b\ c\\
+    &\to(\lambda z.\lambda e.\lambda o.e\ p)\ a\ b\ c\\
+    &\to b\ p
+    \end{aligned}
+    $$
+
+- 当 $n=\mathrm{ODD}_B\ p$ 时，$n\ a\ b\ c$ 被归约为
+
+    $$
+    \begin{aligned}
+    (\mathrm{ODD}_B\ p)\ a\ b\ c
+    &=((\lambda n.\lambda z.\lambda e.\lambda o.o\ n)\ p)\ a\ b\ c\\
+    &\to(\lambda z.\lambda e.\lambda o.o\ p)\ a\ b\ c\\
+    &\to c\ p
+    \end{aligned}
+    $$
+
+综上可知：
+
+$$
+n\ a\ b\ c
+=
+\begin{cases}
+a & n=0 \\
+b\ \frac{n}{2} & n>0 \land 2 \mid n \\
+c\ \frac{n-1}{2} & n>0 \land 2 \nmid n
+\end{cases}
+$$
+
+即 $n\ a\ b\ c$ 表示
+
+- 当 $n=0$ 时执行 $a$
+- 当 $n>0$ 且 $n$ 为偶数时执行 $b\ \frac{n}{2}$
+- 当 $n>0$ 且 $n$ 为奇数时执行 $c\ \frac{n-1}{2}$
+
+后继运算可以通过递归处理进位实现：
+
+$$
+\mathrm{succ}(n)
+=
+\begin{cases}
+    1 & n=0 \\
+    2 (\frac{n}{2}) + 1 & n>0 \land 2 \mid n \\
+    2 (\mathrm{succ}(\frac{n-1}{2})) & n>0 \land 2 \nmid n
+\end{cases}
+$$
+
+用 Y 组合子构造的递归为：
+
+$$
+\boxed{
+\begin{aligned}
+\mathrm{SUCC}_B
+=&
+Y\ (\lambda s.\lambda n. \\
+&\quad n\ \\
+&\quad (\mathrm{BIT}_1\ \mathrm{ZERO}_B) \\
+&\quad (\lambda k.\mathrm{BIT}_1\ k) \\
+&\quad (\lambda k.\mathrm{BIT}_0\ (s\ k)) \\
+& )
+\end{aligned}
 }
 $$
 
