@@ -1,0 +1,65 @@
+# Scott-style binary numerals. Constructors store the least significant bit first.
+zero = \z -> \e -> \o -> z;
+even = \n -> \z -> \e -> \o -> e n;
+odd = \n -> \z -> \e -> \o -> o n;
+double = \n -> n zero (\p -> even n) (\p -> even n);
+
+succ = Y (\r -> \n ->
+    n (odd zero) (\p -> odd p) (\p -> even (r p)));
+pred = Y (\r -> \n ->
+    n zero (\p -> odd (r p)) (\p -> double p));
+
+isZero = \n -> n TRUE (\p -> FALSE) (\p -> FALSE);
+lt = Y (\r -> \m -> \n ->
+    m (n FALSE (\q -> TRUE) (\q -> TRUE))
+        (\p -> n FALSE (\q -> r p q) (\q -> NOT (r q p)))
+        (\p -> n FALSE (\q -> r p q) (\q -> r p q)));
+
+addRecur = \r -> \m -> \n ->
+    m
+        n
+        (\p -> n
+            m
+            (\q -> even (r p q))
+            (\q -> odd (r p q)))
+        (\p -> n
+            m
+            (\q -> odd (r p q))
+            (\q -> even (succ (r p q))));
+@> add = Y addRecur;
+
+subRecur = \r -> \m -> \n ->
+    m
+        zero
+        (\p -> n
+            m
+            (\q -> double (r p q))
+            (\q -> odd (pred (r p q))))
+        (\p -> n
+            m
+            (\q -> odd (r p q))
+            (\q -> double (r p q)));
+subPositive = Y subRecur;
+@> sub = \m -> \n ->
+    IF (lt m n)
+        zero
+        (subPositive m n);
+
+mulRecur = \r -> \m -> \n ->
+    n zero
+        (\p -> even (r m p))
+        (\p -> p m
+            (\q -> add m (even (r m p)))
+            (\q -> add m (even (r m p))));
+mulPositive = Y mulRecur;
+@> mul = \m -> m
+    (\n -> zero)
+    (\p -> mulPositive m)
+    (\p -> mulPositive m);
+
+divRecur = \r -> \m -> \n ->
+    IF (isZero n) zero
+        (IF (lt m n) zero
+            (succ (r (sub m n) n)));
+@> div = Y divRecur;
+

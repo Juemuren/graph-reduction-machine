@@ -299,12 +299,14 @@ $$
 综上可知：
 
 $$
+\boxed{
 n\ a\ b
 =
 \begin{cases}
   a & n = 0 \\
   b\ (n-1) & n \ge 1
 \end{cases}
+}
 $$
 
 即 $n\ a\ b$ 表示
@@ -313,6 +315,11 @@ $$
 - 当 $n\ge 1$ 时执行 $b\ (n-1)$
 
 ### 斯科特编码的自然数运算
+
+用斯科特编码实现自然数运算的关键之处，就是将运算的结果按情况进行分类：
+
+- 对于 $n=0$ 的情形，需要将结果表示为常量
+- 对于 $n\ge1$ 的情形，需要将结果表示为以 $n-1$ 为参数的函数
 
 #### 斯科特编码的加法
 
@@ -473,13 +480,11 @@ $$
 
 皮亚诺公理可以认为是一种一进制编码：无论采用丘奇编码还是斯科特编码，对于 $n$ 都需要 $O(n)$ 的表示长度。而二进制编码则只需要 $O(\log n)$ 的表示长度。
 
-二进制编码也存在不同风格的实现方式。一种是利用丘奇布尔值和丘奇列表实现，另一种是利用斯科特风格的递归实现。
+二进制编码也存在不同风格的实现方式。一种是利用丘奇列表实现，另一种是利用斯科特风格的递归实现。后文采用斯科特风格的二进制编码。
 
 二进制编码及相关运算实现在 [binary.lambda](binary.lambda) 中。
 
 ### 二进制编码的自然数构造
-
-<!-- TODO 二进制编码 -->
 
 斯科特风格的二进制编码需要三个基本定义：
 
@@ -522,7 +527,7 @@ $$
 
 $$
 \begin{aligned}
-0_B &= \mathrm{ZERO}_B\\
+0_B &= \mathrm{ZERO}_B \\
 1_B &= \mathrm{BIT}_1(\mathrm{ZERO}_B) \\
 2_B &= \mathrm{BIT}_0(1_B) = \mathrm{BIT}_0(\mathrm{BIT}_1(\mathrm{ZERO}_B)) \\
 3_B &= \mathrm{BIT}_1(1_B) = \mathrm{BIT}_1(\mathrm{BIT}_1(\mathrm{ZERO}_B)) \\
@@ -533,7 +538,18 @@ $$
 \end{aligned}
 $$
 
-这是从最低有效位到最高有效位的二进制表示。
+这是从最低有效位到最高有效位的二进制表示，即最外层构造器是最低有效位，最内层构造器是最高有效位。可以往最高位增加任意数量的前导零，因为
+
+$$
+\begin{aligned}
+    \mathrm{ZERO}_B
+    &= 0 \\
+    &= 2 \times 0 \\
+    &= 2 \times 2 \times 0 \\
+    &= 2 \times 2 \times \cdots \times 0 \\
+    &= \mathrm{BIT}_0\ (\mathrm{BIT}_0\ (\cdots (\mathrm{ZERO}_B)))
+\end{aligned}
+$$
 
 斯科特风格的二进制自然数同样可用于表示模式匹配：
 
@@ -547,31 +563,32 @@ $$
     \end{aligned}
     $$
 
-- 当 $n=\mathrm{EVEN}_B\ p$ 时，$n\ a\ b\ c$ 被归约为
+- 当 $n=\mathrm{EVEN}_B\ k$ 时，$n\ a\ b\ c$ 被归约为
 
     $$
     \begin{aligned}
-    (\mathrm{EVEN}_B\ p)\ a\ b\ c
-    &=((\lambda n.\lambda z.\lambda e.\lambda o.e\ n)\ p)\ a\ b\ c\\
-    &\to(\lambda z.\lambda e.\lambda o.e\ p)\ a\ b\ c\\
-    &\to b\ p
+    (\mathrm{EVEN}_B\ k)\ a\ b\ c
+    &=((\lambda n.\lambda z.\lambda e.\lambda o.e\ n)\ k)\ a\ b\ c\\
+    &\to(\lambda z.\lambda e.\lambda o.e\ k)\ a\ b\ c\\
+    &\to b\ k
     \end{aligned}
     $$
 
-- 当 $n=\mathrm{ODD}_B\ p$ 时，$n\ a\ b\ c$ 被归约为
+- 当 $n=\mathrm{ODD}_B\ k$ 时，$n\ a\ b\ c$ 被归约为
 
     $$
     \begin{aligned}
-    (\mathrm{ODD}_B\ p)\ a\ b\ c
-    &=((\lambda n.\lambda z.\lambda e.\lambda o.o\ n)\ p)\ a\ b\ c\\
-    &\to(\lambda z.\lambda e.\lambda o.o\ p)\ a\ b\ c\\
-    &\to c\ p
+    (\mathrm{ODD}_B\ k)\ a\ b\ c
+    &=((\lambda n.\lambda z.\lambda e.\lambda o.o\ n)\ k)\ a\ b\ c\\
+    &\to(\lambda z.\lambda e.\lambda o.o\ k)\ a\ b\ c\\
+    &\to c\ k
     \end{aligned}
     $$
 
 综上可知：
 
 $$
+\boxed{
 n\ a\ b\ c
 =
 \begin{cases}
@@ -579,6 +596,7 @@ a & n=0 \\
 b\ \frac{n}{2} & n>0 \land 2 \mid n \\
 c\ \frac{n-1}{2} & n>0 \land 2 \nmid n
 \end{cases}
+}
 $$
 
 即 $n\ a\ b\ c$ 表示
@@ -594,8 +612,8 @@ $$
 =
 \begin{cases}
     1 & n=0 \\
-    2 (\frac{n}{2}) + 1 & n>0 \land 2 \mid n \\
-    2 (\mathrm{succ}(\frac{n-1}{2})) & n>0 \land 2 \nmid n
+    2 \frac{n}{2} + 1 & n>0 \land 2 \mid n \\
+    2 \mathrm{succ}(\frac{n-1}{2}) & n>0 \land 2 \nmid n
 \end{cases}
 $$
 
@@ -606,14 +624,113 @@ $$
 \begin{aligned}
 \mathrm{SUCC}_B
 =&
-Y\ (\lambda s.\lambda n. \\
+Y\ (\lambda r.\lambda n. \\
 &\quad n\ \\
-&\quad (\mathrm{BIT}_1\ \mathrm{ZERO}_B) \\
-&\quad (\lambda k.\mathrm{BIT}_1\ k) \\
-&\quad (\lambda k.\mathrm{BIT}_0\ (s\ k)) \\
+&\quad (\mathrm{ODD}_B\ \mathrm{ZERO}_B) \\
+&\quad (\lambda k.\mathrm{ODD}_B\ k) \\
+&\quad (\lambda k.\mathrm{EVEN}_B\ (r\ k)) \\
 & )
 \end{aligned}
 }
+$$
+
+前驱运算也可以通过递归处理进位实现：
+
+$$
+\mathrm{pred}(n)
+=
+\begin{cases}
+    0 & n=0 \lor n=1 \\
+    2 \mathrm{pred}(\frac{n}{2}) + 1 & n>0 \land 2 \mid n \\
+    2 \frac{n-1}{2} & n>0 \land 2 \nmid n
+\end{cases}
+$$
+
+用 Y 组合子构造的递归为：
+
+$$
+\boxed{
+\begin{aligned}
+\mathrm{PRED}_B
+=&
+Y (\lambda r.\lambda. n. \\
+&\quad n \\
+&\quad \mathrm{ZERO}_B \\
+&\quad (\lambda p. \mathrm{ODD}_B\ (r\ p)) \\
+&\quad (\lambda n. \\
+&\qquad n \\
+&\qquad \mathrm{ZERO}_B \\
+&\qquad \lambda p. \mathrm{EVEN}_B\ p \\
+&\qquad \lambda p. \mathrm{EVEN}_B\ p \\
+&\quad ) \\
+& );
+\end{aligned}
+}
+$$
+
+### 二进制编码的自然数运算
+
+用二进制编码实现自然数运算的关键之处，就是将运算的结果按情况进行分类：
+
+- 对于 $n=0$ 的情形，需要将结果表示为常量
+- 对于 $n>0 \land 2 \mid n$ 的情形，需要将结果表示为以 $\frac{n}{2}$ 为参数的函数
+- 对于 $n>0 \land 2 \nmid n$ 的情形，需要将结果表示为以 $\frac{n-1}{2}$ 为参数的函数
+
+#### 二进制编码的加法
+
+加法可递归表示为：
+
+$$
+\mathrm{add}(m,n)=
+\begin{cases}
+n & m=0 \\
+m & n=0 \\
+2\mathrm{add}(\frac{m}{2},\frac{n}{2}) & 2 \mid m \land 2 \mid n \\
+2\mathrm{add}(\frac{m}{2},\frac{n-1}{2})+1 & 2 \mid m \land 2 \nmid n \\
+2\mathrm{add}(\frac{m-1}{2},\frac{n}{2})+1 & 2 \nmid m \land 2 \mid n \\
+2(\mathrm{add}(\frac{m-1}{2},\frac{n-1}{2})+1) & 2 \nmid m \land 2 \nmid n
+\end{cases}
+$$
+
+#### 二进制编码的减法
+
+减法可递归表示为：
+
+$$
+\mathrm{sub}(m,n)=
+\begin{cases}
+0 & m<n \\
+m & n=0 \\
+2\mathrm{sub}(\frac{m}{2},\frac{n}{2}) & 2 \mid m \land 2 \mid n \\
+2\mathrm{sub}(\frac{m}{2},\frac{n-1}{2})-1 & 2 \mid m \land 2 \nmid n \\
+2\mathrm{sub}(\frac{m-1}{2},\frac{n}{2})+1 & 2 \nmid m \land 2 \mid n \\
+2\mathrm{sub}(\frac{m-1}{2},\frac{n-1}{2}) & 2 \nmid m \land 2 \nmid n
+\end{cases}
+$$
+
+#### 二进制编码的乘法
+
+乘法可递归表示为：
+
+$$
+\mathrm{mul}(m,n)=
+\begin{cases}
+0 & n=0 \\
+2\mathrm{mul}(m,\frac{n}{2}) & 2 \mid n \\
+2\mathrm{mul}(m,\frac{n-1}{2})+m & 2 \nmid n
+\end{cases}
+$$
+
+#### 二进制编码的除法
+
+除法可递归表示为：
+
+$$
+\mathrm{div}(m,n)=
+\begin{cases}
+0 & n=0 \lor m<n \\
+\mathrm{div}(m-n,n)+1 & n>0 \land m\ge n
+\end{cases}
 $$
 
 ## 比较并绘图
@@ -640,7 +757,9 @@ uv run scripts/compare_binary.py examples/encoding/compare.json
 
 ![add-grid](add-grid.png)
 
-可知对于加法，丘奇编码的归约效率更好。
+可知对于加法，丘奇编码的归约效率比斯科特编码更好。
+
+而对于较大的数字，二进制编码有明显的优势；并且二进制编码的归约步数并不完全单调。在对角线采样中，存在轻微的波动；而在网格采样中，可以看到热力图非常杂乱。这种波动主要发生在二进制的位边界，即当一个数是 $2^k-1$ 时，归约步数通常相比 $2^k$ 会略微变多。
 
 ### 乘法比较结果
 
@@ -656,7 +775,9 @@ uv run scripts/compare_binary.py examples/encoding/compare.json
 
 ![mul-grid](mul-grid.png)
 
-可知对于乘法，丘奇编码的归约效率更好。
+可知对于乘法，丘奇编码的归约效率比斯科特编码更好。
+
+并且对于较大的数字，二进制编码有明显的优势；并且二进制编码的归约步数并不完全单调。在对角线采样中，存在明显的波动；而在网格采样中，可以看到热力图比较杂乱。这种波动主要发生在二进制的位边界，即当一个数是 $2^k-1$ 时，归约通常步数相比 $2^k$ 会显著变多。
 
 ### 减法比较结果
 
@@ -672,7 +793,9 @@ uv run scripts/compare_binary.py examples/encoding/compare.json
 
 ![sub-grid](sub-grid.png)
 
-可知对于减法，斯科特编码的归约效率更好。
+可知对于减法，斯科特编码的归约效率比丘奇编码更好。
+
+并且对于较大的数字，二进制编码有明显的优势。
 
 ### 除法比较结果
 
@@ -688,4 +811,6 @@ uv run scripts/compare_binary.py examples/encoding/compare.json
 
 ![div-grid](div-grid.png)
 
-可知对于除法，斯科特编码的归约效率更好。
+可知对于除法，斯科特编码的归约效率比丘奇编码更好。
+
+并且对于较大的数字，二进制编码有明显的优势。

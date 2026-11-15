@@ -24,8 +24,8 @@ class Method(TypedDict):
     name: str
     file: str
     function: str
-    encode: Literal["church", "scott"]
-    decode: Literal["natural", "scott-natural", "integer", "rational", "boolean"]
+    encode: Literal["church", "scott", "binary"]
+    decode: Literal["natural", "scott-natural", "binary-natural", "integer", "rational", "boolean"]
 
 
 Point = TypeVar("Point")

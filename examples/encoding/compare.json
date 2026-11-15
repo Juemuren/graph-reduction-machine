@@ -1,7 +1,7 @@
 {
     "cases": [
         {
-            "name": "church-vs-scott-add-diag",
+            "name": "church-vs-scott-vs-binary-add-diag",
             "methods": [
                 {
                     "name": "church-add",
@@ -16,15 +16,25 @@
                     "function": "add",
                     "encode": "scott",
                     "decode": "scott-natural"
+                },
+                {
+                    "name": "binary-add",
+                    "file": "binary.lambda",
+                    "function": "add",
+                    "encode": "binary",
+                    "decode": "binary-natural"
                 }
             ],
-            "input": { "kind": "diagonal", "maxIndex": 100 },
+            "input": {
+                "kind": "diagonal",
+                "maxIndex": 100
+            },
             "maxSteps": 10000,
             "csv": "add-diag.csv",
             "png": "add-diag.png"
         },
         {
-            "name": "church-vs-scott-add-grid",
+            "name": "church-vs-scott-vs-binary-add-grid",
             "methods": [
                 {
                     "name": "church-add",
@@ -39,15 +49,26 @@
                     "function": "add",
                     "encode": "scott",
                     "decode": "scott-natural"
+                },
+                {
+                    "name": "binary-add",
+                    "file": "binary.lambda",
+                    "function": "add",
+                    "encode": "binary",
+                    "decode": "binary-natural"
                 }
             ],
-            "input": { "kind": "grid", "maxM": 10, "maxN": 10 },
+            "input": {
+                "kind": "grid",
+                "maxM": 10,
+                "maxN": 10
+            },
             "maxSteps": 10000,
             "csv": "add-grid.csv",
             "png": "add-grid.png"
         },
         {
-            "name": "church-vs-scott-sub-diag",
+            "name": "church-vs-scott-vs-binary-sub-diag",
             "methods": [
                 {
                     "name": "church-sub",
@@ -62,15 +83,25 @@
                     "function": "sub",
                     "encode": "scott",
                     "decode": "scott-natural"
+                },
+                {
+                    "name": "binary-sub",
+                    "file": "binary.lambda",
+                    "function": "sub",
+                    "encode": "binary",
+                    "decode": "binary-natural"
                 }
             ],
-            "input": { "kind": "diagonal", "maxIndex": 100 },
+            "input": {
+                "kind": "diagonal",
+                "maxIndex": 100
+            },
             "maxSteps": 10000,
             "csv": "sub-diag.csv",
             "png": "sub-diag.png"
         },
         {
-            "name": "church-vs-scott-sub-grid",
+            "name": "church-vs-scott-vs-binary-sub-grid",
             "methods": [
                 {
                     "name": "church-sub",
@@ -85,15 +116,26 @@
                     "function": "sub",
                     "encode": "scott",
                     "decode": "scott-natural"
+                },
+                {
+                    "name": "binary-sub",
+                    "file": "binary.lambda",
+                    "function": "sub",
+                    "encode": "binary",
+                    "decode": "binary-natural"
                 }
             ],
-            "input": { "kind": "grid", "maxM": 10, "maxN": 10 },
+            "input": {
+                "kind": "grid",
+                "maxM": 10,
+                "maxN": 10
+            },
             "maxSteps": 10000,
             "csv": "sub-grid.csv",
             "png": "sub-grid.png"
         },
         {
-            "name": "church-vs-scott-mul-diag",
+            "name": "church-vs-scott-vs-binary-mul-diag",
             "methods": [
                 {
                     "name": "church-mul",
@@ -108,15 +150,25 @@
                     "function": "mul",
                     "encode": "scott",
                     "decode": "scott-natural"
+                },
+                {
+                    "name": "binary-mul",
+                    "file": "binary.lambda",
+                    "function": "mul",
+                    "encode": "binary",
+                    "decode": "binary-natural"
                 }
             ],
-            "input": { "kind": "diagonal", "maxIndex": 100 },
+            "input": {
+                "kind": "diagonal",
+                "maxIndex": 100
+            },
             "maxSteps": 10000,
             "csv": "mul-diag.csv",
             "png": "mul-diag.png"
         },
         {
-            "name": "church-vs-scott-mul-grid",
+            "name": "church-vs-scott-vs-binary-mul-grid",
             "methods": [
                 {
                     "name": "church-mul",
@@ -131,15 +183,26 @@
                     "function": "mul",
                     "encode": "scott",
                     "decode": "scott-natural"
+                },
+                {
+                    "name": "binary-mul",
+                    "file": "binary.lambda",
+                    "function": "mul",
+                    "encode": "binary",
+                    "decode": "binary-natural"
                 }
             ],
-            "input": { "kind": "grid", "maxM": 10, "maxN": 10 },
+            "input": {
+                "kind": "grid",
+                "maxM": 10,
+                "maxN": 10
+            },
             "maxSteps": 10000,
             "csv": "mul-grid.csv",
             "png": "mul-grid.png"
         },
         {
-            "name": "church-vs-scott-div-diag",
+            "name": "church-vs-scott-vs-binary-div-diag",
             "methods": [
                 {
                     "name": "church-div",
@@ -154,15 +217,25 @@
                     "function": "div",
                     "encode": "scott",
                     "decode": "scott-natural"
+                },
+                {
+                    "name": "binary-div",
+                    "file": "binary.lambda",
+                    "function": "div",
+                    "encode": "binary",
+                    "decode": "binary-natural"
                 }
             ],
-            "input": { "kind": "diagonal", "maxIndex": 100 },
+            "input": {
+                "kind": "diagonal",
+                "maxIndex": 100
+            },
             "maxSteps": 10000,
             "csv": "div-diag.csv",
             "png": "div-diag.png"
         },
         {
-            "name": "church-vs-scott-div-grid",
+            "name": "church-vs-scott-vs-binary-div-grid",
             "methods": [
                 {
                     "name": "church-div",
@@ -177,9 +250,20 @@
                     "function": "div",
                     "encode": "scott",
                     "decode": "scott-natural"
+                },
+                {
+                    "name": "binary-div",
+                    "file": "binary.lambda",
+                    "function": "div",
+                    "encode": "binary",
+                    "decode": "binary-natural"
                 }
             ],
-            "input": { "kind": "grid", "maxM": 10, "maxN": 10 },
+            "input": {
+                "kind": "grid",
+                "maxM": 10,
+                "maxN": 10
+            },
             "maxSteps": 10000,
             "csv": "div-grid.csv",
             "png": "div-grid.png"
