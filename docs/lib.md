@@ -89,7 +89,7 @@
 
 自然数的实现位于 [natural.lambda](../lib/natural.lambda)。
 
-自然数使用皮亚诺公理进行定义。
+自然数使用皮亚诺公理进行定义。`ZERO` 对应数值 $0$，`SUCC` 是后继构造子，`SUCC n` 对应数值 $n+1$。
 
 一是零的后继
 
@@ -105,19 +105,68 @@ SUCC (SUCC ZERO)
 
 以此类推。
 
-目前的算术系统中包含两种编码：
+皮亚诺公理可以认为是一种一进制数字，因此数值为 $n$ 的数字需要 $O(n)$ 的表示长度。
 
-- Church 编码无后缀，为 `ZERO` / `SUCC`
-- Scott 编码使用 `S` 后缀，为 `ZERO_S` / `SUCC_S`
+二进制使用两种构造子，分别为偶构造子 `EVEN` 和奇构造子 `ODD`，`EVEN n` 和 `ODD n` 分别对应数值 $2n$ 和 $2n+1$。
 
-两种编码不可混用，且需要不同的解码方式。
+一是零的奇构造
+
+```lambda
+ODD ZERO
+```
+
+二是一的偶构造
+
+```lambda
+EVEN (ODD ZERO)
+```
+
+三是一的奇构造
+
+```lambda
+ODD (ODD ZERO)
+```
+
+四是二的偶构造
+
+```lambda
+EVEN (EVEN (ODD ZERO))
+```
+
+以此类推。
+
+数值为 $n$ 的二进制数字需要 $O(\log n)$ 的表示长度。
+
+目前的算术系统中包含三种编码：
+
+- Church 编码，其相关的内置函数都无后缀。构造函数采用一进制；运算函数的参数与结果均使用 Church 编码；比较函数的参数使用 Church 编码，结果使用布尔值编码
+- Scott 编码，其相关的内置函数都添加 `_S` 后缀。构造函数采用一进制；运算函数的参数与结果均使用 Scott 编码；比较函数的参数使用 Scott 编码，结果使用布尔值编码
+- Binary 编码，其相关的内置函数都添加 `_B` 后缀。构造函数采用二进制；运算函数的参数与结果均使用 Binary 编码；比较函数的参数使用 Binary 编码，结果使用布尔值编码
+
+三种编码不可混用，且需要不同的解码方式。
 
 ### 自然数构造
+
+#### Church 编码
 
 - `ZERO` 表示零
 - `SUCC a` 表示自然数 `a` 的后继
 - `ONE` / `TWO` / `THREE` / `FOUR` / `FIVE` / `SIX` / `SEVEN` / `EIGHT` / `NINE` / `TEN` 分别表示一到十
-- 可以直接使用十进制阿拉伯数字表示自然数
+- 可以直接使用十进制阿拉伯数字表示 Church 编码的自然数。相关编码选项参见 [compiler.md#编译器选项](compiler.md#编译器选项)，解码选项参见 [interpreter.md#解释器选项](interpreter.md#解释器选项)
+
+#### Scott 编码
+
+- `ZERO_S` 表示零
+- `SUCC_S a` 表示自然数 `a` 的后继
+- 可以直接使用十进制阿拉伯数字表示 Scott 编码的自然数。相关编码选项参见 [compiler.md#编译器选项](compiler.md#编译器选项)，解码选项参见 [interpreter.md#解释器选项](interpreter.md#解释器选项)
+
+#### Binary 编码
+
+- `ZERO_B` 表示零
+- `EVEN_B a` 表示 `a` 的两倍，`ODD_B a` 表示 `a` 的两倍加一
+- `BIT_0` / `BIT_1` 分别是 `EVEN_B` / `ODD_B` 的别名
+- 前导零不影响数值，即 `BIT_0 ZERO_B` / `BIT_0 (BIT_0 ZERO_B)` 等仍表示零，`BIT_1 (BIT_0 ZERO_B)` / `BIT_1 (BIT_0 (BIT_0 ZERO_B))` 等仍表示一，以此类推
+- 可以直接使用十进制阿拉伯数字表示 Binary 编码的自然数。相关编码选项参见 [compiler.md#编译器选项](compiler.md#编译器选项)，解码选项参见 [interpreter.md#解释器选项](interpreter.md#解释器选项)
 
 ### 自然数运算
 

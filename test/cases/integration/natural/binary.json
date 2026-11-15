@@ -23,6 +23,302 @@
       "stage": "decode",
       "options": { "encode": "binary", "decode": "binary-natural" },
       "expect": { "value": "3" }
+    },
+    {
+      "name": "iszero_b-leading-zero",
+      "language": "lambda",
+      "source": "@! ISZERO_B (EVEN_B (EVEN_B ZERO_B));",
+      "stage": "decode",
+      "options": { "decode": "boolean" },
+      "expect": { "value": "True" }
+    },
+    {
+      "name": "iszero_b-leading-zero-nonzero",
+      "language": "lambda",
+      "source": "@! ISZERO_B (EVEN_B (ODD_B (EVEN_B ZERO_B)));",
+      "stage": "decode",
+      "options": { "decode": "boolean" },
+      "expect": { "value": "False" }
+    },
+    {
+      "name": "lt_b-leading-zero-equal",
+      "language": "lambda",
+      "source": "@! LT_B (EVEN_B ZERO_B) ZERO_B;",
+      "stage": "decode",
+      "options": { "decode": "boolean" },
+      "expect": { "value": "False" }
+    },
+    {
+      "name": "lt_b-leading-zero-less",
+      "language": "lambda",
+      "source": "@! LT_B (EVEN_B ZERO_B) (ODD_B ZERO_B);",
+      "stage": "decode",
+      "options": { "decode": "boolean" },
+      "expect": { "value": "True" }
+    },
+    {
+      "name": "lt_b-leading-zero-greater",
+      "language": "lambda",
+      "source": "@! LT_B (ODD_B (EVEN_B ZERO_B)) (EVEN_B ZERO_B);",
+      "stage": "decode",
+      "options": { "decode": "boolean" },
+      "expect": { "value": "False" }
+    },
+    {
+      "name": "lt_b-leading-zero-nonzero-equal",
+      "language": "lambda",
+      "source": "@! LT_B (EVEN_B (ODD_B (EVEN_B ZERO_B))) (EVEN_B (ODD_B ZERO_B));",
+      "stage": "decode",
+      "options": { "decode": "boolean" },
+      "expect": { "value": "False" }
+    },
+    {
+      "name": "lt_b-even-odd",
+      "language": "lambda",
+      "source": "@! LT_B 2 3;",
+      "stage": "decode",
+      "options": { "encode": "binary", "decode": "boolean" },
+      "expect": { "value": "True" }
+    },
+    {
+      "name": "lt_b-odd-even",
+      "language": "lambda",
+      "source": "@! LT_B 3 2;",
+      "stage": "decode",
+      "options": { "encode": "binary", "decode": "boolean" },
+      "expect": { "value": "False" }
+    },
+    {
+      "name": "pred_b-leading-zero",
+      "language": "lambda",
+      "source": "@! PRED_B (EVEN_B (EVEN_B ZERO_B));",
+      "stage": "decode",
+      "options": { "decode": "binary-natural" },
+      "expect": { "value": "0" }
+    },
+    {
+      "name": "add_b",
+      "language": "lambda",
+      "source": "@! ADD_B 5 7;",
+      "stage": "decode",
+      "options": { "encode": "binary", "decode": "binary-natural" },
+      "expect": { "value": "12" }
+    },
+    {
+      "name": "mul_b",
+      "language": "lambda",
+      "source": "@! MUL_B 3 4;",
+      "stage": "decode",
+      "options": { "encode": "binary", "decode": "binary-natural" },
+      "expect": { "value": "12" }
+    },
+    {
+      "name": "sub_b-underflow",
+      "language": "lambda",
+      "source": "@! SUB_B 2 3;",
+      "stage": "decode",
+      "options": { "encode": "binary", "decode": "binary-natural" },
+      "expect": { "value": "0" }
+    },
+    {
+      "name": "div_b-leading-zero-divisor",
+      "language": "lambda",
+      "source": "@! DIV_B 3 (EVEN_B ZERO_B);",
+      "stage": "decode",
+      "options": { "encode": "binary", "decode": "binary-natural" },
+      "expect": { "value": "0" }
+    },
+    {
+      "name": "div_b",
+      "language": "lambda",
+      "source": "@! DIV_B 7 2;",
+      "stage": "decode",
+      "options": { "encode": "binary", "decode": "binary-natural" },
+      "expect": { "value": "3" }
+    },
+    {
+      "name": "succ_b-leading-zero",
+      "language": "lambda",
+      "source": "@! SUCC_B (EVEN_B ZERO_B);",
+      "stage": "decode",
+      "options": { "decode": "binary-natural" },
+      "expect": { "value": "1" }
+    },
+    {
+      "name": "pred_b-leading-zero-one",
+      "language": "lambda",
+      "source": "@! PRED_B (ODD_B (EVEN_B ZERO_B));",
+      "stage": "decode",
+      "options": { "decode": "binary-natural" },
+      "expect": { "value": "0" }
+    },
+    {
+      "name": "fact_b-zero",
+      "language": "lambda",
+      "source": "@! FACT_B (EVEN_B ZERO_B);",
+      "stage": "decode",
+      "options": { "decode": "binary-natural" },
+      "expect": { "value": "1" }
+    },
+    {
+      "name": "fact_b",
+      "language": "lambda",
+      "source": "@! FACT_B 4;",
+      "stage": "decode",
+      "options": { "encode": "binary", "decode": "binary-natural" },
+      "expect": { "value": "24" }
+    },
+    {
+      "name": "add_b-leading-zero",
+      "language": "lambda",
+      "source": "@! ADD_B (EVEN_B ZERO_B) (ODD_B (EVEN_B ZERO_B));",
+      "stage": "decode",
+      "options": { "decode": "binary-natural" },
+      "expect": { "value": "1" }
+    },
+    {
+      "name": "mul_b-leading-zero",
+      "language": "lambda",
+      "source": "@! MUL_B (EVEN_B ZERO_B) (ODD_B ZERO_B);",
+      "stage": "decode",
+      "options": { "decode": "binary-natural" },
+      "expect": { "value": "0" }
+    },
+    {
+      "name": "sub_b-leading-zero",
+      "language": "lambda",
+      "source": "@! SUB_B (EVEN_B (ODD_B (EVEN_B ZERO_B))) (ODD_B ZERO_B);",
+      "stage": "decode",
+      "options": { "decode": "binary-natural" },
+      "expect": { "value": "1" }
+    },
+    {
+      "name": "pow_b-zero-exponent",
+      "language": "lambda",
+      "source": "@! POW_B 0 (EVEN_B ZERO_B);",
+      "stage": "decode",
+      "options": { "encode": "binary", "decode": "binary-natural" },
+      "expect": { "value": "1" }
+    },
+    {
+      "name": "pow_b",
+      "language": "lambda",
+      "source": "@! POW_B 2 5;",
+      "stage": "decode",
+      "options": { "encode": "binary", "decode": "binary-natural" },
+      "expect": { "value": "32" }
+    },
+    {
+      "name": "mod_b-zero-divisor",
+      "language": "lambda",
+      "source": "@! MOD_B 3 (EVEN_B ZERO_B);",
+      "stage": "decode",
+      "options": { "encode": "binary", "decode": "binary-natural" },
+      "expect": { "value": "3" }
+    },
+    {
+      "name": "mod_b",
+      "language": "lambda",
+      "source": "@! MOD_B 7 2;",
+      "stage": "decode",
+      "options": { "encode": "binary", "decode": "binary-natural" },
+      "expect": { "value": "1" }
+    },
+    {
+      "name": "gcd_b-leading-zero",
+      "language": "lambda",
+      "source": "@! GCD_B (EVEN_B ZERO_B) 6;",
+      "stage": "decode",
+      "options": { "encode": "binary", "decode": "binary-natural" },
+      "expect": { "value": "6" }
+    },
+    {
+      "name": "gcd_b",
+      "language": "lambda",
+      "source": "@! GCD_B 6 4;",
+      "stage": "decode",
+      "options": { "encode": "binary", "decode": "binary-natural" },
+      "expect": { "value": "2" }
+    },
+    {
+      "name": "lcm_b-zero",
+      "language": "lambda",
+      "source": "@! LCM_B (EVEN_B ZERO_B) 3;",
+      "stage": "decode",
+      "options": { "encode": "binary", "decode": "binary-natural" },
+      "expect": { "value": "0" }
+    },
+    {
+      "name": "lcm_b",
+      "language": "lambda",
+      "source": "@! LCM_B 4 6;",
+      "stage": "decode",
+      "options": { "encode": "binary", "decode": "binary-natural" },
+      "expect": { "value": "12" }
+    },
+    {
+      "name": "max_b-leading-zero",
+      "language": "lambda",
+      "source": "@! MAX_B (EVEN_B ZERO_B) (ODD_B ZERO_B);",
+      "stage": "decode",
+      "options": { "decode": "binary-natural" },
+      "expect": { "value": "1" }
+    },
+    {
+      "name": "min_b-leading-zero",
+      "language": "lambda",
+      "source": "@! MIN_B (EVEN_B ZERO_B) (ODD_B ZERO_B);",
+      "stage": "decode",
+      "options": { "decode": "binary-natural" },
+      "expect": { "value": "0" }
+    },
+    {
+      "name": "log_b",
+      "language": "lambda",
+      "source": "@! LOG_B 2 9;",
+      "stage": "decode",
+      "options": { "encode": "binary", "decode": "binary-natural" },
+      "expect": { "value": "3" }
+    },
+    {
+      "name": "eq_b-leading-zero",
+      "language": "lambda",
+      "source": "@! EQ_B (EVEN_B ZERO_B) ZERO_B;",
+      "stage": "decode",
+      "options": { "decode": "boolean" },
+      "expect": { "value": "True" }
+    },
+    {
+      "name": "neq_b-leading-zero",
+      "language": "lambda",
+      "source": "@! NEQ_B (ODD_B (EVEN_B ZERO_B)) ZERO_B;",
+      "stage": "decode",
+      "options": { "decode": "boolean" },
+      "expect": { "value": "True" }
+    },
+    {
+      "name": "leq_b-leading-zero",
+      "language": "lambda",
+      "source": "@! LEQ_B (EVEN_B ZERO_B) ZERO_B;",
+      "stage": "decode",
+      "options": { "decode": "boolean" },
+      "expect": { "value": "True" }
+    },
+    {
+      "name": "gt_b-leading-zero",
+      "language": "lambda",
+      "source": "@! GT_B (ODD_B ZERO_B) (EVEN_B ZERO_B);",
+      "stage": "decode",
+      "options": { "decode": "boolean" },
+      "expect": { "value": "True" }
+    },
+    {
+      "name": "geq_b-leading-zero",
+      "language": "lambda",
+      "source": "@! GEQ_B ZERO_B (EVEN_B ZERO_B);",
+      "stage": "decode",
+      "options": { "decode": "boolean" },
+      "expect": { "value": "True" }
     }
   ]
 }

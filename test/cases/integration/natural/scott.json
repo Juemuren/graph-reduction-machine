@@ -203,6 +203,150 @@
       "stage": "decode",
       "options": { "encode": "scott", "decode": "boolean" },
       "expect": { "value": "False" }
+    },
+    {
+      "name": "fact_s-zero",
+      "language": "lambda",
+      "source": "@! FACT_S 0;",
+      "stage": "decode",
+      "options": { "encode": "scott", "decode": "scott-natural" },
+      "expect": { "value": "1" }
+    },
+    {
+      "name": "fact_s",
+      "language": "lambda",
+      "source": "@! FACT_S 4;",
+      "stage": "decode",
+      "options": { "encode": "scott", "decode": "scott-natural" },
+      "expect": { "value": "24" }
+    },
+    {
+      "name": "gcd_s-zero",
+      "language": "lambda",
+      "source": "@! GCD_S 0 6;",
+      "stage": "decode",
+      "options": { "encode": "scott", "decode": "scott-natural" },
+      "expect": { "value": "6" }
+    },
+    {
+      "name": "gcd_s",
+      "language": "lambda",
+      "source": "@! GCD_S 6 4;",
+      "stage": "decode",
+      "options": { "encode": "scott", "decode": "scott-natural" },
+      "expect": { "value": "2" }
+    },
+    {
+      "name": "lcm_s-zero",
+      "language": "lambda",
+      "source": "@! LCM_S 0 3;",
+      "stage": "decode",
+      "options": { "encode": "scott", "decode": "scott-natural" },
+      "expect": { "value": "0" }
+    },
+    {
+      "name": "lcm_s",
+      "language": "lambda",
+      "source": "@! LCM_S 4 6;",
+      "stage": "decode",
+      "options": { "encode": "scott", "decode": "scott-natural" },
+      "expect": { "value": "12" }
+    },
+    {
+      "name": "max_s",
+      "language": "lambda",
+      "source": "@! MAX_S 2 3;",
+      "stage": "decode",
+      "options": { "encode": "scott", "decode": "scott-natural" },
+      "expect": { "value": "3" }
+    },
+    {
+      "name": "min_s",
+      "language": "lambda",
+      "source": "@! MIN_S 2 3;",
+      "stage": "decode",
+      "options": { "encode": "scott", "decode": "scott-natural" },
+      "expect": { "value": "2" }
+    },
+    {
+      "name": "pow_s-zero-exponent",
+      "language": "lambda",
+      "source": "@! POW_S 0 0;",
+      "stage": "decode",
+      "options": { "encode": "scott", "decode": "scott-natural" },
+      "expect": { "value": "1" }
+    },
+    {
+      "name": "pow_s",
+      "language": "lambda",
+      "source": "@! POW_S 2 3;",
+      "stage": "decode",
+      "options": { "encode": "scott", "decode": "scott-natural" },
+      "expect": { "value": "8" }
+    },
+    {
+      "name": "mod_s-zero-divisor",
+      "language": "lambda",
+      "source": "@! MOD_S 3 0;",
+      "stage": "decode",
+      "options": { "encode": "scott", "decode": "scott-natural" },
+      "expect": { "value": "3" }
+    },
+    {
+      "name": "mod_s",
+      "language": "lambda",
+      "source": "@! MOD_S 7 2;",
+      "stage": "decode",
+      "options": { "encode": "scott", "decode": "scott-natural" },
+      "expect": { "value": "1" }
+    },
+    {
+      "name": "log_s",
+      "language": "lambda",
+      "source": "@! LOG_S 2 9;",
+      "stage": "decode",
+      "options": { "encode": "scott", "decode": "scott-natural" },
+      "expect": { "value": "3" }
+    },
+    {
+      "name": "eq_s",
+      "language": "lambda",
+      "source": "@! EQ_S 2 2;",
+      "stage": "decode",
+      "options": { "encode": "scott", "decode": "boolean" },
+      "expect": { "value": "True" }
+    },
+    {
+      "name": "neq_s",
+      "language": "lambda",
+      "source": "@! NEQ_S 2 3;",
+      "stage": "decode",
+      "options": { "encode": "scott", "decode": "boolean" },
+      "expect": { "value": "True" }
+    },
+    {
+      "name": "leq_s",
+      "language": "lambda",
+      "source": "@! LEQ_S 2 2;",
+      "stage": "decode",
+      "options": { "encode": "scott", "decode": "boolean" },
+      "expect": { "value": "True" }
+    },
+    {
+      "name": "gt_s",
+      "language": "lambda",
+      "source": "@! GT_S 3 2;",
+      "stage": "decode",
+      "options": { "encode": "scott", "decode": "boolean" },
+      "expect": { "value": "True" }
+    },
+    {
+      "name": "geq_s",
+      "language": "lambda",
+      "source": "@! GEQ_S 2 2;",
+      "stage": "decode",
+      "options": { "encode": "scott", "decode": "boolean" },
+      "expect": { "value": "True" }
     }
   ]
 }

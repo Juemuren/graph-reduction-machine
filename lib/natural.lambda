@@ -99,6 +99,9 @@ divMod = \m -> \n ->
 # Unary operations
 
 @> PRED_S = \n -> n ZERO_S (\predecessor -> predecessor);
+@> FACT_S = Y (\fact -> \n ->
+    n (SUCC_S ZERO_S) (\predecessor -> MUL_S n (fact predecessor))
+);
 
 # Symmetric binary operations
 
@@ -108,11 +111,25 @@ divMod = \m -> \n ->
 @> MUL_S = Y (\mul -> \m -> \n ->
     m ZERO_S (\predecessor -> ADD_S n (mul predecessor n))
 );
+@> GCD_S = \m -> \n ->
+    FST (WHILE
+        (\pair -> NOT (ISZERO_S (SND pair)))
+        (\pair -> PAIR (SND pair) (MOD_S (FST pair) (SND pair)))
+        (PAIR m n));
+@> LCM_S = \m -> \n ->
+    IF (OR (ISZERO_S m) (ISZERO_S n))
+        ZERO_S
+        (DIV_S (MUL_S m n) (GCD_S m n));
+@> MAX_S = \m -> \n -> IF (GEQ_S m n) m n;
+@> MIN_S = \m -> \n -> IF (LEQ_S m n) m n;
 
 # Asymmetric binary operations
 
 @> SUB_S = Y (\sub -> \m -> \n ->
     n m (\predecessor -> sub (PRED_S m) predecessor)
+);
+@> POW_S = Y (\pow -> \m -> \n ->
+    n (SUCC_S ZERO_S) (\predecessor -> MUL_S m (pow m predecessor))
 );
 @> DIV_S = Y (\div -> \m -> \n ->
     (ISZERO_S n)
@@ -121,6 +138,19 @@ divMod = \m -> \n ->
         ZERO_S
         (SUCC_S (div (SUB_S m n) n)))
 );
+@> MOD_S = Y (\mod -> \m -> \n ->
+    IF (ISZERO_S n) m
+        (IF (LT_S m n) m
+            (mod (SUB_S m n) n))
+);
+@> LOG_S = \base -> \number ->
+    FST (WHILE
+        (\state -> GEQ_S (SND state) base)
+        (\state ->
+            PAIR
+                (SUCC_S (FST state))
+                (DIV_S (SND state) base))
+        (PAIR ZERO_S number));
 
 # Comparison
 
@@ -129,10 +159,17 @@ divMod = \m -> \n ->
     m (n FALSE (\t -> TRUE))
     (\p -> n FALSE (\q -> lt p q))
 );
+@> EQ_S = \m -> \n -> AND (NOT (LT_S m n)) (NOT (LT_S n m));
+@> NEQ_S = \m -> \n -> NOT (EQ_S m n);
+@> LEQ_S = \m -> \n -> NOT (LT_S n m);
+@> GT_S = \m -> \n -> LT_S n m;
+@> GEQ_S = \m -> \n -> NOT (LT_S m n);
 
 # ---
 # Binary-encoded
 # ---
+
+# Construction
 
 @> ZERO_B = \zero -> \even -> \odd -> zero;
 @> EVEN_B = \n -> \zero -> \even -> \odd -> even n;
@@ -141,10 +178,116 @@ divMod = \m -> \n ->
 @> BIT_0 = EVEN_B;
 @> BIT_1 = ODD_B;
 
-@> SUCC_B = Y (\s -> \n ->
+# Unary operations
+
+@> SUCC_B = Y (\succ -> \n ->
     n
-    (BIT_1 ZERO_B)
-    (\k -> BIT_1 k)
-    (\k -> BIT_0 (s k))
+        (ODD_B ZERO_B)
+        (\k -> ODD_B k)
+        (\k -> EVEN_B (succ k))
 );
+
+@> PRED_B = Y (\pred -> \n ->
+    n
+        ZERO_B
+        (\p -> IF (ISZERO_B p) ZERO_B (ODD_B (pred p)))
+        (\p -> EVEN_B p)
+);
+
+@> FACT_B = Y (\fact -> \n ->
+    IF (ISZERO_B n) (ODD_B ZERO_B) (MUL_B n (fact (PRED_B n)))
+);
+
+doubleB = \n -> n ZERO_B (\p -> EVEN_B n) (\p -> EVEN_B n);
+
+# Symmetric binary operations
+
+@> ADD_B = Y (\add -> \m -> \n ->
+    m n
+        (\p -> n m
+            (\q -> doubleB (add p q))
+            (\q -> ODD_B (add p q)))
+        (\p -> n m
+            (\q -> ODD_B (add p q))
+            (\q -> EVEN_B (SUCC_B (add p q))))
+);
+
+mulB = Y (\mul -> \m -> \n ->
+    n ZERO_B
+        (\p -> doubleB (mul m p))
+        (\p -> ADD_B m (doubleB (mul m p)))
+);
+@> MUL_B = \m -> \n -> IF (ISZERO_B m) ZERO_B (mulB m n);
+@> GCD_B = \m -> \n ->
+    FST (WHILE
+        (\pair -> NOT (ISZERO_B (SND pair)))
+        (\pair -> PAIR (SND pair) (MOD_B (FST pair) (SND pair)))
+        (PAIR m n));
+@> LCM_B = \m -> \n ->
+    IF (OR (ISZERO_B m) (ISZERO_B n))
+        ZERO_B
+        (DIV_B (MUL_B m n) (GCD_B m n));
+@> MAX_B = \m -> \n -> IF (GEQ_B m n) m n;
+@> MIN_B = \m -> \n -> IF (LEQ_B m n) m n;
+
+# Asymmetric binary operations
+
+subB = Y (\sub -> \m -> \n ->
+    m ZERO_B
+        (\p -> n m
+            (\q -> doubleB (sub p q))
+            (\q -> ODD_B (PRED_B (sub p q))))
+        (\p -> n m
+            (\q -> ODD_B (sub p q))
+            (\q -> doubleB (sub p q)))
+);
+@> SUB_B = \m -> \n -> IF (LT_B m n) ZERO_B (subB m n);
+
+powB = Y (\pow -> \m -> \n ->
+    n
+        (ODD_B ZERO_B)
+        (\p -> MUL_B (pow m p) (pow m p))
+        (\p -> MUL_B m (MUL_B (pow m p) (pow m p)))
+);
+@> POW_B = powB;
+
+@> DIV_B = Y (\div -> \m -> \n ->
+    IF (ISZERO_B n) ZERO_B
+        (IF (LT_B m n) ZERO_B
+            (SUCC_B (div (SUB_B m n) n)))
+);
+@> MOD_B = Y (\mod -> \m -> \n ->
+    IF (ISZERO_B n) m
+        (IF (LT_B m n) m
+            (mod (SUB_B m n) n))
+);
+
+@> LOG_B = \base -> \number ->
+    FST (WHILE
+        (\state -> GEQ_B (SND state) base)
+        (\state ->
+            PAIR
+                (SUCC_B (FST state))
+                (DIV_B (SND state) base))
+        (PAIR ZERO_B number));
+
+# Comparison
+
+@> ISZERO_B = Y (\isZero -> \n ->
+    n TRUE (\p -> isZero p) (\p -> FALSE)
+);
+@> LT_B = Y (\lt -> \m -> \n ->
+    m (NOT (ISZERO_B n))
+        (\p -> n FALSE
+            (\q -> lt p q)
+            (\q -> NOT (lt q p)))
+        (\p -> n FALSE
+            (\q -> lt p q)
+            (\q -> lt p q))
+);
+@> EQ_B = \m -> \n -> AND (NOT (LT_B m n)) (NOT (LT_B n m));
+@> NEQ_B = \m -> \n -> NOT (EQ_B m n);
+@> LEQ_B = \m -> \n -> NOT (LT_B n m);
+@> GT_B = \m -> \n -> LT_B n m;
+@> GEQ_B = \m -> \n -> NOT (LT_B m n);
 
