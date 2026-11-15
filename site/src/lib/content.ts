@@ -1,6 +1,8 @@
 import { readdir, readFile, stat } from "node:fs/promises";
 import path from "node:path";
 import { parse } from "@std/csv";
+import { instance } from "@viz-js/viz";
+import { fromHtml } from "hast-util-from-html";
 import rehypeKatex from "rehype-katex";
 import rehypeSlug from "rehype-slug";
 import rehypeStringify from "rehype-stringify";
@@ -55,6 +57,57 @@ interface HtmlNode {
   };
   children?: HtmlNode[];
   value?: string;
+}
+
+const viz = instance();
+
+function renderDotDiagrams(sourcePath: string) {
+  return () => async (tree: HtmlNode) => {
+    const renderer = await viz;
+    const visit = (node: HtmlNode) => {
+      if (!node.children) return;
+      node.children = node.children.flatMap((child) => {
+        if (child.tagName === "pre") {
+          const code = child.children?.[0];
+          if (
+            code?.tagName === "code" &&
+            code.properties?.className?.includes("language-dot")
+          ) {
+            const dot =
+              code.children?.map((part) => part.value ?? "").join("") ?? "";
+            let svg: string;
+            try {
+              svg = renderer.renderString(dot, {
+                format: "svg",
+                engine: "dot",
+              });
+            } catch (error) {
+              throw new Error(`DOT 图渲染失败: ${sourcePath}`, {
+                cause: error,
+              });
+            }
+            const elements = fromHtml(svg, { fragment: true })
+              .children as HtmlNode[];
+            const diagram = elements.find(
+              (element) => element.tagName === "svg",
+            );
+            if (!diagram) throw new Error(`DOT 图未生成 SVG: ${sourcePath}`);
+            return [
+              {
+                type: "element",
+                tagName: "div",
+                properties: { className: ["dot-diagram"] },
+                children: [diagram],
+              },
+            ];
+          }
+        }
+        visit(child);
+        return [child];
+      });
+    };
+    visit(tree);
+  };
 }
 
 function linkImages() {
@@ -334,6 +387,7 @@ export async function renderMarkdown(sourcePath: string) {
     .use(renderCsvLinks(sourcePath))
     .use(rewriteLinks(sourcePath))
     .use(remarkRehype)
+    .use(renderDotDiagrams(sourcePath))
     .use(linkImages)
     .use(collapseCsvTables)
     .use(rehypeSlug)

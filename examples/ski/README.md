@@ -90,38 +90,54 @@ SKI 图包含四种节点：`@` 应用节点、`S` 节点、`K` 节点、`I` 节
 - 内部节点是应用节点，固定有一条入边和两条出边，入边连接到根节点或别的内部节点，出边分别连接到函数节点和参数节点
 - 叶节点是 `S` 节点 / `K` 节点 / `I` 节点，固定有一条入边，连接到根节点或内部节点
 
-```mermaid
-flowchart TD
-    0(("@"))
-    1(("@"))
-    2(("@"))
-    3(("S"))
-    4(("I"))
-    5(("I"))
-    6(("I"))
-    0 --> 1
-    0 --> 6
-    1 --> 2
-    1 --> 5
-    2 --> 3
-    2 --> 4
+```dot
+digraph {
+    graph [
+        ordering=out,
+        bgcolor=transparent,
+        label="unshared",
+        labelloc=t,
+    ]
+    node [shape=circle]
+    0 [label="@"]
+    1 [label="@"]
+    2 [label="@"]
+    3 [label="S"]
+    4 [label="I"]
+    5 [label="I"]
+    6 [label="I"]
+    0 -> 1
+    0 -> 6
+    1 -> 2
+    1 -> 5
+    2 -> 3
+    2 -> 4
+}
 ```
 
 如果考虑共享节点，那么 SKI 图是一个有序有向无环图，因为多个应用节点的出边可能连接到同一个节点，这可以用来减少图的大小
 
-```mermaid
-flowchart TD
-    0(("@"))
-    1(("@"))
-    2(("@"))
-    3(("S"))
-    4(("I"))
-    0 --> 1
-    0 --> 4
-    1 --> 2
-    1 --> 4
-    2 --> 3
-    2 --> 4
+```dot
+digraph {
+    graph [
+        ordering=out,
+        bgcolor=transparent,
+        label="shared",
+        labelloc=t,
+    ]
+    node [shape=circle]
+    0 [label="@"]
+    1 [label="@"]
+    2 [label="@"]
+    3 [label="S"]
+    4 [label="I"]
+    0 -> 1
+    0 -> 4
+    1 -> 2
+    1 -> 4
+    2 -> 3
+    2 -> 4
+}
 ```
 
 ## SKI 图归约
@@ -130,83 +146,125 @@ flowchart TD
 
 如果函数节点是 `I` 节点，参数节点是 `x`，那么得到的结果为 `x`。由于 `I` 组合子只需要一个参数，所以不需要向上回溯节点
 
-```mermaid
-flowchart LR
-    subgraph U["unreduced"]
-        u0(("@"))
-        u1(("I"))
-        u2(("x"))
-        u0 --> u1
-        u0 --> u2
-    end
-
-    subgraph R["reduced"]
-        r0(("x"))
-    end
-
-    U --> R
+```dot
+digraph {
+    graph [
+        ordering=out,
+        bgcolor=transparent,
+        rankdir=TB,
+        newrank=true,
+        compound=true,
+        nodesep=1.0,
+    ]
+    node [shape=circle]
+    subgraph cluster_before {
+        label="unreduced"
+        u0 [label="@"]
+        u1 [label="I"]
+        u2 [label="x"]
+        u0 -> u1
+        u0 -> u2
+    }
+    subgraph cluster_after {
+        label="reduced"
+        r0 [label="x"]
+    }
+    { rank=source; u0; r0; }
+    u0 -> r0 [
+        ltail=cluster_before,
+        lhead=cluster_after,
+    ]
+}
 ```
 
 如果函数节点是 `K` 节点，参数节点是 `x` 和 `y`，那么得到的结果为 `x`。由于 `K` 组合子需要两个参数，所以需要向上回溯一个节点
 
-```mermaid
-flowchart LR
-    subgraph U["unreduced"]
-        u0(("@"))
-        u1(("@"))
-        u2(("y"))
-        u3(("K"))
-        u4(("x"))
-        u0 --> u1
-        u0 --> u2
-        u1 --> u3
-        u1 --> u4
-    end
-
-    subgraph R["reduced"]
-        r0(("x"))
-    end
-
-    U --> R
+```dot
+digraph {
+    graph [
+        ordering=out,
+        bgcolor=transparent,
+        rankdir=TB,
+        newrank=true,
+        compound=true,
+        nodesep=1.0,
+    ]
+    node [shape=circle]
+    subgraph cluster_before {
+        label="unreduced"
+        u0 [label="@"]
+        u1 [label="@"]
+        u2 [label="y"]
+        u3 [label="K"]
+        u4 [label="x"]
+        u0 -> u1
+        u0 -> u2
+        u1 -> u3
+        u1 -> u4
+    }
+    subgraph cluster_after {
+        label="reduced"
+        r0 [label="x"]
+    }
+    { rank=source; u0; r0; }
+    u0 -> r0 [
+        ltail=cluster_before,
+        lhead=cluster_after,
+    ]
+}
 ```
 
 如果函数节点是 `S` 节点，参数节点是 `x` / `y` / `z`，那么得到的结果为 `(x z) (y z)`。由于 `S` 组合子需要三个参数，所以需要向上回溯两个节点
 
-```mermaid
-flowchart LR
-    subgraph U["unreduced"]
-        u0(("@"))
-        u1(("@"))
-        u2(("z"))
-        u3(("@"))
-        u4(("y"))
-        u5(("S"))
-        u6(("x"))
-        u0 --> u1
-        u0 --> u2
-        u1 --> u3
-        u1 --> u4
-        u3 --> u5
-        u3 --> u6
-    end
-
-    subgraph R["reduced"]
-        r0(("@"))
-        r1(("@"))
-        r2(("@"))
-        r3(("x"))
-        r4(("z"))
-        r5(("y"))
-        r6(("z"))
-        r0 --> r1
-        r0 --> r2
-        r1 --> r3
-        r1 --> r4
-        r2 --> r5
-        r2 --> r6
-    end
-
-    U --> R
+```dot
+digraph {
+    graph [
+        ordering=out,
+        bgcolor=transparent,
+        rankdir=TB,
+        newrank=true,
+        compound=true,
+        nodesep=1.0,
+    ]
+    node [shape=circle]
+    subgraph cluster_before {
+        label="unreduced"
+        u0 [label="@"]
+        u1 [label="@"]
+        u2 [label="z"]
+        u3 [label="@"]
+        u4 [label="y"]
+        u5 [label="S"]
+        u6 [label="x"]
+        u0 -> u1
+        u0 -> u2
+        u1 -> u3
+        u1 -> u4
+        u3 -> u5
+        u3 -> u6
+    }
+    subgraph cluster_after {
+        label="reduced"
+        r0 [label="@"]
+        r1 [label="@"]
+        r2 [label="@"]
+        r3 [label="x"]
+        r4 [label="z"]
+        r5 [label="y"]
+        r6 [label="z"]
+        r0 -> r1
+        r0 -> r2
+        r1 -> r3
+        r1 -> r4
+        r2 -> r5
+        r2 -> r6
+    }
+    { rank=source; u0; r0; }
+    u0 -> r0 [
+        ltail=cluster_before,
+        lhead=cluster_after,
+    ]
+}
 ```
 
 ## 示例

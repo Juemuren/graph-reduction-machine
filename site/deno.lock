@@ -5,10 +5,13 @@
     "jsr:@std/csv@1.0.6": "1.0.6",
     "jsr:@std/streams@^1.0.9": "1.2.0",
     "npm:@astrojs/check@0.9.12": "0.9.12_typescript@6.0.3",
+    "npm:@biomejs/biome@*": "2.6.6",
     "npm:@biomejs/biome@2.6.6": "2.6.6",
     "npm:@jsr/std__csv@1.0.6": "1.0.6",
     "npm:@types/node@26.6.6": "26.6.6",
+    "npm:@viz-js/viz@3.31.0": "3.31.0",
     "npm:astro@7.4.10": "7.4.10_@types+node@26.6.6",
+    "npm:hast-util-from-html@2.1.0": "2.1.0",
     "npm:katex@0.16.22": "0.16.22",
     "npm:pagefind@^1.6.0": "1.6.0",
     "npm:photoswipe@5.4.4": "5.4.4",
@@ -942,6 +945,9 @@
     },
     "@ungap/structured-clone@1.4.0": {
       "integrity": "sha512-1mEZtMKPM09vDmQt5y7YvmN2+DFTP7Tg0EWXdic8/C6VRnpb33e4ghisCIE3WZjsE2N8mf+QV1Zqh7ZFYLWInQ=="
+    },
+    "@viz-js/viz@3.31.0": {
+      "integrity": "sha512-r7zlQdRvcwvIpjHGgs+KNWHeE/P5/Dq7k8ZAKaMCbZqomxCBJV78gVuQYaHzFVca+kB0mX0fMW9UFevCOBG50A=="
     },
     "@volar/kit@2.4.31_typescript@6.0.3": {
       "integrity": "sha512-pQgvegC28dfdNcs/iDNZVHkMs+dG7rpD9Aj+sNU2hildv1QuH7/MIoff/cSJW/IR25AGOeHWbJXWWFKDXXWtVw==",
@@ -2844,7 +2850,9 @@
       "npm:@astrojs/check@0.9.12",
       "npm:@biomejs/biome@2.6.6",
       "npm:@types/node@26.6.6",
+      "npm:@viz-js/viz@3.31.0",
       "npm:astro@7.4.10",
+      "npm:hast-util-from-html@2.1.0",
       "npm:katex@0.16.22",
       "npm:pagefind@^1.6.0",
       "npm:photoswipe@5.4.4",

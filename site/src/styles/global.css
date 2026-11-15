@@ -181,6 +181,41 @@ img {
   margin: 20px 0;
 }
 
+.prose .dot-diagram {
+  margin: 20px 0;
+  padding: 20px;
+  overflow-x: auto;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+}
+
+.prose .dot-diagram svg {
+  display: block;
+  max-width: 100%;
+  height: auto;
+  margin: auto;
+}
+
+.prose .dot-diagram svg .graph > polygon,
+.prose .dot-diagram svg .node ellipse {
+  fill: none;
+}
+
+.prose .dot-diagram svg .node ellipse,
+.prose .dot-diagram svg .edge path,
+.prose .dot-diagram svg .cluster polygon {
+  stroke: var(--accent);
+}
+
+.prose .dot-diagram svg .edge polygon {
+  fill: var(--accent);
+  stroke: var(--accent);
+}
+
+.prose .dot-diagram svg text {
+  fill: var(--body-text);
+}
+
 .prose a[data-pswp-width] img {
   cursor: zoom-in;
 }
