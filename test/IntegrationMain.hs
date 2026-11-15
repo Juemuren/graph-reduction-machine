@@ -83,6 +83,8 @@ decodeGraph spec limit graph = case runDecode spec of
       else
         showDecoded "Real" renderRational (decodeReal limit (fromInteger index) graph)
   Just name -> case parseDecodeType name of
+    Just StringType ->
+      showComposite (decodeComposite limit StringType graph)
     Just kind@(ListType _) ->
       showComposite (decodeComposite limit kind graph)
     Just kind@(PairType _ _) ->

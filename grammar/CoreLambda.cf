@@ -24,6 +24,7 @@ _.           Exp1      ::= Exp2 ;
 EVar.        Exp2      ::= Name ;
 EBuiltin.    Exp2      ::= Builtin ;
 ENumber.     Exp2      ::= Integer ;
+EString.     Exp2      ::= String ;
 _.           Exp2      ::= "(" Exp ")" ;
 
 token Name (lower (letter | digit | '_')*) ;

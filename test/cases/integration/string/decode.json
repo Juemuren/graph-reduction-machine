@@ -1,0 +1,60 @@
+{
+  "cases": [
+    {
+      "name": "empty-literal",
+      "language": "lambda",
+      "source": "@! \"\";",
+      "stage": "decode",
+      "options": { "decode": "string" },
+      "expect": { "value": "" }
+    },
+    {
+      "name": "unicode-literal",
+      "language": "lambda",
+      "source": "@! \"A中😀\";",
+      "stage": "decode",
+      "options": { "decode": "string" },
+      "expect": { "value": "A中😀" }
+    },
+    {
+      "name": "escaped-literal",
+      "language": "lambda",
+      "source": "@! \"a\\n\\\"b\\\\\";",
+      "stage": "decode",
+      "options": { "decode": "string" },
+      "expect": { "value": "a\n\"b\\" }
+    },
+    {
+      "name": "literal-independent-of-numeric-encoding",
+      "language": "lambda",
+      "source": "@! \"A\";",
+      "stage": "decode",
+      "options": { "encode": "scott", "decode": "string" },
+      "expect": { "value": "A" }
+    },
+    {
+      "name": "append",
+      "language": "lambda",
+      "source": "@! APPEND \"Hi\" \"!\";",
+      "stage": "decode",
+      "options": { "decode": "string" },
+      "expect": { "value": "Hi!" }
+    },
+    {
+      "name": "nested-list",
+      "language": "lambda",
+      "source": "@! CONS \"A\" (CONS \"B\" NIL);",
+      "stage": "decode",
+      "options": { "decode": "list<string>" },
+      "expect": { "value": "[A, B]" }
+    },
+    {
+      "name": "invalid-character",
+      "language": "lambda",
+      "source": "@! CONS 114514 NIL;",
+      "stage": "decode",
+      "options": { "encode": "binary", "decode": "string" },
+      "expect": { "error": "not a value of the requested type" }
+    }
+  ]
+}

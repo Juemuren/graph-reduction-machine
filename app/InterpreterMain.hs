@@ -95,7 +95,7 @@ parseArgs = go Nothing False Raw Nothing Nothing
       [ "usage: ski-interpreter"
       , "[--max-steps=N|--no-step-limit]"
       , "[--show-steps]"
-      , "[--decode=natural|scott-natural|binary-natural|boolean|integer|rational|real|list<T>|pair<A,B>]"
+      , "[--decode=natural|scott-natural|binary-natural|boolean|integer|rational|real|string|list<T>|pair<A,B>]"
       , "[--precision-real=N]"
       , "[FILE]"
       ]
@@ -114,6 +114,7 @@ parseArgs = go Nothing False Raw Nothing Nothing
           "integer" -> go limit showSteps Integer precision path rest
           "rational" -> go limit showSteps Rational precision path rest
           "real" -> go limit showSteps (Real 0) precision path rest
+          "string" -> go limit showSteps (Composite StringType) precision path rest
           _ ->
             maybe
               (Left usage)

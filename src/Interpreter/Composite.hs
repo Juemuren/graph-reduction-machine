@@ -6,7 +6,7 @@ module Interpreter.Composite (
   decodeCompositeSourceWithSteps,
 ) where
 
-import Data.Char (isSpace)
+import Data.Char (chr, isSpace)
 import Data.List (intercalate, stripPrefix)
 import Data.Ratio (denominator, numerator)
 import Interpreter.Binary (decodeBinaryNaturalAt)
@@ -30,6 +30,7 @@ data DecodeType
   | BooleanType
   | IntegerType
   | RationalType
+  | StringType
   | PairType DecodeType DecodeType
   | ListType DecodeType
   deriving (Eq, Show)
@@ -60,6 +61,7 @@ parseDecodeType source = do
         ("boolean", rest) -> Just (BooleanType, rest)
         ("integer", rest) -> Just (IntegerType, rest)
         ("rational", rest) -> Just (RationalType, rest)
+        ("string", rest) -> Just (StringType, rest)
         _ -> Nothing
 
 decodeComposite ::
@@ -81,6 +83,7 @@ decodeAt kind root = case kind of
     fmap (fmap (\value -> if value then "TRUE" else "FALSE")) (decodeBooleanAt root)
   IntegerType -> fmap (fmap show) (decodeIntegerAt root)
   RationalType -> fmap (fmap renderRational) (decodeRationalAt root)
+  StringType -> decodeChurchListAt decodeCharacterAt root
   PairType firstType secondType -> do
     components <- decodePairAt root
     case components of
@@ -90,16 +93,29 @@ decodeAt kind root = case kind of
         secondValue <- decodeAt secondType second
         pure ((\a b -> "(" ++ a ++ ", " ++ b ++ ")") <$> firstValue <*> secondValue)
   ListType elementType -> do
-    cons <- allocate ProbeFunction
-    nil <- allocate ProbeValue
-    appliedOnce <- allocate (App root cons)
-    appliedTwice <- allocate (App appliedOnce nil)
-    values <- decodeListAt elementType nil appliedTwice
+    values <- decodeChurchListAt (decodeAt elementType) root
     pure (fmap (\items -> "[" ++ intercalate ", " items ++ "]") values)
 
+decodeChurchListAt :: (Address -> Run (Maybe a)) -> Address -> Run (Maybe [a])
+decodeChurchListAt decodeItem root = do
+  cons <- allocate ProbeFunction
+  nil <- allocate ProbeValue
+  appliedOnce <- allocate (App root cons)
+  appliedTwice <- allocate (App appliedOnce nil)
+  decodeListAt decodeItem nil appliedTwice
+
+decodeCharacterAt :: Address -> Run (Maybe Char)
+decodeCharacterAt address = do
+  value <- decodeBinaryNaturalAt address
+  pure $ do
+    number <- value
+    if number <= 0x10FFFF && (number < 0xD800 || number > 0xDFFF)
+      then Just (chr (fromIntegral number))
+      else Nothing
+
 decodeListAt ::
-  DecodeType -> Address -> Address -> Run (Maybe [String])
-decodeListAt elementType nil current = do
+  (Address -> Run (Maybe a)) -> Address -> Address -> Run (Maybe [a])
+decodeListAt decodeItem nil current = do
   whnf current
   actual <- resolve current
   if actual == nil
@@ -108,8 +124,8 @@ decodeListAt elementType nil current = do
       (headNode, applications) <- spine current
       case (headNode, applications) of
         (ProbeFunction, [(_, item), (_, rest)]) -> do
-          value <- decodeAt elementType item
-          values <- decodeListAt elementType nil rest
+          value <- decodeItem item
+          values <- decodeListAt decodeItem nil rest
           pure ((:) <$> value <*> values)
         _ -> pure Nothing
 

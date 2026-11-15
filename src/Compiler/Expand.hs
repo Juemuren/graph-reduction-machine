@@ -8,6 +8,7 @@ import Compiler.ModuleSource (Import (..), Module (..), parseModule)
 import Control.Monad (foldM, when)
 import qualified CoreLambda.Abs as Core
 import qualified CoreLambda.Print as Core
+import Data.Char (ord)
 import Data.List (intercalate)
 import qualified Data.Map.Strict as Map
 import qualified PureLambda.Abs as Pure
@@ -142,6 +143,10 @@ go encoding library allSources file stack bound expression = case expression of
     Pure.EAbs (Pure.Name name)
       <$> go encoding library allSources file stack (name : bound) body
   Core.ENumber number -> Right (encodeNatural encoding number)
+  Core.EString value ->
+    if all validScalar value
+      then Right (encodeString value)
+      else Left "string literal contains an invalid Unicode scalar value"
   Core.EBuiltin (Core.Builtin name) -> do
     imported <- lookupName allSources file name
     case imported of
@@ -174,6 +179,31 @@ encodeNatural encoding number = case encoding of
   var = Pure.EVar . Pure.Name
   absName name = Pure.EAbs (Pure.Name name)
   app = Pure.EApp
+
+encodeString :: String -> Pure.Exp
+encodeString = foldr cons nil
+ where
+  nil =
+    Pure.EAbs
+      (Pure.Name "c")
+      (Pure.EAbs (Pure.Name "n") (Pure.EVar (Pure.Name "n")))
+  cons character rest =
+    Pure.EAbs (Pure.Name "c") $
+      Pure.EAbs (Pure.Name "n") $
+        Pure.EApp
+          ( Pure.EApp
+              (Pure.EVar (Pure.Name "c"))
+              (encodeNatural Binary (toInteger (ord character)))
+          )
+          ( Pure.EApp
+              (Pure.EApp rest (Pure.EVar (Pure.Name "c")))
+              (Pure.EVar (Pure.Name "n"))
+          )
+
+validScalar :: Char -> Bool
+validScalar character = code < 0xD800 || code > 0xDFFF
+ where
+  code = ord character
 
 lookupName ::
   Map.Map FilePath String -> FilePath -> String -> Either String (Maybe FilePath)

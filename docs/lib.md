@@ -198,18 +198,18 @@ EVEN (EVEN (ODD ZERO))
 
 ### 自然数构造
 
+可以直接使用十进制阿拉伯数字表示 Church / Scott / Binary 自然数字面量。相关语法参见 [syntax.md#核心-λ-的字面量](syntax.md#核心-λ-的字面量)，编码选项参见 [compiler.md#编译器选项](compiler.md#编译器选项)，解码选项参见 [interpreter.md#解释器选项](interpreter.md#解释器选项)
+
 #### Church 自然数编码
 
 - `ZERO` 表示零
 - `SUCC a` 表示自然数 `a` 的后继
 - `ONE` / `TWO` / `THREE` / `FOUR` / `FIVE` / `SIX` / `SEVEN` / `EIGHT` / `NINE` / `TEN` 分别表示一到十
-- 可以直接使用十进制阿拉伯数字表示 Church 自然数编码。相关编码选项参见 [compiler.md#编译器选项](compiler.md#编译器选项)，解码选项参见 [interpreter.md#解释器选项](interpreter.md#解释器选项)
 
 #### Scott 自然数编码
 
 - `ZERO_S` 表示零
 - `SUCC_S a` 表示自然数 `a` 的后继
-- 可以直接使用十进制阿拉伯数字表示 Scott 自然数编码。相关编码选项参见 [compiler.md#编译器选项](compiler.md#编译器选项)，解码选项参见 [interpreter.md#解释器选项](interpreter.md#解释器选项)
 
 #### Binary 自然数编码
 
@@ -217,7 +217,6 @@ EVEN (EVEN (ODD ZERO))
 - `EVEN_B a` 表示 `a` 的两倍，`ODD_B a` 表示 `a` 的两倍加一
 - `BIT_0` / `BIT_1` 分别是 `EVEN_B` / `ODD_B` 的别名
 - 前导零不影响数值，即 `BIT_0 ZERO_B` / `BIT_0 (BIT_0 ZERO_B)` 等仍表示零，`BIT_1 (BIT_0 ZERO_B)` / `BIT_1 (BIT_0 (BIT_0 ZERO_B))` 等仍表示一，以此类推
-- 可以直接使用十进制阿拉伯数字表示 Binary 自然数编码。相关编码选项参见 [compiler.md#编译器选项](compiler.md#编译器选项)，解码选项参见 [interpreter.md#解释器选项](interpreter.md#解释器选项)
 
 ### 自然数运算
 
@@ -459,3 +458,20 @@ $$
 - `REQ a b n` / `RNEQ a b n` 判断 `a n` 是否等于 / 不等于 `b n`
 - `RLT a b n` / `RLEQ a b n` 判断 `a n` 是否小于 / 小于或等于 `b n`
 - `RGT a b n` / `RGEQ a b n` 判断 `a n` 是否大于 / 大于或等于 `b n`
+
+## 字符串
+
+字符串使用 Church 有序列表编码，列表中的每个元素是用 Binary 自然数编码的 Unicode 标量值。
+
+字符的有效 Unicode 标量值范围是从 `0` 至 `0x10FFFF` 且排除从 `0xD800` 至 `0xDFFF` 的代理项。
+
+### 字符串构造
+
+可以直接使用双引号表示字符串字面量。相关语法参见 [syntax.md#核心-λ-的字面量](syntax.md#核心-λ-的字面量)，解码选项参见 [interpreter.md#解释器选项](interpreter.md#解释器选项)
+
+- `NIL` 表示空字符串
+- `CONS a s` 表示将字符 `a` 放在字符串 `s` 开头的新字符串
+
+### 字符串操作
+
+字符串就是元素为 Binary 自然数的有序列表，可以使用所有的 [有序列表操作](#有序列表操作)。

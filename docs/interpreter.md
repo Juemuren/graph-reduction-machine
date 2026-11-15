@@ -100,6 +100,18 @@
 
 默认的自然数下标为 `0`。
 
+#### 字符串解码
+
+使用字符串解码时，解释器会把输入图的根表达式应用到符号参数 `c` 和 `n`，再归约所得表达式：
+
+- 若归约结果为 `n`，则把 `""` 作为解码得到的字符串
+- 若归约结果为 `c a r`，则按 Binary 自然数解码 `a`，按字符串递归解码 `r`
+   - 若 `a` 和 `r` 解码成功，则把 `a` 对应的字符放在 `r` 的开头，作为解码得到的字符串
+   - 若 `a` 或 `r` 解码失败，则字符串解码失败
+- 若结果不符合以上两种形式，则字符串解码失败
+
+字符的有效 Unicode 标量值范围是从 `0` 至 `0x10FFFF` 且排除从 `0xD800` 至 `0xDFFF` 的代理项。超出此范围的 Binary 自然数会视作字符串解码失败。
+
 #### 有序对解码
 
 使用有序对 `pair<A,B>` 解码时，解释器会把输入图的根表达式应用到符号参数 `f`，再将所得表达式归约到 `f a b` 形式，然后分别按 `A` 和 `B` 的解码方式解码 `a` 和 `b`：
@@ -113,7 +125,7 @@
 
 - 若归约结果为 `n`，则把 `[]` 作为解码得到的有序列表
 - 若归约结果为 `c a r`，则按 `T` 的解码方式解码 `a`，按 `list<T>` 的解码方式递归解码 `r`
-   - 若 `a` 和 `r` 解码成功，则把 `a r` 作为解码得到的 Church 有序列表
+   - 若 `a` 和 `r` 解码成功，则把 `a` 放在列表 `r` 的开头，作为解码得到的 Church 有序列表
    - 若 `a` 或 `r` 解码失败，则 Church 有序列表解码失败
 - 若结果不符合以上两种形式，则 Church 有序列表解码失败
 
@@ -134,5 +146,6 @@
 - 用 `--decode=integer` 解码整数
 - 用 `--decode=rational` 解码有理数
 - 用 `--decode=real` 解码实数，用 `--precision-real=N` 指定解码时使用的自然数下标为 `N`
-- 用 `--decode=list<T>` 解码 Church 列表，其中 `T` 可以是 `natural` / `scott-natural` / `binary-natural` / `boolean` / `integer` / `rational`，也可以是嵌套的 `list<T>` / `pair<A,B>`；`real` 目前不能用于复合类型
-- 用 `--decode=pair<A,B>` 解码 Church 有序对，其中 `A/B` 可以是 `natural`、`scott-natural`、`binary-natural`、`boolean`、`integer`、`rational`，也可以是嵌套的 `list<T>` / `pair<A,B>`；`real` 目前不能用于复合类型
+- 用 `--decode=string` 解码字符串
+- 用 `--decode=list<T>` 解码 Church 列表，其中 `T` 可以是 `natural` / `scott-natural` / `binary-natural` / `boolean` / `integer` / `rational` / `string`，也可以是嵌套的 `list<T>` / `pair<A,B>`；`real` 目前不能用于复合类型
+- 用 `--decode=pair<A,B>` 解码 Church 有序对，其中 `A/B` 可以是 `natural` / `scott-natural` / `binary-natural` / `boolean` / `integer` / `rational` / `string`，也可以是嵌套的 `list<T>` / `pair<A,B>`；`real` 目前不能用于复合类型
