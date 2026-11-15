@@ -92,13 +92,13 @@ SKI 图包含四种节点：`@` 应用节点、`S` 节点、`K` 节点、`I` 节
 
 ```mermaid
 flowchart TD
-    0("@")
-    1("@")
-    2("@")
-    3("S")
-    4("I")
-    5("I")
-    6("I")
+    0(("@"))
+    1(("@"))
+    2(("@"))
+    3(("S"))
+    4(("I"))
+    5(("I"))
+    6(("I"))
     0 --> 1
     0 --> 6
     1 --> 2
@@ -111,11 +111,11 @@ flowchart TD
 
 ```mermaid
 flowchart TD
-    0("@")
-    1("@")
-    2("@")
-    3("S")
-    4("I")
+    0(("@"))
+    1(("@"))
+    2(("@"))
+    3(("S"))
+    4(("I"))
     0 --> 1
     0 --> 4
     1 --> 2
@@ -133,15 +133,15 @@ flowchart TD
 ```mermaid
 flowchart LR
     subgraph U["unreduced"]
-        u0("@")
-        u1("I")
-        u2("x")
+        u0(("@"))
+        u1(("I"))
+        u2(("x"))
         u0 --> u1
         u0 --> u2
     end
 
     subgraph R["reduced"]
-        r0("x")
+        r0(("x"))
     end
 
     U --> R
@@ -152,11 +152,11 @@ flowchart LR
 ```mermaid
 flowchart LR
     subgraph U["unreduced"]
-        u0("@")
-        u1("@")
-        u2("y")
-        u3("K")
-        u4("x")
+        u0(("@"))
+        u1(("@"))
+        u2(("y"))
+        u3(("K"))
+        u4(("x"))
         u0 --> u1
         u0 --> u2
         u1 --> u3
@@ -164,7 +164,7 @@ flowchart LR
     end
 
     subgraph R["reduced"]
-        r0("x")
+        r0(("x"))
     end
 
     U --> R
@@ -175,13 +175,13 @@ flowchart LR
 ```mermaid
 flowchart LR
     subgraph U["unreduced"]
-        u0("@")
-        u1("@")
-        u2("z")
-        u3("@")
-        u4("y")
-        u5("S")
-        u6("x")
+        u0(("@"))
+        u1(("@"))
+        u2(("z"))
+        u3(("@"))
+        u4(("y"))
+        u5(("S"))
+        u6(("x"))
         u0 --> u1
         u0 --> u2
         u1 --> u3
@@ -191,13 +191,13 @@ flowchart LR
     end
 
     subgraph R["reduced"]
-        r0("@")
-        r1("@")
-        r2("@")
-        r3("x")
-        r4("z")
-        r5("y")
-        r6("z")
+        r0(("@"))
+        r1(("@"))
+        r2(("@"))
+        r3(("x"))
+        r4(("z"))
+        r5(("y"))
+        r6(("z"))
         r0 --> r1
         r0 --> r2
         r1 --> r3
