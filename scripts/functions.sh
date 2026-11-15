@@ -124,6 +124,99 @@ invoke_lambda_stage() (
     esac
 )
 
+_lambda_encode_completions() {
+    mapfile -t COMPREPLY < <(compgen -W 'church scott binary' -- "$1")
+}
+
+_lambda_decode_completions() {
+    local rest=$1 prefix='' expected='type' candidate top
+    local -a stack=()
+    local -a types=(natural scott-natural binary-natural boolean integer rational string 'list<' 'pair<')
+
+    while [[ -n $rest ]]; do
+        if [[ $expected == type ]]; then
+            case $rest in
+                list\<*)
+                    stack+=(list)
+                    prefix+='list<'
+                    rest=${rest#list<}
+                    ;;
+                pair\<*)
+                    stack+=(pair-first)
+                    prefix+='pair<'
+                    rest=${rest#pair<}
+                    ;;
+                *)
+                    if [[ $rest =~ ^(natural|scott-natural|binary-natural|boolean|integer|rational|string|real)([,\>]|$) ]]; then
+                        candidate=${BASH_REMATCH[1]}
+                        [[ $candidate == real && ${#stack[@]} -gt 0 ]] && break
+                        prefix+=$candidate
+                        rest=${rest#"$candidate"}
+                        expected=after
+                    else
+                        break
+                    fi
+                    ;;
+            esac
+        else
+            top=${stack[${#stack[@]} - 1]-}
+            case $top:$rest in
+                pair-first:,*)
+                    stack[${#stack[@]} - 1]=pair-second
+                    prefix+=,
+                    rest=${rest#,}
+                    expected='type'
+                    ;;
+                list:\>* | pair-second:\>*)
+                    unset 'stack[${#stack[@]}-1]'
+                    prefix+='>'
+                    rest=${rest#>}
+                    ;;
+                *) break ;;
+            esac
+        fi
+    done
+
+    COMPREPLY=()
+    if [[ $expected == type ]]; then
+        if ((${#stack[@]} == 0)); then
+            types+=(real)
+        fi
+        for candidate in "${types[@]}"; do
+            [[ $candidate == "$rest"* ]] && COMPREPLY+=("$prefix$candidate")
+        done
+    elif [[ -z $rest ]]; then
+        top=${stack[${#stack[@]} - 1]-}
+        case $top in
+            list | pair-second) COMPREPLY+=("$prefix>") ;;
+            pair-first) COMPREPLY+=("$prefix,") ;;
+        esac
+    fi
+}
+
+_lambda_option_completions() {
+    local command=$1 current=$2 value index
+    COMPREPLY=()
+
+    case $command:$current in
+        invoke_compiler:--encode=*)
+            value=${current#--encode=}
+            _lambda_encode_completions "$value"
+            for index in "${!COMPREPLY[@]}"; do
+                COMPREPLY[index]="--encode=${COMPREPLY[index]}"
+            done
+            ;;
+        invoke_interpreter:--decode=*)
+            _lambda_decode_completions "${current#--decode=}"
+            for index in "${!COMPREPLY[@]}"; do
+                COMPREPLY[index]="--decode=${COMPREPLY[index]}"
+            done
+            ;;
+    esac
+
+    compopt -o nospace
+}
+
 _lambda_tool_completion() {
     local current=${COMP_WORDS[COMP_CWORD]}
     local previous=${COMP_WORDS[COMP_CWORD - 1]}
@@ -133,7 +226,10 @@ _lambda_tool_completion() {
 
     if [[ $command != invoke_lambda_stage ]]; then
         for word in "${COMP_WORDS[@]:1:COMP_CWORD-1}"; do
-            [[ $word == -- ]] && return
+            if [[ $word == -- ]]; then
+                _lambda_option_completions "$command" "$current"
+                return
+            fi
         done
         option_words+=' --'
     else
@@ -158,11 +254,12 @@ _lambda_tool_completion() {
                 return
                 ;;
             -e | --encode)
-                mapfile -t COMPREPLY < <(compgen -W 'church scott binary' -- "$current")
+                _lambda_encode_completions "$current"
                 return
                 ;;
             -d | --decode)
-                mapfile -t COMPREPLY < <(compgen -W 'natural scott-natural binary-natural boolean integer rational real' -- "$current")
+                _lambda_decode_completions "$current"
+                compopt -o nospace
                 return
                 ;;
         esac

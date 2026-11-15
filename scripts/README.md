@@ -26,7 +26,7 @@
 
 - `-File` 文件路径
 - `-Source` 源代码内容，也可以通过管道传入
-- `--` 后为编译器选项，也可以通过 `-Options` 传入参数数组。具体选项请参考 [compiler.md#编译器选项](../docs/compiler.md#编译器选项)
+- `--` 后为编译器选项，也可以通过 `-Options` 传入参数数组。具体选项请参考 [compiler.md#编译器选项](../docs/compiler.md#编译器选项)。其中 `--encode=` 参数提供补全
 
 使用示例：
 
@@ -44,7 +44,7 @@ Invoke-Compiler -File "examples/e/factorial.lambda"
 
 - `-File` 文件路径
 - `-Source` 源代码内容，也可以通过管道传入
-- `--` 后为解释器选项，也可以通过 `-Options` 传入参数数组。具体选项请参考 [interpreter.md#解释器选项](../docs/interpreter.md#解释器选项)
+- `--` 后为解释器选项，也可以通过 `-Options` 传入参数数组。具体选项请参考 [interpreter.md#解释器选项](../docs/interpreter.md#解释器选项)。其中 `--decode=` 参数提供补全
 
 使用示例：
 
@@ -71,8 +71,8 @@ Invoke-LambdaStage -File "examples/e/factorial.lambda" -Stage decode -Decode rea
 - `-File` 文件路径
 - `-Source` 源代码内容，也可以通过管道传入
 - `-Stage` 指定的一个阶段。可以为 `expand` / `reduce` / `compile` / `interpret` / `decode`。无默认值
-- `-Encode` 编译器编码方式。可以为 `church` / `scott`。默认为 `church`
-- `-Decode` 解释器解码方式。可以为 `natural` / `scott-natural` / `boolean` / `integer` / `rational` / `real`。默认为 `natural`
+- `-Encode` 编译器编码方式。详见 [compiler.md#编译器选项](../docs/compiler.md#编译器选项)。默认为 `church`
+- `-Decode` 解释器解码方式，详见 [interpreter.md#解释器选项](../docs/interpreter.md#解释器选项)。默认为 `natural`
 
 ## run.ps1
 
@@ -118,7 +118,7 @@ source ./scripts/functions.sh
 
 - `-f` / `--file` 文件路径
 - `-s` / `--source` 源代码内容，也可以通过管道传入
-- `--` 后为编译器选项。具体选项请参考 [compiler.md#编译器选项](../docs/compiler.md#编译器选项)
+- `--` 后为编译器选项。具体选项请参考 [compiler.md#编译器选项](../docs/compiler.md#编译器选项)。其中 `--encode=` 参数提供补全
 
 使用示例：
 
@@ -136,7 +136,7 @@ invoke_compiler -f examples/e/factorial.lambda
 
 - `-f` / `--file` 文件路径
 - `-s` / `--source` 源代码内容，也可以通过管道传入
-- `--` 后为解释器选项。具体选项请参考 [interpreter.md#解释器选项](../docs/interpreter.md#解释器选项)
+- `--` 后为解释器选项。具体选项请参考 [interpreter.md#解释器选项](../docs/interpreter.md#解释器选项)。其中 `--decode=` 参数提供补全
 
 使用示例：
 
@@ -163,8 +163,8 @@ invoke_lambda_stage -f examples/e/factorial.lambda -t decode -d real
 - `-f` / `--file` 文件路径
 - `-s` / `--source` 源代码内容，也可以通过管道传入
 - `-t` / `--stage` 指定的一个阶段。可以为 `expand` / `reduce` / `compile` / `interpret` / `decode`。无默认值
-- `-e` / `--encode` 编译器编码方式。可以为 `church` / `scott`。默认为 `church`
-- `-d` / `--decode` 解释器解码方式。可以为 `natural` / `scott-natural` / `boolean` / `integer` / `rational` / `real`。默认为 `natural`
+- `-e` / `--encode` 编译器编码方式。详见 [compiler.md#编译器选项](../docs/compiler.md#编译器选项)。默认为 `church`
+- `-d` / `--decode` 解释器解码方式。详见 [interpreter.md#解释器选项](../docs/interpreter.md#解释器选项)。默认为 `natural`
 
 ## run.sh
 
