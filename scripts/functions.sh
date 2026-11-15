@@ -158,11 +158,11 @@ _lambda_tool_completion() {
                 return
                 ;;
             -e | --encode)
-                mapfile -t COMPREPLY < <(compgen -W 'church scott' -- "$current")
+                mapfile -t COMPREPLY < <(compgen -W 'church scott binary' -- "$current")
                 return
                 ;;
             -d | --decode)
-                mapfile -t COMPREPLY < <(compgen -W 'natural scott-natural boolean integer rational real' -- "$current")
+                mapfile -t COMPREPLY < <(compgen -W 'natural scott-natural binary-natural boolean integer rational real' -- "$current")
                 return
                 ;;
         esac

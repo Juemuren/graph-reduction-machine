@@ -7,10 +7,10 @@ param(
     [ValidateSet('expand', 'reduce', 'compile', 'interpret', 'decode')]
     [string[]]$Stages = @('decode'),
 
-    [ValidateSet('church', 'scott')]
+    [ValidateSet('church', 'scott', 'binary')]
     [string]$Encode = "church",
 
-    [ValidateSet('natural', 'scott-natural', 'boolean', 'integer', 'rational', 'real')]
+    [ValidateSet('natural', 'scott-natural', 'binary-natural', 'boolean', 'integer', 'rational', 'real')]
     [string]$Decode = "natural",
 
     [Parameter(ValueFromPipeline)]

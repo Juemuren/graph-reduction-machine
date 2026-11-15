@@ -26,10 +26,6 @@ function Invoke-Compiler {
     }
 
     end {
-        if (-not $File -and -not $inputSource.Count) {
-            throw "No input from file or pipe."
-        }
-
         $compiler = cabal list-bin exe:lambda-compiler
         if ($File) {
             & $compiler $File @Options
@@ -68,10 +64,6 @@ function Invoke-Interpreter {
     }
 
     end {
-        if (-not $File -and -not $inputSource.Count) {
-            throw "No input from file or pipe."
-        }
-
         $interpreter = cabal list-bin exe:ski-interpreter
         if ($File) {
             & $interpreter $File @Options
@@ -92,10 +84,10 @@ function Invoke-LambdaStage {
         [ValidateSet('expand', 'reduce', 'compile', 'interpret', 'decode')]
         [string]$Stage,
 
-        [ValidateSet('church', 'scott')]
+        [ValidateSet('church', 'scott', 'binary')]
         [string]$Encode = 'church',
 
-        [ValidateSet('natural', 'scott-natural', 'boolean', 'integer', 'rational', 'real')]
+        [ValidateSet('natural', 'scott-natural', 'binary-natural', 'boolean', 'integer', 'rational', 'real')]
         [string]$Decode = 'natural',
 
         [Parameter(ValueFromPipeline)]
