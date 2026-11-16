@@ -1,4 +1,4 @@
--- | Decode typed Church pairs and lists from SKI graphs.
+-- | Decode typed Church pairs and Church or Scott lists from SKI graphs.
 module Interpreter.Composite (
   DecodeType (..),
   parseDecodeType,
@@ -33,6 +33,7 @@ data DecodeType
   | StringType
   | PairType DecodeType DecodeType
   | ListType DecodeType
+  | ScottListType DecodeType
   deriving (Eq, Show)
 
 -- | Parse a complete type expression, including nested pairs and lists.
@@ -42,6 +43,10 @@ parseDecodeType source = do
   if all isSpace rest then Just value else Nothing
  where
   parseType input
+    | Just rest <- stripPrefix "scott-list<" input = do
+        (elementType, afterElement) <- parseType (dropWhile isSpace rest)
+        afterClose <- stripPrefix ">" (dropWhile isSpace afterElement)
+        pure (ScottListType elementType, afterClose)
     | Just rest <- stripPrefix "list<" input = do
         (elementType, afterElement) <- parseType (dropWhile isSpace rest)
         afterClose <- stripPrefix ">" (dropWhile isSpace afterElement)
@@ -95,6 +100,9 @@ decodeAt kind root = case kind of
   ListType elementType -> do
     values <- decodeChurchListAt (decodeAt elementType) root
     pure (fmap (\items -> "[" ++ intercalate ", " items ++ "]") values)
+  ScottListType elementType -> do
+    values <- decodeScottListAt (decodeAt elementType) root
+    pure (fmap (\items -> "[" ++ intercalate ", " items ++ "]") values)
 
 decodeChurchListAt :: (Address -> Run (Maybe a)) -> Address -> Run (Maybe [a])
 decodeChurchListAt decodeItem root = do
@@ -103,6 +111,25 @@ decodeChurchListAt decodeItem root = do
   appliedOnce <- allocate (App root cons)
   appliedTwice <- allocate (App appliedOnce nil)
   decodeListAt decodeItem nil appliedTwice
+
+decodeScottListAt :: (Address -> Run (Maybe a)) -> Address -> Run (Maybe [a])
+decodeScottListAt decodeItem root = do
+  cons <- allocate ProbeFunction
+  nil <- allocate ProbeValue
+  appliedOnce <- allocate (App root cons)
+  appliedTwice <- allocate (App appliedOnce nil)
+  whnf appliedTwice
+  actual <- resolve appliedTwice
+  if actual == nil
+    then pure (Just [])
+    else do
+      (headNode, applications) <- spine appliedTwice
+      case (headNode, applications) of
+        (ProbeFunction, [(_, item), (_, rest)]) -> do
+          value <- decodeItem item
+          values <- decodeScottListAt decodeItem rest
+          pure ((:) <$> value <*> values)
+        _ -> pure Nothing
 
 decodeCharacterAt :: Address -> Run (Maybe Char)
 decodeCharacterAt address = do

@@ -1,0 +1,64 @@
+{
+  "cases": [
+    {
+      "name": "nil_s",
+      "language": "lambda",
+      "source": "@! NIL_S;\n",
+      "stage": "decode",
+      "options": {
+        "decode": "scott-list<natural>"
+      },
+      "expect": {
+        "value": "[]"
+      }
+    },
+    {
+      "name": "cons_s",
+      "language": "lambda",
+      "source": "@! CONS_S TWO (CONS_S THREE NIL_S);\n",
+      "stage": "decode",
+      "options": {
+        "decode": "scott-list<natural>"
+      },
+      "expect": {
+        "value": "[2, 3]"
+      }
+    },
+    {
+      "name": "nested_s",
+      "language": "lambda",
+      "source": "@! CONS_S (CONS_S ONE NIL_S) (CONS_S NIL_S NIL_S);\n",
+      "stage": "decode",
+      "options": {
+        "decode": "scott-list<scott-list<natural>>"
+      },
+      "expect": {
+        "value": "[[1], []]"
+      }
+    },
+    {
+      "name": "mixed_nested_s",
+      "language": "lambda",
+      "source": "@! CONS_S (CONS ONE NIL) NIL_S;\n",
+      "stage": "decode",
+      "options": {
+        "decode": "scott-list<list<natural>>"
+      },
+      "expect": {
+        "value": "[[1]]"
+      }
+    },
+    {
+      "name": "element-type-mismatch_s",
+      "language": "lambda",
+      "source": "@! CONS_S TRUE NIL_S;\n",
+      "stage": "decode",
+      "options": {
+        "decode": "scott-list<pair<natural,natural>>"
+      },
+      "expect": {
+        "error": "not a value of the requested type"
+      }
+    }
+  ]
+}

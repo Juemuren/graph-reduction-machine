@@ -1,0 +1,340 @@
+{
+  "cases": [
+    {
+      "name": "isnil_s-empty",
+      "language": "lambda",
+      "source": "@! ISNIL_S NIL_S;\n",
+      "stage": "decode",
+      "options": {
+        "decode": "boolean"
+      },
+      "expect": {
+        "value": "True"
+      }
+    },
+    {
+      "name": "isnil_s-cons",
+      "language": "lambda",
+      "source": "@! ISNIL_S (CONS_S ONE NIL_S);\n",
+      "stage": "decode",
+      "options": {
+        "decode": "boolean"
+      },
+      "expect": {
+        "value": "False"
+      }
+    },
+    {
+      "name": "foldr_s",
+      "language": "lambda",
+      "source": "@! FOLDR_S SUB ZERO (CONS_S THREE (CONS_S ONE NIL_S));\n",
+      "stage": "decode",
+      "options": {
+        "decode": "natural"
+      },
+      "expect": {
+        "value": "2"
+      }
+    },
+    {
+      "name": "foldl_s",
+      "language": "lambda",
+      "source": "@! FOLDL_S SUB THREE (CONS_S ONE (CONS_S TWO NIL_S));\n",
+      "stage": "decode",
+      "options": {
+        "decode": "natural"
+      },
+      "expect": {
+        "value": "0"
+      }
+    },
+    {
+      "name": "map_s",
+      "language": "lambda",
+      "source": "@! MAP_S SUCC (CONS_S ONE (CONS_S TWO NIL_S));\n",
+      "stage": "decode",
+      "options": {
+        "decode": "scott-list<natural>"
+      },
+      "expect": {
+        "value": "[2, 3]"
+      }
+    },
+    {
+      "name": "filter_s",
+      "language": "lambda",
+      "source": "@! FILTER_S (\\x -> GT x ONE) (CONS_S ONE (CONS_S THREE (CONS_S TWO NIL_S)));\n",
+      "stage": "decode",
+      "options": {
+        "decode": "scott-list<natural>"
+      },
+      "expect": {
+        "value": "[3, 2]"
+      }
+    },
+    {
+      "name": "reverse_s",
+      "language": "lambda",
+      "source": "@! REVERSE_S (CONS_S ONE (CONS_S TWO NIL_S));\n",
+      "stage": "decode",
+      "options": {
+        "decode": "scott-list<natural>"
+      },
+      "expect": {
+        "value": "[2, 1]"
+      }
+    },
+    {
+      "name": "insert_s",
+      "language": "lambda",
+      "source": "@! INSERT_S ONE THREE (CONS_S ONE (CONS_S TWO NIL_S));\n",
+      "stage": "decode",
+      "options": {
+        "decode": "scott-list<natural>"
+      },
+      "expect": {
+        "value": "[1, 3, 2]"
+      }
+    },
+    {
+      "name": "insert_s-beyond",
+      "language": "lambda",
+      "source": "@! INSERT_S FIVE THREE (CONS_S ONE NIL_S);\n",
+      "stage": "decode",
+      "options": {
+        "decode": "scott-list<natural>"
+      },
+      "expect": {
+        "value": "[1, 3]"
+      }
+    },
+    {
+      "name": "sort_s",
+      "language": "lambda",
+      "source": "@! SORT_S LEQ (CONS_S THREE (CONS_S ONE (CONS_S TWO NIL_S)));\n",
+      "stage": "decode",
+      "options": {
+        "decode": "scott-list<natural>"
+      },
+      "expect": {
+        "value": "[1, 2, 3]"
+      }
+    },
+    {
+      "name": "sort_s-descending",
+      "language": "lambda",
+      "source": "@! SORT_S GEQ (CONS_S ONE (CONS_S THREE (CONS_S TWO NIL_S)));\n",
+      "stage": "decode",
+      "options": {
+        "decode": "scott-list<natural>"
+      },
+      "expect": {
+        "value": "[3, 2, 1]"
+      }
+    },
+    {
+      "name": "head_s-empty",
+      "language": "lambda",
+      "source": "@! HEAD_S THREE NIL_S;\n",
+      "stage": "decode",
+      "options": {
+        "decode": "natural"
+      },
+      "expect": {
+        "value": "3"
+      }
+    },
+    {
+      "name": "tail_s",
+      "language": "lambda",
+      "source": "@! TAIL_S (CONS_S ONE (CONS_S TWO NIL_S));\n",
+      "stage": "decode",
+      "options": {
+        "decode": "scott-list<natural>"
+      },
+      "expect": {
+        "value": "[2]"
+      }
+    },
+    {
+      "name": "index_s",
+      "language": "lambda",
+      "source": "@! INDEX_S ONE ZERO (CONS_S ONE (CONS_S THREE NIL_S));\n",
+      "stage": "decode",
+      "options": {
+        "decode": "natural"
+      },
+      "expect": {
+        "value": "3"
+      }
+    },
+    {
+      "name": "index_s-out-of-bounds",
+      "language": "lambda",
+      "source": "@! INDEX_S THREE FOUR (CONS_S ONE NIL_S);\n",
+      "stage": "decode",
+      "options": {
+        "decode": "natural"
+      },
+      "expect": {
+        "value": "4"
+      }
+    },
+    {
+      "name": "find_s",
+      "language": "lambda",
+      "source": "@! FIND_S (\\x -> GT x ONE) ZERO (CONS_S ONE (CONS_S THREE NIL_S));\n",
+      "stage": "decode",
+      "options": {
+        "decode": "natural"
+      },
+      "expect": {
+        "value": "3"
+      }
+    },
+    {
+      "name": "find_s-missing",
+      "language": "lambda",
+      "source": "@! FIND_S (\\x -> GT x THREE) FOUR (CONS_S ONE NIL_S);\n",
+      "stage": "decode",
+      "options": {
+        "decode": "natural"
+      },
+      "expect": {
+        "value": "4"
+      }
+    },
+    {
+      "name": "take_s",
+      "language": "lambda",
+      "source": "@! TAKE_S TWO (CONS_S ONE (CONS_S TWO (CONS_S THREE NIL_S)));\n",
+      "stage": "decode",
+      "options": {
+        "decode": "scott-list<natural>"
+      },
+      "expect": {
+        "value": "[1, 2]"
+      }
+    },
+    {
+      "name": "take_s-zero",
+      "language": "lambda",
+      "source": "@! TAKE_S ZERO (CONS_S ONE NIL_S);\n",
+      "stage": "decode",
+      "options": {
+        "decode": "scott-list<natural>"
+      },
+      "expect": {
+        "value": "[]"
+      }
+    },
+    {
+      "name": "drop_s",
+      "language": "lambda",
+      "source": "@! DROP_S TWO (CONS_S ONE (CONS_S TWO (CONS_S THREE NIL_S)));\n",
+      "stage": "decode",
+      "options": {
+        "decode": "scott-list<natural>"
+      },
+      "expect": {
+        "value": "[3]"
+      }
+    },
+    {
+      "name": "drop_s-beyond",
+      "language": "lambda",
+      "source": "@! DROP_S FIVE (CONS_S ONE NIL_S);\n",
+      "stage": "decode",
+      "options": {
+        "decode": "scott-list<natural>"
+      },
+      "expect": {
+        "value": "[]"
+      }
+    },
+    {
+      "name": "uncons_s",
+      "language": "lambda",
+      "source": "@! HEAD_S ZERO (SND (UNCONS_S (CONS_S ONE (CONS_S TWO NIL_S))));\n",
+      "stage": "decode",
+      "options": {
+        "decode": "natural"
+      },
+      "expect": {
+        "value": "2"
+      }
+    },
+    {
+      "name": "uncons_s-empty",
+      "language": "lambda",
+      "source": "@! ISNIL_S (SND (UNCONS_S NIL_S));\n",
+      "stage": "decode",
+      "options": {
+        "decode": "boolean"
+      },
+      "expect": {
+        "value": "True"
+      }
+    },
+    {
+      "name": "case_s-cons",
+      "language": "lambda",
+      "source": "@! CASE_S (CONS_S TWO NIL_S) ZERO (\\head -> \\tail -> ADD head (LENGTH_S tail));\n",
+      "stage": "decode",
+      "options": {
+        "decode": "natural"
+      },
+      "expect": {
+        "value": "2"
+      }
+    },
+    {
+      "name": "case_s-empty",
+      "language": "lambda",
+      "source": "@! CASE_S NIL_S FOUR (\\head -> \\tail -> ZERO);\n",
+      "stage": "decode",
+      "options": {
+        "decode": "natural"
+      },
+      "expect": {
+        "value": "4"
+      }
+    },
+    {
+      "name": "append_s",
+      "language": "lambda",
+      "source": "@! APPEND_S (CONS_S ONE NIL_S) (CONS_S TWO NIL_S);\n",
+      "stage": "decode",
+      "options": {
+        "decode": "scott-list<natural>"
+      },
+      "expect": {
+        "value": "[1, 2]"
+      }
+    },
+    {
+      "name": "concat_s",
+      "language": "lambda",
+      "source": "@! CONCAT_S (CONS_S (CONS_S ONE NIL_S) (CONS_S NIL_S (CONS_S (CONS_S TWO NIL_S) NIL_S)));\n",
+      "stage": "decode",
+      "options": {
+        "decode": "scott-list<natural>"
+      },
+      "expect": {
+        "value": "[1, 2]"
+      }
+    },
+    {
+      "name": "length_s",
+      "language": "lambda",
+      "source": "@! LENGTH_S (CONS_S ONE (CONS_S TWO NIL_S));\n",
+      "stage": "decode",
+      "options": {
+        "decode": "natural"
+      },
+      "expect": {
+        "value": "2"
+      }
+    }
+  ]
+}

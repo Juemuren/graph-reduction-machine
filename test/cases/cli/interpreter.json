@@ -78,13 +78,20 @@
       "expect": {
         "exitCode": 1,
         "stdout": "",
-        "stderr": "usage: ski-interpreter [--max-steps=N|--no-step-limit] [--show-steps] [--decode=natural|scott-natural|binary-natural|boolean|integer|rational|real|string|list<T>|pair<A,B>] [--precision-real=N] [FILE]\n"
+        "stderr": "usage: ski-interpreter [--max-steps=N|--no-step-limit] [--show-steps] [--decode=natural|scott-natural|binary-natural|boolean|integer|rational|real|string|list<T>|scott-list<T>|pair<A,B>] [--precision-real=N] [FILE]\n"
       }
     },
     {
       "name": "decode-empty-list",
       "command": "ski-interpreter",
       "args": ["--decode=list<natural>"],
+      "stdin": "#0 = #1 #2;\n#1 = K;\n#2 = I;\n",
+      "expect": { "exitCode": 0, "stdout": "[]\n", "stderr": "" }
+    },
+    {
+      "name": "decode-empty-scott-list",
+      "command": "ski-interpreter",
+      "args": ["--decode=scott-list<natural>"],
       "stdin": "#0 = #1 #2;\n#1 = K;\n#2 = I;\n",
       "expect": { "exitCode": 0, "stdout": "[]\n", "stderr": "" }
     },
@@ -103,7 +110,7 @@
       "expect": {
         "exitCode": 1,
         "stdout": "",
-        "stderr": "usage: ski-interpreter [--max-steps=N|--no-step-limit] [--show-steps] [--decode=natural|scott-natural|binary-natural|boolean|integer|rational|real|string|list<T>|pair<A,B>] [--precision-real=N] [FILE]\n"
+        "stderr": "usage: ski-interpreter [--max-steps=N|--no-step-limit] [--show-steps] [--decode=natural|scott-natural|binary-natural|boolean|integer|rational|real|string|list<T>|scott-list<T>|pair<A,B>] [--precision-real=N] [FILE]\n"
       }
     }
   ]

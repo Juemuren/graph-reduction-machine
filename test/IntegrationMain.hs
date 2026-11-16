@@ -87,6 +87,8 @@ decodeGraph spec limit graph = case runDecode spec of
       showComposite (decodeComposite limit StringType graph)
     Just kind@(ListType _) ->
       showComposite (decodeComposite limit kind graph)
+    Just kind@(ScottListType _) ->
+      showComposite (decodeComposite limit kind graph)
     Just kind@(PairType _ _) ->
       showComposite (decodeComposite limit kind graph)
     _ -> Left "unknown or missing decode type"
