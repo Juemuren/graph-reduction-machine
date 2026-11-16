@@ -8,6 +8,7 @@
 
 @> ZERO = \f -> \x -> x;
 @> SUCC = \n -> \f -> \x -> f (n f x);
+
 @> ONE = \f -> \x -> f x;
 @> TWO = \f -> \x -> f (f x);
 @> THREE = \f -> \x -> f (f (f x));
@@ -96,6 +97,17 @@ divMod = \m -> \n ->
 @> ZERO_S = \zero -> \successor -> zero;
 @> SUCC_S = \n -> \zero -> \successor -> successor n;
 
+@> ONE_S = SUCC_S ZERO_S;
+@> TWO_S = SUCC_S ONE_S;
+@> THREE_S = SUCC_S TWO_S;
+@> FOUR_S = SUCC_S THREE_S;
+@> FIVE_S = SUCC_S FOUR_S;
+@> SIX_S = SUCC_S FIVE_S;
+@> SEVEN_S = SUCC_S SIX_S;
+@> EIGHT_S = SUCC_S SEVEN_S;
+@> NINE_S = SUCC_S EIGHT_S;
+@> TEN_S = SUCC_S NINE_S;
+
 # Unary operations
 
 @> PRED_S = \n -> n ZERO_S (\predecessor -> predecessor);
@@ -177,6 +189,17 @@ divMod = \m -> \n ->
 
 @> BIT_0 = EVEN_B;
 @> BIT_1 = ODD_B;
+
+@> ONE_B = BIT_1 ZERO_B;
+@> TWO_B = BIT_0 ONE_B;
+@> THREE_B = BIT_1 ONE_B;
+@> FOUR_B = BIT_0 TWO_B;
+@> FIVE_B = BIT_1 TWO_B;
+@> SIX_B = BIT_0 THREE_B;
+@> SEVEN_B = BIT_1 THREE_B;
+@> EIGHT_B = BIT_0 FOUR_B;
+@> NINE_B = BIT_1 FOUR_B;
+@> TEN_B = BIT_0 FIVE_B;
 
 # Unary operations
 

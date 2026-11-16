@@ -210,12 +210,14 @@ EVEN (EVEN (ODD ZERO))
 
 - `ZERO_S` 表示零
 - `SUCC_S a` 表示自然数 `a` 的后继
+- `ONE_S` / `TWO_S` / `THREE_S` / `FOUR_S` / `FIVE_S` / `SIX_S` / `SEVEN_S` / `EIGHT_S` / `NINE_S` / `TEN_S` 分别表示一到十
 
 #### Binary 自然数编码
 
 - `ZERO_B` 表示零
 - `EVEN_B a` 表示 `a` 的两倍，`ODD_B a` 表示 `a` 的两倍加一
 - `BIT_0` / `BIT_1` 分别是 `EVEN_B` / `ODD_B` 的别名
+- `ONE_B` / `TWO_B` / `THREE_B` / `FOUR_B` / `FIVE_B` / `SIX_B` / `SEVEN_B` / `EIGHT_B` / `NINE_B` / `TEN_B` 分别表示一到十
 - 前导零不影响数值，即 `BIT_0 ZERO_B` / `BIT_0 (BIT_0 ZERO_B)` 等仍表示零，`BIT_1 (BIT_0 ZERO_B)` / `BIT_1 (BIT_0 (BIT_0 ZERO_B))` 等仍表示一，以此类推
 
 ### 自然数运算
