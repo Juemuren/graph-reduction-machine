@@ -21,24 +21,55 @@
 
 @> MAP = \f -> \list -> \c -> \n -> list (\item -> \rest -> c (f item) rest) n;
 @> FILTER = \predicate -> \list -> \c -> \n ->
-    list (\item -> \rest -> IF (predicate item) (c item rest) rest) n;
+    list
+        (\item -> \rest ->
+            IF (predicate item)
+                (c item rest)
+                rest)
+        n;
 @> REVERSE = \list -> FOLDL (\acc -> \item -> CONS item acc) NIL list;
+@> INSERT = \index -> \item -> \list ->
+    APPEND (TAKE index list) (CONS item (DROP index list));
+
+sortInsertStep = \predicate -> \item -> \state ->
+    PAIR
+        (CONS item (FST state))
+        (\value ->
+            IF (predicate value item)
+                (CONS value (CONS item (FST state)))
+                (CONS item (SND state value)));
+sortInsertInit = (PAIR NIL (\item -> CONS item NIL));
+sortInsert = \predicate -> \value -> \list ->
+    SND
+        (list
+            (sortInsertStep predicate)
+            sortInsertInit)
+    value;
+@> SORT = \predicate -> \list ->
+    FOLDR (sortInsert predicate) NIL list;
 
 # Deconstruction
 
-@> HEAD = \list -> \default -> list (\item -> \rest -> item) default;
+@> HEAD = \default -> \list -> list (\item -> \rest -> item) default;
 @> TAIL = \list ->
     FST (list
         (\item -> \pair -> PAIR (SND pair) (CONS item (SND pair)))
         (PAIR NIL NIL));
-@> INDEX = \n -> \default -> \list ->
-    IF (ISZERO n)
-        default
-        (list
-            (\item -> \rest -> \remaining ->
-                IF (ISZERO remaining) item (rest (PRED remaining)))
-            (\remaining -> default)
-            (PRED n));
+@> INDEX = \index -> \default -> \list ->
+    list
+        (\item -> \rest -> \remaining ->
+            IF (ISZERO remaining)
+                item
+                (rest (PRED remaining)))
+        (\remaining -> default)
+        index;
+@> FIND = \predicate -> \default -> \list ->
+    list
+        (\item -> \rest ->
+            IF (predicate item)
+                item
+                rest)
+        default;
 @> TAKE = \n -> \list -> \c -> \empty ->
     list
         (\item -> \rest -> \remaining ->
@@ -48,11 +79,11 @@
         (\remaining -> empty)
         n;
 @> DROP = \n -> \list -> n TAIL list;
-@> UNCONS = \list -> PAIR (HEAD list NIL) (TAIL list);
+@> UNCONS = \list -> PAIR (HEAD NIL list) (TAIL list);
 @> CASE = \list -> \empty -> \cons ->
     IF (ISNIL list)
         empty
-        (cons (HEAD list NIL) (TAIL list));
+        (cons (HEAD NIL list) (TAIL list));
 
 # Combination
 
