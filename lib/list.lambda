@@ -97,3 +97,88 @@ sortInsert = \predicate -> \value -> \list ->
 # Comparison
 
 @> ISNIL = \list -> list (\item -> \rest -> FALSE) TRUE;
+
+# ---
+# Scott encoding
+# ---
+
+# Construction
+
+@> NIL_S = \cons -> \empty -> empty;
+@> CONS_S = \head -> \tail -> \cons -> \empty -> cons head tail;
+
+# Traversal
+
+@> FOLDR_S = \f -> \initial ->
+    Y (\fold -> \list ->
+        list (\item -> \rest -> f item (fold rest)) initial);
+@> FOLDL_S = \f -> \initial ->
+    Y (\fold -> \acc -> \list ->
+        list (\item -> \rest -> fold (f acc item) rest) acc)
+    initial;
+
+# Transformation
+
+@> MAP_S = \f ->
+    Y (\map -> \list ->
+        list (\item -> \rest -> CONS_S (f item) (map rest)) NIL_S);
+@> FILTER_S = \predicate ->
+    Y (\filter -> \list ->
+        list
+            (\item -> \rest ->
+                IF (predicate item)
+                    (CONS_S item (filter rest))
+                    (filter rest))
+            NIL_S);
+@> REVERSE_S = \list -> FOLDL_S (\acc -> \item -> CONS_S item acc) NIL_S list;
+@> INSERT_S = \index -> \item -> \list ->
+    APPEND_S (TAKE_S index list) (CONS_S item (DROP_S index list));
+
+sortInsertS = \predicate -> \value ->
+    Y (\insert -> \list ->
+        list
+            (\item -> \rest ->
+                IF (predicate value item)
+                    (CONS_S value list)
+                    (CONS_S item (insert rest)))
+            (CONS_S value NIL_S));
+@> SORT_S = \predicate -> \list ->
+    FOLDR_S (sortInsertS predicate) NIL_S list;
+
+# Deconstruction
+
+@> HEAD_S = \default -> \list -> list (\item -> \rest -> item) default;
+@> TAIL_S = \list -> list (\item -> \rest -> rest) NIL_S;
+@> INDEX_S = \index -> \default -> \list ->
+    HEAD_S default (DROP_S index list);
+@> FIND_S = \predicate -> \default ->
+    Y (\find -> \list ->
+        list
+            (\item -> \rest ->
+                IF (predicate item) item (find rest))
+            default);
+@> TAKE_S = \n ->
+    Y (\take -> \remaining -> \list ->
+        IF (ISZERO remaining)
+            NIL_S
+            (list
+                (\item -> \rest -> CONS_S item (take (PRED remaining) rest))
+                NIL_S))
+    n;
+@> DROP_S = \n -> \list -> n TAIL_S list;
+@> UNCONS_S = \list ->
+    list (\item -> \rest -> PAIR item rest) (PAIR NIL_S NIL_S);
+@> CASE_S = \list -> \empty -> \cons -> list cons empty;
+
+# Combination
+
+@> APPEND_S = \left -> \right -> FOLDR_S CONS_S right left;
+@> CONCAT_S = \lists -> FOLDR_S APPEND_S NIL_S lists;
+
+# Measurement
+
+@> LENGTH_S = \list -> FOLDR_S (\item -> \rest -> SUCC rest) ZERO list;
+
+# Comparison
+
+@> ISNIL_S = \list -> list (\item -> \rest -> FALSE) TRUE;
