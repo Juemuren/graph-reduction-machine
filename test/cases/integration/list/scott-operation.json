@@ -87,7 +87,7 @@
     {
       "name": "insert_s",
       "language": "lambda",
-      "source": "@! INSERT_S ONE THREE (CONS_S ONE (CONS_S TWO NIL_S));\n",
+      "source": "@! INSERT_S ONE_S THREE (CONS_S ONE (CONS_S TWO NIL_S));\n",
       "stage": "decode",
       "options": {
         "decode": "scott-list<natural>"
@@ -99,7 +99,7 @@
     {
       "name": "insert_s-beyond",
       "language": "lambda",
-      "source": "@! INSERT_S FIVE THREE (CONS_S ONE NIL_S);\n",
+      "source": "@! INSERT_S FIVE_S THREE (CONS_S ONE NIL_S);\n",
       "stage": "decode",
       "options": {
         "decode": "scott-list<natural>"
@@ -159,7 +159,7 @@
     {
       "name": "index_s",
       "language": "lambda",
-      "source": "@! INDEX_S ONE ZERO (CONS_S ONE (CONS_S THREE NIL_S));\n",
+      "source": "@! INDEX_S ONE_S ZERO (CONS_S ONE (CONS_S THREE NIL_S));\n",
       "stage": "decode",
       "options": {
         "decode": "natural"
@@ -171,7 +171,7 @@
     {
       "name": "index_s-out-of-bounds",
       "language": "lambda",
-      "source": "@! INDEX_S THREE FOUR (CONS_S ONE NIL_S);\n",
+      "source": "@! INDEX_S THREE_S FOUR (CONS_S ONE NIL_S);\n",
       "stage": "decode",
       "options": {
         "decode": "natural"
@@ -207,7 +207,7 @@
     {
       "name": "take_s",
       "language": "lambda",
-      "source": "@! TAKE_S TWO (CONS_S ONE (CONS_S TWO (CONS_S THREE NIL_S)));\n",
+      "source": "@! TAKE_S TWO_S (CONS_S ONE (CONS_S TWO (CONS_S THREE NIL_S)));\n",
       "stage": "decode",
       "options": {
         "decode": "scott-list<natural>"
@@ -219,7 +219,7 @@
     {
       "name": "take_s-zero",
       "language": "lambda",
-      "source": "@! TAKE_S ZERO (CONS_S ONE NIL_S);\n",
+      "source": "@! TAKE_S ZERO_S (CONS_S ONE NIL_S);\n",
       "stage": "decode",
       "options": {
         "decode": "scott-list<natural>"
@@ -231,7 +231,7 @@
     {
       "name": "drop_s",
       "language": "lambda",
-      "source": "@! DROP_S TWO (CONS_S ONE (CONS_S TWO (CONS_S THREE NIL_S)));\n",
+      "source": "@! DROP_S TWO_S (CONS_S ONE (CONS_S TWO (CONS_S THREE NIL_S)));\n",
       "stage": "decode",
       "options": {
         "decode": "scott-list<natural>"
@@ -243,7 +243,7 @@
     {
       "name": "drop_s-beyond",
       "language": "lambda",
-      "source": "@! DROP_S FIVE (CONS_S ONE NIL_S);\n",
+      "source": "@! DROP_S FIVE_S (CONS_S ONE NIL_S);\n",
       "stage": "decode",
       "options": {
         "decode": "scott-list<natural>"
@@ -279,7 +279,7 @@
     {
       "name": "case_s-cons",
       "language": "lambda",
-      "source": "@! CASE_S (CONS_S TWO NIL_S) ZERO (\\head -> \\tail -> ADD head (LENGTH_S tail));\n",
+      "source": "@! CASE_S (CONS_S TWO (CONS_S THREE NIL_S)) ZERO (\\head -> \\tail -> IF (ISZERO_S (LENGTH_S tail)) ZERO head);\n",
       "stage": "decode",
       "options": {
         "decode": "natural"
@@ -330,10 +330,34 @@
       "source": "@! LENGTH_S (CONS_S ONE (CONS_S TWO NIL_S));\n",
       "stage": "decode",
       "options": {
-        "decode": "natural"
+        "decode": "scott-natural"
       },
       "expect": {
         "value": "2"
+      }
+    },
+    {
+      "name": "length_s-empty",
+      "language": "lambda",
+      "source": "@! LENGTH_S NIL_S;\n",
+      "stage": "decode",
+      "options": {
+        "decode": "scott-natural"
+      },
+      "expect": {
+        "value": "0"
+      }
+    },
+    {
+      "name": "take_s-length",
+      "language": "lambda",
+      "source": "@! TAKE_S (LENGTH_S (CONS_S ONE (CONS_S TWO NIL_S))) (CONS_S THREE (CONS_S FOUR (CONS_S FIVE NIL_S)));\n",
+      "stage": "decode",
+      "options": {
+        "decode": "scott-list<natural>"
+      },
+      "expect": {
+        "value": "[3, 4]"
       }
     }
   ]

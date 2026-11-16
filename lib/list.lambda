@@ -159,13 +159,19 @@ sortInsertS = \predicate -> \value ->
             default);
 @> TAKE_S = \n ->
     Y (\take -> \remaining -> \list ->
-        IF (ISZERO remaining)
+        remaining
             NIL_S
-            (list
-                (\item -> \rest -> CONS_S item (take (PRED remaining) rest))
-                NIL_S))
+            (\predecessor ->
+                list
+                    (\item -> \rest -> CONS_S item (take predecessor rest))
+                    NIL_S))
     n;
-@> DROP_S = \n -> \list -> n TAIL_S list;
+@> DROP_S = \n -> \list ->
+    Y (\drop -> \remaining -> \rest ->
+        remaining
+            rest
+            (\predecessor -> drop predecessor (TAIL_S rest)))
+    n list;
 @> UNCONS_S = \list ->
     list (\item -> \rest -> PAIR item rest) (PAIR NIL_S NIL_S);
 @> CASE_S = \list -> \empty -> \cons -> list cons empty;
@@ -177,7 +183,7 @@ sortInsertS = \predicate -> \value ->
 
 # Measurement
 
-@> LENGTH_S = \list -> FOLDR_S (\item -> \rest -> SUCC rest) ZERO list;
+@> LENGTH_S = \list -> FOLDR_S (\item -> \rest -> SUCC_S rest) ZERO_S list;
 
 # Comparison
 
