@@ -51,7 +51,7 @@
     {
       "name": "invalid-character",
       "language": "lambda",
-      "source": "@! CONS 114514 NIL;",
+      "source": "@! CONS 1114112 NIL;",
       "stage": "decode",
       "options": { "encode": "binary", "decode": "string" },
       "expect": { "error": "not a value of the requested type" }
