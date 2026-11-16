@@ -1,0 +1,50 @@
+# Scott lists with Binary-natural elements and indices.
+
+@> nil = \c -> \n -> n;
+@> cons = \h -> \t -> \c -> \n -> c h t;
+
+sumStep = \r -> \l ->
+    l
+        (\h -> \t -> ADD_B h (r t))
+        ZERO_B;
+@> sum = Y sumStep;
+
+prodStep = \r -> \l ->
+    l
+        (\h -> \t -> MUL_B h (r t))
+        ONE_B;
+@> prod = Y prodStep;
+
+indexStep = \r -> \l -> \i -> \d ->
+    l
+        (\h -> \t ->
+            IF (ISZERO_B i)
+                h
+                (r t (PRED_B i) d))
+        d;
+@> index = Y indexStep;
+
+findStep = \r -> \l -> \p -> \d ->
+    l
+        (\h -> \t ->
+            IF (p h)
+                h
+                (r t p d))
+        d;
+@> find = Y findStep;
+
+insertStep = \r -> \x -> \l ->
+    l
+        (\h -> \t -> 
+            IF (LT_B x h)
+                (cons x l)
+                (cons h (r x t)))
+        (cons x nil);
+insert = Y insertStep;
+
+sortStep = \r -> \l ->
+    l
+        (\h -> \t -> 
+            insert h (r t))
+        nil;
+@> sort = Y sortStep;

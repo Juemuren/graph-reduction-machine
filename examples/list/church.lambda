@@ -1,0 +1,31 @@
+# Church lists with Binary-natural elements and indices.
+
+@> nil = \c -> \n -> n;
+@> cons = \h -> \t -> \c -> \n -> c h (t c n);
+
+@> sum = \l -> l ADD_B ZERO_B;
+@> prod = \l -> l MUL_B ONE_B;
+
+indexStep = \h -> \r -> \k ->
+    IF (ISZERO_B k)
+        h
+        (r (PRED_B k));
+@> index = \l -> \i -> \d ->
+    l indexStep (\k -> d) i;
+
+findStep = \p -> \h -> \r ->
+    IF (p h) h r;
+@> find = \l -> \p -> \d ->
+    l (findStep p) d;
+
+# A state holds the unchanged suffix and its insertion function.
+insertStep = \h -> \state ->
+    PAIR
+        (cons h (FST state))
+        (\x ->
+            IF (LT_B x h)
+            (cons x (cons h (FST state)))
+            (cons h (SND state x)));
+insertInit = PAIR nil (\x -> cons x nil);
+insert = \x -> \l -> SND (l insertStep insertInit) x;
+@> sort = \l -> l insert nil;

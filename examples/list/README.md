@@ -4,6 +4,10 @@
 
 Church 有序列表通过折叠操作来表示数据，适合对列表进行遍历。
 
+Church 有序列表及相关操作实现在 [church.lambda](church.lambda) 中。
+
+### Church 有序列表的构造
+
 Church 有序列表需要两个基本定义：
 
 $$
@@ -29,7 +33,7 @@ $$
 $$
 \begin{aligned}
 [] &= \mathrm{NIL}_C \\
-[i_1] &= \mathrm{CONS}_C\ i_1\ \mathrm{NIL} \\
+[i_1] &= \mathrm{CONS}_C\ i_1\ \mathrm{NIL}_C \\
 [i_2,i_1] &= \mathrm{CONS}_C\ i_2\ [i_1] \\
 [i_3,i_2,i_1] &= \mathrm{CONS}_C\ i_3\ [i_2,i_1]
 \end{aligned}
@@ -92,11 +96,236 @@ a\ i_1\ (a\ i_2\ (\cdots(a\ i_k\ b)\cdots))
 }
 $$
 
-即 $l\ a\ b$ 表示对 $l$ 中的每个元素从右到左依次对当前元素和累计值应用 $a$。
+即 $l\ a\ b$ 表示对 $l$ 中的每个元素从右到左依次对当前元素和累计值应用 $a$，而初始累计值为 $b$。
+
+这就是对列表的右折叠：
+
+$$
+l\ f\ z
+=
+\mathrm{foldr}(f,z,l)
+=
+\begin{cases}
+z & l=[]\\
+f(x,\mathrm{foldr}(f,z,xs)) & l=x::xs
+\end{cases}
+$$
+
+### Church 有序列表的操作
+
+以下操作均使用 Binary 自然数作为列表元素和列表索引。
+
+实现 Church 有序列表操作的关键之处，就是把操作本身用一个右折叠表示。
+
+#### Church 有序列表的求和
+
+列表元素的求和可以递归表示为：
+
+$$
+\mathrm{sum}(l)
+=
+\begin{cases}
+  0 & l=[] \\
+  x+\mathrm{sum}(xs) & l=x::xs
+\end{cases} \\
+$$
+
+对照右折叠的定义：
+
+$$
+\begin{aligned}
+z &= 0 \\
+f(x,r) &= x+r
+\end{aligned}
+$$
+
+因此有：
+
+```lambda
+@> sum = \l -> l ADD_B ZERO_B;
+```
+
+#### Church 有序列表的求积
+
+列表元素的求积可以递归表示为：
+
+$$
+\mathrm{prod}(l)
+=
+\begin{cases}
+  1 & l=[] \\
+  x\times\mathrm{prod}(xs) & l=x::xs
+\end{cases}
+$$
+
+对照右折叠的定义：
+
+$$
+\begin{aligned}
+z &= 1 \\
+f(x,r) &= x\times r
+\end{aligned}
+$$
+
+因此有：
+
+```lambda
+@> prod = \l -> l MUL_B ONE_B;
+```
+
+#### Church 有序列表的按索引访问
+
+按索引访问的索引 $i$ 从零开始计数，越界时返回指定的默认值 $d$：
+
+$$
+\mathrm{index}(l, i, d)
+=
+\begin{cases}
+d & l=[] \\
+x & l=x::xs \land i=0 \\
+\mathrm{index}(xs,i-1,d) & l=x::xs \land i>0
+\end{cases}
+$$
+
+为了能够得到索引减一的值，需要用以索引为参数的函数作为折叠结果。对照右折叠的定义可知：
+
+$$
+\begin{aligned}
+z &= \lambda i.d \\
+f(x,g)
+&= \lambda i.
+\begin{cases}
+  x & i=0 \\
+  g(i-1) & i>0
+  \end{cases}
+\end{aligned}
+$$
+
+把折叠结果应用于索引，就得到了索引处的元素：
+
+```lambda
+indexStep = \h -> \r -> \k ->
+    IF (ISZERO_B k)
+        h
+        (r (PRED_B k));
+@> index = \l -> \i -> \d ->
+    l indexStep (\k -> d) i;
+```
+
+#### Church 有序列表的查找
+
+查找从左到右第一个满足 $p$ 的元素，没有匹配时返回默认值 $d$：
+
+$$
+\mathrm{find}(l,p,d)
+=
+\begin{cases}
+d & l=[] \\
+x & l=x::xs \land p(x) \\
+\mathrm{find}(xs,p,d) & l=x::xs \land \neg p(x)
+\end{cases}
+$$
+
+对照右折叠的定义：
+
+$$
+\begin{aligned}
+z &= d \\
+f(x,r)
+&=
+\begin{cases}
+  x & p(x) \\
+  r & \neg p(x)
+\end{cases}
+\end{aligned}
+$$
+
+因此有：
+
+```lambda
+findStep = \p -> \h -> \r ->
+    IF (p h) h r;
+@> find = \l -> \p -> \d ->
+    l (findStep p) d;
+```
+
+#### Church 有序列表的排序
+
+排序使用升序插入排序，可以递归表示为：
+
+$$
+\mathrm{sort}(l)
+=
+\begin{cases}
+[] & l=[] \\
+\mathrm{insert}(x,\mathrm{sort}(xs)) & l=x::xs
+\end{cases}
+$$
+
+由右折叠的定义可知：
+
+$$
+\begin{aligned}
+z &= [] \\
+f(x,r) &= \mathrm{insert}(x,r)
+\end{aligned}
+$$
+
+因此只要实现 `insert`，便可以写出排序：
+
+```lambda
+@> sort = \l -> l insert nil;
+```
+
+而插入是将 $x$ 放到有序列表中第一个大于 $x$ 的元素之前：
+
+$$
+\mathrm{insert}(x,l)
+=
+\begin{cases}
+  [x] & l=[] \\
+  x::y::ys & l=y::ys \land x<y \\
+  y::\mathrm{insert}(x,ys) & l=y::ys \land x\ge y
+\end{cases}
+$$
+
+为了保留未经修改的尾列表，需要用有序对 $(u,g)$ 作为折叠结果，其中 $u$ 是原来的尾列表，$g(x)$ 是把 $x$ 插入原尾列表的结果。对照右折叠的定义可知：
+
+$$
+\begin{aligned}
+z &= ([],\lambda x.[x]) \\
+f(y,(u,g))
+&=
+\left(y::u,\lambda x.
+\begin{cases}
+  x::y::u & x<y \\
+  y::g(x) & x\ge y
+\end{cases}
+\right)
+\end{aligned}
+$$
+
+取折叠结果的第二个分量并应用于 $x$，就得到了插入后的新列表：
+
+```lambda
+insertStep = \h -> \state ->
+    PAIR
+        (cons h (FST state))
+        (\x ->
+            IF (LT_B x h)
+            (cons x (cons h (FST state)))
+            (cons h (SND state x)));
+insertInit = PAIR nil (\x -> cons x nil);
+insert = \x -> \l -> SND (l insertStep insertInit) x;
+```
 
 ## Scott 有序列表
 
 Scott 有序列表通过选择空列表或非空列表对应的分支来表示数据，适合对列表进行模式匹配和解构。
+
+Scott 有序列表及相关操作实现在 [scott.lambda](scott.lambda) 中。
+
+### Scott 有序列表的构造
 
 Scott 有序列表需要两个基本定义：
 
@@ -160,7 +389,7 @@ l\ a\ b
 =
 \begin{cases}
   b & l = [] \\
-  a\ i_1\ i_{2:k} & l = [i_1,\ldots i_{2:k}]
+  a\ x\ xs & l = x::xs
 \end{cases}
 }
 $$
@@ -169,3 +398,175 @@ $$
 
 - 当 $l$ 为空列表时执行 $b$
 - 当 $l$ 非空列表时执行 $a\ i_1\ i_{2:k}$，其中 $i_1$ 是首元素而 $i_{2:k}$ 是去除首元素得到的尾列表
+
+### Scott 有序列表的操作
+
+以下操作均使用 Binary 自然数作为列表元素和列表索引。
+
+实现 Scott 有序列表操作的关键之处，就是把操作本身用一个模式匹配表示，并分别处理空列表和非空列表两个分支。
+
+#### Scott 有序列表的求和
+
+列表元素的求和可以递归表示为：
+
+$$
+\mathrm{sum}(l)
+=
+\begin{cases}
+0 & l=[] \\
+x+\mathrm{sum}(xs) & l=x::xs
+\end{cases} \\
+$$
+
+因此有：
+
+```lambda
+sumStep = \r -> \l ->
+    l
+        (\h -> \t -> ADD_B h (r t))
+        ZERO_B;
+@> sum = Y sumStep;
+```
+
+#### Scott 有序列表的求积
+
+列表元素的求积可以递归表示为：
+
+$$
+\mathrm{prod}(l)
+=
+\begin{cases}
+1 & l=[] \\
+x\times\mathrm{prod}(xs) & l=x::xs
+\end{cases}
+$$
+
+因此有：
+
+```lambda
+prodStep = \r -> \l ->
+    l
+        (\h -> \t -> MUL_B h (r t))
+        ONE_B;
+@> prod = Y prodStep;
+```
+
+#### Scott 有序列表的按索引访问
+
+按索引访问的递归定义为：
+
+$$
+\mathrm{index}(l,i,d)=
+\begin{cases}
+  d & l=[] \\
+  x & l=x::xs \land i=0 \\
+  \mathrm{index}(xs,i-1,d) & l=x::xs \land i>0
+\end{cases}
+$$
+
+对于两种分支：
+
+- 空列表分支返回 $d$
+- 非空列表分支根据索引 $i$ 是否为零继续选择分支
+
+因此实现为：
+
+```lambda
+indexStep = \r -> \l -> \i -> \d ->
+    l
+        (\h -> \t ->
+            IF (ISZERO_B i)
+                h
+                (r t (PRED_B i) d))
+        d;
+@> index = Y indexStep;
+```
+
+#### Scott 有序列表的查找
+
+查找的递归定义为：
+
+$$
+\mathrm{find}(l,p,d)=
+\begin{cases}
+  d & l=[] \\
+  x & l=x::xs \land p(x) \\
+  \mathrm{find}(xs,p,d) & l=x::xs \land \neg p(x)
+\end{cases}
+$$
+
+对于两种分支：
+
+- 空列表分支返回 $d$
+- 非空列表分支根据谓词 $p(x)$ 是否成立继续选择分支
+
+因此实现为：
+
+```lambda
+findStep = \r -> \l -> \p -> \d ->
+    l
+        (\h -> \t ->
+            IF (p h)
+                h
+                (r t p d))
+        d;
+@> find = Y findStep;
+```
+
+#### Scott 有序列表的排序
+
+排序的递归定义为：
+
+$$
+\mathrm{sort}(l)
+=
+\begin{cases}
+[] & l=[] \\
+\mathrm{insert}(x,\mathrm{sort}(xs)) & l=x::xs
+\end{cases}
+$$
+
+实现为：
+
+```lambda
+sortStep = \r -> \l ->
+    l
+        (\h -> \t -> 
+            insert h (r t))
+        nil;
+@> sort = Y sortStep;
+```
+
+插入的递归定义为：
+
+$$
+\mathrm{insert}(x,l)
+=
+\begin{cases}
+  [x] & l=[] \\
+  x::y::ys & l=y::ys \land x<y \\
+  y::\mathrm{insert}(x,ys) & l=y::ys \land x\ge y
+\end{cases}
+$$
+
+对于两种分支：
+
+- 空列表分支返回 $[x]$
+- 非空列表分支根据 $x < y$ 是否成立继续选择分支
+
+因此实现为：
+
+```lambda
+insertStep = \r -> \x -> \l ->
+    l
+        (\h -> \t -> 
+            IF (LT_B x h)
+                (cons x l)
+                (cons h (r x t)))
+        (cons x nil);
+insert = Y insertStep;
+```
+
+## 比较并绘图
+
+<!-- TODO -->
