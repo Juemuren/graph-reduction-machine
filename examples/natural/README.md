@@ -1,14 +1,14 @@
 # 自然数编码
 
-## 丘奇编码
+## Church 自然数
 
-丘奇编码通过反复应用函数来表示数据，强调数据的迭代或折叠行为。
+Church 自然数通过反复应用函数来表示数据，强调数据的迭代或折叠行为。
 
-丘奇编码及相关运算实现在 [church.lambda](church.lambda) 中。
+Church 自然数及相关运算实现在 [church.lambda](church.lambda) 中。
 
-### 丘奇编码的自然数构造
+### Church 自然数的构造
 
-丘奇编码将自然数 $n$ 表示为函数应用 $n$ 次：
+Church 自然数 $n$ 表示为函数应用 $n$ 次：
 
 $$
 \begin{aligned}
@@ -19,7 +19,7 @@ $$
 \end{aligned}
 $$
 
-因此按照皮亚诺公理，丘奇编码的零和后继分别为：
+因此按照皮亚诺公理，Church 自然数的零和后继分别为：
 
 $$
 \boxed{
@@ -30,19 +30,7 @@ $$
 }
 $$
 
-前驱可以表示为：
-
-$$
-\mathrm{PRED}_C
-=
-\lambda n.\lambda f.\lambda x.
-n\
-(\lambda g.\lambda h.h\ (g\ f))\
-(\lambda u.x)\
-(\lambda u.u)
-$$
-
-丘奇编码的自然数可用于表示迭代：
+Church 自然数可用于表示迭代：
 
 - 当 $n=\mathrm{ZERO}_C$ 时，$n\ a\ b$ 被归约为
 
@@ -97,13 +85,21 @@ n\ a\ b
 }
 $$
 
+简记为：
+
+$$
+n\ a\ b = a^n (b)
+$$
+
 即 $n\ a\ b$ 表示对 $b$ 连续应用 $n$ 次 $a$。
 
-### 丘奇编码的自然数运算
+### Church 自然数的运算
 
-#### 丘奇编码的加法
+实现 Church 自然数运算的关键之处，就是将运算的结果表示为函数应用 $n$ 次。
 
-丘奇编码的加法非常简单，$m+n$ 就是先执行函数 $n$ 次再执行函数 $m$ 次：
+#### Church 自然数的加法
+
+Church 自然数的加法非常简单，$m+n$ 就是先执行函数 $n$ 次再执行函数 $m$ 次：
 
 $$
 \boxed{
@@ -113,9 +109,9 @@ $$
 }
 $$
 
-#### 丘奇编码的乘法
+#### Church 自然数的乘法
 
-丘奇编码的乘法更加简单，$m\times n$ 就是把执行函数 $n$ 次的过程重复 $m$ 次：
+Church 自然数的乘法更加简单，$m\times n$ 就是把执行函数 $n$ 次的过程重复 $m$ 次：
 
 $$
 \boxed{
@@ -125,9 +121,78 @@ $$
 }
 $$
 
-#### 丘奇编码的减法
+#### Church 自然数的前驱
 
-丘奇编码的减法会麻烦一些，$m-n$ 可以表示为对 $m$ 连续应用 $n$ 次前驱：
+Church 自然数的前驱较为麻烦。
+
+首先需要三个辅助函数：
+
+$$
+\begin{aligned}
+A &= \lambda g.\lambda h.h\ (g\ f) \\
+B &= \lambda u.x \\
+I &= \lambda u.u \\
+\end{aligned}
+$$
+
+其中：
+
+- $A\ g$ 返回 $\lambda h.h\ (g\ f)$
+- $B\ f$ 返回 $x$
+- $I\ u$ 返回 $u$
+
+然后观察应用结果：
+
+$$
+n\ A\ B\ I
+=
+A^n(B)\ I
+$$
+
+对于 $A^1(B)$ 有：
+
+$$
+A\ B = \lambda h.h\ (B\ f) = \lambda h.h\ x
+$$
+
+对于 $A^2(B)$ 有：
+
+$$
+A\ (A\ B) = \lambda h.h\ ((A\ B)\ f) = \lambda h.h\ (f\ x)
+$$
+
+对于 $A^3(B)$ 有：
+
+$$
+A\ (A\ (A\ B)) = \lambda h.h\ ((A\ (A\ B))\ f) = \lambda h.h\ (f\ (f\ x))
+$$
+
+由数学归纳法，对于 $A^n(B)$ 有：
+
+$$
+A^n(B) = \lambda h.h\ (A^{n-1}(B)\ f) = \lambda h.h\ (f^{n-1}(x))
+$$
+
+于是：
+
+$$
+A^n(B)\ I = f^{n-1}(x)
+$$
+
+而 $n-1$ 是 $\lambda f. \lambda x. f^{n-1}(x)$，因此前驱可以表示为：
+
+$$
+\boxed{
+\mathrm{PRED}_C
+=
+\lambda n.\lambda f.\lambda x.
+n\ A\ B\ I
+}
+$$
+
+#### Church 自然数的减法
+
+Church 自然数的减法会麻烦一些，$m-n$ 可以表示为对 $m$ 连续应用 $n$ 次前驱：
 
 $$
 \boxed{
@@ -137,9 +202,9 @@ $$
 }
 $$
 
-#### 丘奇编码的除法
+#### Church 自然数的除法
 
-丘奇编码的除法会更加复杂。
+Church 自然数的除法会更加复杂。
 
 一种方法是用迭代。
 
@@ -226,17 +291,17 @@ $$
 }
 $$
 
-另一种方法是用递归。不过这和斯科特编码中的除法基本相同，故不再重复。
+另一种方法是用递归。不过这和 Scott 自然数中的除法基本相同，故不再重复。
 
-## 斯科特编码
+## Scott 自然数
 
-斯科特编码通过选择构造器对应的分支来表示数据，强调模式匹配和数据结构的拆解。
+Scott 自然数通过选择构造器对应的分支来表示数据，强调模式匹配和数据结构的拆解。
 
-斯科特编码及相关运算实现在 [scott.lambda](scott.lambda) 中。
+Scott 自然数及相关运算实现在 [scott.lambda](scott.lambda) 中。
 
-### 斯科特编码的自然数构造
+### Scott 自然数的构造
 
-斯科特编码需要两个基本定义：
+Scott 自然数需要两个基本定义：
 
 $$
 \boxed{
@@ -250,10 +315,10 @@ $$
 这分别表示：
 
 $$
-\begin{cases}
-0 \\
-n+1 \\
-\end{cases}
+\begin{aligned}
+\mathrm{ZERO}_S &\to 0 \\
+\mathrm{SUCC}_S\ n &\to n+1 \\
+\end{aligned}
 $$
 
 由此可以按照皮亚诺公理递归定义所有自然数：
@@ -267,13 +332,7 @@ $$
 \end{aligned}
 $$
 
-斯科特编码的前驱可以表示为：
-
-$$
-\mathrm{PRED}_S=\lambda n.n\ \mathrm{ZERO}_S\ (\lambda p.p)
-$$
-
-斯科特编码的自然数可用于表示模式匹配：
+Scott 自然数可用于表示模式匹配：
 
 - 当 $n=\mathrm{ZERO}_S$ 时，$n\ a\ b$ 被归约为
 
@@ -314,16 +373,29 @@ $$
 - 当 $n=0$ 时执行 $a$
 - 当 $n\ge 1$ 时执行 $b\ (n-1)$
 
-### 斯科特编码的自然数运算
+### Scott 自然数的运算
 
-用斯科特编码实现自然数运算的关键之处，就是将运算的结果按情况进行分类：
+实现 Scott 自然数运算的关键之处，就是将运算的结果按情况进行分类：
 
 - 对于 $n=0$ 的情形，需要将结果表示为常量
 - 对于 $n\ge1$ 的情形，需要将结果表示为以 $n-1$ 为参数的函数
 
-#### 斯科特编码的加法
+#### Scott 自然数的前驱
 
-斯科特编码的加法可以使用递归实现：
+Scott 自然数的前驱利用模式匹配可以非常简单的实现：
+
+$$
+\boxed{
+\mathrm{PRED}_S
+=
+\lambda n.
+n\ \mathrm{ZERO}_S\ (\lambda p.p)
+}
+$$
+
+#### Scott 自然数的加法
+
+Scott 自然数的加法可以使用递归实现：
 
 $$
 \mathrm{add}(m, n)
@@ -334,34 +406,25 @@ $$
 \end{cases}
 $$
 
-先表示递归的部分：
+使用 Y 组合子构造递归：
 
 $$
 \boxed{
 \begin{aligned}
-\mathrm{recur}
+\mathrm{ADD}_S
 =&
-\lambda r.\lambda m.\lambda n. \\
-& n \\
-&\quad m \\
-&\quad (\lambda p.\mathrm{SUCC}_S\ (r\ m\ p))
+\mathrm{Y}\ (\lambda r.\lambda m.\lambda n. \\
+&\quad n \\
+&\qquad m \\
+&\qquad (\lambda p.\mathrm{SUCC}_S\ (r\ m\ p)) \\
+& )
 \end{aligned}
 }
 $$
 
-然后使用 Y 组合子构造递归：
+#### Scott 自然数的减法
 
-$$
-\boxed{
-\mathrm{ADD}_S
-=
-\mathrm{Y}\ \mathrm{recur}
-}
-$$
-
-#### 斯科特编码的减法
-
-斯科特编码的减法可以使用递归实现：
+Scott 自然数的减法可以使用递归实现：
 
 $$
 \mathrm{sub}(m, n)
@@ -372,34 +435,9 @@ $$
 \end{cases}
 $$
 
-先表示递归的部分：
+#### Scott 自然数的乘法
 
-$$
-\boxed{
-\begin{aligned}
-\mathrm{recur}
-=&
-\lambda r.\lambda m.\lambda n. \\
-& n \\
-&\quad m \\
-&\quad (\lambda p.\mathrm{PRED}_S\ (r\ m\ p))
-\end{aligned}
-}
-$$
-
-然后使用 Y 组合子构造递归：
-
-$$
-\boxed{
-\mathrm{SUB}_S
-=
-\mathrm{Y}\ \mathrm{recur}
-}
-$$
-
-#### 斯科特编码的乘法
-
-斯科特编码的乘法可以使用递归实现：
+Scott 自然数的乘法可以使用递归实现：
 
 $$
 \mathrm{mul}(m, n)
@@ -410,34 +448,9 @@ $$
 \end{cases}
 $$
 
-先表示递归的部分：
+#### Scott 自然数的除法
 
-$$
-\boxed{
-\begin{aligned}
-\mathrm{recur}
-=&
-\lambda r.\lambda m.\lambda n. \\
-& n \\
-&\quad \mathrm{ZERO}_S \\
-&\quad (\lambda p.\mathrm{ADD}_S\ (r\ m\ p)\ m)
-\end{aligned}
-}
-$$
-
-然后使用 Y 组合子构造递归：
-
-$$
-\boxed{
-\mathrm{MUL}_S
-=
-\mathrm{Y}\ \mathrm{recur}
-}
-$$
-
-#### 斯科特编码的除法
-
-斯科特编码的除法可以使用分段递归实现：
+Scott 自然数的除法可以使用分段递归实现：
 
 $$
 \mathrm{div}(m, n)
@@ -476,17 +489,17 @@ $$
 }
 $$
 
-## 二进制编码
+## Binary 自然数
 
-皮亚诺公理可以认为是一种一进制编码：无论采用丘奇编码还是斯科特编码，对于 $n$ 都需要 $O(n)$ 的表示长度。而二进制编码则只需要 $O(\log n)$ 的表示长度。
+皮亚诺公理可以认为是一种一进制编码：无论采用 Church 自然数还是 Scott 自然数，对于 $n$ 都需要 $O(n)$ 的表示长度。而二进制编码只需要 $O(\log n)$ 的表示长度。
 
-二进制编码也存在不同风格的实现方式。一种是利用丘奇列表实现，另一种是利用斯科特风格的递归实现。后文采用斯科特风格的二进制编码。
+二进制编码也存在不同的实现方式。一种是利用 Church 有序列表实现，另一种是利用 Scott 风格的递归实现。本示例采用后一种实现方式。
 
-二进制编码及相关运算实现在 [binary.lambda](binary.lambda) 中。
+Binary 自然数及相关运算实现在 [binary.lambda](binary.lambda) 中。
 
-### 二进制编码的自然数构造
+### Binary 自然数的构造
 
-斯科特风格的二进制编码需要三个基本定义：
+Scott 风格的二进制编码需要三个基本定义：
 
 $$
 \boxed{
@@ -501,11 +514,11 @@ $$
 这分别表示：
 
 $$
-\begin{cases}
-0 \\
-2k \\
-2k+1
-\end{cases}
+\begin{aligned}
+\mathrm{ZERO}_B &\to 0 \\
+\mathrm{EVEN}_B\ k &\to 2k \\
+\mathrm{ODD}_B\ k &\to 2k+1
+\end{aligned}
 $$
 
 由此可以递归定义所有自然数：
@@ -551,7 +564,7 @@ $$
 \end{aligned}
 $$
 
-斯科特风格的二进制自然数同样可用于表示模式匹配：
+Scott 风格的二进制自然数同样可用于表示模式匹配：
 
 - 当 $n=\mathrm{ZERO}_B$ 时，$n\ a\ b\ c$ 被归约为
 
@@ -605,6 +618,16 @@ $$
 - 当 $n>0$ 且 $n$ 为偶数时执行 $b\ \frac{n}{2}$
 - 当 $n>0$ 且 $n$ 为奇数时执行 $c\ \frac{n-1}{2}$
 
+### Binary 自然数的运算
+
+实现 Binary 自然数运算的关键之处，就是将运算的结果按情况进行分类：
+
+- 对于 $n=0$ 的情形，需要将结果表示为常量
+- 对于 $n>0 \land 2 \mid n$ 的情形，需要将结果表示为以 $\frac{n}{2}$ 为参数的函数
+- 对于 $n>0 \land 2 \nmid n$ 的情形，需要将结果表示为以 $\frac{n-1}{2}$ 为参数的函数
+
+#### Binary 自然数的后驱
+
 后继运算可以通过递归处理进位实现：
 
 $$
@@ -617,22 +640,7 @@ $$
 \end{cases}
 $$
 
-用 Y 组合子构造的递归为：
-
-$$
-\boxed{
-\begin{aligned}
-\mathrm{SUCC}_B
-=&
-Y\ (\lambda r.\lambda n. \\
-&\quad n\ \\
-&\quad (\mathrm{ODD}_B\ \mathrm{ZERO}_B) \\
-&\quad (\lambda k.\mathrm{ODD}_B\ k) \\
-&\quad (\lambda k.\mathrm{EVEN}_B\ (r\ k)) \\
-& )
-\end{aligned}
-}
-$$
+#### Binary 自然数的前驱
 
 前驱运算也可以通过递归处理进位实现：
 
@@ -646,37 +654,7 @@ $$
 \end{cases}
 $$
 
-用 Y 组合子构造的递归为：
-
-$$
-\boxed{
-\begin{aligned}
-\mathrm{PRED}_B
-=&
-Y (\lambda r.\lambda. n. \\
-&\quad n \\
-&\quad \mathrm{ZERO}_B \\
-&\quad (\lambda p. \mathrm{ODD}_B\ (r\ p)) \\
-&\quad (\lambda n. \\
-&\qquad n \\
-&\qquad \mathrm{ZERO}_B \\
-&\qquad \lambda p. \mathrm{EVEN}_B\ p \\
-&\qquad \lambda p. \mathrm{EVEN}_B\ p \\
-&\quad ) \\
-& );
-\end{aligned}
-}
-$$
-
-### 二进制编码的自然数运算
-
-用二进制编码实现自然数运算的关键之处，就是将运算的结果按情况进行分类：
-
-- 对于 $n=0$ 的情形，需要将结果表示为常量
-- 对于 $n>0 \land 2 \mid n$ 的情形，需要将结果表示为以 $\frac{n}{2}$ 为参数的函数
-- 对于 $n>0 \land 2 \nmid n$ 的情形，需要将结果表示为以 $\frac{n-1}{2}$ 为参数的函数
-
-#### 二进制编码的加法
+#### Binary 自然数的加法
 
 加法可递归表示为：
 
@@ -692,7 +670,7 @@ m & n=0 \\
 \end{cases}
 $$
 
-#### 二进制编码的减法
+#### Binary 自然数的减法
 
 减法可递归表示为：
 
@@ -708,7 +686,7 @@ m & n=0 \\
 \end{cases}
 $$
 
-#### 二进制编码的乘法
+#### Binary 自然数的乘法
 
 乘法可递归表示为：
 
@@ -721,7 +699,7 @@ $$
 \end{cases}
 $$
 
-#### 二进制编码的除法
+#### Binary 自然数的除法
 
 除法可递归表示为：
 
@@ -757,9 +735,9 @@ uv run scripts/compare_binary.py examples/encoding/compare.json
 
 ![add-grid](add-grid.png)
 
-可知对于加法，丘奇编码的归约效率比斯科特编码更好。
+可知对于加法，Church 自然数的归约效率比 Scott 自然数更好。
 
-而对于较大的数字，二进制编码有明显的优势；并且二进制编码的归约步数并不完全单调。在对角线采样中，存在轻微的波动；而在网格采样中，可以看到热力图非常杂乱。这种波动主要发生在二进制的位边界，即当一个数是 $2^k-1$ 时，归约步数通常相比 $2^k$ 会略微变多。
+对于较大的数字，Binary 自然数有明显的优势；并且 Binary 自然数的归约步数并不完全单调。在对角线采样中，存在轻微的波动；而在网格采样中，可以看到热力图非常杂乱。这种波动主要发生在二进制的位边界，即当一个数是 $2^k-1$ 时，归约步数通常相比 $2^k$ 会略微变多。
 
 ### 乘法比较结果
 
@@ -775,9 +753,9 @@ uv run scripts/compare_binary.py examples/encoding/compare.json
 
 ![mul-grid](mul-grid.png)
 
-可知对于乘法，丘奇编码的归约效率比斯科特编码更好。
+可知对于乘法，Church 自然数的归约效率比 Scott 自然数更好。
 
-并且对于较大的数字，二进制编码有明显的优势；并且二进制编码的归约步数并不完全单调。在对角线采样中，存在明显的波动；而在网格采样中，可以看到热力图比较杂乱。这种波动主要发生在二进制的位边界，即当一个数是 $2^k-1$ 时，归约通常步数相比 $2^k$ 会显著变多。
+对于较大的数字，Binary 自然数有明显的优势；并且 Binary 自然数的归约步数并不完全单调。在对角线采样中，存在明显的波动；而在网格采样中，可以看到热力图比较杂乱。这种波动主要发生在二进制的位边界，即当一个数是 $2^k-1$ 时，归约通常步数相比 $2^k$ 会显著变多。
 
 ### 减法比较结果
 
@@ -793,9 +771,9 @@ uv run scripts/compare_binary.py examples/encoding/compare.json
 
 ![sub-grid](sub-grid.png)
 
-可知对于减法，斯科特编码的归约效率比丘奇编码更好。
+可知对于减法，Scott 自然数的归约效率比 Church 自然数更好。
 
-并且对于较大的数字，二进制编码有明显的优势。
+对于较大的数字，Binary 自然数有明显的优势。
 
 ### 除法比较结果
 
@@ -811,6 +789,6 @@ uv run scripts/compare_binary.py examples/encoding/compare.json
 
 ![div-grid](div-grid.png)
 
-可知对于除法，斯科特编码的归约效率比丘奇编码更好。
+可知对于除法，Scott 自然数的归约效率比 Church 自然数更好。
 
-并且对于较大的数字，二进制编码有明显的优势。
+对于较大的数字，Binary 自然数有明显的优势。
