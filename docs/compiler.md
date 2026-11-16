@@ -66,5 +66,3 @@
 
 - 使用 `--encode-natural=church|scott|binary` 指定自然数字面量的编码，默认为 `church`
 - 使用 `--encode-string=L<N>` 指定字符串字面量的编码，其中 `L` 表示有序列表编码，可以是 `church` / `scott`；`N` 表示自然数编码，可以是 `church` / `scott` / `binary`，默认为 `church<binary>`
-<!-- TODO 考虑放弃兼容或修改语义 -->
-- 原有 `--encode=church|scott|binary` 暂时保留，作用与 `--encode-natural` 相同；两者不能同时指定

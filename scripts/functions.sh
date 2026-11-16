@@ -54,7 +54,7 @@ invoke_interpreter() {
 }
 
 invoke_integration_stage() (
-    local stage='' encode=church decode=natural
+    local stage='' encode_natural=church encode_string='church<binary>' decode=natural
     local -a input=()
 
     while (($#)); do
@@ -67,8 +67,12 @@ invoke_integration_stage() (
                 stage=$2
                 shift 2
                 ;;
-            -e | --encode)
-                encode=$2
+            -en | --encode-natural)
+                encode_natural=$2
+                shift 2
+                ;;
+            -es | --encode-string)
+                encode_string=$2
                 shift 2
                 ;;
             -d | --decode)
@@ -90,24 +94,26 @@ invoke_integration_stage() (
     case $stage in
         expand)
             invoke_compiler "${input[@]}" -- \
-                "--encode=$encode" \
+                "--encode-natural=$encode_natural" \
+                "--encode-string=$encode_string" \
                 --stop-after=expand
             ;;
         reduce)
             invoke_compiler "${input[@]}" -- \
-                "--encode=$encode" \
+                "--encode-natural=$encode_natural" \
+                "--encode-string=$encode_string" \
                 --stop-after=reduce \
                 --enable-reduce=both
             ;;
         compile)
             invoke_compiler "${input[@]}" -- \
-                "--encode=$encode" |
+                "--encode-natural=$encode_natural" "--encode-string=$encode_string" |
                 tr -d '\r' |
                 paste -sd '\t' -
             ;;
         interpret)
             invoke_compiler "${input[@]}" -- \
-                "--encode=$encode" |
+                "--encode-natural=$encode_natural" "--encode-string=$encode_string" |
                 invoke_interpreter -- \
                     --show-steps |
                 tr -d '\r' |
@@ -115,7 +121,7 @@ invoke_integration_stage() (
             ;;
         decode)
             invoke_compiler "${input[@]}" -- \
-                "--encode=$encode" |
+                "--encode-natural=$encode_natural" "--encode-string=$encode_string" |
                 invoke_interpreter -- \
                     --show-steps \
                     --no-step-limit \
@@ -125,7 +131,7 @@ invoke_integration_stage() (
 )
 
 invoke_integration_sequence() (
-    local file='' source='' input_kind='' stages=decode encode=church decode=natural stage selected
+    local file='' source='' input_kind='' stages=decode encode_natural=church encode_string='church<binary>' decode=natural stage selected
     local -a input=() selected_stages=()
 
     while (($#)); do
@@ -144,8 +150,12 @@ invoke_integration_sequence() (
                 stages=$2
                 shift 2
                 ;;
-            -e | --encode)
-                encode=$2
+            -en | --encode-natural)
+                encode_natural=$2
+                shift 2
+                ;;
+            -es | --encode-string)
+                encode_string=$2
                 shift 2
                 ;;
             -d | --decode)
@@ -175,7 +185,8 @@ invoke_integration_sequence() (
             if [[ $selected == "$stage" ]]; then
                 invoke_integration_stage "${input[@]}" \
                     --stage "$stage" \
-                    --encode "$encode" \
+                    --encode-natural "$encode_natural" \
+                    --encode-string "$encode_string" \
                     --decode "$decode"
                 break
             fi
@@ -196,8 +207,12 @@ _grm_stage_completions() {
     done
 }
 
-_grm_encode_completions() {
+_grm_encode_natural_completions() {
     mapfile -t COMPREPLY < <(compgen -W 'church scott binary' -- "$1")
+}
+
+_grm_encode_string_completions() {
+    mapfile -t COMPREPLY < <(compgen -W 'church<church> church<scott> church<binary> scott<church> scott<scott> scott<binary>' -- "$1")
 }
 
 _grm_decode_completions() {
@@ -271,11 +286,18 @@ _grm_option_completions() {
     COMPREPLY=()
 
     case $command:$current in
-        invoke_compiler:--encode=*)
-            value=${current#--encode=}
-            _grm_encode_completions "$value"
+        invoke_compiler:--encode-natural=*)
+            value=${current#--encode-natural=}
+            _grm_encode_natural_completions "$value"
             for index in "${!COMPREPLY[@]}"; do
-                COMPREPLY[index]="--encode=${COMPREPLY[index]}"
+                COMPREPLY[index]="--encode-natural=${COMPREPLY[index]}"
+            done
+            ;;
+        invoke_compiler:--encode-string=*)
+            value=${current#--encode-string=}
+            _grm_encode_string_completions "$value"
+            for index in "${!COMPREPLY[@]}"; do
+                COMPREPLY[index]="--encode-string=${COMPREPLY[index]}"
             done
             ;;
         invoke_interpreter:--decode=*)
@@ -298,10 +320,10 @@ _grm_tool_completion() {
 
     case $command in
         invoke_integration_stage)
-            option_words+=' -t --stage -e --encode -d --decode'
+            option_words+=' -t --stage -en --encode-natural -es --encode-string -d --decode'
             ;;
         invoke_integration_sequence)
-            option_words+=' -t --stages -e --encode -d --decode'
+            option_words+=' -t --stages -en --encode-natural -es --encode-string -d --decode'
             ;;
         *)
             for word in "${COMP_WORDS[@]:1:COMP_CWORD-1}"; do
@@ -335,8 +357,13 @@ _grm_tool_completion() {
                 fi
                 return
                 ;;
-            -e | --encode)
-                _grm_encode_completions "$current"
+            -en | --encode-natural)
+                _grm_encode_natural_completions "$current"
+                return
+                ;;
+            -es | --encode-string)
+                _grm_encode_string_completions "$current"
+                compopt -o nospace
                 return
                 ;;
             -d | --decode)

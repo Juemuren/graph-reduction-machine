@@ -72,7 +72,7 @@ data RunSpec = RunSpec
   , runPrecisionReal :: Maybe Integer
   , runMaxSteps :: Maybe Int
   , runEnableReduce :: Maybe String
-  , runEncode :: Maybe String
+  , runEncodeNatural :: Maybe String
   , runEncodeString :: Maybe String
   }
 
@@ -127,7 +127,7 @@ parseRunSpec stage = withObject "options" $ \object ->
     <*> object .:? "precisionReal"
     <*> object .:? "maxSteps"
     <*> object .:? "enableReduce"
-    <*> object .:? "encode"
+    <*> object .:? "encodeNatural"
     <*> object .:? "encodeString"
 
 instance FromJSON Expected where

@@ -36,7 +36,7 @@ runCase :: String -> TestCase -> IO ()
 runCase label (TestCase _ (Input language source modules) spec expected) = do
   void (caseLimit label 100000 spec)
   reduction <- unwrap label (parseReduction (runEnableReduce spec))
-  let encoding = case runEncode spec of
+  let encoding = case runEncodeNatural spec of
         Just "scott" -> Scott
         Just "binary" -> Binary
         _ -> Church
@@ -94,7 +94,7 @@ compilerOptions :: String -> RunSpec -> [String]
 compilerOptions stage spec =
   ["--stop-after=reduce" | stage == "reduce"]
     ++ maybe [] (\value -> ["--enable-reduce=" ++ value]) (runEnableReduce spec)
-    ++ maybe [] (\value -> ["--encode=" ++ value]) (runEncode spec)
+    ++ maybe [] (\value -> ["--encode-natural=" ++ value]) (runEncodeNatural spec)
 
 runCompiler :: String -> [String] -> String -> IO String
 runCompiler label options source = do

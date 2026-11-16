@@ -29,7 +29,7 @@
       "language": "lambda",
       "source": "@! \"A\";",
       "stage": "decode",
-      "options": { "encode": "scott", "decode": "string" },
+      "options": { "encodeNatural": "scott", "decode": "string" },
       "expect": { "value": "A" }
     },
     {
@@ -101,7 +101,7 @@
       "language": "lambda",
       "source": "@! CONS 1114112 NIL;",
       "stage": "decode",
-      "options": { "encode": "binary", "decode": "string" },
+      "options": { "encodeNatural": "binary", "decode": "string" },
       "expect": { "error": "not a value of the requested type" }
     }
   ]

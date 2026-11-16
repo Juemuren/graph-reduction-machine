@@ -16,7 +16,6 @@ import Compiler.Expand (
   expandSourceWithEncodings,
  )
 import Compiler.ModuleLoader (loadModuleSources)
-import Control.Applicative ((<|>))
 import Data.List (stripPrefix)
 import Data.Maybe (fromMaybe)
 import qualified PureLambda.Print as Pure
@@ -65,7 +64,6 @@ parseArgs = go Nothing Nothing Nothing Nothing Nothing
       , "[--enable-reduce=beta|eta|both]"
       , "[--encode-natural=church|scott|binary]"
       , "[--encode-string=church<church|scott|binary>|scott<church|scott|binary>]"
-      , "[--encode=church|scott|binary]"
       , "[FILE]"
       ]
   go mode reduction natural string path [] =
@@ -83,8 +81,7 @@ parseArgs = go Nothing Nothing Nothing Nothing Nothing
   go mode Nothing natural string path ("--enable-reduce=eta" : rest) = go mode (Just EtaOnly) natural string path rest
   go mode Nothing natural string path ("--enable-reduce=both" : rest) = go mode (Just BetaEta) natural string path rest
   go mode reduction Nothing string path (value : rest)
-    | Just name <-
-        stripPrefix "--encode-natural=" value <|> stripPrefix "--encode=" value =
+    | Just name <- stripPrefix "--encode-natural=" value =
         maybe
           (Left usage)
           (\encoding -> go mode reduction (Just encoding) string path rest)

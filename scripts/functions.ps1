@@ -98,7 +98,9 @@ function Invoke-IntegrationStage {
         [Parameter(Mandatory)]
         [string]$Stage,
 
-        [string]$Encode = 'church',
+        [string]$EncodeNatural = 'church',
+
+        [string]$EncodeString = 'church<binary>',
 
         [string]$Decode = 'natural',
 
@@ -128,32 +130,37 @@ function Invoke-IntegrationStage {
         switch ($Stage) {
             'expand' {
                 Invoke-Compiler -File $File -Source $inputSource -Options @(
-                    "--encode=$Encode",
+                    "--encode-natural=$EncodeNatural",
+                    "--encode-string=$EncodeString",
                     '--stop-after=expand'
                 )
             }
             'reduce' {
                 Invoke-Compiler -File $File -Source $inputSource -Options @(
-                    "--encode=$Encode",
+                    "--encode-natural=$EncodeNatural",
+                    "--encode-string=$EncodeString",
                     '--stop-after=reduce',
                     '--enable-reduce=both'
                 )
             }
             'compile' {
                 Invoke-Compiler -File $File -Source $inputSource -Options @(
-                    "--encode=$Encode"
+                    "--encode-natural=$EncodeNatural",
+                    "--encode-string=$EncodeString"
                 ) | Join-String -Separator "`t"
             }
             'interpret' {
                 Invoke-Compiler -File $File -Source $inputSource -Options @(
-                    "--encode=$Encode"
+                    "--encode-natural=$EncodeNatural",
+                    "--encode-string=$EncodeString"
                 ) | Invoke-Interpreter -Options @(
                     '--show-steps'
                 ) | Join-String -Separator "`t"
             }
             'decode' {
                 Invoke-Compiler -File $File -Source $inputSource -Options @(
-                    "--encode=$Encode"
+                    "--encode-natural=$EncodeNatural",
+                    "--encode-string=$EncodeString"
                 ) | Invoke-Interpreter -Options @(
                     '--show-steps',
                     '--no-step-limit',
@@ -173,7 +180,9 @@ function Invoke-IntegrationSequence {
 
         [string[]]$Stages = @('decode'),
 
-        [string]$Encode = 'church',
+        [string]$EncodeNatural = 'church',
+
+        [string]$EncodeString = 'church<binary>',
 
         [string]$Decode = 'natural',
 
@@ -199,7 +208,8 @@ function Invoke-IntegrationSequence {
             if ($Stages -contains $stage) {
                 Invoke-IntegrationStage -File $File -Source $inputSource `
                     -Stage $stage `
-                    -Encode $Encode `
+                    -EncodeNatural $EncodeNatural `
+                    -EncodeString $EncodeString `
                     -Decode $Decode
             }
         }
@@ -216,10 +226,20 @@ function _GRM_GET-StageCompletion {
     }
 }
 
-function _GRM_GET-EncodeCompletion {
+function _GRM_GET-EncodeNaturalCompletion {
     param([string]$Prefix)
 
     foreach ($type in @('church', 'scott', 'binary')) {
+        if ($type.StartsWith($Prefix, [System.StringComparison]::OrdinalIgnoreCase)) {
+            $type
+        }
+    }
+}
+
+function _GRM_GET-EncodeStringCompletion {
+    param([string]$Prefix)
+
+    foreach ($type in @('church<church>', 'church<scott>', 'church<binary>', 'scott<church>', 'scott<scott>', 'scott<binary>')) {
         if ($type.StartsWith($Prefix, [System.StringComparison]::OrdinalIgnoreCase)) {
             $type
         }
@@ -302,8 +322,11 @@ function _GRM_GET-OptionCompletion {
     )
 
     $word = $Word.Trim("'`"")
-    if ($CommandName -eq 'Invoke-Compiler' -and $word.StartsWith('--encode=')) {
-        $values = _GRM_GET-EncodeCompletion $word.Substring(9) | ForEach-Object { "--encode=$_" }
+    if ($CommandName -eq 'Invoke-Compiler' -and $word.StartsWith('--encode-natural=')) {
+        $values = _GRM_GET-EncodeNaturalCompletion $word.Substring(17) | ForEach-Object { "--encode-natural=$_" }
+    }
+    elseif ($CommandName -eq 'Invoke-Compiler' -and $word.StartsWith('--encode-string=')) {
+        $values = _GRM_GET-EncodeStringCompletion $word.Substring(16) | ForEach-Object { "--encode-string=$_" }
     }
     elseif ($CommandName -eq 'Invoke-Interpreter' -and $word.StartsWith('--decode=')) {
         $values = _GRM_GET-DecodeCompletion $word.Substring(9) | ForEach-Object { "--decode=$_" }
@@ -323,10 +346,17 @@ Register-ArgumentCompleter -Native -CommandName Invoke-Compiler, Invoke-Interpre
     _GRM_GET-OptionCompletion $commandName ([string]$args[0])
 }
 
-Register-ArgumentCompleter -CommandName Invoke-IntegrationStage, Invoke-IntegrationSequence -ParameterName Encode -ScriptBlock {
+Register-ArgumentCompleter -CommandName Invoke-IntegrationStage, Invoke-IntegrationSequence -ParameterName EncodeNatural -ScriptBlock {
     $prefix = ([string]$args[2]).Trim("'`"")
-    foreach ($completion in _GRM_GET-EncodeCompletion $prefix) {
+    foreach ($completion in _GRM_GET-EncodeNaturalCompletion $prefix) {
         [System.Management.Automation.CompletionResult]::new($completion, $completion, 'ParameterValue', $completion)
+    }
+}
+
+Register-ArgumentCompleter -CommandName Invoke-IntegrationStage, Invoke-IntegrationSequence -ParameterName EncodeString -ScriptBlock {
+    $prefix = ([string]$args[2]).Trim("'`"")
+    foreach ($completion in _GRM_GET-EncodeStringCompletion $prefix) {
+        [System.Management.Automation.CompletionResult]::new("'$completion'", $completion, 'ParameterValue', $completion)
     }
 }
 

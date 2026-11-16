@@ -45,7 +45,7 @@ main = runSuite "integration" runCase
 runCase :: String -> TestCase -> IO ()
 runCase label (TestCase _ (Input language source modules) spec expected) = do
   reduction <- unwrap label (parseReduction (runEnableReduce spec))
-  let encoding = case runEncode spec of
+  let encoding = case runEncodeNatural spec of
         Just "scott" -> Scott
         Just "binary" -> Binary
         _ -> Church

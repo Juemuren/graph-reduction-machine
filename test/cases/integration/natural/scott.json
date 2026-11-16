@@ -65,7 +65,7 @@
       "language": "lambda",
       "source": "@! ADD_S 2 3;\n",
       "stage": "decode",
-      "options": { "encode": "scott", "decode": "scott-natural" },
+      "options": { "encodeNatural": "scott", "decode": "scott-natural" },
       "expect": { "value": "5" }
     },
     {
@@ -73,7 +73,7 @@
       "language": "lambda",
       "source": "@! ADD_S 0 2;\n",
       "stage": "decode",
-      "options": { "encode": "scott", "decode": "scott-natural" },
+      "options": { "encodeNatural": "scott", "decode": "scott-natural" },
       "expect": { "value": "2" }
     },
     {
@@ -81,7 +81,7 @@
       "language": "lambda",
       "source": "@! MUL_S 2 3;\n",
       "stage": "decode",
-      "options": { "encode": "scott", "decode": "scott-natural" },
+      "options": { "encodeNatural": "scott", "decode": "scott-natural" },
       "expect": { "value": "6" }
     },
     {
@@ -89,7 +89,7 @@
       "language": "lambda",
       "source": "@! MUL_S 3 0;\n",
       "stage": "decode",
-      "options": { "encode": "scott", "decode": "scott-natural" },
+      "options": { "encodeNatural": "scott", "decode": "scott-natural" },
       "expect": { "value": "0" }
     },
     {
@@ -97,7 +97,7 @@
       "language": "lambda",
       "source": "@! MUL_S 0 3;\n",
       "stage": "decode",
-      "options": { "encode": "scott", "decode": "scott-natural" },
+      "options": { "encodeNatural": "scott", "decode": "scott-natural" },
       "expect": { "value": "0" }
     },
     {
@@ -105,7 +105,7 @@
       "language": "lambda",
       "source": "@! SUB_S 3 2;\n",
       "stage": "decode",
-      "options": { "encode": "scott", "decode": "scott-natural" },
+      "options": { "encodeNatural": "scott", "decode": "scott-natural" },
       "expect": { "value": "1" }
     },
     {
@@ -113,7 +113,7 @@
       "language": "lambda",
       "source": "@! SUB_S 2 3;\n",
       "stage": "decode",
-      "options": { "encode": "scott", "decode": "scott-natural" },
+      "options": { "encodeNatural": "scott", "decode": "scott-natural" },
       "expect": { "value": "0" }
     },
     {
@@ -121,7 +121,7 @@
       "language": "lambda",
       "source": "@! DIV_S 7 2;\n",
       "stage": "decode",
-      "options": { "encode": "scott", "decode": "scott-natural" },
+      "options": { "encodeNatural": "scott", "decode": "scott-natural" },
       "expect": { "value": "3" }
     },
     {
@@ -129,7 +129,7 @@
       "language": "lambda",
       "source": "@! DIV_S 4 2;\n",
       "stage": "decode",
-      "options": { "encode": "scott", "decode": "scott-natural" },
+      "options": { "encodeNatural": "scott", "decode": "scott-natural" },
       "expect": { "value": "2" }
     },
     {
@@ -137,7 +137,7 @@
       "language": "lambda",
       "source": "@! DIV_S 1 2;\n",
       "stage": "decode",
-      "options": { "encode": "scott", "decode": "scott-natural" },
+      "options": { "encodeNatural": "scott", "decode": "scott-natural" },
       "expect": { "value": "0" }
     },
     {
@@ -145,7 +145,7 @@
       "language": "lambda",
       "source": "@! DIV_S 0 2;\n",
       "stage": "decode",
-      "options": { "encode": "scott", "decode": "scott-natural" },
+      "options": { "encodeNatural": "scott", "decode": "scott-natural" },
       "expect": { "value": "0" }
     },
     {
@@ -153,7 +153,7 @@
       "language": "lambda",
       "source": "@! DIV_S 2 0;\n",
       "stage": "decode",
-      "options": { "encode": "scott", "decode": "scott-natural" },
+      "options": { "encodeNatural": "scott", "decode": "scott-natural" },
       "expect": { "value": "0" }
     },
     {
@@ -161,7 +161,7 @@
       "language": "lambda",
       "source": "@! LT_S 0 0;\n",
       "stage": "decode",
-      "options": { "encode": "scott", "decode": "boolean" },
+      "options": { "encodeNatural": "scott", "decode": "boolean" },
       "expect": { "value": "False" }
     },
     {
@@ -169,7 +169,7 @@
       "language": "lambda",
       "source": "@! LT_S 0 2;\n",
       "stage": "decode",
-      "options": { "encode": "scott", "decode": "boolean" },
+      "options": { "encodeNatural": "scott", "decode": "boolean" },
       "expect": { "value": "True" }
     },
     {
@@ -177,7 +177,7 @@
       "language": "lambda",
       "source": "@! LT_S 2 0;\n",
       "stage": "decode",
-      "options": { "encode": "scott", "decode": "boolean" },
+      "options": { "encodeNatural": "scott", "decode": "boolean" },
       "expect": { "value": "False" }
     },
     {
@@ -185,7 +185,7 @@
       "language": "lambda",
       "source": "@! LT_S 1 2;\n",
       "stage": "decode",
-      "options": { "encode": "scott", "decode": "boolean" },
+      "options": { "encodeNatural": "scott", "decode": "boolean" },
       "expect": { "value": "True" }
     },
     {
@@ -193,7 +193,7 @@
       "language": "lambda",
       "source": "@! LT_S 2 2;\n",
       "stage": "decode",
-      "options": { "encode": "scott", "decode": "boolean" },
+      "options": { "encodeNatural": "scott", "decode": "boolean" },
       "expect": { "value": "False" }
     },
     {
@@ -201,7 +201,7 @@
       "language": "lambda",
       "source": "@! LT_S 2 1;\n",
       "stage": "decode",
-      "options": { "encode": "scott", "decode": "boolean" },
+      "options": { "encodeNatural": "scott", "decode": "boolean" },
       "expect": { "value": "False" }
     },
     {
@@ -209,7 +209,7 @@
       "language": "lambda",
       "source": "@! FACT_S 0;",
       "stage": "decode",
-      "options": { "encode": "scott", "decode": "scott-natural" },
+      "options": { "encodeNatural": "scott", "decode": "scott-natural" },
       "expect": { "value": "1" }
     },
     {
@@ -217,7 +217,7 @@
       "language": "lambda",
       "source": "@! FACT_S 4;",
       "stage": "decode",
-      "options": { "encode": "scott", "decode": "scott-natural" },
+      "options": { "encodeNatural": "scott", "decode": "scott-natural" },
       "expect": { "value": "24" }
     },
     {
@@ -225,7 +225,7 @@
       "language": "lambda",
       "source": "@! GCD_S 0 6;",
       "stage": "decode",
-      "options": { "encode": "scott", "decode": "scott-natural" },
+      "options": { "encodeNatural": "scott", "decode": "scott-natural" },
       "expect": { "value": "6" }
     },
     {
@@ -233,7 +233,7 @@
       "language": "lambda",
       "source": "@! GCD_S 6 4;",
       "stage": "decode",
-      "options": { "encode": "scott", "decode": "scott-natural" },
+      "options": { "encodeNatural": "scott", "decode": "scott-natural" },
       "expect": { "value": "2" }
     },
     {
@@ -241,7 +241,7 @@
       "language": "lambda",
       "source": "@! LCM_S 0 3;",
       "stage": "decode",
-      "options": { "encode": "scott", "decode": "scott-natural" },
+      "options": { "encodeNatural": "scott", "decode": "scott-natural" },
       "expect": { "value": "0" }
     },
     {
@@ -249,7 +249,7 @@
       "language": "lambda",
       "source": "@! LCM_S 4 6;",
       "stage": "decode",
-      "options": { "encode": "scott", "decode": "scott-natural" },
+      "options": { "encodeNatural": "scott", "decode": "scott-natural" },
       "expect": { "value": "12" }
     },
     {
@@ -257,7 +257,7 @@
       "language": "lambda",
       "source": "@! MAX_S 2 3;",
       "stage": "decode",
-      "options": { "encode": "scott", "decode": "scott-natural" },
+      "options": { "encodeNatural": "scott", "decode": "scott-natural" },
       "expect": { "value": "3" }
     },
     {
@@ -265,7 +265,7 @@
       "language": "lambda",
       "source": "@! MIN_S 2 3;",
       "stage": "decode",
-      "options": { "encode": "scott", "decode": "scott-natural" },
+      "options": { "encodeNatural": "scott", "decode": "scott-natural" },
       "expect": { "value": "2" }
     },
     {
@@ -273,7 +273,7 @@
       "language": "lambda",
       "source": "@! POW_S 0 0;",
       "stage": "decode",
-      "options": { "encode": "scott", "decode": "scott-natural" },
+      "options": { "encodeNatural": "scott", "decode": "scott-natural" },
       "expect": { "value": "1" }
     },
     {
@@ -281,7 +281,7 @@
       "language": "lambda",
       "source": "@! POW_S 2 3;",
       "stage": "decode",
-      "options": { "encode": "scott", "decode": "scott-natural" },
+      "options": { "encodeNatural": "scott", "decode": "scott-natural" },
       "expect": { "value": "8" }
     },
     {
@@ -289,7 +289,7 @@
       "language": "lambda",
       "source": "@! MOD_S 3 0;",
       "stage": "decode",
-      "options": { "encode": "scott", "decode": "scott-natural" },
+      "options": { "encodeNatural": "scott", "decode": "scott-natural" },
       "expect": { "value": "3" }
     },
     {
@@ -297,7 +297,7 @@
       "language": "lambda",
       "source": "@! MOD_S 7 2;",
       "stage": "decode",
-      "options": { "encode": "scott", "decode": "scott-natural" },
+      "options": { "encodeNatural": "scott", "decode": "scott-natural" },
       "expect": { "value": "1" }
     },
     {
@@ -305,7 +305,7 @@
       "language": "lambda",
       "source": "@! LOG_S 2 9;",
       "stage": "decode",
-      "options": { "encode": "scott", "decode": "scott-natural" },
+      "options": { "encodeNatural": "scott", "decode": "scott-natural" },
       "expect": { "value": "3" }
     },
     {
@@ -313,7 +313,7 @@
       "language": "lambda",
       "source": "@! EQ_S 2 2;",
       "stage": "decode",
-      "options": { "encode": "scott", "decode": "boolean" },
+      "options": { "encodeNatural": "scott", "decode": "boolean" },
       "expect": { "value": "True" }
     },
     {
@@ -321,7 +321,7 @@
       "language": "lambda",
       "source": "@! NEQ_S 2 3;",
       "stage": "decode",
-      "options": { "encode": "scott", "decode": "boolean" },
+      "options": { "encodeNatural": "scott", "decode": "boolean" },
       "expect": { "value": "True" }
     },
     {
@@ -329,7 +329,7 @@
       "language": "lambda",
       "source": "@! LEQ_S 2 2;",
       "stage": "decode",
-      "options": { "encode": "scott", "decode": "boolean" },
+      "options": { "encodeNatural": "scott", "decode": "boolean" },
       "expect": { "value": "True" }
     },
     {
@@ -337,7 +337,7 @@
       "language": "lambda",
       "source": "@! GT_S 3 2;",
       "stage": "decode",
-      "options": { "encode": "scott", "decode": "boolean" },
+      "options": { "encodeNatural": "scott", "decode": "boolean" },
       "expect": { "value": "True" }
     },
     {
@@ -345,7 +345,7 @@
       "language": "lambda",
       "source": "@! GEQ_S 2 2;",
       "stage": "decode",
-      "options": { "encode": "scott", "decode": "boolean" },
+      "options": { "encodeNatural": "scott", "decode": "boolean" },
       "expect": { "value": "True" }
     }
   ]

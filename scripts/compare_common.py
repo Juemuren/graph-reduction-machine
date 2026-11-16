@@ -68,7 +68,7 @@ def compile_example(
 
     options = [compiler]
     if encode is not None:
-        options.append(f"--encode={encode}")
+        options.append(f"--encode-natural={encode}")
     result = subprocess.run(
         options,
         cwd=ROOT,

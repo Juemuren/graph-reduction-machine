@@ -12,7 +12,7 @@
       "language": "lambda",
       "source": "2",
       "stage": "expand",
-      "options": { "encode": "church" },
+      "options": { "encodeNatural": "church" },
       "expect": { "value": "\\f -> \\x -> f (f x)" }
     },
     {
@@ -20,7 +20,7 @@
       "language": "lambda",
       "source": "0",
       "stage": "expand",
-      "options": { "encode": "scott" },
+      "options": { "encodeNatural": "scott" },
       "expect": { "value": "\\zero -> \\successor -> zero" }
     },
     {
@@ -28,7 +28,7 @@
       "language": "lambda",
       "source": "2",
       "stage": "expand",
-      "options": { "encode": "scott" },
+      "options": { "encodeNatural": "scott" },
       "expect": { "value": "\\zero -> \\successor -> successor (\\zero -> \\successor -> successor (\\zero -> \\successor -> zero))" }
     },
     {
@@ -36,7 +36,7 @@
       "language": "lambda",
       "source": "0",
       "stage": "expand",
-      "options": { "encode": "binary" },
+      "options": { "encodeNatural": "binary" },
       "expect": { "value": "\\zero -> \\even -> \\odd -> zero" }
     },
     {
@@ -44,7 +44,7 @@
       "language": "lambda",
       "source": "2",
       "stage": "expand",
-      "options": { "encode": "binary" },
+      "options": { "encodeNatural": "binary" },
       "expect": { "value": "\\zero -> \\even -> \\odd -> even (\\zero -> \\even -> \\odd -> odd (\\zero -> \\even -> \\odd -> zero))" }
     },
     {

@@ -27,13 +27,13 @@
 
 - `-File` 文件路径
 - `-Source` 源代码内容，也可以通过管道传入
-- `--` 后为编译器选项，也可以通过 `-Options` 传入参数数组。具体选项请参考 [compiler.md#编译器选项](../docs/compiler.md#编译器选项)。其中 `--encode=` 参数提供补全
+- `--` 后为编译器选项，也可以通过 `-Options` 传入参数数组。具体选项请参考 [compiler.md#编译器选项](../docs/compiler.md#编译器选项)。其中 `--encode-natural=` 和 `--encode-string=` 参数提供补全
 
 使用示例：
 
 ```pwsh
 '@! ONE;' | Invoke-Compiler -- --stop-after=reduce --enable-reduce=both
-Invoke-Compiler -Source '@! ONE;' -- --encode=scott
+Invoke-Compiler -Source '@! ONE;' -- --encode-natural=scott
 Invoke-Compiler -File "examples/e/factorial.lambda"
 ```
 
@@ -72,8 +72,9 @@ Invoke-IntegrationStage -File "examples/e/factorial.lambda" -Stage decode -Decod
 - `-File` 文件路径
 - `-Source` 源代码内容，也可以通过管道传入
 - `-Stage` 指定的一个阶段。可以为 `expand` / `reduce` / `compile` / `interpret` / `decode`。无默认值
-- `-Encode` 编译器编码方式。详见 [compiler.md#编译器选项](../docs/compiler.md#编译器选项)。默认为 `church`
-- `-Decode` 解释器解码方式，详见 [interpreter.md#解释器选项](../docs/interpreter.md#解释器选项)。默认为 `natural`
+- `-EncodeNatural` 编译器的自然数字面量编码方式，默认为 `church`。详见 [compiler.md#编译器选项](../docs/compiler.md#编译器选项)
+- `-EncodeString` 编译器的字符串字面量编码方式，默认为 `church<binary>`。详见 [compiler.md#编译器选项](../docs/compiler.md#编译器选项)
+- `-Decode` 解释器的解码方式，默认为 `natural`。详见 [interpreter.md#解释器选项](../docs/interpreter.md#解释器选项)
 
 ### Invoke-IntegrationSequence
 
@@ -91,9 +92,8 @@ Invoke-IntegrationSequence -File "examples/e/factorial.lambda" -Stages decode -D
 
 - `-File` 文件路径
 - `-Source` 源代码内容，也可以通过管道传入
-- `-Stages` 指定的一个或多个阶段，用 `,` 连接。默认为 `decode`
-- `-Encode` 编译器编码方式。详见 [compiler.md#编译器选项](../docs/compiler.md#编译器选项)。默认为 `church`
-- `-Decode` 解释器解码方式。详见 [interpreter.md#解释器选项](../docs/interpreter.md#解释器选项)。默认为 `natural`
+- `-Stages` 指定的一个或多个阶段，默认为 `decode`。各阶段用 `,` 连接，可选的阶段见 [Invoke-IntegrationStage](#invoke-integrationstage) 中的 `-Stage` 参数
+- `-EncodeNatural` / `-EncodeString` / `-Decode` 与 [Invoke-IntegrationStage](#invoke-integrationstage) 中的同名参数一致
 
 ## functions.sh
 
@@ -120,7 +120,7 @@ source ./scripts/functions.sh
 
 - `-f` / `--file` 文件路径
 - `-s` / `--source` 源代码内容，也可以通过管道传入
-- `--` 后为编译器选项。具体选项请参考 [compiler.md#编译器选项](../docs/compiler.md#编译器选项)。其中 `--encode=` 参数提供补全
+- `--` 后为编译器选项。具体选项请参考 [compiler.md#编译器选项](../docs/compiler.md#编译器选项)。其中 `--encode-natural=` 和 `--encode-string=` 参数提供补全
 
 使用示例：
 
@@ -165,8 +165,9 @@ invoke_integration_stage -f examples/e/factorial.lambda -t decode -d real
 - `-f` / `--file` 文件路径
 - `-s` / `--source` 源代码内容，也可以通过管道传入
 - `-t` / `--stage` 指定的一个阶段。可以为 `expand` / `reduce` / `compile` / `interpret` / `decode`。无默认值
-- `-e` / `--encode` 编译器编码方式。详见 [compiler.md#编译器选项](../docs/compiler.md#编译器选项)。默认为 `church`
-- `-d` / `--decode` 解释器解码方式。详见 [interpreter.md#解释器选项](../docs/interpreter.md#解释器选项)。默认为 `natural`
+- `-en` / `--encode-natural` 编译器的自然数字面量编码方式，默认为 `church`。详见 [compiler.md#编译器选项](../docs/compiler.md#编译器选项)
+- `-es` / `--encode-string` 编译器的字符串字面量编码方式，默认为 `church<binary>`。详见 [compiler.md#编译器选项](../docs/compiler.md#编译器选项)
+- `-d` / `--decode` 解释器的解码方式，默认为 `natural`。详见 [interpreter.md#解释器选项](../docs/interpreter.md#解释器选项)
 
 ### invoke_integration_sequence
 
@@ -184,9 +185,8 @@ invoke_integration_sequence -f examples/e/factorial.lambda -t decode -d real
 
 - `-f` / `--file` 文件路径
 - `-s` / `--source` 源代码内容，也可以通过管道传入
-- `-t` / `--stages` 指定的一个或多个阶段，用 `,` 连接。默认为 `decode`
-- `-e` / `--encode` 编译器编码方式。详见 [compiler.md#编译器选项](../docs/compiler.md#编译器选项)。默认为 `church`
-- `-d` / `--decode` 解释器解码方式。详见 [interpreter.md#解释器选项](../docs/interpreter.md#解释器选项)。默认为 `natural`
+- `-t` / `--stages` 指定的一个或多个阶段，默认为 `decode`。各阶段用 `,` 连接，可选的阶段见 [invoke_integration_stage](#invoke_integration_stage) 中的 `-stage` 参数
+- `-en` / `--encode-natural`、`-es` / `--encode-string`、`-d` / `--decode` 与 [invoke_integration_stage](#invoke_integration_stage) 中的同名参数一致
 
 ## compare_real.py
 

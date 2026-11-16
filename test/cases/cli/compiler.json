@@ -14,7 +14,7 @@
     {
       "name": "church-numeral",
       "command": "lambda-compiler",
-      "args": ["--stop-after=expand", "--encode=church"],
+      "args": ["--stop-after=expand", "--encode-natural=church"],
       "stdin": "@! 2;",
       "expect": {
         "exitCode": 0,
@@ -25,22 +25,11 @@
     {
       "name": "scott-numeral",
       "command": "lambda-compiler",
-      "args": ["--stop-after=expand", "--encode=scott"],
+      "args": ["--stop-after=expand", "--encode-natural=scott"],
       "stdin": "@! 1;",
       "expect": {
         "exitCode": 0,
         "stdout": "\\ zero -> \\ successor -> successor (\\ zero -> \\ successor -> zero)\n",
-        "stderr": ""
-      }
-    },
-    {
-      "name": "scott-numeral-new-option",
-      "command": "lambda-compiler",
-      "args": ["--stop-after=expand", "--encode-natural=scott"],
-      "stdin": "@! 0;",
-      "expect": {
-        "exitCode": 0,
-        "stdout": "\\ zero -> \\ successor -> zero\n",
         "stderr": ""
       }
     },
@@ -58,12 +47,12 @@
     {
       "name": "invalid-encoding",
       "command": "lambda-compiler",
-      "args": ["--encode=other"],
+      "args": ["--encode-natural=other"],
       "stdin": "@! 0;",
       "expect": {
         "exitCode": 1,
         "stdout": "",
-        "stderr": "usage: lambda-compiler [--stop-after=expand|reduce] [--enable-reduce=beta|eta|both] [--encode-natural=church|scott|binary] [--encode-string=church<church|scott|binary>|scott<church|scott|binary>] [--encode=church|scott|binary] [FILE]\n"
+        "stderr": "usage: lambda-compiler [--stop-after=expand|reduce] [--enable-reduce=beta|eta|both] [--encode-natural=church|scott|binary] [--encode-string=church<church|scott|binary>|scott<church|scott|binary>] [FILE]\n"
       }
     },
     {
@@ -74,7 +63,7 @@
       "expect": {
         "exitCode": 1,
         "stdout": "",
-        "stderr": "usage: lambda-compiler [--stop-after=expand|reduce] [--enable-reduce=beta|eta|both] [--encode-natural=church|scott|binary] [--encode-string=church<church|scott|binary>|scott<church|scott|binary>] [--encode=church|scott|binary] [FILE]\n"
+        "stderr": "usage: lambda-compiler [--stop-after=expand|reduce] [--enable-reduce=beta|eta|both] [--encode-natural=church|scott|binary] [--encode-string=church<church|scott|binary>|scott<church|scott|binary>] [FILE]\n"
       }
     }
   ]

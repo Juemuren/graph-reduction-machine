@@ -5,7 +5,7 @@
       "language": "lambda",
       "source": "@! 3;",
       "stage": "decode",
-      "options": { "encode": "church", "decode": "natural" },
+      "options": { "encodeNatural": "church", "decode": "natural" },
       "expect": { "value": "3" }
     },
     {
@@ -13,7 +13,7 @@
       "language": "lambda",
       "source": "@! 3;",
       "stage": "decode",
-      "options": { "encode": "scott", "decode": "scott-natural" },
+      "options": { "encodeNatural": "scott", "decode": "scott-natural" },
       "expect": { "value": "3" }
     }
   ]
