@@ -1,7 +1,18 @@
 {-# LANGUAGE TemplateHaskell #-}
 
 -- | Resolve modules and expand library definitions into pure lambda calculus.
-module Compiler.Expand (Encoding (..), expand, expandSource, expandSourceWith, standardLibrarySources) where
+module Compiler.Expand (
+  Encoding (..),
+  ListEncoding (..),
+  StringEncoding (..),
+  Encodings (..),
+  defaultEncodings,
+  expand,
+  expandSource,
+  expandSourceWith,
+  expandSourceWithEncodings,
+  standardLibrarySources,
+) where
 
 import Compiler.LibrarySource (embeddedSources)
 import Compiler.ModuleSource (Import (..), Module (..), parseModule)
@@ -37,6 +48,19 @@ standardIndex = foldM addModule Map.empty (Map.toList sources)
 
 data Encoding = Church | Scott | Binary deriving (Eq, Show)
 
+data ListEncoding = ChurchList | ScottList deriving (Eq, Show)
+
+data StringEncoding = StringEncoding ListEncoding Encoding deriving (Eq, Show)
+
+data Encodings = Encodings
+  { naturalEncoding :: Encoding
+  , stringEncoding :: StringEncoding
+  }
+  deriving (Eq, Show)
+
+defaultEncodings :: Encodings
+defaultEncodings = Encodings Church (StringEncoding ChurchList Binary)
+
 -- | Keep the expression API available to callers that already have an AST.
 expand :: Core.Exp -> Either String Pure.Exp
 expand expression = expandSource Map.empty "<input>" ("@! " ++ Core.printTree expression ++ ";")
@@ -52,7 +76,15 @@ expandSourceWith ::
   FilePath ->
   String ->
   Either String Pure.Exp
-expandSourceWith encoding external path source = do
+expandSourceWith encoding = expandSourceWithEncodings (defaultEncodings{naturalEncoding = encoding})
+
+expandSourceWithEncodings ::
+  Encodings ->
+  Map.Map FilePath String ->
+  FilePath ->
+  String ->
+  Either String Pure.Exp
+expandSourceWithEncodings encodings external path source = do
   let file = normalise path
       allSources = Map.insert file source (Map.union external sources)
   library <- standardIndex
@@ -60,7 +92,7 @@ expandSourceWith encoding external path source = do
   body <-
     maybe (Left "module has no final expression") Right (moduleExpression parsed)
   validateImports allSources file parsed
-  go encoding library allSources file [] [] body
+  go encodings library allSources file [] [] body
 
 parsedModule :: Map.Map FilePath String -> FilePath -> Either String Module
 parsedModule allSources file = do
@@ -95,14 +127,14 @@ validateImports allSources file parsed = do
     | otherwise = Left (file ++ ": " ++ target ++ " does not export " ++ name)
 
 resolve ::
-  Encoding ->
+  Encodings ->
   Map.Map String FilePath ->
   Map.Map FilePath String ->
   FilePath ->
   [(FilePath, String)] ->
   String ->
   Either String Pure.Exp
-resolve encoding library allSources file stack name = do
+resolve encodings library allSources file stack name = do
   let key = (file, name)
   when (key `elem` stack) $
     Left
@@ -111,7 +143,7 @@ resolve encoding library allSources file stack name = do
   validateImports allSources file parsed
   case lookup name (moduleDefinitions parsed) of
     Just body -> do
-      result <- go encoding library allSources file (key : stack) [] body
+      result <- go encodings library allSources file (key : stack) [] body
       case freeVariables [] result of
         [] -> Right result
         names ->
@@ -119,7 +151,7 @@ resolve encoding library allSources file stack name = do
     Nothing -> Left (file ++ ": undefined name: " ++ name)
 
 go ::
-  Encoding ->
+  Encodings ->
   Map.Map String FilePath ->
   Map.Map FilePath String ->
   FilePath ->
@@ -127,37 +159,37 @@ go ::
   [String] ->
   Core.Exp ->
   Either String Pure.Exp
-go encoding library allSources file stack bound expression = case expression of
+go encodings library allSources file stack bound expression = case expression of
   Core.EVar (Core.Name name)
     | name `elem` bound -> Right (Pure.EVar (Pure.Name name))
     | otherwise -> do
         definition <- lookupName allSources file name
         case definition of
           Nothing -> Right (Pure.EVar (Pure.Name name))
-          Just target -> resolve encoding library allSources target stack name
+          Just target -> resolve encodings library allSources target stack name
   Core.EApp function argument ->
     Pure.EApp
-      <$> go encoding library allSources file stack bound function
-      <*> go encoding library allSources file stack bound argument
+      <$> go encodings library allSources file stack bound function
+      <*> go encodings library allSources file stack bound argument
   Core.EAbs (Core.Name name) body ->
     Pure.EAbs (Pure.Name name)
-      <$> go encoding library allSources file stack (name : bound) body
-  Core.ENumber number -> Right (encodeNatural encoding number)
+      <$> go encodings library allSources file stack (name : bound) body
+  Core.ENumber number -> Right (encodeNatural (naturalEncoding encodings) number)
   Core.EString value ->
     if all validScalar value
-      then Right (encodeString value)
+      then Right (encodeString (stringEncoding encodings) value)
       else Left "string literal contains an invalid Unicode scalar value"
   Core.EBuiltin (Core.Builtin name) -> do
     imported <- lookupName allSources file name
     case imported of
-      Just target -> resolve encoding library allSources target stack name
+      Just target -> resolve encodings library allSources target stack name
       Nothing -> do
         target <-
           maybe
             (Left ("standard library does not export " ++ name))
             Right
             (Map.lookup name library)
-        resolve encoding library allSources target stack name
+        resolve encodings library allSources target stack name
 
 encodeNatural :: Encoding -> Integer -> Pure.Exp
 encodeNatural encoding number = case encoding of
@@ -180,20 +212,31 @@ encodeNatural encoding number = case encoding of
   absName name = Pure.EAbs (Pure.Name name)
   app = Pure.EApp
 
-encodeString :: String -> Pure.Exp
-encodeString = foldr cons nil
+encodeString :: StringEncoding -> String -> Pure.Exp
+encodeString (StringEncoding listEncoding characterEncoding) = foldr cons nil
  where
   nil =
     Pure.EAbs
       (Pure.Name "c")
       (Pure.EAbs (Pure.Name "n") (Pure.EVar (Pure.Name "n")))
-  cons character rest =
+  cons character rest = case listEncoding of
+    ChurchList -> churchCons character rest
+    ScottList ->
+      Pure.EAbs (Pure.Name "c") $
+        Pure.EAbs (Pure.Name "n") $
+          Pure.EApp
+            ( Pure.EApp
+                (Pure.EVar (Pure.Name "c"))
+                (encodeNatural characterEncoding (toInteger (ord character)))
+            )
+            rest
+  churchCons character rest =
     Pure.EAbs (Pure.Name "c") $
       Pure.EAbs (Pure.Name "n") $
         Pure.EApp
           ( Pure.EApp
               (Pure.EVar (Pure.Name "c"))
-              (encodeNatural Binary (toInteger (ord character)))
+              (encodeNatural characterEncoding (toInteger (ord character)))
           )
           ( Pure.EApp
               (Pure.EApp rest (Pure.EVar (Pure.Name "c")))

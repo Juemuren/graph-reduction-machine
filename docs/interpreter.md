@@ -102,15 +102,17 @@
 
 #### 字符串解码
 
-使用字符串解码时，解释器会把输入图的根表达式应用到符号参数 `c` 和 `n`，再归约所得表达式：
+使用字符串 `L<N>` 解码时，解释器按有序列表 `L` 的解码方式解码有序列表，按自然数 `N` 的解码方式解码自然数。
+
+解释器会把输入图的根表达式应用到符号参数 `c` 和 `n`，再归约所得表达式：
 
 - 若归约结果为 `n`，则把 `""` 作为解码得到的字符串
-- 若归约结果为 `c a r`，则按 Binary 自然数解码 `a`，按字符串递归解码 `r`
+- 若归约结果为 `c a r`，则按 `N` 的解码方式解码 `a`，按 `L<N>` 的解码方式递归解码 `r`
    - 若 `a` 和 `r` 解码成功，则把 `a` 对应的字符放在 `r` 的开头，作为解码得到的字符串
    - 若 `a` 或 `r` 解码失败，则字符串解码失败
 - 若结果不符合以上两种形式，则字符串解码失败
 
-字符的有效 Unicode 标量值范围是从 `0` 至 `0x10FFFF` 且排除从 `0xD800` 至 `0xDFFF` 的代理项。超出此范围的 Binary 自然数会视作字符串解码失败。
+字符的有效 Unicode 标量值范围是从 `0` 至 `0x10FFFF` 且排除从 `0xD800` 至 `0xDFFF` 的代理项。超出此范围的自然数会视作字符串解码失败。
 
 #### 有序对解码
 
@@ -154,9 +156,10 @@
 - 用 `--decode=integer` 解码整数
 - 用 `--decode=rational` 解码有理数
 - 用 `--decode=real` 解码实数，用 `--precision-real=N` 指定解码时使用的自然数下标为 `N`
-- 用 `--decode=string` 解码字符串
+- 用 `--decode=string` 解码用 Church 列表和 Binary 自然数表示的字符串，等价于 `--decode=string<church<binary>>`
+- 用 `--decode=string<L<N>>` 解码用 `L` 列表和 `N` 自然数表示的字符串，其中 `L` 可以是 `church` / `scott`，`N` 可以是 `church` / `scott` / `binary`
 - 用 `--decode=list<T>` 解码 Church 列表
 - 用 `--decode=scott-list<T>` 解码 Scott 列表
 - 用 `--decode=pair<A,B>` 解码 Church 有序对
 
-其中 `T`、`A`、`B` 可以是 `natural` / `scott-natural` / `binary-natural` / `boolean` / `integer` / `rational` / `string`，也可以是嵌套的 `list<T>` / `scott-list<T>` / `pair<A,B>`；`real` 目前不能用于复合类型。
+其中 `T`、`A`、`B` 可以是 `natural` / `scott-natural` / `binary-natural` / `boolean` / `integer` / `rational` / `string` / `string<L<N>>`，也可以是嵌套的 `list<T>` / `scott-list<T>` / `pair<A,B>`；`real` 目前不能用于复合类型。

@@ -1,7 +1,13 @@
 module Main (main) where
 
-import Compiler (compileSourceWithEncoding)
-import Compiler.Expand (Encoding (..))
+import Compiler (compileSourceWithEncodings)
+import Compiler.Expand (
+  Encoding (..),
+  Encodings (..),
+  ListEncoding (..),
+  StringEncoding (..),
+  defaultEncodings,
+ )
 import Control.Monad (void)
 import Data.Ratio (denominator, numerator)
 import Interpreter (
@@ -43,6 +49,18 @@ runCase label (TestCase _ (Input language source modules) spec expected) = do
         Just "scott" -> Scott
         Just "binary" -> Binary
         _ -> Church
+      selectedStringEncoding = case runEncodeString spec of
+        Just "church<church>" -> StringEncoding ChurchList Church
+        Just "church<scott>" -> StringEncoding ChurchList Scott
+        Just "scott<church>" -> StringEncoding ScottList Church
+        Just "scott<scott>" -> StringEncoding ScottList Scott
+        Just "scott<binary>" -> StringEncoding ScottList Binary
+        _ -> StringEncoding ChurchList Binary
+      encodings =
+        defaultEncodings
+          { naturalEncoding = encoding
+          , stringEncoding = selectedStringEncoding
+          }
   limit <- caseLimit label 100000 spec
   case (language, runStage spec, expected) of
     ("lambda", "interpret", ExpectedValue graph) ->
@@ -50,7 +68,7 @@ runCase label (TestCase _ (Input language source modules) spec expected) = do
         ( assertGraph
             label
             graph
-            ( compileSourceWithEncoding encoding reduction modules "<input>" source
+            ( compileSourceWithEncodings encodings reduction modules "<input>" source
                 >>= interpret limit
             )
         )
@@ -58,7 +76,7 @@ runCase label (TestCase _ (Input language source modules) spec expected) = do
       graph <-
         unwrap
           label
-          (compileSourceWithEncoding encoding reduction modules "<input>" source)
+          (compileSourceWithEncodings encodings reduction modules "<input>" source)
       let result = decodeGraph spec limit graph
       case expected of
         ExpectedValue value -> unwrap label result >>= assertEqual label value
@@ -85,6 +103,8 @@ decodeGraph spec limit graph = case runDecode spec of
   Just name -> case parseDecodeType name of
     Just StringType ->
       showComposite (decodeComposite limit StringType graph)
+    Just kind@(EncodedStringType _ _) ->
+      showComposite (decodeComposite limit kind graph)
     Just kind@(ListType _) ->
       showComposite (decodeComposite limit kind graph)
     Just kind@(ScottListType _) ->

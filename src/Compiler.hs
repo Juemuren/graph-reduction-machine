@@ -7,15 +7,22 @@ module Compiler (
   compileSourceWith,
   compileSourceWithModules,
   compileSourceWithEncoding,
+  compileSourceWithEncodings,
   reduce,
   reduceWith,
   reduceSource,
   reduceSourceWith,
   reduceSourceWithModules,
   reduceSourceWithEncoding,
+  reduceSourceWithEncodings,
 ) where
 
-import Compiler.Expand (Encoding (..), expandSourceWith)
+import Compiler.Expand (
+  Encoding (..),
+  Encodings (..),
+  defaultEncodings,
+  expandSourceWithEncodings,
+ )
 import Data.List (intercalate, nub)
 import qualified Data.Map.Strict as Map
 import Data.Maybe (fromMaybe)
@@ -50,8 +57,19 @@ compileSourceWithEncoding ::
   FilePath ->
   String ->
   Either String Graph.Graph
-compileSourceWithEncoding encoding reduction modules path source =
-  expandSourceWith encoding modules path source >>= compileWith reduction
+compileSourceWithEncoding encoding =
+  compileSourceWithEncodings (defaultEncodings{naturalEncoding = encoding})
+
+compileSourceWithEncodings ::
+  Encodings ->
+  Reduction ->
+  Map.Map FilePath String ->
+  FilePath ->
+  String ->
+  Either String Graph.Graph
+compileSourceWithEncodings encodings reduction modules path source =
+  expandSourceWithEncodings encodings modules path source
+    >>= compileWith reduction
 
 -- | Parse and reduce one expression without translating it to SKI.
 reduceSource :: String -> Either String Pure.Exp
@@ -76,8 +94,19 @@ reduceSourceWithEncoding ::
   FilePath ->
   String ->
   Either String Pure.Exp
-reduceSourceWithEncoding encoding reduction modules path source =
-  expandSourceWith encoding modules path source >>= reduceChecked reduction
+reduceSourceWithEncoding encoding =
+  reduceSourceWithEncodings (defaultEncodings{naturalEncoding = encoding})
+
+reduceSourceWithEncodings ::
+  Encodings ->
+  Reduction ->
+  Map.Map FilePath String ->
+  FilePath ->
+  String ->
+  Either String Pure.Exp
+reduceSourceWithEncodings encodings reduction modules path source =
+  expandSourceWithEncodings encodings modules path source
+    >>= reduceChecked reduction
 
 compile :: Pure.Exp -> Either String Graph.Graph
 compile = compileWith BetaEta

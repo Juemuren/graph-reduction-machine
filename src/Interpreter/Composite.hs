@@ -1,3 +1,5 @@
+{-# LANGUAGE TupleSections #-}
+
 -- | Decode typed Church pairs and Church or Scott lists from SKI graphs.
 module Interpreter.Composite (
   DecodeType (..),
@@ -31,6 +33,7 @@ data DecodeType
   | IntegerType
   | RationalType
   | StringType
+  | EncodedStringType Bool DecodeType
   | PairType DecodeType DecodeType
   | ListType DecodeType
   | ScottListType DecodeType
@@ -43,6 +46,21 @@ parseDecodeType source = do
   if all isSpace rest then Just value else Nothing
  where
   parseType input
+    | Just rest <- stripPrefix "string<" input = do
+        (scott, afterList) <- case stripPrefix "church<" rest of
+          Just value -> Just (False, value)
+          Nothing -> (True,) <$> stripPrefix "scott<" rest
+        (characterType, afterCharacter) <-
+          case span
+            (\character -> character /= '>' && not (isSpace character))
+            (dropWhile isSpace afterList) of
+            ("church", remaining) -> Just (NaturalType, remaining)
+            ("scott", remaining) -> Just (ScottNaturalType, remaining)
+            ("binary", remaining) -> Just (BinaryNaturalType, remaining)
+            _ -> Nothing
+        afterInner <- stripPrefix ">" (dropWhile isSpace afterCharacter)
+        afterOuter <- stripPrefix ">" (dropWhile isSpace afterInner)
+        pure (EncodedStringType scott characterType, afterOuter)
     | Just rest <- stripPrefix "scott-list<" input = do
         (elementType, afterElement) <- parseType (dropWhile isSpace rest)
         afterClose <- stripPrefix ">" (dropWhile isSpace afterElement)
@@ -89,6 +107,10 @@ decodeAt kind root = case kind of
   IntegerType -> fmap (fmap show) (decodeIntegerAt root)
   RationalType -> fmap (fmap renderRational) (decodeRationalAt root)
   StringType -> decodeChurchListAt decodeCharacterAt root
+  EncodedStringType scott characterType ->
+    (if scott then decodeScottListAt else decodeChurchListAt)
+      (decodeCharacterWith characterType)
+      root
   PairType firstType secondType -> do
     components <- decodePairAt root
     case components of
@@ -132,8 +154,15 @@ decodeScottListAt decodeItem root = do
         _ -> pure Nothing
 
 decodeCharacterAt :: Address -> Run (Maybe Char)
-decodeCharacterAt address = do
-  value <- decodeBinaryNaturalAt address
+decodeCharacterAt = decodeCharacterWith BinaryNaturalType
+
+decodeCharacterWith :: DecodeType -> Address -> Run (Maybe Char)
+decodeCharacterWith characterType address = do
+  value <- case characterType of
+    NaturalType -> decodeNaturalAt address
+    ScottNaturalType -> decodeScottNaturalAt address
+    BinaryNaturalType -> decodeBinaryNaturalAt address
+    _ -> pure Nothing
   pure $ do
     number <- value
     if number <= 0x10FFFF && (number < 0xD800 || number > 0xDFFF)

@@ -23,8 +23,8 @@
 
 对于字面量的展开：
 
-- 自然数字面量被替换为对应的自然数编码，提供 Church / Scott / Binary 自然数编码
-- 字符串字面量被替换为对应的字符串编码，提供 Church 有序列表编码。其中每个字符为 Binary 自然数编码的 Unicode 标量值
+- 自然数字面量被替换为选定编码的自然数。具体编码的表示方式见 [lib.md#自然数](lib.md#自然数)
+- 字符串字面量被替换为选定编码的字符串。具体编码的表示方式见 [lib.md#字符串](lib.md#字符串)
 
 ### 表达式归约
 
@@ -64,6 +64,7 @@
 
 指定字面量的编码：
 
-- 使用 `--encode=church` 选择 Church 自然数编码
-- 使用 `--encode=scott` 选择 Scott 自然数编码
-- 使用 `--encode=binary` 选择 Binary 自然数编码
+- 使用 `--encode-natural=church|scott|binary` 指定自然数字面量的编码，默认为 `church`
+- 使用 `--encode-string=L<N>` 指定字符串字面量的编码，其中 `L` 表示有序列表编码，可以是 `church` / `scott`；`N` 表示自然数编码，可以是 `church` / `scott` / `binary`，默认为 `church<binary>`
+<!-- TODO 考虑放弃兼容或修改语义 -->
+- 原有 `--encode=church|scott|binary` 暂时保留，作用与 `--encode-natural` 相同；两者不能同时指定

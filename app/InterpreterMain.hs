@@ -95,7 +95,7 @@ parseArgs = go Nothing False Raw Nothing Nothing
       [ "usage: ski-interpreter"
       , "[--max-steps=N|--no-step-limit]"
       , "[--show-steps]"
-      , "[--decode=natural|scott-natural|binary-natural|boolean|integer|rational|real|string|list<T>|scott-list<T>|pair<A,B>]"
+      , "[--decode=natural|scott-natural|binary-natural|boolean|integer|rational|real|string|string<L<N>>|list<T>|scott-list<T>|pair<A,B>]"
       , "[--precision-real=N]"
       , "[FILE]"
       ]
@@ -148,4 +148,5 @@ parseArgs = go Nothing False Raw Nothing Nothing
     Just kind@(ListType _) -> Just kind
     Just kind@(ScottListType _) -> Just kind
     Just kind@(PairType _ _) -> Just kind
+    Just kind@(EncodedStringType _ _) -> Just kind
     _ -> Nothing

@@ -34,6 +34,28 @@
       }
     },
     {
+      "name": "scott-numeral-new-option",
+      "command": "lambda-compiler",
+      "args": ["--stop-after=expand", "--encode-natural=scott"],
+      "stdin": "@! 0;",
+      "expect": {
+        "exitCode": 0,
+        "stdout": "\\ zero -> \\ successor -> zero\n",
+        "stderr": ""
+      }
+    },
+    {
+      "name": "scott-string-empty",
+      "command": "lambda-compiler",
+      "args": ["--stop-after=expand", "--encode-string=scott<church>"],
+      "stdin": "@! \"\";",
+      "expect": {
+        "exitCode": 0,
+        "stdout": "\\ c -> \\ n -> n\n",
+        "stderr": ""
+      }
+    },
+    {
       "name": "invalid-encoding",
       "command": "lambda-compiler",
       "args": ["--encode=other"],
@@ -41,7 +63,18 @@
       "expect": {
         "exitCode": 1,
         "stdout": "",
-        "stderr": "usage: lambda-compiler [--stop-after=expand|reduce] [--enable-reduce=beta|eta|both] [--encode=church|scott|binary] [FILE]\n"
+        "stderr": "usage: lambda-compiler [--stop-after=expand|reduce] [--enable-reduce=beta|eta|both] [--encode-natural=church|scott|binary] [--encode-string=church<church|scott|binary>|scott<church|scott|binary>] [--encode=church|scott|binary] [FILE]\n"
+      }
+    },
+    {
+      "name": "invalid-string-encoding",
+      "command": "lambda-compiler",
+      "args": ["--encode-string=scott<other>"],
+      "stdin": "@! \"A\";",
+      "expect": {
+        "exitCode": 1,
+        "stdout": "",
+        "stderr": "usage: lambda-compiler [--stop-after=expand|reduce] [--enable-reduce=beta|eta|both] [--encode-natural=church|scott|binary] [--encode-string=church<church|scott|binary>|scott<church|scott|binary>] [--encode=church|scott|binary] [FILE]\n"
       }
     }
   ]

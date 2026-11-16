@@ -1,12 +1,23 @@
+{-# LANGUAGE TupleSections #-}
+
 module Main (main) where
 
 import Compiler (
   Reduction (..),
-  compileSourceWithEncoding,
-  reduceSourceWithEncoding,
+  compileSourceWithEncodings,
+  reduceSourceWithEncodings,
  )
-import Compiler.Expand (Encoding (..), expandSourceWith)
+import Compiler.Expand (
+  Encoding (..),
+  Encodings (..),
+  ListEncoding (..),
+  StringEncoding (..),
+  defaultEncodings,
+  expandSourceWithEncodings,
+ )
 import Compiler.ModuleLoader (loadModuleSources)
+import Control.Applicative ((<|>))
+import Data.List (stripPrefix)
 import Data.Maybe (fromMaybe)
 import qualified PureLambda.Print as Pure
 import Ski.Print (printTree)
@@ -26,12 +37,15 @@ main = do
         Graph ->
           fmap
             printTree
-            (compileSourceWithEncoding encoding reduction modules sourcePath source)
-        Expand -> fmap Pure.printTree (expandSourceWith encoding modules sourcePath source)
+            (compileSourceWithEncodings encoding reduction modules sourcePath source)
+        Expand ->
+          fmap
+            Pure.printTree
+            (expandSourceWithEncodings encoding modules sourcePath source)
         Reduce ->
           fmap
             Pure.printTree
-            (reduceSourceWithEncoding encoding reduction modules sourcePath source)
+            (reduceSourceWithEncodings encoding reduction modules sourcePath source)
   case result of
     Left message -> do
       hPutStrLn stderr ("lambda-compiler: " ++ message)
@@ -41,32 +55,60 @@ main = do
 data Mode = Graph | Expand | Reduce
 
 parseArgs ::
-  [String] -> Either String (Mode, Reduction, Encoding, Maybe FilePath)
-parseArgs = go Nothing Nothing Nothing Nothing
+  [String] -> Either String (Mode, Reduction, Encodings, Maybe FilePath)
+parseArgs = go Nothing Nothing Nothing Nothing Nothing
  where
   usage =
     unwords
       [ "usage: lambda-compiler"
       , "[--stop-after=expand|reduce]"
       , "[--enable-reduce=beta|eta|both]"
+      , "[--encode-natural=church|scott|binary]"
+      , "[--encode-string=church<church|scott|binary>|scott<church|scott|binary>]"
       , "[--encode=church|scott|binary]"
       , "[FILE]"
       ]
-  go mode reduction encoding path [] =
+  go mode reduction natural string path [] =
     Right
       ( fromMaybe Graph mode
       , fromMaybe NoReduction reduction
-      , fromMaybe Church encoding
+      , Encodings
+          (fromMaybe Church natural)
+          (fromMaybe (stringEncoding defaultEncodings) string)
       , path
       )
-  go Nothing reduction encoding path ("--stop-after=expand" : rest) = go (Just Expand) reduction encoding path rest
-  go Nothing reduction encoding path ("--stop-after=reduce" : rest) = go (Just Reduce) reduction encoding path rest
-  go mode Nothing encoding path ("--enable-reduce=beta" : rest) = go mode (Just BetaOnly) encoding path rest
-  go mode Nothing encoding path ("--enable-reduce=eta" : rest) = go mode (Just EtaOnly) encoding path rest
-  go mode Nothing encoding path ("--enable-reduce=both" : rest) = go mode (Just BetaEta) encoding path rest
-  go mode reduction Nothing path ("--encode=church" : rest) = go mode reduction (Just Church) path rest
-  go mode reduction Nothing path ("--encode=scott" : rest) = go mode reduction (Just Scott) path rest
-  go mode reduction Nothing path ("--encode=binary" : rest) = go mode reduction (Just Binary) path rest
-  go mode reduction encoding Nothing (value@(first : _) : rest)
-    | first /= '-' = go mode reduction encoding (Just value) rest
-  go _ _ _ _ _ = Left usage
+  go Nothing reduction natural string path ("--stop-after=expand" : rest) = go (Just Expand) reduction natural string path rest
+  go Nothing reduction natural string path ("--stop-after=reduce" : rest) = go (Just Reduce) reduction natural string path rest
+  go mode Nothing natural string path ("--enable-reduce=beta" : rest) = go mode (Just BetaOnly) natural string path rest
+  go mode Nothing natural string path ("--enable-reduce=eta" : rest) = go mode (Just EtaOnly) natural string path rest
+  go mode Nothing natural string path ("--enable-reduce=both" : rest) = go mode (Just BetaEta) natural string path rest
+  go mode reduction Nothing string path (value : rest)
+    | Just name <-
+        stripPrefix "--encode-natural=" value <|> stripPrefix "--encode=" value =
+        maybe
+          (Left usage)
+          (\encoding -> go mode reduction (Just encoding) string path rest)
+          (parseNatural name)
+  go mode reduction natural Nothing path (value : rest)
+    | Just name <- stripPrefix "--encode-string=" value =
+        maybe
+          (Left usage)
+          (\encoding -> go mode reduction natural (Just encoding) path rest)
+          (parseString name)
+  go mode reduction natural string Nothing (value@(first : _) : rest)
+    | first /= '-' = go mode reduction natural string (Just value) rest
+  go _ _ _ _ _ _ = Left usage
+
+  parseNatural "church" = Just Church
+  parseNatural "scott" = Just Scott
+  parseNatural "binary" = Just Binary
+  parseNatural _ = Nothing
+
+  parseString name = do
+    (list, rest) <- case stripPrefix "church<" name of
+      Just value -> Just (ChurchList, value)
+      Nothing -> (ScottList,) <$> stripPrefix "scott<" name
+    natural <- stripSuffix ">" rest >>= parseNatural
+    pure (StringEncoding list natural)
+
+  stripSuffix suffix value = reverse <$> stripPrefix (reverse suffix) (reverse value)

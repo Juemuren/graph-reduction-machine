@@ -33,6 +33,54 @@
       "expect": { "value": "A" }
     },
     {
+      "name": "church-list-church-character",
+      "language": "lambda",
+      "source": "@! \"A\";",
+      "stage": "decode",
+      "options": { "encodeString": "church<church>", "decode": "string<church<church>>" },
+      "expect": { "value": "A" }
+    },
+    {
+      "name": "church-list-scott-character",
+      "language": "lambda",
+      "source": "@! \"A\";",
+      "stage": "decode",
+      "options": { "encodeString": "church<scott>", "decode": "string<church<scott>>" },
+      "expect": { "value": "A" }
+    },
+    {
+      "name": "church-list-binary-character",
+      "language": "lambda",
+      "source": "@! \"A\";",
+      "stage": "decode",
+      "options": { "encodeString": "church<binary>", "decode": "string<church<binary>>" },
+      "expect": { "value": "A" }
+    },
+    {
+      "name": "scott-list-church-character",
+      "language": "lambda",
+      "source": "@! \"A\";",
+      "stage": "decode",
+      "options": { "encodeString": "scott<church>", "decode": "string<scott<church>>" },
+      "expect": { "value": "A" }
+    },
+    {
+      "name": "scott-list-scott-character",
+      "language": "lambda",
+      "source": "@! \"A\";",
+      "stage": "decode",
+      "options": { "encodeString": "scott<scott>", "decode": "string<scott<scott>>" },
+      "expect": { "value": "A" }
+    },
+    {
+      "name": "scott-list-binary-character",
+      "language": "lambda",
+      "source": "@! \"Hi\";",
+      "stage": "decode",
+      "options": { "encodeString": "scott<binary>", "decode": "string<scott<binary>>" },
+      "expect": { "value": "Hi" }
+    },
+    {
       "name": "append",
       "language": "lambda",
       "source": "@! APPEND \"Hi\" \"!\";",

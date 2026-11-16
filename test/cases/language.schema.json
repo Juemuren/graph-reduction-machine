@@ -49,6 +49,7 @@
       "properties": {
         "enableReduce": { "enum": ["beta", "eta", "both"] },
         "encode": { "enum": ["church", "scott", "binary"] },
+        "encodeString": { "enum": ["church<church>", "church<scott>", "church<binary>", "scott<church>", "scott<scott>", "scott<binary>"] },
         "maxSteps": { "type": "integer", "minimum": 1 },
         "decode": { "type": "string", "minLength": 1 },
         "precisionReal": { "type": "integer", "minimum": 0 }

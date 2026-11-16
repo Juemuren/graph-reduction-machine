@@ -58,7 +58,9 @@ cabal test
 - `stage` 是要进行到的阶段。可以为 `parse` / `expand` / `reduce` / `compile` / `interpret` / `decode`
 - `options`
   - `options.enableReduce` 是编译器启用的归约类型。可以为 `beta` / `eta` / `both`
-  - `options.encode` 是编译器的编码方式。具体的编码方式参见 [compiler.md#编译器选项](compiler.md#编译器选项)
+  <!-- TODO 改为 encodeNatural -->
+  - `options.encode` 是编译器对自然数字面量的编码方式。具体的编码方式参见 [compiler.md#编译器选项](compiler.md#编译器选项)
+  - `options.encodeString` 是编译器对字符串字面量的编码方式。具体的编码方式参见 [compiler.md#编译器选项](compiler.md#编译器选项)
   - `options.maxSteps` 是解释器的归约步数上限。为正整数
   - `options.decode` 是解释器的解码方式。具体的编码方式参见 [interpreter.md#解释器选项](interpreter.md#解释器选项)
   - `options.precisionReal` 是实数解码精度。为非负整数
