@@ -18,6 +18,7 @@ export const exampleNames = [
   "lambda",
   "ski",
   "natural",
+  "list",
   "fibonacci",
   "pi",
   "e",

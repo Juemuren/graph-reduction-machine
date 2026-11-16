@@ -1,11 +1,11 @@
 ---
 import CardGrid from "../../components/CardGrid.astro";
-import { referenceDocs } from "../../config";
+import { docNames } from "../../config";
 import Base from "../../layouts/Base.astro";
 import { readSource, titleOf } from "../../lib/content";
 
 const items = await Promise.all(
-  referenceDocs.map(async (slug) => ({
+  docNames.map(async (slug) => ({
     slug,
     title: titleOf(await readSource(`docs/${slug}.md`)),
   })),
