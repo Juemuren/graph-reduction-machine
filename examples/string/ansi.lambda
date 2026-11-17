@@ -1,0 +1,5 @@
+red = CONS 27 (CONS 91 (CONS 51 (CONS 49 (CONS 109 NIL))));
+green = CONS 27 (CONS 91 (CONS 51 (CONS 50 (CONS 109 NIL))));
+reset = CONS 27 (CONS 91 (CONS 48 (CONS 109 NIL)));
+
+@! APPEND red (APPEND "Hello" (APPEND reset (APPEND ", " (APPEND green (APPEND "World" (APPEND reset "!"))))));

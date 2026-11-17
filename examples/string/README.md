@@ -60,3 +60,15 @@ lambda-compiler examples/string/separate.lambda | ski-interpreter --decode=strin
 ```
 
 程序在原字符串的所有相邻字符之间插入一个字符。原字符串为 `Lambda`，插入字符为 `.`，因此输出为 `L.a.m.b.d.a`。
+
+### ANSI 控制序列
+
+实现在 [ansi.lambda](ansi.lambda) 中。
+
+在仓库根目录运行：
+
+```sh
+lambda-compiler examples/string/ansi.lambda --encode-natural=binary | ski-interpreter --decode=string
+```
+
+程序会输出 `Hello, World!`。如果终端支持 ANSI 控制序列，那么 `Hello` 会变成红色，`World` 会变成绿色。
