@@ -25,7 +25,9 @@ const { items } = Astro.props;
       href: `/examples/${item.slug}/`,
       title: item.label,
       description: `${item.sources.length} 个源码文件`,
-      extra: item.images.length ? `${item.images.length} 张比较图` : undefined,
+      extra: item.images.length
+        ? `${item.images.length} 份比较数据`
+        : undefined,
     }))}
   />
 </section>

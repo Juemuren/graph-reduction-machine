@@ -11,7 +11,7 @@ import remarkMath from "remark-math";
 import remarkParse from "remark-parse";
 import remarkRehype from "remark-rehype";
 import { unified } from "unified";
-import { exampleNames, docNames, root } from "../config";
+import { docNames, exampleNames, root } from "../config";
 import { sitePath } from "./urls";
 
 export interface Example {
@@ -270,8 +270,8 @@ export async function examples(): Promise<Example[]> {
         slug: name,
         label: titleOf(await readSource(`examples/${name}/README.md`)),
         files,
-        sources: files.filter((file) => /\.(lambda|ski)$/.test(file)),
-        images: files.filter((file) => file.endsWith(".png")),
+        sources: files.filter((file) => /\.(lambda|ski|dot)$/.test(file)),
+        images: files.filter((file) => /\.(png|svg)$/.test(file)),
         data: files.filter((file) => file.endsWith(".csv")),
         compare: files.includes("compare.json"),
       };
@@ -298,7 +298,7 @@ export async function librarySources() {
 export async function assetFiles() {
   const all = (await examples()).flatMap((example) =>
     example.files
-      .filter((file) => /\.(lambda|ski|png|csv|json)$/.test(file))
+      .filter((file) => /\.(lambda|ski|dot|png|svg|csv|json)$/.test(file))
       .map((file) => `examples/${example.slug}/${file}`),
   );
   all.push(...(await librarySources()).map((file) => `lib/${file}`));
@@ -322,7 +322,7 @@ export function routeFor(relative: string) {
   const normalized = relative.replaceAll("\\", "/");
   if (/^examples\/[^/]+\/README\.md$/.test(normalized))
     return `/${normalized.replace(/\/README\.md$/, "")}/`;
-  if (/^examples\/[^/]+\/[^/]+\.(lambda|ski)$/.test(normalized))
+  if (/^examples\/[^/]+\/[^/]+\.(lambda|ski|dot)$/.test(normalized))
     return `/${normalized}/`;
   if (/^docs\/[^/]+\.md$/.test(normalized))
     return `/docs/${path.posix.basename(normalized, ".md")}/`;
