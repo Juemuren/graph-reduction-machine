@@ -20,6 +20,7 @@ export const exampleNames = [
   "natural",
   "list",
   "string",
+  "real",
   "fibonacci",
   "pi",
   "e",
