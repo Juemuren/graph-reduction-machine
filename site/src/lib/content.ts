@@ -126,21 +126,48 @@ function linkImages() {
           const relative = decodeURIComponent(
             imagePath.slice(assetPrefix.length),
           );
-          if (!relative.endsWith(".png") || relative.split("/").includes(".."))
+          const extension = path.extname(relative);
+          if (
+            (extension !== ".png" && extension !== ".svg") ||
+            relative.split("/").includes("..")
+          )
             return child;
           const image = await readFile(path.join(root, relative));
-          if (
-            image.length < 24 ||
-            image.toString("hex", 0, 8) !== "89504e470d0a1a0a"
-          )
-            throw new Error(`无效的 PNG 图片: ${relative}`);
+          let width: number;
+          let height: number;
+          if (extension === ".png") {
+            if (
+              image.length < 24 ||
+              image.toString("hex", 0, 8) !== "89504e470d0a1a0a"
+            )
+              throw new Error(`无效的 PNG 图片: ${relative}`);
+            width = image.readUInt32BE(16);
+            height = image.readUInt32BE(20);
+          } else {
+            const svgTag = image.toString("utf8").match(/<svg\b[^>]*>/i)?.[0];
+            const viewBox = svgTag
+              ?.match(/\bviewBox\s*=\s*(["'])(.*?)\1/i)?.[2]
+              .trim()
+              .split(/[\s,]+/)
+              .map(Number);
+            if (
+              viewBox?.length !== 4 ||
+              !Number.isFinite(viewBox[2]) ||
+              !Number.isFinite(viewBox[3]) ||
+              viewBox[2] <= 0 ||
+              viewBox[3] <= 0
+            )
+              throw new Error(`SVG 缺少有效 viewBox: ${relative}`);
+            width = viewBox[2];
+            height = viewBox[3];
+          }
           return {
             type: "element",
             tagName: "a",
             properties: {
               href: src,
-              "data-pswp-width": image.readUInt32BE(16),
-              "data-pswp-height": image.readUInt32BE(20),
+              "data-pswp-width": width,
+              "data-pswp-height": height,
             },
             children: [child],
           };
