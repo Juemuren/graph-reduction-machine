@@ -1,0 +1,326 @@
+{
+  "cases": [
+    {
+      "name": "sum",
+      "expression": "{function} {list}",
+      "generator": {
+        "kind": "random",
+        "min": 1,
+        "max": 10,
+        "seed": 114514
+      },
+      "methods": [
+        {
+          "name": "church",
+          "file": "church.lambda",
+          "function": "sum",
+          "encoding": "church",
+          "decode": "binary-natural"
+        },
+        {
+          "name": "scott",
+          "file": "scott.lambda",
+          "function": "sum",
+          "encoding": "scott",
+          "decode": "binary-natural"
+        }
+      ],
+      "maxLength": 50,
+      "maxSteps": 1000000,
+      "csv": "sum.csv",
+      "png": "sum.png"
+    },
+    {
+      "name": "prod",
+      "expression": "{function} {list}",
+      "generator": {
+        "kind": "random",
+        "min": 1,
+        "max": 5,
+        "seed": 114514
+      },
+      "methods": [
+        {
+          "name": "church",
+          "file": "church.lambda",
+          "function": "prod",
+          "encoding": "church",
+          "decode": "binary-natural"
+        },
+        {
+          "name": "scott",
+          "file": "scott.lambda",
+          "function": "prod",
+          "encoding": "scott",
+          "decode": "binary-natural"
+        }
+      ],
+      "maxLength": 50,
+      "maxSteps": 1000000,
+      "csv": "prod.csv",
+      "png": "prod.png"
+    },
+    {
+      "name": "index-first",
+      "expression": "{function} {list} {firstIndex} 999",
+      "generator": {
+        "kind": "ascending-cycle",
+        "min": 1,
+        "max": 100
+      },
+      "methods": [
+        {
+          "name": "church",
+          "file": "church.lambda",
+          "function": "index",
+          "encoding": "church",
+          "decode": "binary-natural"
+        },
+        {
+          "name": "scott",
+          "file": "scott.lambda",
+          "function": "index",
+          "encoding": "scott",
+          "decode": "binary-natural"
+        }
+      ],
+      "maxLength": 100,
+      "maxSteps": 1000000,
+      "csv": "index-first.csv",
+      "png": "index-first.png"
+    },
+    {
+      "name": "index-middle",
+      "expression": "{function} {list} {middleIndex} 999",
+      "generator": {
+        "kind": "ascending-cycle",
+        "min": 1,
+        "max": 100
+      },
+      "methods": [
+        {
+          "name": "church",
+          "file": "church.lambda",
+          "function": "index",
+          "encoding": "church",
+          "decode": "binary-natural"
+        },
+        {
+          "name": "scott",
+          "file": "scott.lambda",
+          "function": "index",
+          "encoding": "scott",
+          "decode": "binary-natural"
+        }
+      ],
+      "maxLength": 100,
+      "maxSteps": 1000000,
+      "csv": "index-middle.csv",
+      "png": "index-middle.png"
+    },
+    {
+      "name": "index-last",
+      "expression": "{function} {list} {lastIndex} 999",
+      "generator": {
+        "kind": "ascending-cycle",
+        "min": 1,
+        "max": 100
+      },
+      "methods": [
+        {
+          "name": "church",
+          "file": "church.lambda",
+          "function": "index",
+          "encoding": "church",
+          "decode": "binary-natural"
+        },
+        {
+          "name": "scott",
+          "file": "scott.lambda",
+          "function": "index",
+          "encoding": "scott",
+          "decode": "binary-natural"
+        }
+      ],
+      "maxLength": 100,
+      "maxSteps": 1000000,
+      "csv": "index-last.csv",
+      "png": "index-last.png"
+    },
+    {
+      "name": "find-first",
+      "expression": "{function} {list} (EQ_B {first}) 999",
+      "generator": {
+        "kind": "ascending-cycle",
+        "min": 1,
+        "max": 100
+      },
+      "methods": [
+        {
+          "name": "church",
+          "file": "church.lambda",
+          "function": "find",
+          "encoding": "church",
+          "decode": "binary-natural"
+        },
+        {
+          "name": "scott",
+          "file": "scott.lambda",
+          "function": "find",
+          "encoding": "scott",
+          "decode": "binary-natural"
+        }
+      ],
+      "maxLength": 100,
+      "maxSteps": 1000000,
+      "csv": "find-first.csv",
+      "png": "find-first.png"
+    },
+    {
+      "name": "find-middle",
+      "expression": "{function} {list} (EQ_B {middle}) 999",
+      "generator": {
+        "kind": "ascending-cycle",
+        "min": 1,
+        "max": 100
+      },
+      "methods": [
+        {
+          "name": "church",
+          "file": "church.lambda",
+          "function": "find",
+          "encoding": "church",
+          "decode": "binary-natural"
+        },
+        {
+          "name": "scott",
+          "file": "scott.lambda",
+          "function": "find",
+          "encoding": "scott",
+          "decode": "binary-natural"
+        }
+      ],
+      "maxLength": 100,
+      "maxSteps": 1000000,
+      "csv": "find-middle.csv",
+      "png": "find-middle.png"
+    },
+    {
+      "name": "find-last",
+      "expression": "{function} {list} (EQ_B {last}) 999",
+      "generator": {
+        "kind": "ascending-cycle",
+        "min": 1,
+        "max": 100
+      },
+      "methods": [
+        {
+          "name": "church",
+          "file": "church.lambda",
+          "function": "find",
+          "encoding": "church",
+          "decode": "binary-natural"
+        },
+        {
+          "name": "scott",
+          "file": "scott.lambda",
+          "function": "find",
+          "encoding": "scott",
+          "decode": "binary-natural"
+        }
+      ],
+      "maxLength": 100,
+      "maxSteps": 1000000,
+      "csv": "find-last.csv",
+      "png": "find-last.png"
+    },
+    {
+      "name": "sort-descending",
+      "expression": "{function} {list}",
+      "generator": {
+        "kind": "descending-cycle",
+        "min": 1,
+        "max": 50
+      },
+      "methods": [
+        {
+          "name": "church",
+          "file": "church.lambda",
+          "function": "sort",
+          "encoding": "church",
+          "decode": "list<binary-natural>"
+        },
+        {
+          "name": "scott",
+          "file": "scott.lambda",
+          "function": "sort",
+          "encoding": "scott",
+          "decode": "scott-list<binary-natural>"
+        }
+      ],
+      "maxLength": 50,
+      "maxSteps": 1000000,
+      "csv": "sort-descending.csv",
+      "png": "sort-descending.png"
+    },
+    {
+      "name": "sort-duplicates",
+      "expression": "{function} {list}",
+      "generator": {
+        "kind": "descending-cycle",
+        "min": 1,
+        "max": 2
+      },
+      "methods": [
+        {
+          "name": "church",
+          "file": "church.lambda",
+          "function": "sort",
+          "encoding": "church",
+          "decode": "list<binary-natural>"
+        },
+        {
+          "name": "scott",
+          "file": "scott.lambda",
+          "function": "sort",
+          "encoding": "scott",
+          "decode": "scott-list<binary-natural>"
+        }
+      ],
+      "maxLength": 50,
+      "maxSteps": 1000000,
+      "csv": "sort-duplicates.csv",
+      "png": "sort-duplicates.png"
+    },
+    {
+      "name": "sort-random",
+      "expression": "{function} {list}",
+      "generator": {
+        "kind": "random",
+        "min": 1,
+        "max": 1000,
+        "seed": 114514
+      },
+      "methods": [
+        {
+          "name": "church",
+          "file": "church.lambda",
+          "function": "sort",
+          "encoding": "church",
+          "decode": "list<binary-natural>"
+        },
+        {
+          "name": "scott",
+          "file": "scott.lambda",
+          "function": "sort",
+          "encoding": "scott",
+          "decode": "scott-list<binary-natural>"
+        }
+      ],
+      "maxLength": 50,
+      "maxSteps": 1000000,
+      "csv": "sort-random.csv",
+      "png": "sort-random.png"
+    }
+  ]
+}

@@ -173,9 +173,9 @@ $$
 @> prod = \l -> l MUL_B ONE_B;
 ```
 
-#### Church 有序列表的按索引访问
+#### Church 有序列表的索引
 
-按索引访问的索引 $i$ 从零开始计数，越界时返回指定的默认值 $d$：
+索引访问列表对应位置的元素，索引 $i$ 从零开始计数，越界时返回指定的默认值 $d$：
 
 $$
 \mathrm{index}(l, i, d)
@@ -451,9 +451,9 @@ prodStep = \r -> \l ->
 @> prod = Y prodStep;
 ```
 
-#### Scott 有序列表的按索引访问
+#### Scott 有序列表的索引
 
-按索引访问的递归定义为：
+索引的递归定义为：
 
 $$
 \mathrm{index}(l,i,d)=
@@ -569,4 +569,114 @@ insert = Y insertStep;
 
 ## 比较并绘图
 
-<!-- TODO -->
+在仓库根目录运行：
+
+```sh
+uv run scripts/compare_list.py examples/list/compare.json
+```
+
+以下比较均使用 Binary 自然数作为列表元素和列表索引。
+
+### 求和比较结果
+
+列表为随机生成的序列，最小值为 `1`，最大值为 `10`。
+
+得到的表格为：
+
+[sum.csv](sum.csv)
+
+得到的图片为：
+
+![sum](sum.png)
+
+可知在该输入范围内，Church 列表求和的归约步数略少于 Scott 列表。
+
+### 求积比较结果
+
+列表为随机生成的序列，最小值为 `1`，最大值为 `5`。
+
+得到的表格为：
+
+[prod.csv](prod.csv)
+
+得到的图片为：
+
+![prod](prod.png)
+
+可知在该输入范围内，Church 列表求积的归约步数略少于 Scott 列表。
+
+### 索引比较结果
+
+列表为从 `1` 到长度上限的升序排列，分别访问首项 / 中间项 / 末项。
+
+得到的表格为：
+
+[index-first.csv](index-first.csv)
+
+[index-middle.csv](index-middle.csv)
+
+[index-last.csv](index-last.csv)
+
+得到的图片为：
+
+![index-first](index-first.png)
+
+![index-middle](index-middle.png)
+
+![index-last](index-last.png)
+
+可知对于非空列表：
+
+- 访问首项的归约步数不随列表长度增加
+- 访问中间项和末项的归约步数随列表长度增加，且近似呈线性关系
+
+对于索引操作，在这些输入范围内，Church 列表的归约步数少于 Scott 列表。
+
+### 查找比较结果
+
+列表为从 `1` 到长度上限的升序排列，分别查找首项 / 中间项 / 末项。
+
+得到的表格为：
+
+[find-first.csv](find-first.csv)
+
+[find-middle.csv](find-middle.csv)
+
+[find-last.csv](find-last.csv)
+
+得到的图片为：
+
+![find-first](find-first.png)
+
+![find-middle](find-middle.png)
+
+![find-last](find-last.png)
+
+可知对于非空列表：
+
+- 匹配首项时归约步数不随列表长度增加
+- 匹配中间项和末项的归约步数随列表长度增加，且近似呈线性关系
+
+对于查找操作，在这些输入范围内，Church 列表的归约步数少于 Scott 列表。
+
+### 排序比较结果
+
+列表分别使用从长度上限到 `1` 的降序排列 / `2,1,2,1,...` 的降序循环 / 最小值为 `1`、最大值为 `1000` 的随机序列。
+
+得到的表格为：
+
+[sort-descending.csv](sort-descending.csv)
+
+[sort-duplicates.csv](sort-duplicates.csv)
+
+[sort-random.csv](sort-random.csv)
+
+得到的图片为：
+
+![sort-descending](sort-descending.png)
+
+![sort-duplicates](sort-duplicates.png)
+
+![sort-random](sort-random.png)
+
+可知对于排序操作，在这些输入范围内，Scott 列表的归约步数少于 Church 列表。
