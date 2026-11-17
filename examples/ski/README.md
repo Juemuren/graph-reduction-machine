@@ -115,7 +115,7 @@ digraph {
 }
 ```
 
-如果考虑共享节点，那么 SKI 图是一个有序有向无环图，因为多个应用节点的出边可能连接到同一个节点，这可以用来减少图的大小
+如果考虑共享节点，那么 SKI 图是一个有向无环图，因为多个应用节点的出边可能连接到同一个节点，这可以用来减少图的大小
 
 ```dot
 digraph {
@@ -269,7 +269,9 @@ digraph {
 
 ## 示例
 
-比较 S、K、I 组合子分别编译得到的 SKI 图
+### 编译后的图
+
+S、K、I 组合子分别编译得到的 SKI 图
 
 ```sh
 echo "@! S;" | lambda-compiler > examples/ski/s.ski
@@ -277,26 +279,57 @@ echo "@! K;" | lambda-compiler > examples/ski/k.ski
 echo "@! I;" | lambda-compiler > examples/ski/i.ski
 ```
 
-验证 `S K K` 等价于 `I`
-
-```sh
-echo "@! S K K;" | lambda-compiler --enable-reduce=both > examples/ski/skk.ski
-```
-
-比较不同自然数编码编译得到的 SKI 图
+λ 抽象编译得到的 SKI 图
 
 ```sh
 echo "@! \f -> \x -> f x;" | lambda-compiler > examples/ski/church.ski
 echo "@! \z -> \s -> z;" | lambda-compiler > examples/ski/scott.ski
 ```
 
-比较不同自然数编码在归约后再编译得到的 SKI 图
+### 归约后的图
+
+验证 `S K K` 等价于 `I`
 
 ```sh
-echo "@! \f -> \x -> f x;" | lambda-compiler --enable-reduce=beta > examples/ski/church-beta.ski
-echo "@! \f -> \x -> f x;" | lambda-compiler --enable-reduce=eta > examples/ski/church-eta.ski
-echo "@! \f -> \x -> f x;" | lambda-compiler --enable-reduce=both > examples/ski/church-both.ski
-echo "@! \z -> \s -> z;" | lambda-compiler --enable-reduce=beta > examples/ski/scott-beta.ski
-echo "@! \z -> \s -> z;" | lambda-compiler --enable-reduce=eta > examples/ski/scott-eta.ski
-echo "@! \z -> \s -> z;" | lambda-compiler --enable-reduce=both > examples/ski/scott-both.ski
+echo "@! S K K;" | lambda-compiler --enable-reduce=beta > examples/ski/reduce-compile.ski
+echo "@! S K K;" | lambda-compiler | ski-interpreter > examples/ski/compile-reduce.ski
 ```
+
+[reduce-compile.ski](reduce-compile.ski) 是 β 归约后再编译得到的 SKI 图，[compile-reduce.ski](compile-reduce.ski) 是编译后再 β 归约得到的 SKI 图。二者结构不同，但功能是等价的。
+
+### 共享后的图
+
+```sh
+echo "@! S K K;" | lambda-compiler | ski-interpreter --share=merge > examples/ski/merge.ski
+```
+
+对比 [compile-reduce.ski](compile-reduce.ski) 和 [merge.ski](merge.ski) 可以发现，图的节点明显变少了，因为相同的节点被共享了。
+
+```sh
+ski-interpreter examples/ski/merge.ski --share=unfold > examples/ski/unfold.ski
+```
+
+对比 [merge.ski](merge.ski) 和 [unfold.ski](unfold.ski) 可以发现，图的节点明显变多了，因为共享节点又被重新展开了。
+
+### 可视化图
+
+查看 [s.ski](skk.ski) 输出的 Graphviz DOT 文本，保存在 [s.dot](s.dot) 中：
+
+```sh
+ski-interpreter --output=graphviz examples/ski/s.ski > examples/ski/s.dot
+```
+
+如果安装了 `dot` 工具，那么可以将其渲染为 SVG 图片：
+
+```sh
+ski-interpreter --output=graphviz examples/ski/s.ski | dot -Tsvg -o examples/ski/s-preserve.svg
+ski-interpreter --share=merge --output=graphviz examples/ski/s.ski | dot -Tsvg -o examples/ski/s-merge.svg
+```
+
+未启用共享节点的图片为：
+
+![s-preserve.svg](s-preserve.svg)
+
+启用共享节点的图片为：
+
+![s-merge.svg](s-merge.svg)
