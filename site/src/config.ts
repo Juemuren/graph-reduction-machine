@@ -19,6 +19,7 @@ export const exampleNames = [
   "ski",
   "natural",
   "list",
+  "string",
   "fibonacci",
   "pi",
   "e",

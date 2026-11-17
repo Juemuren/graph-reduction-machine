@@ -1,0 +1,3 @@
+mirror = \s -> APPEND s (REVERSE s);
+
+@! mirror "cat";

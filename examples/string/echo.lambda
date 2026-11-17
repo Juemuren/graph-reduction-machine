@@ -1,0 +1,4 @@
+echo = \s ->
+    FOLDR (\ch -> \rest -> CONS ch (CONS ch rest)) NIL s;
+
+@! echo "Hi!";

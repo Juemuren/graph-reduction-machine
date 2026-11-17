@@ -1,0 +1,8 @@
+separate = \separator -> \s ->
+    FOLDR
+        (\ch -> \rest ->
+            CONS ch (IF (ISNIL rest) NIL (CONS separator rest)))
+        NIL
+        s;
+
+@! separate (HEAD NIL ".") "Lambda";
