@@ -157,6 +157,12 @@
 - 用 `--share=unfold` 在归约完成后，将共享节点展开为独立节点，使输出图变成一棵二叉树。不影响归约步数，但图可能显著变大
 - `--share` 只用于图输出，不能与 `--decode` 同时使用
 
+指定输出图的格式：
+
+- 用 `--output=ski` 输出 SKI 图文本，为默认格式
+- 用 `--output=graphviz` 输出 Graphviz DOT 文本。应用节点标为 `@`，两条边分别标为 `function` 和 `argument`
+- `--output` 只用于图输出，不能与 `--decode` 同时使用
+
 指定解码方式：
 
 - 用 `--decode=boolean` 解码布尔值
@@ -172,5 +178,6 @@
 - 用 `--decode=scott-list<T>` 解码 Scott 列表
 - 用 `--decode=pair<A,B>` 解码 Church 有序对
 - `--decode` 不能与 `--share` 同时使用
+- `--decode` 不能与 `--output` 同时使用
 
 其中 `T`、`A`、`B` 可以是 `natural` / `scott-natural` / `binary-natural` / `boolean` / `integer` / `rational` / `string` / `string<L<N>>`，也可以是嵌套的 `list<T>` / `scott-list<T>` / `pair<A,B>`；`real` 目前不能用于复合类型。

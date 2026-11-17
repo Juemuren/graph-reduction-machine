@@ -1,6 +1,7 @@
 -- | Reduce SKI graphs and decode Church-encoded values.
 module Interpreter (
   ShareMode (..),
+  renderGraphviz,
   interpretSource,
   interpretSourceWithSteps,
   interpretSourceWithShareWithSteps,
@@ -60,6 +61,7 @@ import Interpreter.Composite (
   decodeCompositeSourceWithSteps,
   parseDecodeType,
  )
+import Interpreter.Graphviz (renderGraphviz)
 import Interpreter.Machine (normalize, runGraph, runGraphWithSteps, serialize)
 import Interpreter.Scott (
   decodeScottNatural,

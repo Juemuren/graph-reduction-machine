@@ -50,6 +50,7 @@ library
     , Interpreter.Church
     , Interpreter.Composite
     , Interpreter.Binary
+    , Interpreter.Graphviz
     , Interpreter.Machine
     , Interpreter.Share
     , Interpreter.Scott
