@@ -2,6 +2,7 @@
 module Interpreter (
   ShareMode (..),
   renderGraphviz,
+  renderMermaid,
   interpretSource,
   interpretSourceWithSteps,
   interpretSourceWithShareWithSteps,
@@ -63,6 +64,7 @@ import Interpreter.Composite (
  )
 import Interpreter.Graphviz (renderGraphviz)
 import Interpreter.Machine (normalize, runGraph, runGraphWithSteps, serialize)
+import Interpreter.Mermaid (renderMermaid)
 import Interpreter.Scott (
   decodeScottNatural,
   decodeScottNaturalSource,

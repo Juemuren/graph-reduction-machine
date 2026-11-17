@@ -20,6 +20,7 @@ import Interpreter (
   interpretSourceWithShareWithSteps,
   parseDecodeType,
   renderGraphviz,
+  renderMermaid,
  )
 import Numeric.Natural (Natural)
 import qualified Ski.Abs as Graph
@@ -80,12 +81,13 @@ renderDecoded message render (value, steps) =
 renderRational :: Rational -> String
 renderRational value = show (numerator value) ++ "/" ++ show (denominator value)
 
-data OutputFormat = Ski | Graphviz deriving (Eq)
+data OutputFormat = Ski | Graphviz | Mermaid deriving (Eq)
 
 renderOutput :: OutputFormat -> Graph.Graph -> String
 renderOutput format graph = case format of
   Ski -> printTree graph
   Graphviz -> renderGraphviz graph
+  Mermaid -> renderMermaid graph
 
 data DecodeMode
   = Raw
@@ -112,7 +114,7 @@ parseArgs = go Nothing False Raw Nothing Nothing Nothing Nothing
       , "[--max-steps=N|--no-step-limit]"
       , "[--show-steps]"
       , "[--share=preserve|merge|unfold]"
-      , "[--output=ski|graphviz]"
+      , "[--output=ski|graphviz|mermaid]"
       , "[--decode=natural|scott-natural|binary-natural|boolean|integer|rational|real|string|string<L<N>>|list<T>|scott-list<T>|pair<A,B>]"
       , "[--precision-real=N]"
       , "[FILE]"
@@ -163,6 +165,7 @@ parseArgs = go Nothing False Raw Nothing Nothing Nothing Nothing
         case name of
           "ski" -> go limit showSteps Raw sharing (Just Ski) precision path rest
           "graphviz" -> go limit showSteps Raw sharing (Just Graphviz) precision path rest
+          "mermaid" -> go limit showSteps Raw sharing (Just Mermaid) precision path rest
           _ -> Left usage
   go limit showSteps mode sharing output precision path (value : rest)
     | value == "--no-step-limit" && isNothing limit =

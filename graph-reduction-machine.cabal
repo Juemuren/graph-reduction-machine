@@ -52,6 +52,7 @@ library
     , Interpreter.Binary
     , Interpreter.Graphviz
     , Interpreter.Machine
+    , Interpreter.Mermaid
     , Interpreter.Share
     , Interpreter.Scott
     , LanguageServer.Common

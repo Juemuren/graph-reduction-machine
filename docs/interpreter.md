@@ -161,6 +161,7 @@
 
 - 用 `--output=ski` 输出 SKI 图文本，为默认格式
 - 用 `--output=graphviz` 输出 Graphviz DOT 文本。应用节点标为 `@`，两条边分别标为 `function` 和 `argument`
+- 用 `--output=mermaid` 输出 Mermaid flowchart 文本。应用节点标为 `@`，两条边分别标为 `function` 和 `argument`
 - `--output` 只用于图输出，不能与 `--decode` 同时使用
 
 指定解码方式：
