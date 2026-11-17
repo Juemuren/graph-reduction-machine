@@ -28,7 +28,7 @@
 
 每次组合子改写计为一步。
 
-归约存在步数限制。默认的步数限制为 `100000`。超过步数上限时会报错。
+归约存在步数限制。超过步数上限时会报错。
 
 ### 解码
 
@@ -143,9 +143,19 @@
 
 指定归约的步数上限：
 
-- 用 `--max-steps=N` 指定步数上限为正整数 `N`
+- 用 `--max-steps=N` 指定步数上限为正整数 `N`，默认为 `100000`
 - 用 `--no-step-limit` 禁用步数上限。不能和 `--max-steps=N` 同时使用
-- 用 `--show-steps` 在成功输出结果后，将实际的归约步数写入标准错误。格式为 `steps: N`
+
+显示归约的步数上限：
+
+- 用 `--show-steps` 在成功输出结果后，显示实际的归约步数。默认不开启。归约步数会写入标准错误，格式为 `steps: N`
+
+指定输出图的共享方式：
+
+- 用 `--share=preserve` 保留输入图已有的共享节点和归约过程中产生的共享节点，为默认方式
+- 用 `--share=merge` 在归约完成后，合并结构相同的节点。不影响归约步数
+- 用 `--share=unfold` 在归约完成后，将共享节点展开为独立节点，使输出图变成一棵二叉树。不影响归约步数，但图可能显著变大
+- `--share` 只用于图输出，不能与 `--decode` 同时使用
 
 指定解码方式：
 
@@ -161,5 +171,6 @@
 - 用 `--decode=list<T>` 解码 Church 列表
 - 用 `--decode=scott-list<T>` 解码 Scott 列表
 - 用 `--decode=pair<A,B>` 解码 Church 有序对
+- `--decode` 不能与 `--share` 同时使用
 
 其中 `T`、`A`、`B` 可以是 `natural` / `scott-natural` / `binary-natural` / `boolean` / `integer` / `rational` / `string` / `string<L<N>>`，也可以是嵌套的 `list<T>` / `scott-list<T>` / `pair<A,B>`；`real` 目前不能用于复合类型。

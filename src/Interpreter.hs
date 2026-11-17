@@ -1,7 +1,9 @@
 -- | Reduce SKI graphs and decode Church-encoded values.
 module Interpreter (
+  ShareMode (..),
   interpretSource,
   interpretSourceWithSteps,
+  interpretSourceWithShareWithSteps,
   interpret,
   decodeNaturalSource,
   decodeNaturalSourceWithSteps,
@@ -64,6 +66,7 @@ import Interpreter.Scott (
   decodeScottNaturalSource,
   decodeScottNaturalSourceWithSteps,
  )
+import Interpreter.Share (ShareMode (..), shareGraph)
 import Numeric.Natural (Natural)
 import qualified Ski.Abs as Graph
 import qualified Ski.Par as Graph
@@ -74,9 +77,16 @@ interpretSource limit source =
 
 interpretSourceWithSteps ::
   Maybe Int -> String -> Either String (Graph.Graph, Natural)
-interpretSourceWithSteps limit source =
+interpretSourceWithSteps = interpretSourceWithShareWithSteps Preserve
+
+interpretSourceWithShareWithSteps ::
+  ShareMode -> Maybe Int -> String -> Either String (Graph.Graph, Natural)
+interpretSourceWithShareWithSteps sharing limit source =
   Graph.pGraph (Graph.myLexer source) >>= \graph ->
-    runGraphWithSteps limit graph (\root -> normalize root >> serialize root)
+    runGraphWithSteps
+      limit
+      graph
+      (\root -> normalize root >> shareGraph sharing <$> serialize root)
 
 interpret :: Int -> Graph.Graph -> Either String Graph.Graph
 interpret limit graph =

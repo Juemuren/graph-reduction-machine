@@ -1,6 +1,61 @@
 {
   "cases": [
     {
+      "name": "share-preserve",
+      "command": "ski-interpreter",
+      "args": ["--share=preserve", "--show-steps"],
+      "stdin": "#0 = #1 #3;\n#1 = #2 #3;\n#2 = S;\n#3 = I;\n",
+      "expect": {
+        "exitCode": 0,
+        "stdout": "#0 = #1 #3;\n#1 = #2 #3;\n#2 = S;\n#3 = I;\n",
+        "stderr": "steps: 0\n"
+      }
+    },
+    {
+      "name": "share-merge-after-reduction",
+      "command": "ski-interpreter",
+      "args": ["--share=merge", "--show-steps"],
+      "stdin": "#0 = #1 #6;\n#1 = #2 #5;\n#2 = #3 #4;\n#3 = S;\n#4 = S;\n#5 = S;\n#6 = #7 #8;\n#7 = K;\n#8 = I;\n",
+      "expect": {
+        "exitCode": 0,
+        "stdout": "#0 = #1 #1;\n#1 = #2 #3;\n#2 = S;\n#3 = #4 #5;\n#4 = K;\n#5 = I;\n",
+        "stderr": "steps: 1\n"
+      }
+    },
+    {
+      "name": "share-unfold",
+      "command": "ski-interpreter",
+      "args": ["--share=unfold", "--show-steps"],
+      "stdin": "#0 = #1 #1;\n#1 = #2 #3;\n#2 = S;\n#3 = I;\n",
+      "expect": {
+        "exitCode": 0,
+        "stdout": "#0 = #1 #4;\n#1 = #2 #3;\n#2 = S;\n#3 = I;\n#4 = #5 #6;\n#5 = S;\n#6 = I;\n",
+        "stderr": "steps: 0\n"
+      }
+    },
+    {
+      "name": "share-and-decode-conflict",
+      "command": "ski-interpreter",
+      "args": ["--share=merge", "--decode=boolean"],
+      "stdin": "#0 = K;\n",
+      "expect": {
+        "exitCode": 1,
+        "stdout": "",
+        "stderr": "usage: ski-interpreter [--max-steps=N|--no-step-limit] [--show-steps] [--share=preserve|merge|unfold] [--decode=natural|scott-natural|binary-natural|boolean|integer|rational|real|string|string<L<N>>|list<T>|scott-list<T>|pair<A,B>] [--precision-real=N] [FILE]\n"
+      }
+    },
+    {
+      "name": "decode-and-share-conflict",
+      "command": "ski-interpreter",
+      "args": ["--decode=boolean", "--share=preserve"],
+      "stdin": "#0 = K;\n",
+      "expect": {
+        "exitCode": 1,
+        "stdout": "",
+        "stderr": "usage: ski-interpreter [--max-steps=N|--no-step-limit] [--show-steps] [--share=preserve|merge|unfold] [--decode=natural|scott-natural|binary-natural|boolean|integer|rational|real|string|string<L<N>>|list<T>|scott-list<T>|pair<A,B>] [--precision-real=N] [FILE]\n"
+      }
+    },
+    {
       "name": "unlimited-and-show-steps",
       "command": "ski-interpreter",
       "args": [
@@ -78,7 +133,7 @@
       "expect": {
         "exitCode": 1,
         "stdout": "",
-        "stderr": "usage: ski-interpreter [--max-steps=N|--no-step-limit] [--show-steps] [--decode=natural|scott-natural|binary-natural|boolean|integer|rational|real|string|string<L<N>>|list<T>|scott-list<T>|pair<A,B>] [--precision-real=N] [FILE]\n"
+        "stderr": "usage: ski-interpreter [--max-steps=N|--no-step-limit] [--show-steps] [--share=preserve|merge|unfold] [--decode=natural|scott-natural|binary-natural|boolean|integer|rational|real|string|string<L<N>>|list<T>|scott-list<T>|pair<A,B>] [--precision-real=N] [FILE]\n"
       }
     },
     {
@@ -117,7 +172,7 @@
       "expect": {
         "exitCode": 1,
         "stdout": "",
-        "stderr": "usage: ski-interpreter [--max-steps=N|--no-step-limit] [--show-steps] [--decode=natural|scott-natural|binary-natural|boolean|integer|rational|real|string|string<L<N>>|list<T>|scott-list<T>|pair<A,B>] [--precision-real=N] [FILE]\n"
+        "stderr": "usage: ski-interpreter [--max-steps=N|--no-step-limit] [--show-steps] [--share=preserve|merge|unfold] [--decode=natural|scott-natural|binary-natural|boolean|integer|rational|real|string|string<L<N>>|list<T>|scott-list<T>|pair<A,B>] [--precision-real=N] [FILE]\n"
       }
     }
   ]

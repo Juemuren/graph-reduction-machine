@@ -51,6 +51,7 @@ library
     , Interpreter.Composite
     , Interpreter.Binary
     , Interpreter.Machine
+    , Interpreter.Share
     , Interpreter.Scott
     , LanguageServer.Common
   build-depends:

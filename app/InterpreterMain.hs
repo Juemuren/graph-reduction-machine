@@ -8,6 +8,7 @@ import Data.Maybe (fromMaybe, isNothing)
 import Data.Ratio (denominator, numerator)
 import Interpreter (
   DecodeType (..),
+  ShareMode (..),
   decodeBinaryNaturalSourceWithSteps,
   decodeBooleanSourceWithSteps,
   decodeCompositeSourceWithSteps,
@@ -16,7 +17,7 @@ import Interpreter (
   decodeRationalSourceWithSteps,
   decodeRealSourceWithSteps,
   decodeScottNaturalSourceWithSteps,
-  interpretSourceWithSteps,
+  interpretSourceWithShareWithSteps,
   parseDecodeType,
  )
 import Numeric.Natural (Natural)
@@ -29,11 +30,11 @@ import Text.Read (readMaybe)
 main :: IO ()
 main = do
   args <- getArgs
-  (limit, showSteps, mode, path) <- either die pure (parseArgs args)
+  (limit, showSteps, mode, sharing, path) <- either die pure (parseArgs args)
   source <- maybe getContents readFile path
   let result =
         case mode of
-          Raw -> first printTree <$> interpretSourceWithSteps limit source
+          Raw -> first printTree <$> interpretSourceWithShareWithSteps sharing limit source
           Natural ->
             decodeNaturalSourceWithSteps limit source
               >>= renderDecoded "not a Church Natural" show
@@ -87,62 +88,79 @@ data DecodeMode
   deriving (Eq)
 
 parseArgs ::
-  [String] -> Either String (Maybe Int, Bool, DecodeMode, Maybe FilePath)
-parseArgs = go Nothing False Raw Nothing Nothing
+  [String] ->
+  Either String (Maybe Int, Bool, DecodeMode, ShareMode, Maybe FilePath)
+parseArgs = go Nothing False Raw Nothing Nothing Nothing
  where
   usage =
     unwords
       [ "usage: ski-interpreter"
       , "[--max-steps=N|--no-step-limit]"
       , "[--show-steps]"
+      , "[--share=preserve|merge|unfold]"
       , "[--decode=natural|scott-natural|binary-natural|boolean|integer|rational|real|string|string<L<N>>|list<T>|scott-list<T>|pair<A,B>]"
       , "[--precision-real=N]"
       , "[FILE]"
       ]
-  go limit showSteps mode precision path [] = case (mode, precision) of
-    (Real _, Just index) -> Right (fromMaybe (Just 100000) limit, showSteps, Real index, path)
-    (Real _, Nothing) -> Right (fromMaybe (Just 100000) limit, showSteps, Real 0, path)
-    (_, Nothing) -> Right (fromMaybe (Just 100000) limit, showSteps, mode, path)
+  go limit showSteps mode sharing precision path [] = case (mode, precision, sharing) of
+    (Real _, Just index, Nothing) -> Right (fromMaybe (Just 100000) limit, showSteps, Real index, Preserve, path)
+    (Real _, Nothing, Nothing) -> Right (fromMaybe (Just 100000) limit, showSteps, Real 0, Preserve, path)
+    (Raw, Nothing, _) ->
+      Right
+        ( fromMaybe (Just 100000) limit
+        , showSteps
+        , Raw
+        , fromMaybe Preserve sharing
+        , path
+        )
+    (_, Nothing, Nothing) -> Right (fromMaybe (Just 100000) limit, showSteps, mode, Preserve, path)
     _ -> Left usage
-  go limit showSteps Raw precision path (value : rest)
+  go limit showSteps Raw Nothing precision path (value : rest)
     | Just name <- stripPrefix "--decode=" value =
         case name of
-          "natural" -> go limit showSteps Natural precision path rest
-          "scott-natural" -> go limit showSteps ScottNatural precision path rest
-          "binary-natural" -> go limit showSteps BinaryNatural precision path rest
-          "boolean" -> go limit showSteps Boolean precision path rest
-          "integer" -> go limit showSteps Integer precision path rest
-          "rational" -> go limit showSteps Rational precision path rest
-          "real" -> go limit showSteps (Real 0) precision path rest
-          "string" -> go limit showSteps (Composite StringType) precision path rest
+          "natural" -> go limit showSteps Natural Nothing precision path rest
+          "scott-natural" -> go limit showSteps ScottNatural Nothing precision path rest
+          "binary-natural" -> go limit showSteps BinaryNatural Nothing precision path rest
+          "boolean" -> go limit showSteps Boolean Nothing precision path rest
+          "integer" -> go limit showSteps Integer Nothing precision path rest
+          "rational" -> go limit showSteps Rational Nothing precision path rest
+          "real" -> go limit showSteps (Real 0) Nothing precision path rest
+          "string" -> go limit showSteps (Composite StringType) Nothing precision path rest
           _ ->
             maybe
               (Left usage)
-              (\kind -> go limit showSteps (Composite kind) precision path rest)
+              (\kind -> go limit showSteps (Composite kind) Nothing precision path rest)
               (parseComposite name)
-  go limit showSteps mode precision path (value : rest)
+  go limit showSteps Raw Nothing precision path (value : rest)
+    | Just name <- stripPrefix "--share=" value =
+        case name of
+          "preserve" -> go limit showSteps Raw (Just Preserve) precision path rest
+          "merge" -> go limit showSteps Raw (Just Merge) precision path rest
+          "unfold" -> go limit showSteps Raw (Just Unfold) precision path rest
+          _ -> Left usage
+  go limit showSteps mode sharing precision path (value : rest)
     | value == "--no-step-limit" && isNothing limit =
-        go (Just Nothing) showSteps mode precision path rest
-  go limit showSteps mode precision path (value : rest)
+        go (Just Nothing) showSteps mode sharing precision path rest
+  go limit showSteps mode sharing precision path (value : rest)
     | value == "--show-steps" && not showSteps =
-        go limit True mode precision path rest
-  go limit showSteps mode precision path (value : rest)
+        go limit True mode sharing precision path rest
+  go limit showSteps mode sharing precision path (value : rest)
     | Just steps <- stripPrefix "--max-steps=" value =
         case readMaybe steps of
           Just maximumSteps
             | maximumSteps > 0 && limit /= Just Nothing ->
-                go (Just (Just maximumSteps)) showSteps mode precision path rest
+                go (Just (Just maximumSteps)) showSteps mode sharing precision path rest
           _ -> Left usage
-  go limit showSteps mode Nothing path (value : rest)
+  go limit showSteps mode sharing Nothing path (value : rest)
     | Just index <- stripPrefix "--precision-real=" value =
         case readMaybe index :: Maybe Integer of
           Just precision
             | precision >= 0 ->
-                go limit showSteps mode (Just (fromInteger precision)) path rest
+                go limit showSteps mode sharing (Just (fromInteger precision)) path rest
           _ -> Left usage
-  go limit showSteps mode precision Nothing (value@(first : _) : rest)
-    | first /= '-' = go limit showSteps mode precision (Just value) rest
-  go _ _ _ _ _ _ = Left usage
+  go limit showSteps mode sharing precision Nothing (value@(first : _) : rest)
+    | first /= '-' = go limit showSteps mode sharing precision (Just value) rest
+  go _ _ _ _ _ _ _ = Left usage
 
   parseComposite name = case parseDecodeType name of
     Just kind@(ListType _) -> Just kind
