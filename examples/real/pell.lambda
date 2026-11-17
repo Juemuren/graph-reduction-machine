@@ -1,0 +1,12 @@
+# (p_0, q_0) = (3, 2); preserve p^2 - 2q^2 = 1.
+pellStep = \state ->
+    (\p -> \q ->
+        PAIR
+            (ADD (MUL THREE p) (MUL FOUR q))
+            (ADD (MUL TWO p) (MUL THREE q)))
+    (FST state) (SND state);
+pellRoot = \n ->
+    (\state -> QDIV (NTOQ (FST state)) (NTOQ (SND state)))
+    (FOR n pellStep (PAIR THREE TWO));
+
+@! pellRoot;

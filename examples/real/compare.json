@@ -1,0 +1,18 @@
+{
+  "cases": [
+    {
+      "name": "Square root of 2 approximation",
+      "methods": [
+        { "name": "binary", "file": "binary.lambda" },
+        { "name": "newton", "file": "newton.lambda" },
+        { "name": "taylor", "file": "taylor.lambda" },
+        { "name": "pell", "file": "pell.lambda" }
+      ],
+      "exactValue": "1.4142135623730950488016887242096980785696718753769",
+      "maxIndex": 10,
+      "maxSteps": 1000000,
+      "csv": "steps-vs-error.csv",
+      "png": "steps-vs-error.png"
+    }
+  ]
+}

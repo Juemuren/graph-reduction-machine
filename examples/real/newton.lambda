@@ -1,0 +1,6 @@
+# x_0 = 3/2; x_(n+1) = (x_n + 2/x_n)/2.
+newtonStep = \estimate ->
+    QDIV (QADD estimate (QDIV (NTOQ TWO) estimate)) (NTOQ TWO);
+newtonRoot = \n -> FOR n newtonStep (QDIV (NTOQ THREE) (NTOQ TWO));
+
+@! newtonRoot;

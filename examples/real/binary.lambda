@@ -1,0 +1,12 @@
+# Midpoints of nested intervals containing sqrt(2), starting with [1, 2].
+binaryStep = \state ->
+    (\middle ->
+        IF (QLT (QMUL middle middle) (NTOQ TWO))
+            (PAIR middle (SND state))
+            (PAIR (FST state) middle))
+    (QDIV (QADD (FST state) (SND state)) (NTOQ TWO));
+binaryRoot = \n ->
+    (\interval -> QDIV (QADD (FST interval) (SND interval)) (NTOQ TWO))
+    (FOR n binaryStep (PAIR (NTOQ ONE) (NTOQ TWO)));
+
+@! binaryRoot;

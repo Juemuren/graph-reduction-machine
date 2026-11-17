@@ -1,0 +1,15 @@
+# Sum the first n+1 terms of (1+x)^(1/2) at x=1.
+# term_(k+1) = term_k * (1/2-k)/(k+1).
+taylorStep = \state ->
+    (\index -> \term ->
+        (\next ->
+            PAIR (SUCC index) (PAIR next (QADD (SND (SND state)) next)))
+        (QDIV
+            (QMUL term (QSUB (QDIV (NTOQ ONE) (NTOQ TWO)) (NTOQ index)))
+            (NTOQ (SUCC index))))
+    (FST state) (FST (SND state));
+taylorRoot = \n ->
+    SND (SND (FOR n taylorStep
+        (PAIR ZERO (PAIR (NTOQ ONE) (NTOQ ONE)))));
+
+@! taylorRoot;
