@@ -115,7 +115,7 @@ digraph {
 }
 ```
 
-如果考虑共享节点，那么 SKI 图是一个有向无环图，因为多个应用节点的出边可能连接到同一个节点，这可以用来减少图的大小
+如果考虑共享节点，那么 SKI 图是一个有向无环图，因为多个应用节点的出边可能连接到同一个节点。更准确地说，此时 SKI 图是一个出边有序的有向无环图，因为应用节点的出边顺序不可交换
 
 ```dot
 digraph {
@@ -313,23 +313,44 @@ ski-interpreter examples/ski/merge.ski --share=unfold > examples/ski/unfold.ski
 
 ### 可视化图
 
-查看 [s.ski](skk.ski) 输出的 Graphviz DOT 文本，保存在 [s.dot](s.dot) 中：
+查看 [s.ski](skk.ski) 可视化图的输出格式
 
 ```sh
 ski-interpreter --output=graphviz examples/ski/s.ski > examples/ski/s.dot
+ski-interpreter --output=mermaid examples/ski/s.ski > examples/ski/s.mmd
 ```
 
-如果安装了 `dot` 工具，那么可以将其渲染为 SVG 图片：
+目前支持：
+
+- Graphviz DOT，示例保存在 [s.dot](s.dot) 中
+- Mermaid flowchart，示例保存在 [s.mmd](s.mmd) 中
+
+如果安装了 `dot` 工具，那么可以将 Graphviz DOT 渲染为 SVG 图片：
 
 ```sh
-ski-interpreter --output=graphviz examples/ski/s.ski | dot -Tsvg -o examples/ski/s-preserve.svg
-ski-interpreter --share=merge --output=graphviz examples/ski/s.ski | dot -Tsvg -o examples/ski/s-merge.svg
+ski-interpreter --output=graphviz examples/ski/s.ski | dot -Tsvg -o examples/ski/s-preserve.dot.svg
+ski-interpreter --share=merge --output=graphviz examples/ski/s.ski | dot -Tsvg -o examples/ski/s-merge.dot.svg
 ```
 
 未启用共享节点的图片为：
 
-![s-preserve.svg](s-preserve.svg)
+![s-preserve.dot.svg](s-preserve.dot.svg)
 
 启用共享节点的图片为：
 
-![s-merge.svg](s-merge.svg)
+![s-merge.dot.svg](s-merge.dot.svg)
+
+如果安装了 `mmdc` 工具，那么可以将 Mermaid flowchart 渲染为 SVG 图片：
+
+```sh
+ski-interpreter --output=mermaid examples/ski/s.ski | mmdc -i - -o examples/ski/s-preserve.mmd.svg
+ski-interpreter --share=merge --output=mermaid examples/ski/s.ski | mmdc -i - -o examples/ski/s-merge.mmd.svg
+```
+
+未启用共享节点的图片为：
+
+![s-preserve.mmd.svg](s-preserve.mmd.svg)
+
+启用共享节点的图片为：
+
+![s-merge.mmd.svg](s-merge.mmd.svg)

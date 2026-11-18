@@ -21,7 +21,7 @@ Deno.test("Markdown math and example data appear in the generated site", async (
   const examples = await exampleFiles();
   const assets = examples.flatMap(({ slug, files }) =>
     files
-      .filter((file) => /\.(png|svg|dot|csv)$/.test(file))
+      .filter((file) => /\.(png|svg|dot|mmd|csv)$/.test(file))
       .map((file) => `assets/examples/${slug}/${file}`)
   );
   assert.ok(assets.length > 0);
@@ -72,7 +72,7 @@ Deno.test("every source page has line numbers, copy and raw download", async () 
   const examples = await exampleFiles();
   const sources = examples.flatMap(({ slug, files }) =>
     files
-      .filter((file) => /\.(lambda|ski|dot)$/.test(file))
+      .filter((file) => /\.(lambda|ski|dot|mmd)$/.test(file))
       .map((file) => ({ slug, file }))
   );
   assert.ok(sources.length > 0);
