@@ -1,7 +1,7 @@
 {
   "cases": [
     {
-      "name": "Square root of 2 approximation",
+      "name": "SQRT_2 approximation",
       "methods": [
         { "name": "binary", "file": "binary.lambda" },
         { "name": "newton", "file": "newton.lambda" },
