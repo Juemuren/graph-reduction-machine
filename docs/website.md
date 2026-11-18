@@ -32,7 +32,7 @@
 2. 实现完整编辑器界面。可以使用已有的成熟的 Web 编辑器
 3. 在 CI 中实现集成
 
-参考信息:
+参考信息：
 
 - [GHC WebAssembly 指南](https://ghc.gitlab.haskell.org/ghc/doc/users_guide/wasm.html)
 
