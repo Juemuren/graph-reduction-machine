@@ -21,7 +21,7 @@ const { items } = Astro.props;
   <CardGrid
     kind="EXAMPLE"
     headingLevel="h3"
-    items={items.map((item) => ({
+    items={items.slice(0, 6).map((item) => ({
       href: `/examples/${item.slug}/`,
       title: item.label,
       description: `${item.sources.length} 个源码文件`,
