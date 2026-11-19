@@ -124,7 +124,7 @@ invoke_integration_stage() (
                 "--encode-natural=$encode_natural" "--encode-string=$encode_string" |
                 invoke_interpreter -- \
                     --show-steps \
-                    --no-step-limit \
+                    --max-steps=infty \
                     "--decode=$decode"
             ;;
     esac

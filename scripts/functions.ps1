@@ -163,7 +163,7 @@ function Invoke-IntegrationStage {
                     "--encode-string=$EncodeString"
                 ) | Invoke-Interpreter -Options @(
                     '--show-steps',
-                    '--no-step-limit',
+                    '--max-steps=infty',
                     "--decode=$Decode"
                 )
             }

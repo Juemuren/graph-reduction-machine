@@ -111,7 +111,7 @@ parseArgs = go Nothing False Raw Nothing Nothing Nothing Nothing
   usage =
     unwords
       [ "usage: ski-interpreter"
-      , "[--max-steps=N|--no-step-limit]"
+      , "[--max-steps=N|0|infty]"
       , "[--show-steps]"
       , "[--share=preserve|merge|unfold]"
       , "[--output=ski|graphviz|mermaid]"
@@ -168,16 +168,15 @@ parseArgs = go Nothing False Raw Nothing Nothing Nothing Nothing
           "mermaid" -> go limit showSteps Raw sharing (Just Mermaid) precision path rest
           _ -> Left usage
   go limit showSteps mode sharing output precision path (value : rest)
-    | value == "--no-step-limit" && isNothing limit =
-        go (Just Nothing) showSteps mode sharing output precision path rest
-  go limit showSteps mode sharing output precision path (value : rest)
     | value == "--show-steps" && not showSteps =
         go limit True mode sharing output precision path rest
   go limit showSteps mode sharing output precision path (value : rest)
+    | value == "--max-steps=infty" && isNothing limit =
+        go (Just Nothing) showSteps mode sharing output precision path rest
     | Just steps <- stripPrefix "--max-steps=" value =
         case readMaybe steps of
           Just maximumSteps
-            | maximumSteps > 0 && limit /= Just Nothing ->
+            | maximumSteps >= 0 && limit /= Just Nothing ->
                 go (Just (Just maximumSteps)) showSteps mode sharing output precision path rest
           _ -> Left usage
   go limit showSteps mode sharing output Nothing path (value : rest)
