@@ -48,6 +48,7 @@ export async function createSourceEditor(container: HTMLElement) {
     "semanticHighlighting.enabled": true,
     ariaLabel: "当前文件源码",
     automaticLayout: true,
+    fixedOverflowWidgets: true,
     theme: theme(),
     fontSize: 15,
     fontLigatures: false,
