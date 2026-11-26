@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import { readFile, stat } from "node:fs/promises";
 import path from "node:path";
-import { root } from "../src/config.ts";
+import { root } from "../src/lib/repository.ts";
 import { base, exampleFiles, html, markdownPages, output } from "./helpers.ts";
 
 Deno.test("every example README has a linked, readable page", async () => {

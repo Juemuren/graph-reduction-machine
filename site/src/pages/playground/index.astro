@@ -1,6 +1,6 @@
 ---
+import { stageLabels } from "../../config";
 import Base from "../../layouts/Base.astro";
-import { stageLabels } from "../../lib/playground";
 import { sitePath } from "../../lib/urls";
 
 const encodings = ["church", "scott", "binary"];
@@ -12,8 +12,8 @@ const encodings = ["church", "scott", "binary"];
       <h1>演练</h1>
     </header>
     <div class="workspace">
-      <section class="panel editor-panel" aria-labelledby="editor-heading">
-        <div class="panel-head">
+      <section class="editor-section" aria-labelledby="editor-heading">
+        <div class="section-head">
           <h2 id="editor-heading">源码</h2>
           <a href={sitePath("/examples/")}>浏览示例</a>
         </div>
@@ -23,24 +23,31 @@ const encodings = ["church", "scott", "binary"];
             <select id="files"></select>
             <button class="button" id="remove-file" type="button">删除</button>
           </div>
-          <textarea
-            id="source"
-            aria-label="当前文件源码"
-            spellcheck="false"
-            autocapitalize="off"
-            wrap="off"
-          ></textarea>
+          <div class="source-editor">
+            <pre
+              id="source-highlight"
+              class="line-content"
+              aria-hidden="true"
+            ></pre>
+            <textarea
+              id="source"
+              aria-label="当前文件源码"
+              spellcheck="false"
+              autocapitalize="off"
+              wrap="off"
+            ></textarea>
+          </div>
           <form class="file-controls" id="add-file">
             <label for="file-path">文件路径</label>
             <input id="file-path" placeholder="例如 lib/helper.lambda" required>
             <button class="button" type="submit">添加文件</button>
           </form>
-          <p id="file-error" class="error" role="alert"></p>
+          <p id="file-error" role="alert"></p>
         </fieldset>
       </section>
 
-      <section class="panel settings-panel" aria-labelledby="settings-heading">
-        <div class="panel-head">
+      <section class="settings-section" aria-labelledby="settings-heading">
+        <div class="section-head">
           <h2 id="settings-heading">运行设置</h2>
         </div>
         <form id="run-settings">
@@ -127,13 +134,13 @@ const encodings = ["church", "scott", "binary"];
         </form>
       </section>
 
-      <section class="panel result-panel" aria-labelledby="result-heading">
-        <div class="panel-head">
+      <section class="result-section" aria-labelledby="result-heading">
+        <div class="section-head">
           <h2 id="result-heading">结果</h2>
           <span id="step-count"></span>
         </div>
         <p id="run-status" role="status">尚未运行</p>
-        <pre class="source-code" id="output" hidden></pre>
+        <pre class="source-code line-content" id="output" hidden></pre>
       </section>
     </div>
   </div>
@@ -147,20 +154,27 @@ void startPlayground();
 
 <style>
 .workspace {
+  --section-spacing: 24px;
   display: grid;
   grid-template-columns: minmax(0, 1fr) minmax(15rem, 19rem);
-  gap: 20px;
+  gap: var(--section-spacing);
   margin-bottom: 56px;
-  align-items: start;
 }
-.panel {
+
+.workspace > section {
   min-width: 0;
-  padding: 18px;
-  border: 1px solid var(--border);
-  border-radius: var(--card-radius);
-  background: var(--panel-bg);
 }
-.panel-head,
+.settings-section {
+  border-inline-start: 1px solid var(--border);
+  padding-inline-start: var(--section-spacing);
+}
+.result-section {
+  grid-column: 1 / -1;
+  border-top: 1px solid var(--border);
+  padding-top: var(--section-spacing);
+}
+
+.section-head,
 .file-controls,
 .run-actions {
   display: flex;
@@ -168,19 +182,20 @@ void startPlayground();
   align-items: center;
   gap: 10px;
 }
-.panel-head {
+.section-head {
   justify-content: space-between;
   margin-bottom: 16px;
 }
-.panel-head h2 {
+.section-head h2 {
   margin: 0;
-  font-size: 1.15rem;
+  font-size: 1.25rem;
 }
+
 fieldset {
+  min-width: 0;
   border: 0;
   padding: 0;
   margin: 0;
-  min-width: 0;
 }
 #run-settings,
 #run-settings fieldset:not([hidden]),
@@ -196,50 +211,131 @@ fieldset {
 legend {
   padding: 0 8px 0 0;
   color: var(--muted-text);
-  font-size: 0.875rem;
 }
+legend,
 label,
 #step-count {
   font-size: 0.875rem;
 }
-#source,
+
+input,
+select,
+.workspace .button {
+  min-height: 2.5rem;
+}
 input,
 select {
-  border: 1px solid var(--border);
+  min-width: 0;
+  border: 1px solid var(--surface-1);
   border-radius: 7px;
-  background: var(--page-bg);
+  background: color-mix(in srgb, var(--surface-0) 35%, transparent);
   color: var(--body-text);
   padding: 8px 10px;
   font: inherit;
-  min-width: 0;
+}
+select {
+  appearance: none;
+  padding-inline-end: 2rem;
+  background-image:
+    linear-gradient(45deg, transparent 50%, var(--muted-text) 50%),
+    linear-gradient(135deg, var(--muted-text) 50%, transparent 50%);
+  background-position:
+    right 15px center,
+    right 10px center;
+  background-size: 5px 5px;
+  background-repeat: no-repeat;
+}
+:is(select, input[list]):enabled {
+  cursor: pointer;
+}
+:is(input, select):enabled:hover {
+  border-color: var(--overlay-1);
+}
+:is(input, select):focus-visible,
+.source-editor:focus-within {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
 }
 #files,
 #file-path {
   flex: 1 1 10rem;
 }
-#source {
-  display: block;
-  width: 100%;
-  min-height: 25rem;
-  margin: 12px 0;
-  resize: vertical;
-  background: var(--code-bg);
-  color: var(--code-text);
-  font:
-    0.95rem / 1.65 ui-monospace,
-    monospace;
-  tab-size: 2;
-}
 .run-actions {
   margin-top: 8px;
 }
-button:disabled {
-  opacity: 0.55;
-  cursor: default;
+.workspace .button {
+  padding-block: 6px;
 }
-.result-panel {
-  grid-column: 1 / -1;
+.workspace .button:not(.primary) {
+  border-color: var(--surface-1);
+  color: var(--body-text);
 }
+.workspace .button:disabled {
+  border-color: var(--border);
+  background: transparent;
+  color: var(--muted-text);
+  cursor: not-allowed;
+}
+#remove-file:enabled:hover {
+  border-color: var(--red);
+  color: var(--red);
+}
+#run {
+  flex: 1;
+}
+
+.source-editor {
+  position: relative;
+  margin: 12px 0;
+  border: 1px solid var(--border);
+  border-radius: 7px;
+  background: var(--code-bg);
+}
+#source,
+#source-highlight {
+  margin: 0;
+  border: 0;
+  padding: 12px;
+  font:
+    0.95rem / 1.65 ui-monospace,
+    monospace;
+  letter-spacing: normal;
+  tab-size: 2;
+  white-space: pre;
+  font-variant-ligatures: none;
+}
+#source {
+  position: relative;
+  display: block;
+  width: 100%;
+  min-height: 25rem;
+  resize: vertical;
+  outline: none;
+  background: transparent;
+  color: var(--code-text);
+  caret-color: var(--code-text);
+}
+#source-highlight {
+  position: absolute;
+  inset: 0 auto auto 0;
+  max-width: 100%;
+  max-height: 100%;
+  overflow: hidden;
+  pointer-events: none;
+  color: var(--code-text);
+  visibility: hidden;
+}
+.source-editor[data-highlighted] #source-highlight {
+  visibility: visible;
+}
+.source-editor[data-highlighted] #source {
+  color: transparent;
+}
+#source::selection {
+  background: var(--surface-1);
+  color: var(--code-text);
+}
+
 #run-status,
 #file-error {
   margin: 0;
@@ -247,19 +343,48 @@ button:disabled {
 #file-error:not(:empty) {
   margin-top: 10px;
 }
-.error,
+#run-status,
+#step-count {
+  color: var(--muted-text);
+}
+#file-error,
 #run-status[data-error="true"] {
   color: var(--red);
 }
 #output {
+  min-height: 3.5rem;
   max-height: 28rem;
+  margin: 12px 0 0;
+  border: 1px solid var(--border);
+  border-inline-start: 3px solid var(--teal);
+  font-size: 0.95rem;
   overflow: auto;
   white-space: pre-wrap;
   overflow-wrap: anywhere;
 }
+#run-status[data-error="true"] + #output {
+  border-inline-start-color: var(--red);
+}
+
+@media (forced-colors: active) {
+  select {
+    appearance: auto;
+  }
+  .source-editor[data-highlighted] #source {
+    color: CanvasText;
+  }
+  .source-editor[data-highlighted] #source-highlight {
+    visibility: hidden;
+  }
+}
 @media (max-width: 760px) {
   .workspace {
     grid-template-columns: minmax(0, 1fr);
+  }
+  .settings-section {
+    border-inline-start: 0;
+    border-top: 1px solid var(--border);
+    padding: var(--section-spacing) 0 0;
   }
   #source {
     min-height: 16rem;

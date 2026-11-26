@@ -7,12 +7,8 @@ import {
   PreopenDirectory,
   WASI,
 } from "@bjorn3/browser_wasi_shim";
-import {
-  outputLimit,
-  type RunMessage,
-  type RunRequest,
-  type Stage,
-} from "./playground";
+import { outputLimit } from "../config";
+import type { RunMessage, RunRequest, Stage } from "./playground";
 
 type Program = "lambda-compiler" | "ski-interpreter";
 type LoadProgram = (name: Program) => Promise<WebAssembly.Module>;
@@ -46,7 +42,8 @@ function capture() {
   let bytes = 0;
   const fd = new ConsoleStdout((chunk) => {
     bytes += chunk.byteLength;
-    if (bytes > outputLimit) throw new Error("输出超过 2 MiB。");
+    if (bytes > outputLimit)
+      throw new Error(`输出超过 ${outputLimit / (1024 * 1024)} MiB。`);
     output += decoder.decode(chunk, { stream: true });
   });
   return { fd, read: () => output + decoder.decode() };

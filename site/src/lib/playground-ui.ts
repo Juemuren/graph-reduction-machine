@@ -1,12 +1,10 @@
+import { inputLimit, runTimeoutMs, stageLabels } from "../config";
 import {
   exampleSession,
-  inputLimit,
   type RunMessage,
   type RunRequest,
-  runTimeoutMs,
   type Stage,
   sessionPath,
-  stageLabels,
 } from "./playground";
 import { sitePath } from "./urls";
 
@@ -14,6 +12,9 @@ export async function startPlayground() {
   const element = <T extends HTMLElement>(id: string) =>
     document.getElementById(id) as T;
   const editor = element<HTMLTextAreaElement>("source");
+  const sourceHighlight = element("source-highlight");
+  const sourceEditor = editor.closest<HTMLElement>(".source-editor");
+  const highlighter = import("./highlight");
   const filesSelect = element<HTMLSelectElement>("files");
   const addFile = element<HTMLFormElement>("add-file");
   const pathInput = element<HTMLInputElement>("file-path");
@@ -34,6 +35,7 @@ export async function startPlayground() {
   let files = new Map([["main.lambda", "@! ADD 2 3;"]]);
   let worker: Worker | undefined;
   let timer: ReturnType<typeof setTimeout> | undefined;
+  let outputRevision = 0;
   let phase: Stage = "decode";
   stage.value = "decode";
 
@@ -59,20 +61,57 @@ export async function startPlayground() {
       !decoding || decode.value.trim() !== "real";
   }
 
+  function syncSourceScroll() {
+    sourceHighlight.scrollTop = editor.scrollTop;
+    sourceHighlight.scrollLeft = editor.scrollLeft;
+  }
+
+  function sizeSourceHighlight() {
+    sourceHighlight.style.width = `${editor.clientWidth}px`;
+    sourceHighlight.style.height = `${editor.clientHeight}px`;
+    syncSourceScroll();
+  }
+
+  let sourceRevision = 0;
+  async function highlightSource() {
+    const revision = ++sourceRevision;
+    const source = editor.value;
+    const extension = filesSelect.value.endsWith(".ski") ? "ski" : "lambda";
+    sourceEditor?.removeAttribute("data-highlighted");
+    if (source.length > inputLimit) return;
+
+    try {
+      const { highlightedLines } = await highlighter;
+      if (revision !== sourceRevision) return;
+      const lines = await highlightedLines(source, extension, false);
+      if (revision !== sourceRevision) return;
+      sourceHighlight.innerHTML = `${lines.join("\n")}\n`;
+      sizeSourceHighlight();
+      sourceEditor?.setAttribute("data-highlighted", "");
+    } catch {
+      // Keep the native textarea readable if highlighting fails.
+    }
+  }
+
+  editor.addEventListener("scroll", syncSourceScroll);
+  new ResizeObserver(sizeSourceHighlight).observe(editor);
+
   function selectFile(path: string) {
     filesSelect.replaceChildren(
       ...Array.from(files.keys(), (file) => new Option(file, file)),
     );
     filesSelect.value = path;
     editor.value = files.get(path) ?? "";
+    void highlightSource();
     removeFile.disabled = files.size < 2;
     updateOptions();
   }
 
   selectFile("main.lambda");
-  editor.addEventListener("input", () =>
-    files.set(filesSelect.value, editor.value),
-  );
+  editor.addEventListener("input", () => {
+    files.set(filesSelect.value, editor.value);
+    void highlightSource();
+  });
   filesSelect.addEventListener("change", () => selectFile(filesSelect.value));
   stage.addEventListener("change", updateOptions);
   decode.addEventListener("input", updateOptions);
@@ -126,6 +165,7 @@ export async function startPlayground() {
     (event) => {
       event.preventDefault();
       if (worker) return;
+      outputRevision++;
       output.hidden = true;
       output.textContent = "";
       stepCount.textContent = "";
@@ -136,7 +176,7 @@ export async function startPlayground() {
         bytes += encoder.encode(source).byteLength;
       }
       if (bytes > inputLimit) {
-        setStatus("会话源码超过 1 MiB。", true);
+        setStatus(`会话源码超过 ${inputLimit / (1024 * 1024)} MiB。`, true);
         return;
       }
 
@@ -184,6 +224,20 @@ export async function startPlayground() {
           } else if ("output" in data) {
             output.hidden = false;
             output.textContent = data.output;
+            if (phase !== "decode") {
+              const revision = outputRevision;
+              const extension =
+                phase === "expand" || phase === "reduce" ? "lambda" : "ski";
+              void highlighter
+                .then(({ highlightedLines }) =>
+                  highlightedLines(data.output, extension, false),
+                )
+                .then((lines) => {
+                  if (revision === outputRevision)
+                    output.innerHTML = lines.join("\n");
+                })
+                .catch(() => {});
+            }
             if (data.steps !== undefined)
               stepCount.textContent = `归约步数 ${data.steps}`;
             finish(`运行完成 · ${label}`);

@@ -33,13 +33,15 @@
     },
     "check:biome": "biome check . --fix",
     "check:deno": "deno fmt && deno lint",
-    "test": "deno test --allow-read --allow-env=SITE_BASE test/",
+    "test": "deno test --allow-read --allow-env=SITE_BASE,VSCODE_TEXTMATE_DEBUG test/",
     "verify": "deno task typecheck && deno task check && deno task build && deno task test"
   },
   "imports": {
     "@astrojs/check": "npm:@astrojs/check@0.9.12",
     "@biomejs/biome": "npm:@biomejs/biome@2.6.6",
     "@bjorn3/browser_wasi_shim": "npm:@bjorn3/browser_wasi_shim@0.4.2",
+    "@shikijs/themes/catppuccin-latte": "npm:@shikijs/themes@4.6.0/catppuccin-latte",
+    "@shikijs/themes/catppuccin-mocha": "npm:@shikijs/themes@4.6.0/catppuccin-mocha",
     "@std/csv": "jsr:@std/csv@1.0.6",
     "@types/node": "npm:@types/node@26.6.6",
     "@viz-js/viz": "npm:@viz-js/viz@3.31.0",
@@ -55,7 +57,8 @@
     "remark-math": "npm:remark-math@6.0.0",
     "remark-parse": "npm:remark-parse@11.0.0",
     "remark-rehype": "npm:remark-rehype@11.1.2",
-    "shiki": "npm:shiki@4.6.0",
+    "shiki/core": "npm:shiki@4.6.0/core",
+    "shiki/engine/javascript": "npm:shiki@4.6.0/engine/javascript",
     "typescript": "npm:typescript@6.0.3",
     "unified": "npm:unified@11.0.5"
   }

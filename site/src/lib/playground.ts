@@ -1,7 +1,3 @@
-export const runTimeoutMs = 10_000;
-export const inputLimit = 1024 * 1024;
-export const outputLimit = 2 * 1024 * 1024;
-
 export type Stage = "expand" | "reduce" | "compile" | "interpret" | "decode";
 export interface RunRequest {
   entry: string;
@@ -19,14 +15,6 @@ export type RunMessage =
   | { stage: Stage }
   | { stage: Stage; output: string; steps?: string }
   | { stage: Stage; error: string };
-
-export const stageLabels: Record<Stage, string> = {
-  expand: "展开",
-  reduce: "归约",
-  compile: "编译",
-  interpret: "解释",
-  decode: "解码",
-};
 
 export function sessionPath(input: string) {
   if (

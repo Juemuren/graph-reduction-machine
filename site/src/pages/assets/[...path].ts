@@ -1,8 +1,8 @@
 import { readFile } from "node:fs/promises";
 import path from "node:path";
 import type { APIRoute } from "astro";
-import { root } from "../../config";
 import { assetFiles } from "../../lib/content";
+import { root } from "../../lib/repository";
 
 const contentTypes: Record<string, string> = {
   ".png": "image/png",

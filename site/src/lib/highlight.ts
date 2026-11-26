@@ -1,7 +1,13 @@
-import { readFile } from "node:fs/promises";
-import path from "node:path";
-import { type BundledLanguage, createHighlighter } from "shiki";
-import { root } from "../config";
+import latte from "@shikijs/themes/catppuccin-latte";
+import mocha from "@shikijs/themes/catppuccin-mocha";
+import { createHighlighterCore } from "shiki/core";
+import { createJavaScriptRegexEngine } from "shiki/engine/javascript";
+import lambda from "../../../vscode-extension/syntaxes/core-lambda.tmLanguage.json" with {
+  type: "json",
+};
+import ski from "../../../vscode-extension/syntaxes/ski-graph.tmLanguage.json" with {
+  type: "json",
+};
 
 const escapeHtml = (value: string) =>
   value
@@ -10,38 +16,27 @@ const escapeHtml = (value: string) =>
     .replaceAll(">", "&gt;")
     .replaceAll('"', "&quot;");
 
-const highlighter = Promise.all([
-  readFile(
-    path.join(root, "vscode-extension/syntaxes/core-lambda.tmLanguage.json"),
-    "utf8",
-  ),
-  readFile(
-    path.join(root, "vscode-extension/syntaxes/ski-graph.tmLanguage.json"),
-    "utf8",
-  ),
-]).then(([lambda, ski]) =>
-  createHighlighter({
-    langs: [
-      { ...JSON.parse(lambda), name: "core-lambda" },
-      { ...JSON.parse(ski), name: "ski-graph" },
-    ],
-    themes: ["catppuccin-latte", "catppuccin-mocha"],
-  }),
-);
+const highlighter = createHighlighterCore({
+  langs: [
+    { ...lambda, name: "core-lambda" },
+    { ...ski, name: "ski-graph", repository: {} },
+  ],
+  themes: [latte, mocha],
+  engine: createJavaScriptRegexEngine(),
+});
 
 export async function highlightedLines(
   source: string,
   extension: string,
+  trimFinalNewline = true,
 ): Promise<string[]> {
-  const text = source.replace(/\n$/, "");
+  const text = trimFinalNewline ? source.replace(/\n$/, "") : source;
   if (extension !== "lambda" && extension !== "ski")
     return text.split("\n").map(escapeHtml);
 
   const tokenizer = await highlighter;
   const lines = tokenizer.codeToTokensWithThemes(text, {
-    lang: (extension === "lambda"
-      ? "core-lambda"
-      : "ski-graph") as BundledLanguage,
+    lang: extension === "lambda" ? "core-lambda" : "ski-graph",
     themes: { light: "catppuccin-latte", dark: "catppuccin-mocha" },
   });
   return lines.map((tokens) =>

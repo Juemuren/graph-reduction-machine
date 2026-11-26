@@ -11,7 +11,8 @@ import remarkMath from "remark-math";
 import remarkParse from "remark-parse";
 import remarkRehype from "remark-rehype";
 import { unified } from "unified";
-import { docNames, exampleNames, root } from "../config";
+import { docNames, exampleNames } from "../config";
+import { root } from "./repository";
 import { sitePath } from "./urls";
 
 export interface Example {
