@@ -9,12 +9,14 @@
     "npm:@biomejs/biome@2.6.6": "2.6.6",
     "npm:@bjorn3/browser_wasi_shim@0.4.2": "0.4.2",
     "npm:@jsr/std__csv@1.0.6": "1.0.6",
+    "npm:@shikijs/monaco@4.6.0": "4.6.0",
     "npm:@shikijs/themes@4.6.0": "4.6.0",
     "npm:@types/node@26.6.6": "26.6.6",
     "npm:@viz-js/viz@3.31.0": "3.31.0",
     "npm:astro@7.4.10": "7.4.10_@types+node@26.6.6",
     "npm:hast-util-from-html@2.1.0": "2.1.0",
     "npm:katex@0.16.22": "0.16.22",
+    "npm:monaco-editor@0.55.1": "0.55.1",
     "npm:pagefind@^1.6.0": "1.6.0",
     "npm:photoswipe@5.4.4": "5.4.4",
     "npm:rehype-katex@7.0.1": "7.0.1",
@@ -870,6 +872,14 @@
         "@shikijs/types"
       ]
     },
+    "@shikijs/monaco@4.6.0": {
+      "integrity": "sha512-EtnqmFtpKL6IunBuAS8VHDzR+bTYxOJhG3xMZIaiGLSCIQ4DSSyksBx+OwQjD78ijXgmDXFVlMK4uZP8ohl0hA==",
+      "dependencies": [
+        "@shikijs/core",
+        "@shikijs/types",
+        "@shikijs/vscode-textmate"
+      ]
+    },
     "@shikijs/primitive@4.6.0": {
       "integrity": "sha512-c54+TQEo9ToqgfL/AU8FpjnV09+GA9Oa7M5ROkkXteZfp5XzpAJGXjjvZQFQioJOwm/w/6Z3lIzQstAkl8coag==",
       "dependencies": [
@@ -944,6 +954,9 @@
       "dependencies": [
         "undici-types"
       ]
+    },
+    "@types/trusted-types@2.0.7": {
+      "integrity": "sha512-ScaPdn1dQczgbl0QFTeTOmVHFULt394XJgOQNoyVhZ6r2vLnMLJfBPd53SB52T/3G36VI1/g2MZaX0cwDuXsfw=="
     },
     "@types/unist@3.0.3": {
       "integrity": "sha512-ko/gIFJRv177XgZsZcBwnqJN5x/Gien8qNOn0D5bQU/zAzVf9Zt3BlcUiLqhV9y4ARk0GbT3tnUiPNgnTXzc/Q=="
@@ -1288,6 +1301,12 @@
       "integrity": "sha512-cgwlv/1iFQiFnU96XXgROh8xTeetsnJiDsTc7TYCLFd9+/WNkIqPTxiM/8pSd8VIrhXGTf1Ny1q1hquVqDJB5w==",
       "dependencies": [
         "domelementtype"
+      ]
+    },
+    "dompurify@3.2.7": {
+      "integrity": "sha512-WhL/YuveyGXJaerVlMYGWhvQswa7myDG17P7Vu65EWC05o8vfeNbvNf4d/BOvH99+ZW+LlQsc1GDKMa1vNK6dw==",
+      "optionalDependencies": [
+        "@types/trusted-types"
       ]
     },
     "domutils@3.2.2": {
@@ -1642,6 +1661,10 @@
     },
     "markdown-table@3.1.0": {
       "integrity": "sha512-xpeSCdM+B+6P3ncfgaB7FoDbtJ30xAe6Z18TGT7AgXJsHqCElCICZovQqdRMm7kHgpTyYv36EupqewoFFSB8vw=="
+    },
+    "marked@14.0.0": {
+      "integrity": "sha512-uIj4+faQ+MgHgwUW1l2PsPglZLOLOT1uErt06dAPtx2kjteLAkbsd/0FiYg/MGS+i7ZKLb7w2WClxHkzOOuryQ==",
+      "bin": true
     },
     "mdast-util-find-and-replace@3.0.4": {
       "integrity": "sha512-z4B5c6jrnJ1ltOQemhWYPBSAo6y42Z8Gt2yEgfgNTMcLSU59B8bfj8Z8AnAlJrBGLnqkdAUZ7jdDEqQw3KuipQ==",
@@ -2050,6 +2073,13 @@
         "micromark-util-subtokenize",
         "micromark-util-symbol",
         "micromark-util-types"
+      ]
+    },
+    "monaco-editor@0.55.1": {
+      "integrity": "sha512-jz4x+TJNFHwHtwuV9vA9rMujcZRb0CEilTEwG2rRSpe/A7Jdkuj8xPKttCgOh+v/lkHy7HsZ64oj+q3xoAFl9A==",
+      "dependencies": [
+        "dompurify",
+        "marked"
       ]
     },
     "mri@1.2.0": {
@@ -2855,12 +2885,14 @@
       "npm:@astrojs/check@0.9.12",
       "npm:@biomejs/biome@2.6.6",
       "npm:@bjorn3/browser_wasi_shim@0.4.2",
+      "npm:@shikijs/monaco@4.6.0",
       "npm:@shikijs/themes@4.6.0",
       "npm:@types/node@26.6.6",
       "npm:@viz-js/viz@3.31.0",
       "npm:astro@7.4.10",
       "npm:hast-util-from-html@2.1.0",
       "npm:katex@0.16.22",
+      "npm:monaco-editor@0.55.1",
       "npm:pagefind@^1.6.0",
       "npm:photoswipe@5.4.4",
       "npm:rehype-katex@7.0.1",

@@ -6,144 +6,156 @@ import { sitePath } from "../../lib/urls";
 const encodings = ["church", "scott", "binary"];
 ---
 
-<Base title="演练">
-  <div class="container">
-    <header class="page-head">
-      <h1>演练</h1>
-    </header>
-    <div class="workspace">
-      <section class="editor-section" aria-labelledby="editor-heading">
-        <div class="section-head">
-          <h2 id="editor-heading">源码</h2>
-          <a href={sitePath("/examples/")}>浏览示例</a>
+<Base title="演练" fillViewport>
+  <section class="workspace" aria-label="演练">
+    <form id="run-settings">
+      <div class="toolbar">
+        <div class="toolbar-file">
+          <button
+            class="button"
+            id="toggle-files"
+            type="button"
+            aria-controls="file-sidebar"
+            aria-expanded="true"
+          >
+            资源管理器
+          </button>
+          <span id="active-file" class="active-file">main.lambda</span>
+          <a class="examples-link" href={sitePath("/examples/")}>浏览示例</a>
         </div>
-        <fieldset id="session">
-          <div class="file-controls">
-            <label for="files">当前文件</label>
-            <select id="files"></select>
-            <button class="button" id="remove-file" type="button">删除</button>
-          </div>
-          <div class="source-editor">
-            <pre
-              id="source-highlight"
-              class="line-content"
-              aria-hidden="true"
-            ></pre>
-            <textarea
-              id="source"
-              aria-label="当前文件源码"
-              spellcheck="false"
-              autocapitalize="off"
-              wrap="off"
-            ></textarea>
-          </div>
-          <form class="file-controls" id="add-file">
-            <label for="file-path">文件路径</label>
-            <input id="file-path" placeholder="例如 lib/helper.lambda" required>
-            <button class="button" type="submit">添加文件</button>
-          </form>
-          <p id="file-error" role="alert"></p>
-        </fieldset>
-      </section>
-
-      <section class="settings-section" aria-labelledby="settings-heading">
-        <div class="section-head">
-          <h2 id="settings-heading">运行设置</h2>
-        </div>
-        <form id="run-settings">
-          <label for="stage">运行阶段</label>
-          <select id="stage">
+        <div class="toolbar-actions">
+          <select id="stage" aria-label="运行阶段">
             {Object.entries(stageLabels).map(([value, label]) => (
               <option value={value}>{label}</option>
             ))}
           </select>
-          <fieldset id="compiler-options">
-            <legend>编译选项</legend>
-            <label for="reduction">λ 归约方式</label>
-            <select id="reduction">
-              <option value="none">关闭</option>
-              <option value="beta">β</option>
-              <option value="eta">η</option>
-              <option value="both">β + η</option>
-            </select>
-            <label for="encode-natural">自然数编码</label>
-            <select id="encode-natural">
-              {encodings.map((value) => <option>{value}</option>)}
-            </select>
-            <label for="encode-string">字符串编码</label>
-            <select id="encode-string">
-              {["church", "scott"].flatMap((list) =>
-                encodings.map((natural) => (
-                  <option
-                    selected={list === "church" && natural === "binary"}
-                  >{`${list}<${natural}>`}</option>
-                )),
-              )}
-            </select>
-          </fieldset>
-          <fieldset id="interpreter-options">
-            <legend>解释选项</legend>
-            <label for="steps">归约步数上限</label>
-            <input
-              id="steps"
-              type="number"
-              value="100000"
-              min="0"
-              max="2147483647"
-              step="1"
-              required
-            >
-            <div class="settings-group" id="decode-options">
-              <label for="decode">解码类型</label>
-              <input id="decode" list="decode-types" value="natural" required>
-              <datalist id="decode-types">
-                {[
-                  "natural",
-                  "scott-natural",
-                  "binary-natural",
-                  "boolean",
-                  "integer",
-                  "rational",
-                  "real",
-                  "string",
-                  "list<natural>",
-                  "scott-list<natural>",
-                  "pair<natural,boolean>",
-                ].map((value) => <option value={value} />)}
-              </datalist>
-              <div class="settings-group" id="precision-options" hidden>
-                <label for="precision">实数精度</label>
-                <input
-                  id="precision"
-                  type="number"
-                  value="0"
-                  min="0"
-                  max="2147483647"
-                  step="1"
-                  required
-                >
-              </div>
-            </div>
-          </fieldset>
-          <div class="run-actions">
-            <button class="button primary" id="run" type="submit">运行</button>
-            <button class="button" id="cancel" type="button" disabled>
-              取消
-            </button>
-          </div>
-        </form>
-      </section>
-
-      <section class="result-section" aria-labelledby="result-heading">
-        <div class="section-head">
-          <h2 id="result-heading">结果</h2>
-          <span id="step-count"></span>
+          <button
+            class="button"
+            id="toggle-settings"
+            type="button"
+            aria-controls="advanced-settings"
+            aria-expanded="false"
+          >
+            运行设置
+          </button>
+          <button class="button" id="cancel" type="button" hidden>取消</button>
+          <button class="button primary" id="run" type="submit">运行</button>
         </div>
-        <p id="run-status" role="status">尚未运行</p>
-        <pre class="source-code line-content" id="output" hidden></pre>
-      </section>
+      </div>
+      <div class="settings-grid" id="advanced-settings" hidden>
+        <fieldset id="compiler-options">
+          <legend>编译选项</legend>
+          <label for="reduction">启用归约</label>
+          <select id="reduction">
+            <option value="none">关闭</option>
+            <option value="beta">β</option>
+            <option value="eta">η</option>
+            <option value="both">β + η</option>
+          </select>
+          <label for="encode-natural">自然数编码</label>
+          <select id="encode-natural">
+            {encodings.map((value) => <option>{value}</option>)}
+          </select>
+          <label for="encode-string">字符串编码</label>
+          <select id="encode-string">
+            {["church", "scott"].flatMap((list) =>
+              encodings.map((natural) => (
+                <option
+                  selected={list === "church" && natural === "binary"}
+                >{`${list}<${natural}>`}</option>
+              )),
+            )}
+          </select>
+        </fieldset>
+        <fieldset id="interpreter-options">
+          <legend>解释选项</legend>
+          <label for="steps">步数上限</label>
+          <input
+            id="steps"
+            type="number"
+            value="100000"
+            min="0"
+            max="2147483647"
+            step="1"
+            required
+          >
+          <div class="settings-group" id="decode-options">
+            <label for="decode">解码类型</label>
+            <input id="decode" list="decode-types" value="natural" required>
+            <datalist id="decode-types">
+              {[
+                "natural",
+                "scott-natural",
+                "binary-natural",
+                "boolean",
+                "integer",
+                "rational",
+                "real",
+                "string",
+                "list<natural>",
+                "scott-list<natural>",
+                "pair<natural,boolean>",
+              ].map((value) => <option value={value} />)}
+            </datalist>
+            <div class="settings-group" id="precision-options" hidden>
+              <label for="precision">实数精度</label>
+              <input
+                id="precision"
+                type="number"
+                value="0"
+                min="0"
+                max="2147483647"
+                step="1"
+                required
+              >
+            </div>
+          </div>
+        </fieldset>
+      </div>
+    </form>
+
+    <div class="editor-workspace" id="session">
+      <aside
+        class="file-sidebar"
+        id="file-sidebar"
+        aria-labelledby="files-heading"
+      >
+        <div class="file-sidebar-head">
+          <h2 id="files-heading">文件</h2>
+          <button
+            class="button"
+            id="new-file"
+            type="button"
+            aria-controls="add-file"
+            aria-expanded="false"
+          >
+            新建文件
+          </button>
+        </div>
+        <form id="add-file" hidden>
+          <input
+            id="file-path"
+            aria-label="新文件路径"
+            placeholder="lib/helper.lambda"
+            required
+          >
+          <button class="button" type="submit">添加</button>
+          <p id="file-error" role="alert"></p>
+        </form>
+        <ul id="files" class="file-tree"></ul>
+      </aside>
+      <div class="source-editor" id="source"></div>
     </div>
-  </div>
+
+    <details class="result-section" id="results">
+      <summary>
+        <span class="result-label">输出</span>
+        <span id="run-status" role="status">尚未运行</span>
+        <span id="step-count"></span>
+      </summary>
+      <pre class="source-code line-content" id="output" hidden></pre>
+    </details>
+  </section>
 </Base>
 
 <script>
@@ -154,240 +166,310 @@ void startPlayground();
 
 <style>
 .workspace {
-  --section-spacing: 24px;
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(15rem, 19rem);
-  gap: var(--section-spacing);
-  margin-bottom: 56px;
-}
-
-.workspace > section {
-  min-width: 0;
-}
-.settings-section {
-  border-inline-start: 1px solid var(--border);
-  padding-inline-start: var(--section-spacing);
-}
-.result-section {
-  grid-column: 1 / -1;
-  border-top: 1px solid var(--border);
-  padding-top: var(--section-spacing);
-}
-
-.section-head,
-.file-controls,
-.run-actions {
   display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: 10px;
-}
-.section-head {
-  justify-content: space-between;
-  margin-bottom: 16px;
-}
-.section-head h2 {
-  margin: 0;
-  font-size: 1.25rem;
-}
-
-fieldset {
-  min-width: 0;
-  border: 0;
-  padding: 0;
-  margin: 0;
-}
-#run-settings,
-#run-settings fieldset:not([hidden]),
-.settings-group:not([hidden]) {
-  display: grid;
-  gap: 8px;
-}
-#run-settings fieldset {
-  margin-top: 8px;
-  padding-top: 7px;
-  border-top: 1px solid var(--border);
-}
-legend {
-  padding: 0 8px 0 0;
-  color: var(--muted-text);
-}
-legend,
-label,
-#step-count {
-  font-size: 0.875rem;
-}
-
-input,
-select,
-.workspace .button {
-  min-height: 2.5rem;
-}
-input,
-select {
-  min-width: 0;
-  border: 1px solid var(--surface-1);
-  border-radius: 7px;
-  background: color-mix(in srgb, var(--surface-0) 35%, transparent);
-  color: var(--body-text);
-  padding: 8px 10px;
-  font: inherit;
-}
-select {
-  appearance: none;
-  padding-inline-end: 2rem;
-  background-image:
-    linear-gradient(45deg, transparent 50%, var(--muted-text) 50%),
-    linear-gradient(135deg, var(--muted-text) 50%, transparent 50%);
-  background-position:
-    right 15px center,
-    right 10px center;
-  background-size: 5px 5px;
-  background-repeat: no-repeat;
-}
-:is(select, input[list]):enabled {
-  cursor: pointer;
-}
-:is(input, select):enabled:hover {
-  border-color: var(--overlay-1);
-}
-:is(input, select):focus-visible,
-.source-editor:focus-within {
-  outline: 2px solid var(--accent);
-  outline-offset: 2px;
-}
-#files,
-#file-path {
-  flex: 1 1 10rem;
-}
-.run-actions {
-  margin-top: 8px;
-}
-.workspace .button {
-  padding-block: 6px;
-}
-.workspace .button:not(.primary) {
-  border-color: var(--surface-1);
-  color: var(--body-text);
-}
-.workspace .button:disabled {
-  border-color: var(--border);
-  background: transparent;
-  color: var(--muted-text);
-  cursor: not-allowed;
-}
-#remove-file:enabled:hover {
-  border-color: var(--red);
-  color: var(--red);
-}
-#run {
   flex: 1;
-}
-
-.source-editor {
-  position: relative;
-  margin: 12px 0;
-  border: 1px solid var(--border);
-  border-radius: 7px;
+  flex-direction: column;
+  min-width: 0;
   background: var(--code-bg);
 }
-#source,
-#source-highlight {
-  margin: 0;
-  border: 0;
-  padding: 12px;
-  font:
-    0.95rem / 1.65 ui-monospace,
-    monospace;
-  letter-spacing: normal;
-  tab-size: 2;
-  white-space: pre;
-  font-variant-ligatures: none;
+.workspace [hidden] {
+  display: none;
 }
-#source {
-  position: relative;
-  display: block;
-  width: 100%;
-  min-height: 25rem;
-  resize: vertical;
-  outline: none;
-  background: transparent;
-  color: var(--code-text);
-  caret-color: var(--code-text);
+.toolbar,
+.toolbar-file,
+.toolbar-actions,
+.file-sidebar-head {
+  display: flex;
+  align-items: center;
+  gap: 8px;
 }
-#source-highlight {
-  position: absolute;
-  inset: 0 auto auto 0;
-  max-width: 100%;
-  max-height: 100%;
+.toolbar {
+  justify-content: space-between;
+  gap: 12px;
+  padding: 10px 12px;
+  background: var(--panel-bg);
+}
+.toolbar-file {
+  min-width: 0;
+}
+.active-file {
   overflow: hidden;
-  pointer-events: none;
-  color: var(--code-text);
-  visibility: hidden;
+  font-family: ui-monospace, monospace;
+  font-size: 0.875rem;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
-.source-editor[data-highlighted] #source-highlight {
-  visibility: visible;
+.examples-link {
+  flex: none;
+  padding-inline: 4px;
+  font-size: 0.875rem;
+  white-space: nowrap;
 }
-.source-editor[data-highlighted] #source {
-  color: transparent;
+.toolbar-actions {
+  flex-shrink: 0;
 }
-#source::selection {
-  background: var(--surface-1);
-  color: var(--code-text);
+.workspace .button {
+  padding: 5px 10px;
+  font-size: 0.875rem;
+  white-space: nowrap;
+}
+.workspace .button:not(.primary) {
+  border-color: transparent;
+  background: transparent;
+  color: var(--body-text);
+  font-weight: 600;
+}
+.workspace .button:not(.primary):hover:not(:disabled) {
+  background: var(--surface-0);
+}
+.workspace .button[aria-expanded="true"] {
+  border-color: color-mix(in srgb, var(--accent) 35%, var(--border));
+  background: color-mix(in srgb, var(--accent) 12%, transparent);
+  color: var(--accent);
+}
+.workspace .button:disabled {
+  opacity: 0.65;
+}
+#run {
+  min-width: 4rem;
+}
+.result-section {
+  border-top: 1px solid var(--border);
+}
+.result-section > summary {
+  padding: 8px 14px;
+  color: var(--body-text);
+  font-size: 0.875rem;
+  cursor: pointer;
+}
+.result-section > summary:hover {
+  background: var(--surface-0);
+}
+.settings-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px 24px;
+  padding: 14px 16px 16px;
+  border-top: 1px solid var(--border);
+  background: color-mix(in srgb, var(--page-bg) 55%, var(--surface-0));
+}
+.settings-grid fieldset {
+  min-width: 0;
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+.settings-grid fieldset:not([hidden]) {
+  display: grid;
+  align-content: start;
+  grid-template-columns: minmax(6rem, max-content) minmax(0, 18rem);
+  gap: 8px 12px;
+}
+.settings-group:not([hidden]) {
+  display: contents;
+}
+label {
+  align-self: center;
+  color: var(--muted-text);
+  font-size: 0.875rem;
+}
+legend {
+  margin-block-end: 10px;
+  padding: 0;
+  color: var(--body-text);
+  font-size: 1rem;
+  font-weight: 700;
+}
+input,
+select {
+  min-width: 0;
+  min-height: 2rem;
+  padding: 4px 7px;
+  border: 1px solid var(--border);
+  border-radius: 5px;
+  background: var(--page-bg);
+  color: var(--body-text);
+  font: inherit;
+  font-size: 0.875rem;
+}
+select:hover {
+  border-color: var(--overlay-0);
+}
+.workspace :focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 1px;
 }
 
-#run-status,
-#file-error {
+.editor-workspace {
+  display: grid;
+  flex: 1;
+  grid-template-columns: clamp(10rem, 20%, 15rem) minmax(0, 1fr);
+  border-top: 1px solid var(--border);
+}
+.editor-workspace:has(.file-sidebar[hidden]) {
+  grid-template-columns: minmax(0, 1fr);
+}
+.file-sidebar {
+  contain: size;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  min-height: 0;
+  border-inline-end: 1px solid var(--border);
+  background: color-mix(in srgb, var(--panel-bg) 45%, var(--code-bg));
+}
+.file-sidebar-head {
+  justify-content: space-between;
+  padding: 6px 8px 6px 12px;
+  border-bottom: 1px solid var(--border);
+}
+.file-sidebar-head h2 {
+  margin: 0;
+  font-size: 0.875rem;
+}
+.file-sidebar-head .button,
+#add-file .button {
+  padding: 3px 6px;
+  font-size: 0.8rem;
+}
+.file-tree,
+.file-tree :global(ul) {
+  list-style: none;
   margin: 0;
 }
-#file-error:not(:empty) {
-  margin-top: 10px;
+.file-tree {
+  flex: 1;
+  overflow: auto;
+  padding: 6px;
+}
+.file-tree :global(ul) {
+  margin-inline-start: 9px;
+  border-inline-start: 1px solid var(--border);
+  padding-inline-start: 6px;
+}
+.file-tree :global(.file-row) {
+  display: flex;
+  border-radius: 4px;
+}
+.file-tree :global(button),
+.file-tree :global(summary) {
+  min-height: 1.85rem;
+  border: 0;
+  border-radius: 4px;
+  padding: 3px 6px;
+  background: transparent;
+  color: var(--body-text);
+  font: inherit;
+  font-size: 0.875rem;
+  cursor: pointer;
+}
+.file-tree :global(.file-open),
+.file-tree :global(summary) {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  text-align: start;
+}
+.file-tree :global(.file-row:has([aria-current="true"])) {
+  background: var(--surface-1);
+  box-shadow: inset 2px 0 var(--accent);
+  font-weight: 600;
+}
+.file-tree :global(button:hover),
+.file-tree :global(summary:hover) {
+  background: var(--surface-1);
+}
+.file-tree :global(.file-delete:hover) {
+  color: var(--red);
+}
+#add-file:not([hidden]) {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 6px;
+  padding: 8px;
+  border-bottom: 1px solid var(--border);
+}
+#file-error {
+  grid-column: 1 / -1;
+  margin: 0;
+  color: var(--red);
+  font-size: 0.8rem;
+}
+#file-error:empty {
+  display: none;
+}
+.source-editor {
+  contain: size;
+  min-width: 0;
+  min-height: 16rem;
+  overflow: hidden;
+}
+
+.result-label {
+  margin-inline-end: 8px;
+  font-weight: 600;
 }
 #run-status,
 #step-count {
   color: var(--muted-text);
+  font-size: 0.8rem;
 }
-#file-error,
 #run-status[data-error="true"] {
   color: var(--red);
 }
+#step-count:not(:empty) {
+  margin-inline-start: 8px;
+}
 #output {
   min-height: 3.5rem;
-  max-height: 28rem;
-  margin: 12px 0 0;
+  max-height: min(24rem, 30dvh);
+  margin: 0 12px 12px;
   border: 1px solid var(--border);
   border-inline-start: 3px solid var(--teal);
-  font-size: 0.95rem;
+  font-size: 0.875rem;
   overflow: auto;
   white-space: pre-wrap;
   overflow-wrap: anywhere;
 }
-#run-status[data-error="true"] + #output {
+.result-section:has(#run-status[data-error="true"]) #output {
   border-inline-start-color: var(--red);
 }
 
-@media (forced-colors: active) {
-  select {
-    appearance: auto;
-  }
-  .source-editor[data-highlighted] #source {
-    color: CanvasText;
-  }
-  .source-editor[data-highlighted] #source-highlight {
-    visibility: hidden;
-  }
-}
-@media (max-width: 760px) {
-  .workspace {
+@media (max-width: 640px) {
+  .editor-workspace,
+  .settings-grid {
     grid-template-columns: minmax(0, 1fr);
   }
-  .settings-section {
-    border-inline-start: 0;
-    border-top: 1px solid var(--border);
-    padding: var(--section-spacing) 0 0;
+  .editor-workspace:has(.file-sidebar:not([hidden])) {
+    grid-template-rows: auto 1fr;
   }
-  #source {
-    min-height: 16rem;
+  .file-sidebar {
+    contain: none;
+    border-inline-end: 0;
+    border-bottom: 1px solid var(--border);
+  }
+  .file-tree {
+    max-height: 9rem;
+  }
+}
+@media (max-width: 440px) {
+  .toolbar {
+    flex-wrap: wrap;
+  }
+  .toolbar-file {
+    width: 100%;
+  }
+  .examples-link {
+    margin-inline-start: auto;
+  }
+  .toolbar-actions {
+    width: 100%;
+    flex-wrap: wrap;
+  }
+  #run {
+    margin-inline-start: auto;
   }
 }
 </style>

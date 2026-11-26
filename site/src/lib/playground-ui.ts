@@ -1,4 +1,5 @@
 import { inputLimit, runTimeoutMs, stageLabels } from "../config";
+import { highlightedLines } from "./highlight";
 import {
   exampleSession,
   type RunMessage,
@@ -6,20 +7,29 @@ import {
   type Stage,
   sessionPath,
 } from "./playground";
+import { createSourceEditor, createSourceModel } from "./playground-editor";
 import { sitePath } from "./urls";
 
 export async function startPlayground() {
   const element = <T extends HTMLElement>(id: string) =>
     document.getElementById(id) as T;
-  const editor = element<HTMLTextAreaElement>("source");
-  const sourceHighlight = element("source-highlight");
-  const sourceEditor = editor.closest<HTMLElement>(".source-editor");
-  const highlighter = import("./highlight");
-  const filesSelect = element<HTMLSelectElement>("files");
+  const editor = await createSourceEditor(element("source"));
+  const fileTree = element<HTMLUListElement>("files");
+  const sidebar = element("file-sidebar");
+  const toggleFiles = element<HTMLButtonElement>("toggle-files");
+  const activeFile = element("active-file");
+  const newFile = element<HTMLButtonElement>("new-file");
+  const advanced = element("advanced-settings");
+  const toggleSettings = element<HTMLButtonElement>("toggle-settings");
+  const results = element<HTMLDetailsElement>("results");
+  const runSettings = element<HTMLFormElement>("run-settings");
   const addFile = element<HTMLFormElement>("add-file");
   const pathInput = element<HTMLInputElement>("file-path");
   const fileError = element("file-error");
-  const removeFile = element<HTMLButtonElement>("remove-file");
+  const removeFile = document.createElement("button");
+  removeFile.type = "button";
+  removeFile.className = "file-delete";
+  removeFile.textContent = "×";
   const stage = element<HTMLSelectElement>("stage");
   const decode = element<HTMLInputElement>("decode");
   const compiler = element<HTMLFieldSetElement>("compiler-options");
@@ -33,11 +43,52 @@ export async function startPlayground() {
   const stepCount = element("step-count");
 
   let files = new Map([["main.lambda", "@! ADD 2 3;"]]);
+  const models = new Map<string, ReturnType<typeof createSourceModel>>();
+  const viewStates = new Map<string, ReturnType<typeof editor.saveViewState>>();
+  let activePath = "main.lambda";
+  const fileButtons = new Map<string, HTMLButtonElement>();
   let worker: Worker | undefined;
   let timer: ReturnType<typeof setTimeout> | undefined;
   let outputRevision = 0;
   let phase: Stage = "decode";
   stage.value = "decode";
+
+  const narrow = matchMedia("(max-width: 640px)");
+
+  function showFiles(show: boolean) {
+    sidebar.hidden = !show;
+    toggleFiles.setAttribute("aria-expanded", String(show));
+  }
+
+  showFiles(!narrow.matches);
+  narrow.addEventListener("change", (event) => showFiles(!event.matches));
+  toggleFiles.addEventListener("click", () =>
+    showFiles(Boolean(sidebar.hidden)),
+  );
+
+  function showAddFile(show: boolean) {
+    addFile.hidden = !show;
+    newFile.setAttribute("aria-expanded", String(show));
+    if (show) pathInput.focus();
+    else fileError.textContent = "";
+  }
+
+  newFile.addEventListener("click", () => showAddFile(Boolean(addFile.hidden)));
+  addFile.addEventListener("keydown", (event) => {
+    if (event.key !== "Escape") return;
+    showAddFile(false);
+    newFile.focus();
+  });
+
+  function showSettings(show: boolean) {
+    advanced.hidden = !show;
+    toggleSettings.setAttribute("aria-expanded", String(show));
+  }
+
+  toggleSettings.addEventListener("click", () =>
+    showSettings(Boolean(advanced.hidden)),
+  );
+  runSettings.addEventListener("invalid", () => showSettings(true), true);
 
   function setStatus(message: string, error = false) {
     status.textContent = message;
@@ -45,7 +96,7 @@ export async function startPlayground() {
   }
 
   function updateOptions() {
-    const lambda = filesSelect.value.endsWith(".lambda");
+    const lambda = activePath.endsWith(".lambda");
     for (const option of stage.options) {
       option.disabled =
         !lambda && ["expand", "reduce", "compile"].includes(option.value);
@@ -61,58 +112,96 @@ export async function startPlayground() {
       !decoding || decode.value.trim() !== "real";
   }
 
-  function syncSourceScroll() {
-    sourceHighlight.scrollTop = editor.scrollTop;
-    sourceHighlight.scrollLeft = editor.scrollLeft;
-  }
+  function renderFiles() {
+    const collapsed = new Set(
+      Array.from(fileTree.querySelectorAll("details:not([open])"), (folder) =>
+        folder.getAttribute("data-path"),
+      ),
+    );
+    const root = document.createDocumentFragment();
+    const folders = new Map<string, HTMLUListElement>();
+    fileButtons.clear();
 
-  function sizeSourceHighlight() {
-    sourceHighlight.style.width = `${editor.clientWidth}px`;
-    sourceHighlight.style.height = `${editor.clientHeight}px`;
-    syncSourceScroll();
-  }
+    for (const path of [...files.keys()].sort()) {
+      const parts = path.split("/");
+      const name = parts.pop() ?? path;
+      let parent: DocumentFragment | HTMLUListElement = root;
+      let folderPath = "";
+      for (const part of parts) {
+        folderPath += `${part}/`;
+        let children = folders.get(folderPath);
+        if (!children) {
+          const item = document.createElement("li");
+          const folder = document.createElement("details");
+          const label = document.createElement("summary");
+          folder.dataset.path = folderPath;
+          folder.open = !collapsed.has(folderPath);
+          label.textContent = part;
+          label.title = folderPath;
+          children = document.createElement("ul");
+          folder.append(label, children);
+          item.append(folder);
+          parent.append(item);
+          folders.set(folderPath, children);
+        }
+        parent = children;
+      }
 
-  let sourceRevision = 0;
-  async function highlightSource() {
-    const revision = ++sourceRevision;
-    const source = editor.value;
-    const extension = filesSelect.value.endsWith(".ski") ? "ski" : "lambda";
-    sourceEditor?.removeAttribute("data-highlighted");
-    if (source.length > inputLimit) return;
-
-    try {
-      const { highlightedLines } = await highlighter;
-      if (revision !== sourceRevision) return;
-      const lines = await highlightedLines(source, extension, false);
-      if (revision !== sourceRevision) return;
-      sourceHighlight.innerHTML = `${lines.join("\n")}\n`;
-      sizeSourceHighlight();
-      sourceEditor?.setAttribute("data-highlighted", "");
-    } catch {
-      // Keep the native textarea readable if highlighting fails.
+      const item = document.createElement("li");
+      const button = document.createElement("button");
+      item.className = "file-row";
+      button.type = "button";
+      button.className = "file-open";
+      button.textContent = name;
+      button.title = path;
+      button.addEventListener("click", () => {
+        selectFile(path);
+        if (narrow.matches) {
+          showFiles(false);
+          editor.focus();
+        }
+      });
+      item.append(button);
+      parent.append(item);
+      fileButtons.set(path, button);
     }
+    fileTree.replaceChildren(root);
   }
-
-  editor.addEventListener("scroll", syncSourceScroll);
-  new ResizeObserver(sizeSourceHighlight).observe(editor);
 
   function selectFile(path: string) {
-    filesSelect.replaceChildren(
-      ...Array.from(files.keys(), (file) => new Option(file, file)),
-    );
-    filesSelect.value = path;
-    editor.value = files.get(path) ?? "";
-    void highlightSource();
-    removeFile.disabled = files.size < 2;
+    if (models.has(activePath)) {
+      viewStates.set(activePath, editor.saveViewState());
+    }
+    fileButtons.get(activePath)?.removeAttribute("aria-current");
+    let model = models.get(path);
+    if (!model) {
+      const newModel = createSourceModel(path, files.get(path) ?? "");
+      newModel.onDidChangeContent(() => files.set(path, newModel.getValue()));
+      models.set(path, newModel);
+      model = newModel;
+    }
+    editor.setModel(model);
+    const viewState = viewStates.get(path);
+    if (viewState) editor.restoreViewState(viewState);
+    activePath = path;
+    const button = fileButtons.get(path);
+    button?.setAttribute("aria-current", "true");
+    let ancestor = button?.closest("details");
+    while (ancestor) {
+      ancestor.open = true;
+      ancestor = ancestor.parentElement?.closest("details") ?? null;
+    }
+    activeFile.textContent = path;
+    activeFile.title = path;
+    removeFile.title = `删除 ${path}`;
+    removeFile.setAttribute("aria-label", removeFile.title);
+    if (files.size > 1) button?.after(removeFile);
+    else removeFile.remove();
     updateOptions();
   }
 
-  selectFile("main.lambda");
-  editor.addEventListener("input", () => {
-    files.set(filesSelect.value, editor.value);
-    void highlightSource();
-  });
-  filesSelect.addEventListener("change", () => selectFile(filesSelect.value));
+  renderFiles();
+  selectFile(activePath);
   stage.addEventListener("change", updateOptions);
   decode.addEventListener("input", updateOptions);
 
@@ -120,7 +209,7 @@ export async function startPlayground() {
     event.preventDefault();
     const path = sessionPath(pathInput.value.trim());
     if (!path) {
-      fileError.textContent = "请输入会话内以 .lambda 或 .ski 结尾的相对路径。";
+      fileError.textContent = "仅支持以 .lambda 或 .ski 结尾的路径。";
       return;
     }
     if (
@@ -136,15 +225,26 @@ export async function startPlayground() {
     }
     files.set(path, "");
     pathInput.value = "";
-    fileError.textContent = "";
+    showAddFile(false);
+    if (narrow.matches) showFiles(false);
+    renderFiles();
     selectFile(path);
     editor.focus();
   });
 
   removeFile.addEventListener("click", () => {
-    files.delete(filesSelect.value);
+    const path = activePath;
+    files.delete(path);
+    const model = models.get(path);
+    models.delete(path);
+    viewStates.delete(path);
     const next = files.keys().next().value;
-    if (next) selectFile(next);
+    if (next) {
+      renderFiles();
+      selectFile(next);
+      fileButtons.get(next)?.focus();
+    }
+    model?.dispose();
     fileError.textContent = "";
   });
 
@@ -153,113 +253,108 @@ export async function startPlayground() {
     worker = undefined;
     clearTimeout(timer);
     run.disabled = false;
-    cancel.disabled = true;
+    cancel.hidden = true;
     setStatus(message, error);
   }
 
   cancel.addEventListener("click", () =>
     finish(`已取消 · ${stageLabels[phase]}`),
   );
-  element<HTMLFormElement>("run-settings").addEventListener(
-    "submit",
-    (event) => {
-      event.preventDefault();
-      if (worker) return;
-      outputRevision++;
-      output.hidden = true;
-      output.textContent = "";
-      stepCount.textContent = "";
+  runSettings.addEventListener("submit", (event) => {
+    event.preventDefault();
+    if (worker) return;
+    results.open = true;
+    outputRevision++;
+    output.hidden = true;
+    output.textContent = "";
+    stepCount.textContent = "";
 
-      const encoder = new TextEncoder();
-      let bytes = 0;
-      for (const source of files.values()) {
-        bytes += encoder.encode(source).byteLength;
-      }
-      if (bytes > inputLimit) {
-        setStatus(`会话源码超过 ${inputLimit / (1024 * 1024)} MiB。`, true);
-        return;
-      }
+    const encoder = new TextEncoder();
+    let bytes = 0;
+    for (const source of files.values()) {
+      bytes += encoder.encode(source).byteLength;
+    }
+    if (bytes > inputLimit) {
+      setStatus(`会话源码超过 ${inputLimit / (1024 * 1024)} MiB。`, true);
+      return;
+    }
 
-      const request: RunRequest = {
-        entry: filesSelect.value,
-        files: Array.from(files),
-        stage: stage.value as Stage,
-        reduction: element<HTMLSelectElement>("reduction").value,
-        natural: element<HTMLSelectElement>("encode-natural").value,
-        string: element<HTMLSelectElement>("encode-string").value,
-        decode: decode.value.trim(),
-        precision: precision.valueAsNumber,
-        steps: steps.valueAsNumber,
-      };
-      phase =
-        request.entry.endsWith(".lambda") &&
-        (request.stage === "interpret" || request.stage === "decode")
-          ? "compile"
-          : request.stage;
-      setStatus(`正在运行 · ${stageLabels[phase]}`);
-      try {
-        const active = new Worker(
-          new URL("./playground.worker.ts", import.meta.url),
-          { type: "module" },
-        );
-        worker = active;
-        run.disabled = true;
-        cancel.disabled = false;
-        timer = setTimeout(
-          () =>
-            finish(
-              `运行超过 ${runTimeoutMs / 1000} 秒 · ${stageLabels[phase]}`,
-              true,
-            ),
-          runTimeoutMs,
-        );
-        active.onmessage = ({ data }: MessageEvent<RunMessage>) => {
-          if (worker !== active) return;
-          phase = data.stage;
-          const label = stageLabels[phase];
-          if ("error" in data) {
-            output.hidden = false;
-            output.textContent = data.error;
-            finish(`运行失败 · ${label}`, true);
-          } else if ("output" in data) {
-            output.hidden = false;
-            output.textContent = data.output;
-            if (phase !== "decode") {
-              const revision = outputRevision;
-              const extension =
-                phase === "expand" || phase === "reduce" ? "lambda" : "ski";
-              void highlighter
-                .then(({ highlightedLines }) =>
-                  highlightedLines(data.output, extension, false),
-                )
-                .then((lines) => {
-                  if (revision === outputRevision)
-                    output.innerHTML = lines.join("\n");
-                })
-                .catch(() => {});
-            }
-            if (data.steps !== undefined)
-              stepCount.textContent = `归约步数 ${data.steps}`;
-            finish(`运行完成 · ${label}`);
-          } else {
-            setStatus(`正在运行 · ${label}`);
+    const request: RunRequest = {
+      entry: activePath,
+      files: Array.from(files),
+      stage: stage.value as Stage,
+      reduction: element<HTMLSelectElement>("reduction").value,
+      natural: element<HTMLSelectElement>("encode-natural").value,
+      string: element<HTMLSelectElement>("encode-string").value,
+      decode: decode.value.trim(),
+      precision: precision.valueAsNumber,
+      steps: steps.valueAsNumber,
+    };
+    phase =
+      request.entry.endsWith(".lambda") &&
+      (request.stage === "interpret" || request.stage === "decode")
+        ? "compile"
+        : request.stage;
+    setStatus(`正在运行 · ${stageLabels[phase]}`);
+    try {
+      const active = new Worker(
+        new URL("./playground.worker.ts", import.meta.url),
+        { type: "module" },
+      );
+      worker = active;
+      run.disabled = true;
+      cancel.hidden = false;
+      timer = setTimeout(
+        () =>
+          finish(
+            `运行超过 ${runTimeoutMs / 1000} 秒 · ${stageLabels[phase]}`,
+            true,
+          ),
+        runTimeoutMs,
+      );
+      active.onmessage = ({ data }: MessageEvent<RunMessage>) => {
+        if (worker !== active) return;
+        phase = data.stage;
+        const label = stageLabels[phase];
+        if ("error" in data) {
+          output.hidden = false;
+          output.textContent = data.error;
+          finish(`运行失败 · ${label}`, true);
+        } else if ("output" in data) {
+          output.hidden = false;
+          output.textContent = data.output;
+          if (phase !== "decode") {
+            const revision = outputRevision;
+            const extension =
+              phase === "expand" || phase === "reduce" ? "lambda" : "ski";
+            void highlightedLines(data.output, extension, false)
+              .then((lines) => {
+                if (revision === outputRevision)
+                  output.innerHTML = lines.join("\n");
+              })
+              .catch(() => {});
           }
-        };
-        active.onerror = () => {
-          if (worker === active)
-            finish(`运行环境异常 · ${stageLabels[phase]}`, true);
-        };
-        active.postMessage({ ...request, wasmBase: sitePath("/playground/") });
-      } catch {
-        finish(`无法启动运行环境 · ${stageLabels[phase]}`, true);
-      }
-    },
-  );
+          if (data.steps !== undefined)
+            stepCount.textContent = `归约步数 ${data.steps}`;
+          finish(`运行完成 · ${label}`);
+        } else {
+          setStatus(`正在运行 · ${label}`);
+        }
+      };
+      active.onerror = () => {
+        if (worker === active)
+          finish(`运行环境异常 · ${stageLabels[phase]}`, true);
+      };
+      active.postMessage({ ...request, wasmBase: sitePath("/playground/") });
+    } catch {
+      finish(`无法启动运行环境 · ${stageLabels[phase]}`, true);
+    }
+  });
 
   const example = new URLSearchParams(location.search).get("example");
   if (!example) return;
-  const session = element<HTMLFieldSetElement>("session");
-  session.disabled = run.disabled = true;
+  sidebar.inert = run.disabled = toggleFiles.disabled = true;
+  editor.updateOptions({ readOnly: true });
   setStatus("正在载入示例");
   try {
     const response = await fetch(sitePath("/playground/examples.json"));
@@ -267,8 +362,13 @@ export async function startPlayground() {
     const entry = `examples/${example}`;
     const imported = exampleSession(entry, await response.json());
     if (!imported.size) throw new Error("找不到示例文件。");
+    editor.setModel(null);
+    for (const model of models.values()) model.dispose();
+    models.clear();
+    viewStates.clear();
     files = imported;
     stage.value = "interpret";
+    renderFiles();
     selectFile(entry);
     setStatus("示例已载入");
   } catch (error) {
@@ -277,6 +377,7 @@ export async function startPlayground() {
       true,
     );
   } finally {
-    session.disabled = run.disabled = false;
+    sidebar.inert = run.disabled = toggleFiles.disabled = false;
+    editor.updateOptions({ readOnly: false });
   }
 }

@@ -9,6 +9,7 @@ const {
   title,
   description = "λ 演算图归约机的示例、源码与参考文档",
   search = false,
+  fillViewport = false,
 } = Astro.props;
 ---
 
@@ -35,17 +36,28 @@ const {
     )}
     <title>{title} · Graph Reduction Machine</title>
   </head>
-  <body>
+  <body class:list={[{ "fill-viewport": fillViewport }]}>
     <Header />
     <main id="main" data-pagefind-body={!search ? true : undefined}>
       <slot />
     </main>
-    <Footer />
+    {!fillViewport && <Footer />}
   </body>
 </html>
 
 <style>
 main {
   min-height: calc(100vh - 170px);
+}
+.fill-viewport {
+  display: flex;
+  flex-direction: column;
+  min-height: 100dvh;
+}
+.fill-viewport > main {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  min-height: 0;
 }
 </style>
