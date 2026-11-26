@@ -34,6 +34,7 @@
     "check:biome": "biome check . --fix",
     "check:deno": "deno fmt && deno lint",
     "test": "deno test --allow-read --allow-env=SITE_BASE,VSCODE_TEXTMATE_DEBUG test/",
+    "test:wasm": "deno test --allow-read=public/playground test/playground-wasm.ts",
     "verify": "deno task typecheck && deno task check && deno task build && deno task test"
   },
   "imports": {

@@ -44,6 +44,7 @@ jobs:
         run: |
           source ~/.ghc-wasm/env
           deno task build:wasm
+          deno task test:wasm
       - run: deno task verify
       - name: Upload site
         if: github.event_name == 'push'
