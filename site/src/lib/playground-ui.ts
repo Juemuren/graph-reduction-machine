@@ -8,6 +8,7 @@ import {
   sessionPath,
 } from "./playground";
 import { createSourceEditor, createSourceModel } from "./playground-editor";
+import { connectLanguageService } from "./playground-language";
 import { sitePath } from "./urls";
 
 export async function startPlayground() {
@@ -169,18 +170,24 @@ export async function startPlayground() {
     fileTree.replaceChildren(root);
   }
 
+  function getModel(path: string) {
+    const existing = models.get(path);
+    if (existing) return existing;
+    const model = createSourceModel(path, files.get(path) ?? "");
+    model.onDidChangeContent(() => {
+      files.set(path, model.getValue());
+      languageChanged();
+    });
+    models.set(path, model);
+    return model;
+  }
+
   function selectFile(path: string) {
     if (models.has(activePath)) {
       viewStates.set(activePath, editor.saveViewState());
     }
     fileButtons.get(activePath)?.removeAttribute("aria-current");
-    let model = models.get(path);
-    if (!model) {
-      const newModel = createSourceModel(path, files.get(path) ?? "");
-      newModel.onDidChangeContent(() => files.set(path, newModel.getValue()));
-      models.set(path, newModel);
-      model = newModel;
-    }
+    const model = getModel(path);
     editor.setModel(model);
     const viewState = viewStates.get(path);
     if (viewState) editor.restoreViewState(viewState);
@@ -201,6 +208,15 @@ export async function startPlayground() {
     updateOptions();
   }
 
+  const languageChanged = connectLanguageService(
+    editor,
+    () => files,
+    selectFile,
+    getModel,
+    (message) => {
+      element("language-status").textContent = message;
+    },
+  );
   renderFiles();
   selectFile(activePath);
   stage.addEventListener("change", updateOptions);
@@ -225,6 +241,7 @@ export async function startPlayground() {
       return;
     }
     files.set(path, "");
+    languageChanged();
     pathInput.value = "";
     showAddFile(false);
     if (narrow.matches) showFiles(false);
@@ -236,6 +253,7 @@ export async function startPlayground() {
   removeFile.addEventListener("click", () => {
     const path = activePath;
     files.delete(path);
+    languageChanged();
     const model = models.get(path);
     models.delete(path);
     viewStates.delete(path);
@@ -380,6 +398,7 @@ export async function startPlayground() {
       models.clear();
       viewStates.clear();
       files = imported;
+      languageChanged();
       fileTree.replaceChildren();
       stage.value = "interpret";
       renderFiles();

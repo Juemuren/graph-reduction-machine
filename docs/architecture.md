@@ -28,12 +28,14 @@
 语言服务器的目录结构为：
 
 - 命令行入口位于 `app/LanguageServerMain.hs`
+- 浏览器入口位于 `site/wasm/LanguageServiceMain.hs`
 - 模块入口位于 `src/LanguageServer.hs`
 - 各模块位于 `src/LanguageServer/`
 
 语言服务器的模块拆分为：
 
-- `LanguageServer`：配置并启动 `lsp` 服务，注册核心 λ 与 SKI 图的请求处理函数，获取文档内容，并协调导入文件的读取
+- `LanguageServer`：配置并启动 `lsp` 服务，注册核心 λ 与 SKI 图的请求处理函数，获取文档内容
+- `LanguageServer.Service`：命令行与浏览器共用的定义跳转、导入悬停、诊断和重命名操作
 - `LanguageServer.Lambda`：核心 λ 的词法与语法分析、名称解析、补全、悬停和导入导出信息
 - `LanguageServer.Ski`：SKI 图的词法与语法分析、节点补全和悬停
 

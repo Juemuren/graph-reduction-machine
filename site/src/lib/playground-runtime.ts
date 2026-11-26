@@ -49,7 +49,7 @@ function capture() {
   return { fd, read: () => output + decoder.decode() };
 }
 
-async function command(
+export async function command(
   module: WebAssembly.Module,
   args: string[],
   files: [string, string][],

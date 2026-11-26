@@ -18,12 +18,13 @@ trap 'rm -rf "$build"' EXIT
   done
 )
 
-for entry in Compiler Interpreter; do
+for entry in Compiler Interpreter LanguageService; do
   case "$entry" in
-    Compiler) name=lambda-compiler ;;
-    Interpreter) name=ski-interpreter ;;
+    Compiler) name=lambda-compiler ; source="app/CompilerMain.hs" ;;
+    Interpreter) name=ski-interpreter ; source="app/InterpreterMain.hs" ;;
+    LanguageService) name=language-service; source=site/wasm/LanguageServiceMain.hs ;;
   esac
-  args=(--make "app/${entry}Main.hs" -O1 -i"$build" -isrc -outputdir "$build/$entry")
+  args=(--make "$source" -O1 -i"$build" -isrc -outputdir "$build/$entry")
   # Compile Template Haskell before applying the command's final memory limit.
   "$compiler" "${args[@]}" -no-link
   "$compiler" "${args[@]}" -rtsopts '-with-rtsopts=-M128m -K32m' \

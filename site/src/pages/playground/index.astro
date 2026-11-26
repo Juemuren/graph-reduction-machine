@@ -161,6 +161,7 @@ const encodings = ["church", "scott", "binary"];
       <div class="source-editor" id="source"></div>
     </div>
 
+    <p id="language-status" role="status"></p>
     <details class="result-section" id="results">
       <summary>
         <span class="result-label">输出</span>
@@ -412,6 +413,10 @@ select:hover {
 #file-error:empty {
   display: none;
 }
+#language-status:empty {
+  display: none;
+}
+
 .source-editor {
   contain: size;
   min-width: 0;
