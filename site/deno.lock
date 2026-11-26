@@ -7,6 +7,7 @@
     "npm:@astrojs/check@0.9.12": "0.9.12_typescript@6.0.3",
     "npm:@biomejs/biome@*": "2.6.6",
     "npm:@biomejs/biome@2.6.6": "2.6.6",
+    "npm:@bjorn3/browser_wasi_shim@0.4.2": "0.4.2",
     "npm:@jsr/std__csv@1.0.6": "1.0.6",
     "npm:@types/node@26.6.6": "26.6.6",
     "npm:@viz-js/viz@3.31.0": "3.31.0",
@@ -311,6 +312,9 @@
       "integrity": "sha512-B7KMG26A4I9lAuxwBGMmiVcjMGAeJRoz+pzFt9brRvOAsIrgOu8ptJld5rUWui6tM1uiJwxeJhhDPuAiZtxXdw==",
       "os": ["win32"],
       "cpu": ["x64"]
+    },
+    "@bjorn3/browser_wasi_shim@0.4.2": {
+      "integrity": "sha512-/iHkCVUG3VbcbmEHn5iIUpIrh7a7WPiwZ3sHy4HZKZzBdSadwdddYDZAII2zBvQYV0Lfi8naZngPCN7WPHI/hA=="
     },
     "@bruits/satteri-android-arm64@0.11.7": {
       "integrity": "sha512-ej+1rIKs+yb6/OtcIe1SO22OXjJV0qqUopl5VNZF8Sqc/Pj4m1DXoqBQsPxW5OUYYiDUymIy6hnnn8M78VYk2w==",
@@ -2849,6 +2853,7 @@
       "jsr:@std/csv@1.0.6",
       "npm:@astrojs/check@0.9.12",
       "npm:@biomejs/biome@2.6.6",
+      "npm:@bjorn3/browser_wasi_shim@0.4.2",
       "npm:@types/node@26.6.6",
       "npm:@viz-js/viz@3.31.0",
       "npm:astro@7.4.10",

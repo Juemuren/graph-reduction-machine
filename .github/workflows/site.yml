@@ -23,6 +23,27 @@ jobs:
           deno-version: v2.9.7
           cache: true
       - run: deno ci
+      - name: Install parser generators
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y bnfc alex happy
+      - name: Restore GHC WASM toolchain
+        id: wasm-toolchain
+        uses: actions/cache@v4
+        with:
+          path: ~/.ghc-wasm
+          key: ghc-wasm-9.12-${{ runner.os }}-${{ runner.arch }}-8079eb96bbc63823d99ad8acaff0765532625474
+      - name: Install GHC WASM toolchain
+        if: steps.wasm-toolchain.outputs.cache-hit != 'true'
+        run: |
+          mkdir "$RUNNER_TEMP/ghc-wasm-meta"
+          curl --fail --location --retry 5 https://codeload.github.com/haskell-wasm/ghc-wasm-meta/tar.gz/8079eb96bbc63823d99ad8acaff0765532625474 |
+            tar xz --strip-components=1 -C "$RUNNER_TEMP/ghc-wasm-meta"
+          FLAVOUR=9.12 bash "$RUNNER_TEMP/ghc-wasm-meta/setup.sh"
+      - name: Build playground WebAssembly
+        run: |
+          source ~/.ghc-wasm/env
+          deno task build:wasm
       - run: deno task verify
       - name: Upload site
         if: github.event_name == 'push'

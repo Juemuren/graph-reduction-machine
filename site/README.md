@@ -1,20 +1,11 @@
 # 图归约机演示站点
 
-这是项目的静态阅读站点，用于展示示例、参考文档和源代码。
+这是项目的静态站点，目前包含两个功能：
+
+1. 在线阅读示例、参考文档和源代码
+2. 在线编译核心 λ 与解释 SKI 图
 
 站点的完整计划见 [website.md](../docs/website.md)。
-
-## 文件依赖
-
-此处的目录均为仓库根目录：
-
-- 示例来自 `examples/`
-- 文档来自 `docs/`
-- 标准库实现来自 `lib/`
-- 语法定义来自 `grammar/`
-- 代码高亮来自 `vscode-extension/syntaxes/`
-
-站点不需要 Haskell 运行环境，也不维护这些内容的副本。
 
 ## 任务
 
@@ -50,7 +41,21 @@ deno task build
 
 该任务会将生成的站点文件和索引文件保存在 `dist/` 中。
 
-运行 `deno task dev` 不会生成搜索索引；本地验证搜索功能需要先完成构建，再运行 `deno task preview`。
+索引文件可以单独构建
+
+```sh
+deno task build:search
+```
+
+本地验证搜索功能需要先完成构建，再运行 `deno task preview`；运行 `deno task dev` 不会构建搜素索引。
+
+WASM 需要另外准备工具链，详见 [#演练](#演练) 。准备完成后运行
+
+```sh
+deno task build:wasm
+```
+
+WASM 文件会生成到 `public/playground/` 中。
 
 ### 测试
 
@@ -94,9 +99,35 @@ deno task verify
 
 ## 内容
 
+站点内容来自：
+
+- 示例来自 `examples/`
+- 文档来自 `docs/`
+- 标准库实现来自 `lib/`
+- 语法定义来自 `grammar/`
+- 代码高亮来自 `vscode-extension/syntaxes/`
+
 参考文档列表和示例顺序在 `src/config.ts` 中配置。
 
 新增示例目录只要包含 `README.md`，构建时就会生成对应页面。
+
+## 演练
+
+关于构建：
+
+1. 安装 <https://github.com/haskell-wasm/ghc-wasm-meta> 和 `bnfc` / `alex` / `happy`
+2. 运行 `deno task build:wasm`。
+
+关于会话：
+
+1. 演练的当前文件是运行入口，可以添加文件到同一会话中，以进行导入和导出
+2. 会话保存在当前页面内，打开示例会开始一个新的会话
+
+关于限制：
+
+1. 单次运行总时限为 10 秒，含加载运行时的时间
+2. 每个 WebAssembly 实例的线性内存上限为 256 MiB；GHC 堆上限为 128 MiB，栈上限为 32 MiB
+3. 会话源码总量上限为 1 MiB，单个命令的标准输出和标准错误各有 2 MiB 上限
 
 ## 样式
 

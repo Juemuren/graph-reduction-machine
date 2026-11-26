@@ -1,0 +1,268 @@
+---
+import Base from "../../layouts/Base.astro";
+import { stageLabels } from "../../lib/playground";
+import { sitePath } from "../../lib/urls";
+
+const encodings = ["church", "scott", "binary"];
+---
+
+<Base title="演练">
+  <div class="container">
+    <header class="page-head">
+      <h1>演练</h1>
+    </header>
+    <div class="workspace">
+      <section class="panel editor-panel" aria-labelledby="editor-heading">
+        <div class="panel-head">
+          <h2 id="editor-heading">源码</h2>
+          <a href={sitePath("/examples/")}>浏览示例</a>
+        </div>
+        <fieldset id="session">
+          <div class="file-controls">
+            <label for="files">当前文件</label>
+            <select id="files"></select>
+            <button class="button" id="remove-file" type="button">删除</button>
+          </div>
+          <textarea
+            id="source"
+            aria-label="当前文件源码"
+            spellcheck="false"
+            autocapitalize="off"
+            wrap="off"
+          ></textarea>
+          <form class="file-controls" id="add-file">
+            <label for="file-path">文件路径</label>
+            <input id="file-path" placeholder="例如 lib/helper.lambda" required>
+            <button class="button" type="submit">添加文件</button>
+          </form>
+          <p id="file-error" class="error" role="alert"></p>
+        </fieldset>
+      </section>
+
+      <section class="panel settings-panel" aria-labelledby="settings-heading">
+        <div class="panel-head">
+          <h2 id="settings-heading">运行设置</h2>
+        </div>
+        <form id="run-settings">
+          <label for="stage">运行阶段</label>
+          <select id="stage">
+            {Object.entries(stageLabels).map(([value, label]) => (
+              <option value={value}>{label}</option>
+            ))}
+          </select>
+          <fieldset id="compiler-options">
+            <legend>编译选项</legend>
+            <label for="reduction">λ 归约方式</label>
+            <select id="reduction">
+              <option value="none">关闭</option>
+              <option value="beta">β</option>
+              <option value="eta">η</option>
+              <option value="both">β + η</option>
+            </select>
+            <label for="encode-natural">自然数编码</label>
+            <select id="encode-natural">
+              {encodings.map((value) => <option>{value}</option>)}
+            </select>
+            <label for="encode-string">字符串编码</label>
+            <select id="encode-string">
+              {["church", "scott"].flatMap((list) =>
+                encodings.map((natural) => (
+                  <option
+                    selected={list === "church" && natural === "binary"}
+                  >{`${list}<${natural}>`}</option>
+                )),
+              )}
+            </select>
+          </fieldset>
+          <fieldset id="interpreter-options">
+            <legend>解释选项</legend>
+            <label for="steps">归约步数上限</label>
+            <input
+              id="steps"
+              type="number"
+              value="100000"
+              min="0"
+              max="2147483647"
+              step="1"
+              required
+            >
+            <div class="settings-group" id="decode-options">
+              <label for="decode">解码类型</label>
+              <input id="decode" list="decode-types" value="natural" required>
+              <datalist id="decode-types">
+                {[
+                  "natural",
+                  "scott-natural",
+                  "binary-natural",
+                  "boolean",
+                  "integer",
+                  "rational",
+                  "real",
+                  "string",
+                  "list<natural>",
+                  "scott-list<natural>",
+                  "pair<natural,boolean>",
+                ].map((value) => <option value={value} />)}
+              </datalist>
+              <div class="settings-group" id="precision-options" hidden>
+                <label for="precision">实数精度</label>
+                <input
+                  id="precision"
+                  type="number"
+                  value="0"
+                  min="0"
+                  max="2147483647"
+                  step="1"
+                  required
+                >
+              </div>
+            </div>
+          </fieldset>
+          <div class="run-actions">
+            <button class="button primary" id="run" type="submit">运行</button>
+            <button class="button" id="cancel" type="button" disabled>
+              取消
+            </button>
+          </div>
+        </form>
+      </section>
+
+      <section class="panel result-panel" aria-labelledby="result-heading">
+        <div class="panel-head">
+          <h2 id="result-heading">结果</h2>
+          <span id="step-count"></span>
+        </div>
+        <p id="run-status" role="status">尚未运行</p>
+        <pre class="source-code" id="output" hidden></pre>
+      </section>
+    </div>
+  </div>
+</Base>
+
+<script>
+import { startPlayground } from "../../lib/playground-ui";
+
+void startPlayground();
+</script>
+
+<style>
+.workspace {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(15rem, 19rem);
+  gap: 20px;
+  margin-bottom: 56px;
+  align-items: start;
+}
+.panel {
+  min-width: 0;
+  padding: 18px;
+  border: 1px solid var(--border);
+  border-radius: var(--card-radius);
+  background: var(--panel-bg);
+}
+.panel-head,
+.file-controls,
+.run-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
+}
+.panel-head {
+  justify-content: space-between;
+  margin-bottom: 16px;
+}
+.panel-head h2 {
+  margin: 0;
+  font-size: 1.15rem;
+}
+fieldset {
+  border: 0;
+  padding: 0;
+  margin: 0;
+  min-width: 0;
+}
+#run-settings,
+#run-settings fieldset:not([hidden]),
+.settings-group:not([hidden]) {
+  display: grid;
+  gap: 8px;
+}
+#run-settings fieldset {
+  margin-top: 8px;
+  padding-top: 7px;
+  border-top: 1px solid var(--border);
+}
+legend {
+  padding: 0 8px 0 0;
+  color: var(--muted-text);
+  font-size: 0.875rem;
+}
+label,
+#step-count {
+  font-size: 0.875rem;
+}
+#source,
+input,
+select {
+  border: 1px solid var(--border);
+  border-radius: 7px;
+  background: var(--page-bg);
+  color: var(--body-text);
+  padding: 8px 10px;
+  font: inherit;
+  min-width: 0;
+}
+#files,
+#file-path {
+  flex: 1 1 10rem;
+}
+#source {
+  display: block;
+  width: 100%;
+  min-height: 25rem;
+  margin: 12px 0;
+  resize: vertical;
+  background: var(--code-bg);
+  color: var(--code-text);
+  font:
+    0.95rem / 1.65 ui-monospace,
+    monospace;
+  tab-size: 2;
+}
+.run-actions {
+  margin-top: 8px;
+}
+button:disabled {
+  opacity: 0.55;
+  cursor: default;
+}
+.result-panel {
+  grid-column: 1 / -1;
+}
+#run-status,
+#file-error {
+  margin: 0;
+}
+#file-error:not(:empty) {
+  margin-top: 10px;
+}
+.error,
+#run-status[data-error="true"] {
+  color: var(--red);
+}
+#output {
+  max-height: 28rem;
+  overflow: auto;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+@media (max-width: 760px) {
+  .workspace {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  #source {
+    min-height: 16rem;
+  }
+}
+</style>
