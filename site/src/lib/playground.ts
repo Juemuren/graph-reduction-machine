@@ -34,7 +34,11 @@ export function sessionPath(input: string) {
   return parts.join("/");
 }
 
-export function exampleSession(entry: string, sources: Record<string, string>) {
+export function exampleSession(
+  entry: string,
+  sources: Record<string, string>,
+  exampleSlug?: string,
+) {
   const files = new Map<string, string>();
   function visit(file: string) {
     if (!Object.hasOwn(sources, file) || files.has(file)) return;
@@ -60,5 +64,11 @@ export function exampleSession(entry: string, sources: Record<string, string>) {
     }
   }
   visit(entry);
+  if (files.size && exampleSlug) {
+    const folder = `examples/${exampleSlug}/`;
+    for (const file of Object.keys(sources)) {
+      if (file.startsWith(folder)) visit(file);
+    }
+  }
   return files;
 }

@@ -1,7 +1,14 @@
 ---
 import { stageLabels } from "../../config";
 import Base from "../../layouts/Base.astro";
-import { sitePath } from "../../lib/urls";
+import { examples } from "../../lib/content";
+
+const runnableExamples = (await examples()).flatMap(
+  ({ slug, label, sources }) => {
+    const entry = sources.find((file) => /\.(lambda|ski)$/.test(file));
+    return entry ? [{ slug, label, entry: `${slug}/${entry}` }] : [];
+  },
+);
 
 const encodings = ["church", "scott", "binary"];
 ---
@@ -21,7 +28,14 @@ const encodings = ["church", "scott", "binary"];
             资源管理器
           </button>
           <span id="active-file" class="active-file">main.lambda</span>
-          <a class="examples-link" href={sitePath("/examples/")}>浏览示例</a>
+          <select id="load-example" aria-label="载入示例" disabled>
+            <option value="" selected disabled>载入示例</option>
+            {runnableExamples.map(({ slug, label, entry }) => (
+              <option value={entry} data-example={slug}>
+                {label}
+              </option>
+            ))}
+          </select>
         </div>
         <div class="toolbar-actions">
           <select id="stage" aria-label="运行阶段">
@@ -199,11 +213,9 @@ void startPlayground();
   text-overflow: ellipsis;
   white-space: nowrap;
 }
-.examples-link {
+#load-example {
   flex: none;
-  padding-inline: 4px;
-  font-size: 0.875rem;
-  white-space: nowrap;
+  max-width: 9rem;
 }
 .toolbar-actions {
   flex-shrink: 0;
@@ -461,7 +473,7 @@ select:hover {
   .toolbar-file {
     width: 100%;
   }
-  .examples-link {
+  #load-example {
     margin-inline-start: auto;
   }
   .toolbar-actions {

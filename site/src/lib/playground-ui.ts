@@ -17,6 +17,7 @@ export async function startPlayground() {
   const fileTree = element<HTMLUListElement>("files");
   const sidebar = element("file-sidebar");
   const toggleFiles = element<HTMLButtonElement>("toggle-files");
+  const loadExample = element<HTMLSelectElement>("load-example");
   const activeFile = element("active-file");
   const newFile = element<HTMLButtonElement>("new-file");
   const advanced = element("advanced-settings");
@@ -252,7 +253,7 @@ export async function startPlayground() {
     worker?.terminate();
     worker = undefined;
     clearTimeout(timer);
-    run.disabled = false;
+    run.disabled = sidebar.inert;
     cancel.hidden = true;
     setStatus(message, error);
   }
@@ -262,7 +263,7 @@ export async function startPlayground() {
   );
   runSettings.addEventListener("submit", (event) => {
     event.preventDefault();
-    if (worker) return;
+    if (worker || sidebar.inert) return;
     results.open = true;
     outputRevision++;
     output.hidden = true;
@@ -351,33 +352,58 @@ export async function startPlayground() {
     }
   });
 
-  const example = new URLSearchParams(location.search).get("example");
-  if (!example) return;
-  sidebar.inert = run.disabled = toggleFiles.disabled = true;
-  editor.updateOptions({ readOnly: true });
-  setStatus("正在载入示例");
-  try {
-    const response = await fetch(sitePath("/playground/examples.json"));
-    if (!response.ok) throw new Error(`HTTP ${response.status}`);
-    const entry = `examples/${example}`;
-    const imported = exampleSession(entry, await response.json());
-    if (!imported.size) throw new Error("找不到示例文件。");
-    editor.setModel(null);
-    for (const model of models.values()) model.dispose();
-    models.clear();
-    viewStates.clear();
-    files = imported;
-    stage.value = "interpret";
-    renderFiles();
-    selectFile(entry);
-    setStatus("示例已载入");
-  } catch (error) {
-    setStatus(
-      `示例载入失败 · ${error instanceof Error ? error.message : String(error)}`,
-      true,
-    );
-  } finally {
-    sidebar.inert = run.disabled = toggleFiles.disabled = false;
-    editor.updateOptions({ readOnly: false });
+  async function loadExampleSession(example: string, slug?: string) {
+    sidebar.inert =
+      run.disabled =
+      toggleFiles.disabled =
+      loadExample.disabled =
+        true;
+    editor.updateOptions({ readOnly: true });
+    if (!worker) setStatus("正在载入示例");
+    try {
+      const response = await fetch(sitePath("/playground/examples.json"));
+      if (!response.ok) throw new Error(`HTTP ${response.status}`);
+      const entry = `examples/${example}`;
+      const imported = exampleSession(entry, await response.json(), slug);
+      if (!imported.size) throw new Error("找不到示例文件。");
+
+      finish("示例已载入");
+      outputRevision++;
+      output.hidden = true;
+      output.textContent = "";
+      stepCount.textContent = "";
+      results.open = false;
+      pathInput.value = "";
+      showAddFile(false);
+      editor.setModel(null);
+      for (const model of models.values()) model.dispose();
+      models.clear();
+      viewStates.clear();
+      files = imported;
+      fileTree.replaceChildren();
+      stage.value = "interpret";
+      renderFiles();
+      selectFile(entry);
+    } catch (error) {
+      setStatus(
+        `示例载入失败 · ${error instanceof Error ? error.message : String(error)}`,
+        true,
+      );
+    } finally {
+      sidebar.inert = toggleFiles.disabled = loadExample.disabled = false;
+      run.disabled = Boolean(worker);
+      editor.updateOptions({ readOnly: false });
+    }
   }
+
+  loadExample.addEventListener("change", async () => {
+    const entry = loadExample.value;
+    const slug = loadExample.selectedOptions[0]?.dataset.example;
+    loadExample.value = "";
+    if (entry && slug) await loadExampleSession(entry, slug);
+  });
+
+  const example = new URLSearchParams(location.search).get("example");
+  if (example) await loadExampleSession(example);
+  else loadExample.disabled = false;
 }
