@@ -57,7 +57,7 @@ cabal test
 - `modules` 是核心 λ 的模块。格式为 `{ "文件名": "源码" }`
 - `stage` 是要进行到的阶段。可以为 `parse` / `expand` / `reduce` / `compile` / `interpret` / `decode`
 - `options`
-  - `options.enableReduce` 是编译器启用的归约类型。可以为 `beta` / `eta` / `both`
+  - `options.enableReduce` 是编译器启用的归约规则。可以为 `beta` / `eta` / `both`
   - `options.encodeNatural` 是编译器对自然数字面量的编码方式。具体的编码方式参见 [compiler.md#编译器选项](compiler.md#编译器选项)
   - `options.encodeString` 是编译器对字符串字面量的编码方式。具体的编码方式参见 [compiler.md#编译器选项](compiler.md#编译器选项)
   - `options.maxSteps` 是解释器的归约步数上限。为正整数

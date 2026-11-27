@@ -2,11 +2,11 @@
 
 项目涉及多种语法：
 
-| 语言                  | 语法定义                                  |
-| --------------------- | ----------------------------------------- |
-| 带扩展语法的核心 λ    | [CoreLambda.cf](../grammar/CoreLambda.cf) |
-| 定义展开后的纯 λ      | [PureLambda.cf](../grammar/PureLambda.cf) |
-| 图归约机输入的 SKI 图 | [Ski.cf](../grammar/Ski.cf)               |
+| 语言   | 语法定义                                  |
+| ------ | ----------------------------------------- |
+| 核心 λ | [CoreLambda.cf](../grammar/CoreLambda.cf) |
+| 纯 λ   | [PureLambda.cf](../grammar/PureLambda.cf) |
+| SKI 图 | [Ski.cf](../grammar/Ski.cf)               |
 
 ## 纯 λ
 
