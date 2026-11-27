@@ -103,7 +103,7 @@ invoke_integration_stage() (
                 "--encode-natural=$encode_natural" \
                 "--encode-string=$encode_string" \
                 --stop-after=reduce \
-                --enable-reduce=both
+                --reduce=both
             ;;
         compile)
             invoke_compiler "${input[@]}" -- \

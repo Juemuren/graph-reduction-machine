@@ -140,7 +140,7 @@ function Invoke-IntegrationStage {
                     "--encode-natural=$EncodeNatural",
                     "--encode-string=$EncodeString",
                     '--stop-after=reduce',
-                    '--enable-reduce=both'
+                    '--reduce=both'
                 )
             }
             'compile' {

@@ -110,13 +110,11 @@ export async function runPlayground(
       send({ stage: phase });
       const args = [
         "lambda-compiler",
+        `--stop-after=${phase}`,
+        `--reduce=${request.reduction}`,
         `--encode-natural=${request.natural}`,
         `--encode-string=${request.string}`,
       ];
-      if (phase === "expand" || phase === "reduce")
-        args.push(`--stop-after=${phase}`);
-      if (request.reduction !== "none")
-        args.push(`--enable-reduce=${request.reduction}`);
       const compiled = await command(
         await load("lambda-compiler"),
         [...args, `/${entry}`],

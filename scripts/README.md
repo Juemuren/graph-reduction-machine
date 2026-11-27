@@ -32,7 +32,7 @@
 使用示例：
 
 ```pwsh
-'@! ONE;' | Invoke-Compiler -- --stop-after=reduce --enable-reduce=both
+'@! ONE;' | Invoke-Compiler -- --stop-after=reduce --reduce=both
 Invoke-Compiler -Source '@! ONE;' -- --encode-natural=scott
 Invoke-Compiler -File "examples/e/factorial.lambda"
 ```
@@ -125,7 +125,7 @@ source ./scripts/functions.sh
 使用示例：
 
 ```sh
-echo '@! ONE;' | invoke_compiler -- --stop-after=reduce --enable-reduce=both
+echo '@! ONE;' | invoke_compiler -- --stop-after=reduce --reduce=both
 invoke_compiler -s '@! ONE;'
 invoke_compiler -f examples/e/factorial.lambda
 ```

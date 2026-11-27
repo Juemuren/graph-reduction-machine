@@ -291,7 +291,7 @@ echo "@! \z -> \s -> z;" | lambda-compiler > examples/ski/scott.ski
 验证 `S K K` 等价于 `I`
 
 ```sh
-echo "@! S K K;" | lambda-compiler --enable-reduce=beta > examples/ski/reduce-compile.ski
+echo "@! S K K;" | lambda-compiler --reduce=beta > examples/ski/reduce-compile.ski
 echo "@! S K K;" | lambda-compiler | ski-interpreter > examples/ski/compile-reduce.ski
 ```
 

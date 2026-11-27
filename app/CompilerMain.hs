@@ -60,8 +60,8 @@ parseArgs = go Nothing Nothing Nothing Nothing Nothing
   usage =
     unwords
       [ "usage: lambda-compiler"
-      , "[--stop-after=expand|reduce]"
-      , "[--enable-reduce=beta|eta|both]"
+      , "[--stop-after=expand|reduce|compile]"
+      , "[--reduce=none|beta|eta|both]"
       , "[--encode-natural=church|scott|binary]"
       , "[--encode-string=church<church|scott|binary>|scott<church|scott|binary>]"
       , "[FILE]"
@@ -77,9 +77,11 @@ parseArgs = go Nothing Nothing Nothing Nothing Nothing
       )
   go Nothing reduction natural string path ("--stop-after=expand" : rest) = go (Just Expand) reduction natural string path rest
   go Nothing reduction natural string path ("--stop-after=reduce" : rest) = go (Just Reduce) reduction natural string path rest
-  go mode Nothing natural string path ("--enable-reduce=beta" : rest) = go mode (Just BetaOnly) natural string path rest
-  go mode Nothing natural string path ("--enable-reduce=eta" : rest) = go mode (Just EtaOnly) natural string path rest
-  go mode Nothing natural string path ("--enable-reduce=both" : rest) = go mode (Just BetaEta) natural string path rest
+  go Nothing reduction natural string path ("--stop-after=compile" : rest) = go (Just Graph) reduction natural string path rest
+  go mode Nothing natural string path ("--reduce=none" : rest) = go mode (Just NoReduction) natural string path rest
+  go mode Nothing natural string path ("--reduce=beta" : rest) = go mode (Just BetaOnly) natural string path rest
+  go mode Nothing natural string path ("--reduce=eta" : rest) = go mode (Just EtaOnly) natural string path rest
+  go mode Nothing natural string path ("--reduce=both" : rest) = go mode (Just BetaEta) natural string path rest
   go mode reduction Nothing string path (value : rest)
     | Just name <- stripPrefix "--encode-natural=" value =
         maybe

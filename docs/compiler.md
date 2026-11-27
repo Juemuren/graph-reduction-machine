@@ -68,14 +68,16 @@
 
 在指定阶段后停止编译：
 
-- 使用 `--stop-after=expand` 参数时，在定义和字面量展开后停止，输出得到的纯 λ 表达式
-- 使用 `--stop-after=reduce` 参数时，在表达式归约后停止
+- 使用 `--stop-after=expand` 在定义和字面量展开后停止，输出得到的纯 λ 表达式
+- 使用 `--stop-after=reduce` 在表达式归约后停止
+- 使用 `--stop-after=compile` 在完整编译后停止，是默认选项
 
 指定启用的归约规则：
 
-- 使用 `--enable-reduce=beta` 启用 β 归约
-- 使用 `--enable-reduce=eta` 启用 η 归约
-- 使用 `--enable-reduce=both` 启用 β 归约和 η 归约
+- 使用 `--reduce=none` 禁用归约，是默认选项
+- 使用 `--reduce=beta` 启用 β 归约
+- 使用 `--reduce=eta` 启用 η 归约
+- 使用 `--reduce=both` 启用 β 归约和 η 归约
 
 指定字面量的编码：
 

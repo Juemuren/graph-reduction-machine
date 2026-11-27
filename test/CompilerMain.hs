@@ -93,7 +93,7 @@ runCase label (TestCase _ (Input language source modules) spec expected) = do
 compilerOptions :: String -> RunSpec -> [String]
 compilerOptions stage spec =
   ["--stop-after=reduce" | stage == "reduce"]
-    ++ maybe [] (\value -> ["--enable-reduce=" ++ value]) (runEnableReduce spec)
+    ++ maybe [] (\value -> ["--reduce=" ++ value]) (runEnableReduce spec)
     ++ maybe [] (\value -> ["--encode-natural=" ++ value]) (runEncodeNatural spec)
 
 runCompiler :: String -> [String] -> String -> IO String
