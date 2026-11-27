@@ -5,4 +5,10 @@ export default defineConfig({
   output: "static",
   trailingSlash: "ignore",
   build: { format: "directory" },
+  vite: {
+    build: {
+      // The minified playground entry, including Monaco, is about 3.36 MB.
+      chunkSizeWarningLimit: 5000,
+    },
+  },
 });

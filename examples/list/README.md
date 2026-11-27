@@ -127,7 +127,7 @@ $$
 \begin{cases}
   0 & l=[] \\
   x+\mathrm{sum}(xs) & l=x::xs
-\end{cases} \\
+\end{cases}
 $$
 
 对照右折叠的定义：
@@ -415,7 +415,7 @@ $$
 \begin{cases}
 0 & l=[] \\
 x+\mathrm{sum}(xs) & l=x::xs
-\end{cases} \\
+\end{cases}
 $$
 
 因此有：
