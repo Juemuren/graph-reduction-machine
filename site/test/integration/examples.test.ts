@@ -1,15 +1,17 @@
 import assert from "node:assert/strict";
 import { readFile, stat } from "node:fs/promises";
 import path from "node:path";
+import { exampleNames } from "../../src/config.ts";
 import { root } from "../../src/lib/repository.ts";
 import { base, exampleFiles, html, markdownPages, output } from "./helpers.ts";
 
-Deno.test("every example README has a linked, readable page", async () => {
-  const examples = await exampleFiles();
-  assert.ok(examples.length > 0);
+Deno.test("example index lists exactly the configured examples in order", async () => {
   const index = await html("examples/index.html");
-  for (const { slug } of examples) {
-    assert.ok(index.includes(`href="${base}/examples/${slug}/"`), slug);
+  const slugs = [...index.matchAll(/href="([^"]*\/examples\/([^"/]+)\/)"/g)]
+    .filter(([, href]) => href.startsWith(`${base}/examples/`))
+    .map(([, , slug]) => slug);
+  assert.deepEqual(slugs, exampleNames);
+  for (const slug of exampleNames) {
     assert.match(await html(`examples/${slug}/index.html`), /class="prose"/);
   }
 });

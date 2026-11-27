@@ -10,7 +10,7 @@ export const docNames = [
   "lib",
 ];
 
-// Known examples appear in this order; new examples follow by directory name.
+// Examples published on the site, in display order.
 export const exampleNames = [
   "lambda",
   "ski",

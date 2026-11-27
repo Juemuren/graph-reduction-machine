@@ -1,7 +1,7 @@
 import { readdir, readFile } from "node:fs/promises";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
-import { docNames } from "../../src/config.ts";
+import { docNames, exampleNames } from "../../src/config.ts";
 import { root } from "../../src/lib/repository.ts";
 
 export const dist = fileURLToPath(new URL("../../dist/", import.meta.url));
@@ -14,18 +14,13 @@ export interface ExampleFiles {
   files: string[];
 }
 
-export async function exampleFiles(): Promise<ExampleFiles[]> {
-  const entries = await readdir(path.join(root, "examples"), {
-    withFileTypes: true,
-  });
-  const directories = entries.filter((entry) => entry.isDirectory());
-  const contents = await Promise.all(
-    directories.map(async ({ name }) => ({
-      slug: name,
-      files: await readdir(path.join(root, "examples", name)),
+export function exampleFiles(): Promise<ExampleFiles[]> {
+  return Promise.all(
+    exampleNames.map(async (slug) => ({
+      slug,
+      files: await readdir(path.join(root, "examples", slug)),
     })),
   );
-  return contents.filter(({ files }) => files.includes("README.md"));
 }
 
 export async function markdownPages() {

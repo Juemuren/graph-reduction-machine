@@ -285,18 +285,13 @@ const scan = async (relative: string) =>
     .map((entry) => entry.name)
     .sort();
 
-export async function examples(): Promise<Example[]> {
-  const entries = await readdir(path.join(root, "examples"), {
-    withFileTypes: true,
-  });
-  const available = entries.filter((entry) => entry.isDirectory());
+export function examples(): Promise<Example[]> {
   return Promise.all(
-    available.map(async ({ name }) => {
-      const files = await scan(`examples/${name}`);
-      if (!files.includes("README.md")) return null;
+    exampleNames.map(async (slug) => {
+      const files = await scan(`examples/${slug}`);
       return {
-        slug: name,
-        label: titleOf(await readSource(`examples/${name}/README.md`)),
+        slug,
+        label: titleOf(await readSource(`examples/${slug}/README.md`)),
         files,
         sources: files.filter((file) => /\.(lambda|ski|dot|mmd)$/.test(file)),
         images: files.filter((file) => /\.(png|svg)$/.test(file)),
@@ -304,18 +299,6 @@ export async function examples(): Promise<Example[]> {
         compare: files.includes("compare.json"),
       };
     }),
-  ).then((items) =>
-    items
-      .filter((item): item is Example => item !== null)
-      .sort((a, b) => {
-        const position = (slug: string) => {
-          const index = exampleNames.indexOf(slug);
-          return index === -1 ? Number.MAX_SAFE_INTEGER : index;
-        };
-        return (
-          position(a.slug) - position(b.slug) || a.slug.localeCompare(b.slug)
-        );
-      }),
   );
 }
 
@@ -391,6 +374,9 @@ function rewriteLinks(sourcePath: string) {
           !docNames.includes(path.posix.basename(resolved, ".md"))
         )
           throw new Error(`文档尚未纳入站点: ${sourcePath} -> ${node.url}`);
+        const example = /^examples\/([^/]+)(?:\/|$)/.exec(resolved);
+        if (example && !exampleNames.includes(example[1]))
+          throw new Error(`示例尚未纳入站点: ${sourcePath} -> ${node.url}`);
         node.url =
           sitePath(routeFor(resolved)) +
           (query ? `?${query}` : "") +

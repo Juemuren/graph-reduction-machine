@@ -112,9 +112,10 @@ deno task verify
 - 语法定义来自 `grammar/`
 - 代码高亮来自 `vscode-extension/syntaxes/`
 
-参考文档列表和示例顺序在 `src/config.ts` 中配置。
+`src/config.ts` 中的 `docNames` 和 `exampleNames` 分别配置站点收录的文档和示例及其展示顺序：
 
-新增示例目录只要包含 `README.md`，构建时就会生成对应页面。
+- 添加新文档时，在 `docs/` 下创建 `*.md` 文件，然后将文件名加入 `docNames`
+- 添加新示例时，在 `examples/` 下创建含 `README.md` 的目录，然后将目录名加入 `exampleNames`
 
 ## 演练
 
