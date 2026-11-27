@@ -27,17 +27,6 @@ const lines = await highlightedLines(source, file.split(".").at(-1));
       <div class="source-toolbar">
         <span>源码 · {lines.length} 行</span>
         <div>
-          {relative.startsWith("examples/") &&
-            /\.(lambda|ski)$/.test(relative) && (
-              <a
-                class="button"
-                href={sitePath(
-                  `/playground/?${new URLSearchParams({ example: relative.slice("examples/".length) })}`,
-                )}
-              >
-                在演练中打开
-              </a>
-            )}
           <button class="button" id="copy-source" type="button">
             复制源码
           </button>

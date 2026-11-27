@@ -1,0 +1,45 @@
+{
+  "entry": "hello.lambda",
+  "presets": {
+    "hello.lambda": {
+      "stage": "decode",
+      "reduction": "none",
+      "natural": "church",
+      "string": "church<binary>",
+      "decode": "string",
+      "steps": 100000
+    },
+    "mirror.lambda": {
+      "stage": "decode",
+      "reduction": "none",
+      "natural": "church",
+      "string": "church<binary>",
+      "decode": "string",
+      "steps": 100000
+    },
+    "echo.lambda": {
+      "stage": "decode",
+      "reduction": "none",
+      "natural": "church",
+      "string": "church<binary>",
+      "decode": "string",
+      "steps": 100000
+    },
+    "separate.lambda": {
+      "stage": "decode",
+      "reduction": "none",
+      "natural": "church",
+      "string": "church<binary>",
+      "decode": "string",
+      "steps": 100000
+    },
+    "ansi.lambda": {
+      "stage": "decode",
+      "reduction": "none",
+      "natural": "binary",
+      "string": "church<binary>",
+      "decode": "string",
+      "steps": 100000
+    }
+  }
+}

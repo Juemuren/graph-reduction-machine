@@ -1,0 +1,9 @@
+{
+  "entry": "skk.ski",
+  "presets": {
+    "skk.ski": {
+      "stage": "interpret",
+      "steps": 100000
+    }
+  }
+}

@@ -4,12 +4,12 @@ import { sitePath } from "../urls";
 import { createSourceEditor, createSourceModel } from "./editor";
 import { connectLanguageService } from "./language";
 import {
-  exampleSession,
   type RunMessage,
   type RunRequest,
   type Stage,
   sessionPath,
 } from "./session";
+import { parsePreset, runOptions, supportsStage } from "./settings";
 
 export async function startPlayground() {
   const element = <T extends HTMLElement>(id: string) =>
@@ -19,6 +19,8 @@ export async function startPlayground() {
   const sidebar = element("file-sidebar");
   const toggleFiles = element<HTMLButtonElement>("toggle-files");
   const loadExample = element<HTMLSelectElement>("load-example");
+  const exampleHelp = element<HTMLAnchorElement>("example-help");
+  const applyPreset = element<HTMLButtonElement>("apply-preset");
   const activeFile = element("active-file");
   const newFile = element<HTMLButtonElement>("new-file");
   const advanced = element("advanced-settings");
@@ -36,6 +38,8 @@ export async function startPlayground() {
   const decode = element<HTMLInputElement>("decode");
   const compiler = element<HTMLFieldSetElement>("compiler-options");
   const reduction = element<HTMLSelectElement>("reduction");
+  const natural = element<HTMLSelectElement>("encode-natural");
+  const string = element<HTMLSelectElement>("encode-string");
   const interpreter = element<HTMLFieldSetElement>("interpreter-options");
   const precision = element<HTMLInputElement>("precision");
   const steps = element<HTMLInputElement>("steps");
@@ -48,6 +52,8 @@ export async function startPlayground() {
   let files = new Map([["main.lambda", "@! ADD 2 3;"]]);
   const models = new Map<string, ReturnType<typeof createSourceModel>>();
   const viewStates = new Map<string, ReturnType<typeof editor.saveViewState>>();
+  let exampleFolder = "";
+  let presets: Record<string, unknown> = {};
   let activePath = "main.lambda";
   const fileButtons = new Map<string, HTMLButtonElement>();
   let worker: Worker | undefined;
@@ -99,22 +105,17 @@ export async function startPlayground() {
   }
 
   function updateOptions() {
-    const lambda = activePath.endsWith(".lambda");
+    const options = runOptions(activePath, stage.value, decode.value.trim());
     for (const option of stage.options) {
-      option.disabled =
-        !lambda && ["expand", "reduce", "compile"].includes(option.value);
+      option.disabled = !supportsStage(activePath, option.value);
     }
-    if (stage.selectedOptions[0]?.disabled) stage.value = "interpret";
-    compiler.hidden = compiler.disabled = !lambda;
+    compiler.hidden = compiler.disabled = !options.compiler;
     element("reduction-options").hidden = reduction.disabled =
-      stage.value === "expand";
-    const interpreting =
-      stage.value === "interpret" || stage.value === "decode";
-    interpreter.hidden = interpreter.disabled = !interpreting;
-    const decoding = stage.value === "decode";
-    element("decode-options").hidden = decode.disabled = !decoding;
+      !options.reduction;
+    interpreter.hidden = interpreter.disabled = !options.interpreter;
+    element("decode-options").hidden = decode.disabled = !options.decode;
     element("precision-options").hidden = precision.disabled =
-      !decoding || decode.value.trim() !== "real";
+      !options.precision;
   }
 
   function renderFiles() {
@@ -285,6 +286,10 @@ export async function startPlayground() {
   runSettings.addEventListener("submit", (event) => {
     event.preventDefault();
     if (worker || sidebar.inert) return;
+    if (!supportsStage(activePath, stage.value)) {
+      setStatus("当前文件不支持所选运行阶段。", true);
+      return;
+    }
     results.open = true;
     outputRevision++;
     output.hidden = true;
@@ -306,8 +311,8 @@ export async function startPlayground() {
       files: Array.from(files),
       stage: stage.value as Stage,
       reduction: reduction.value,
-      natural: element<HTMLSelectElement>("encode-natural").value,
-      string: element<HTMLSelectElement>("encode-string").value,
+      natural: natural.value,
+      string: string.value,
       decode: decode.value.trim(),
       precision: precision.valueAsNumber,
       steps: steps.valueAsNumber,
@@ -373,20 +378,56 @@ export async function startPlayground() {
     }
   });
 
-  async function loadExampleSession(example: string, slug?: string) {
+  applyPreset.addEventListener("click", () => {
+    const file = activePath.startsWith(exampleFolder)
+      ? activePath.slice(exampleFolder.length)
+      : "";
+    if (!Object.hasOwn(presets, file)) {
+      setStatus("该文件没有示例预设");
+      return;
+    }
+    try {
+      const preset = parsePreset(activePath, presets[file]);
+      stage.value = preset.stage;
+      if (preset.reduction !== undefined) reduction.value = preset.reduction;
+      if (preset.natural !== undefined) natural.value = preset.natural;
+      if (preset.string !== undefined) string.value = preset.string;
+      if (preset.decode !== undefined) decode.value = preset.decode;
+      if (preset.precision !== undefined)
+        precision.valueAsNumber = preset.precision;
+      if (preset.steps !== undefined) steps.valueAsNumber = preset.steps;
+      updateOptions();
+      setStatus("已应用示例预设");
+    } catch (error) {
+      setStatus(
+        `示例预设无效 · ${error instanceof Error ? error.message : String(error)}`,
+        true,
+      );
+    }
+  });
+
+  async function loadExampleSession(example: string) {
     sidebar.inert =
       run.disabled =
       toggleFiles.disabled =
       loadExample.disabled =
+      applyPreset.disabled =
         true;
     editor.updateOptions({ readOnly: true });
     if (!worker) setStatus("正在载入示例");
     try {
       const response = await fetch(sitePath("/playground/examples.json"));
       if (!response.ok) throw new Error(`HTTP ${response.status}`);
-      const entry = `examples/${example}`;
-      const imported = exampleSession(entry, await response.json(), slug);
-      if (!imported.size) throw new Error("找不到示例文件。");
+      const groups: Record<
+        string,
+        {
+          entry: string;
+          files: [string, string][];
+          presets: Record<string, unknown>;
+        }
+      > = await response.json();
+      if (!Object.hasOwn(groups, example)) throw new Error("找不到示例。");
+      const group = groups[example];
 
       finish("示例已载入");
       outputRevision++;
@@ -400,29 +441,40 @@ export async function startPlayground() {
       for (const model of models.values()) model.dispose();
       models.clear();
       viewStates.clear();
-      files = imported;
+      files = new Map(group.files);
+      presets = group.presets;
+      exampleFolder = `examples/${example}/`;
+      exampleHelp.href = sitePath(`/${exampleFolder}`);
+      exampleHelp.hidden = applyPreset.hidden = false;
       languageChanged();
       fileTree.replaceChildren();
-      stage.value = "interpret";
       renderFiles();
-      selectFile(entry);
+      selectFile(group.entry);
+      const url = new URL(location.href);
+      if (url.searchParams.get("example") !== example) {
+        url.searchParams.set("example", example);
+        history.replaceState(history.state, "", url);
+      }
     } catch (error) {
       setStatus(
         `示例载入失败 · ${error instanceof Error ? error.message : String(error)}`,
         true,
       );
     } finally {
-      sidebar.inert = toggleFiles.disabled = loadExample.disabled = false;
+      sidebar.inert =
+        toggleFiles.disabled =
+        loadExample.disabled =
+        applyPreset.disabled =
+          false;
       run.disabled = Boolean(worker);
       editor.updateOptions({ readOnly: false });
     }
   }
 
   loadExample.addEventListener("change", async () => {
-    const entry = loadExample.value;
-    const slug = loadExample.selectedOptions[0]?.dataset.example;
+    const example = loadExample.value;
     loadExample.value = "";
-    if (entry && slug) await loadExampleSession(entry, slug);
+    if (example) await loadExampleSession(example);
   });
 
   const example = new URLSearchParams(location.search).get("example");

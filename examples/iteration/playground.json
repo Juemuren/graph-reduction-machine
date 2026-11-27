@@ -1,0 +1,45 @@
+{
+  "entry": "range.lambda",
+  "presets": {
+    "range.lambda": {
+      "stage": "decode",
+      "reduction": "none",
+      "natural": "church",
+      "string": "church<binary>",
+      "decode": "list<natural>",
+      "steps": 100000
+    },
+    "sum.lambda": {
+      "stage": "decode",
+      "reduction": "none",
+      "natural": "church",
+      "string": "church<binary>",
+      "decode": "natural",
+      "steps": 100000
+    },
+    "dot.lambda": {
+      "stage": "decode",
+      "reduction": "none",
+      "natural": "church",
+      "string": "church<binary>",
+      "decode": "natural",
+      "steps": 100000
+    },
+    "intersection.lambda": {
+      "stage": "decode",
+      "reduction": "none",
+      "natural": "church",
+      "string": "church<binary>",
+      "decode": "list<natural>",
+      "steps": 100000
+    },
+    "union.lambda": {
+      "stage": "decode",
+      "reduction": "none",
+      "natural": "church",
+      "string": "church<binary>",
+      "decode": "list<natural>",
+      "steps": 100000
+    }
+  }
+}

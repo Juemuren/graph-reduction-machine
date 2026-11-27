@@ -2,15 +2,17 @@
 import { stageLabels } from "../../config";
 import Base from "../../layouts/Base.astro";
 import { examples } from "../../lib/content";
+import {
+  encodings,
+  maxRunInteger,
+  reductions,
+  stringEncodings,
+} from "../../lib/playground/settings";
+import { sitePath } from "../../lib/urls";
 
-const runnableExamples = (await examples()).flatMap(
-  ({ slug, label, sources }) => {
-    const entry = sources.find((file) => /\.(lambda|ski)$/.test(file));
-    return entry ? [{ slug, label, entry: `${slug}/${entry}` }] : [];
-  },
+const runnableExamples = (await examples()).filter(({ files }) =>
+  files.includes("playground.json"),
 );
-
-const encodings = ["church", "scott", "binary"];
 ---
 
 <Base title="演练" fillViewport>
@@ -30,14 +32,24 @@ const encodings = ["church", "scott", "binary"];
           <span id="active-file" class="active-file">main.lambda</span>
           <select id="load-example" aria-label="载入示例" disabled>
             <option value="" selected disabled>载入示例</option>
-            {runnableExamples.map(({ slug, label, entry }) => (
-              <option value={entry} data-example={slug}>
-                {label}
-              </option>
+            {runnableExamples.map(({ slug, label }) => (
+              <option value={slug}>{label}</option>
             ))}
           </select>
         </div>
         <div class="toolbar-actions">
+          <a
+            class="button"
+            id="example-help"
+            href={sitePath("/examples/")}
+            target="_blank"
+            rel="noopener"
+            hidden
+            >打开示例说明</a
+          >
+          <button class="button" id="apply-preset" type="button" hidden>
+            应用示例预设
+          </button>
           <select id="stage" aria-label="运行阶段">
             {Object.entries(stageLabels).map(([value, label]) => (
               <option value={value}>{label}</option>
@@ -62,10 +74,11 @@ const encodings = ["church", "scott", "binary"];
           <div class="settings-group" id="reduction-options">
             <label for="reduction">归约规则</label>
             <select id="reduction">
-              <option value="none">无</option>
-              <option value="beta">β</option>
-              <option value="eta">η</option>
-              <option value="both">β + η</option>
+              {reductions.map((value, index) => (
+                <option value={value}>
+                  {["无", "β", "η", "β + η"][index]}
+                </option>
+              ))}
             </select>
           </div>
           <label for="encode-natural">自然数编码</label>
@@ -74,13 +87,9 @@ const encodings = ["church", "scott", "binary"];
           </select>
           <label for="encode-string">字符串编码</label>
           <select id="encode-string">
-            {["church", "scott"].flatMap((list) =>
-              encodings.map((natural) => (
-                <option
-                  selected={list === "church" && natural === "binary"}
-                >{`${list}<${natural}>`}</option>
-              )),
-            )}
+            {stringEncodings.map((value) => (
+              <option selected={value === "church<binary>"}>{value}</option>
+            ))}
           </select>
         </fieldset>
         <fieldset id="interpreter-options">
@@ -91,7 +100,7 @@ const encodings = ["church", "scott", "binary"];
             type="number"
             value="100000"
             min="0"
-            max="2147483647"
+            max={maxRunInteger}
             step="1"
             required
           >
@@ -120,7 +129,7 @@ const encodings = ["church", "scott", "binary"];
                 type="number"
                 value="0"
                 min="0"
-                max="2147483647"
+                max={maxRunInteger}
                 step="1"
                 required
               >
@@ -473,7 +482,12 @@ select:hover {
     max-height: 9rem;
   }
 }
-@media (max-width: 440px) {
+@media (max-width: 900px) {
+  .toolbar:has(#example-help:not([hidden])) {
+    flex-wrap: wrap;
+  }
+}
+@media (max-width: 640px) {
   .toolbar {
     flex-wrap: wrap;
   }

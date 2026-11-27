@@ -1,0 +1,41 @@
+{
+  "entry": "apply.lambda",
+  "presets": {
+    "apply.lambda": {
+      "stage": "reduce",
+      "reduction": "none",
+      "natural": "church",
+      "string": "church<binary>"
+    },
+    "apply-beta.lambda": {
+      "stage": "reduce",
+      "reduction": "beta",
+      "natural": "church",
+      "string": "church<binary>"
+    },
+    "apply-eta.lambda": {
+      "stage": "reduce",
+      "reduction": "eta",
+      "natural": "church",
+      "string": "church<binary>"
+    },
+    "simplify.lambda": {
+      "stage": "reduce",
+      "reduction": "none",
+      "natural": "church",
+      "string": "church<binary>"
+    },
+    "simplify-beta.lambda": {
+      "stage": "reduce",
+      "reduction": "beta",
+      "natural": "church",
+      "string": "church<binary>"
+    },
+    "simplify-eta.lambda": {
+      "stage": "reduce",
+      "reduction": "eta",
+      "natural": "church",
+      "string": "church<binary>"
+    }
+  }
+}

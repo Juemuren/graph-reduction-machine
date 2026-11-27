@@ -1,0 +1,21 @@
+{
+  "entry": "differential.lambda",
+  "presets": {
+    "differential.lambda": {
+      "stage": "decode",
+      "reduction": "none",
+      "natural": "church",
+      "string": "church<binary>",
+      "decode": "natural",
+      "steps": 100000
+    },
+    "integral.lambda": {
+      "stage": "decode",
+      "reduction": "none",
+      "natural": "church",
+      "string": "church<binary>",
+      "decode": "rational",
+      "steps": 100000
+    }
+  }
+}
