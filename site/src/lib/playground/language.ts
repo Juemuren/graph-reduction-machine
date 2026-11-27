@@ -1,12 +1,12 @@
 import * as monaco from "monaco-editor/esm/vs/editor/editor.api.js";
-import { inputLimit, runTimeoutMs } from "../config";
-import { sessionPath } from "./playground";
+import { inputLimit, runTimeoutMs } from "../../config";
+import { sitePath } from "../urls";
 import type {
   LanguageRequest,
   LanguageResults,
   SourceRange,
-} from "./playground-language-protocol";
-import { sitePath } from "./urls";
+} from "./language-protocol";
+import { sessionPath } from "./session";
 
 const { editor, languages } = monaco;
 
@@ -30,10 +30,9 @@ export function connectLanguageService(
 
   function execute(request: LanguageRequest): Promise<unknown> {
     return new Promise((resolve, reject) => {
-      worker ??= new Worker(
-        new URL("./playground-language.worker.ts", import.meta.url),
-        { type: "module" },
-      );
+      worker ??= new Worker(new URL("./language.worker.ts", import.meta.url), {
+        type: "module",
+      });
       const active = worker;
       function fail(message: string) {
         clearTimeout(timer);

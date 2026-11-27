@@ -7,8 +7,8 @@ import {
   PreopenDirectory,
   WASI,
 } from "@bjorn3/browser_wasi_shim";
-import { outputLimit } from "../config";
-import type { RunMessage, RunRequest, Stage } from "./playground";
+import { outputLimit } from "../../config";
+import type { RunMessage, RunRequest, Stage } from "./session";
 
 type Program = "lambda-compiler" | "ski-interpreter";
 type LoadProgram = (name: Program) => Promise<WebAssembly.Module>;

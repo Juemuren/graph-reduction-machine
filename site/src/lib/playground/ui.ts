@@ -1,15 +1,15 @@
-import { inputLimit, runTimeoutMs, stageLabels } from "../config";
-import { highlightedLines } from "./highlight";
+import { inputLimit, runTimeoutMs, stageLabels } from "../../config";
+import { highlightedLines } from "../highlight";
+import { sitePath } from "../urls";
+import { createSourceEditor, createSourceModel } from "./editor";
+import { connectLanguageService } from "./language";
 import {
   exampleSession,
   type RunMessage,
   type RunRequest,
   type Stage,
   sessionPath,
-} from "./playground";
-import { createSourceEditor, createSourceModel } from "./playground-editor";
-import { connectLanguageService } from "./playground-language";
-import { sitePath } from "./urls";
+} from "./session";
 
 export async function startPlayground() {
   const element = <T extends HTMLElement>(id: string) =>
@@ -317,7 +317,7 @@ export async function startPlayground() {
     setStatus(`正在运行 · ${stageLabels[phase]}`);
     try {
       const active = new Worker(
-        new URL("./playground.worker.ts", import.meta.url),
+        new URL("./runtime.worker.ts", import.meta.url),
         { type: "module" },
       );
       worker = active;

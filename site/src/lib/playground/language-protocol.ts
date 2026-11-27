@@ -1,4 +1,4 @@
-import { command } from "./playground-runtime";
+import { command } from "./runtime";
 
 export type SourceRange = [number, number, number, number];
 

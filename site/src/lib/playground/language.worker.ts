@@ -1,7 +1,4 @@
-import {
-  analyzeSource,
-  type LanguageRequest,
-} from "./playground-language-protocol";
+import { analyzeSource, type LanguageRequest } from "./language-protocol";
 
 let module: Promise<WebAssembly.Module> | undefined;
 

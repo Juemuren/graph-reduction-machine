@@ -40,17 +40,12 @@ deno task preview
 deno task build
 ```
 
-该任务会将生成的站点文件和索引文件保存在 `dist/` 中。
+该任务运行站点构建和搜索索引构建，生成的文件保存在 `dist/` 中
 
-索引文件可以单独构建
+- 站点可以用 `deno task build:astro` 单独构建
+- 搜素索引可以用 `deno task build:search` 单独构建。本地验证搜索功能需要先完成构建，再运行 `deno task preview`
 
-```sh
-deno task build:search
-```
-
-本地验证搜索功能需要先完成构建，再运行 `deno task preview`；运行 `deno task dev` 不会构建搜素索引。
-
-WASM 需要另外准备工具链，详见 [#演练](#演练) 。准备完成后运行
+WASM 需要另外准备工具链，详见 [#演练](#演练)。准备完成后运行
 
 ```sh
 deno task build:wasm
@@ -64,9 +59,18 @@ WASM 文件会生成到 `public/playground/` 中。
 deno task test
 ```
 
-该任务会读取 `dist/` 中的文件，检查生成页面的内容、链接和锚点。
+该任务运行 `test/unit/` 中的单元测试和 `test/integration/` 中的集成测试
 
-因此运行测试前需要先完成构建。
+- 单元测试直接验证模块行为
+- 集成测试需要读取 `dist/` 中的文件，以检查生成页面的内容、链接、锚点和索引。因此集成测试前需要先通过 `deno task build` 完成站点构建和搜索索引构建
+
+WASM 测试需要先通过 `deno task build:wasm` 完成 WASM 构建，再运行
+
+```sh
+deno task test:wasm
+```
+
+WASM 测试在 `test/wasm/` 中。
 
 ### 类型检查
 
@@ -113,6 +117,8 @@ deno task verify
 新增示例目录只要包含 `README.md`，构建时就会生成对应页面。
 
 ## 演练
+
+演练的会话、界面、编辑器、语言服务和运行时模块位于 `src/lib/playground/`，各 Web Worker 入口与对应模块放在同一目录。
 
 关于构建：
 

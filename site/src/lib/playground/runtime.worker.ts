@@ -1,5 +1,5 @@
-import type { RunRequest } from "./playground";
-import { runPlayground } from "./playground-runtime";
+import { runPlayground } from "./runtime";
+import type { RunRequest } from "./session";
 
 self.addEventListener(
   "message",

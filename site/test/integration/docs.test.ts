@@ -1,8 +1,8 @@
 import assert from "node:assert/strict";
 import { readdir } from "node:fs/promises";
 import path from "node:path";
-import { docNames } from "../src/config.ts";
-import { root } from "../src/lib/repository.ts";
+import { docNames } from "../../src/config.ts";
+import { root } from "../../src/lib/repository.ts";
 import { base, html, markdownPages } from "./helpers.ts";
 
 Deno.test("configured documents and library sources have pages", async () => {

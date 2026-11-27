@@ -33,8 +33,8 @@
     },
     "check:biome": "biome check . --fix",
     "check:deno": "deno fmt && deno lint",
-    "test": "deno test --allow-read --allow-env=SITE_BASE,VSCODE_TEXTMATE_DEBUG test/",
-    "test:wasm": "deno test --allow-read test/playground-wasm.ts test/language-service-wasm.ts",
+    "test": "deno test --allow-read --allow-env=SITE_BASE,VSCODE_TEXTMATE_DEBUG test/unit/ test/integration/",
+    "test:wasm": "deno test --allow-read test/wasm/",
     "verify": "deno task typecheck && deno task check && deno task build && deno task test"
   },
   "imports": {

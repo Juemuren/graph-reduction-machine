@@ -1,10 +1,10 @@
 import { readdir, readFile } from "node:fs/promises";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
-import { docNames } from "../src/config.ts";
-import { root } from "../src/lib/repository.ts";
+import { docNames } from "../../src/config.ts";
+import { root } from "../../src/lib/repository.ts";
 
-export const dist = fileURLToPath(new URL("../dist/", import.meta.url));
+export const dist = fileURLToPath(new URL("../../dist/", import.meta.url));
 export const base = (Deno.env.get("SITE_BASE") ?? "/").replace(/\/$/, "");
 export const output = (relative: string) => path.join(dist, relative);
 export const html = (relative: string) => readFile(output(relative), "utf8");

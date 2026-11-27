@@ -4,15 +4,15 @@ import {
   analyzeSource,
   type LanguageRequest,
   type LanguageResults,
-} from "../src/lib/playground-language-protocol.ts";
+} from "../../src/lib/playground/language-protocol.ts";
 
 const module = readFile(
-  new URL("../public/playground/language-service.wasm", import.meta.url),
+  new URL("../../public/playground/language-service.wasm", import.meta.url),
 ).then((bytes) => WebAssembly.compile(bytes));
 
 function fixture(name: string) {
   return readFile(
-    new URL(`../../test/cases/lsp/${name}`, import.meta.url),
+    new URL(`../../../test/cases/lsp/${name}`, import.meta.url),
     "utf8",
   );
 }

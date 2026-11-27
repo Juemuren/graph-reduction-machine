@@ -1,7 +1,10 @@
 import assert from "node:assert/strict";
 import { readFile } from "node:fs/promises";
-import type { RunMessage, RunRequest } from "../src/lib/playground.ts";
-import { runPlayground } from "../src/lib/playground-runtime.ts";
+import type {
+  RunMessage,
+  RunRequest,
+} from "../../src/lib/playground/session.ts";
+import { runPlayground } from "../../src/lib/playground/runtime.ts";
 
 const defaults: RunRequest = {
   entry: "main.lambda",
@@ -29,7 +32,7 @@ Deno.test("Playground WASM resolves a relative import and a standard-library bui
     ],
   }, async (program) => {
     const file = new URL(
-      `../public/playground/${program}.wasm`,
+      `../../public/playground/${program}.wasm`,
       import.meta.url,
     );
     return WebAssembly.compile(await readFile(file));

@@ -1,4 +1,4 @@
-import type { Stage } from "./lib/playground";
+import type { Stage } from "./lib/playground/session";
 
 // Documents shown in /docs/ and accepted as internal Markdown links.
 export const docNames = [

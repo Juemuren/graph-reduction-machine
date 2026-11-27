@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import { stat } from "node:fs/promises";
-import { docNames } from "../src/config.ts";
+import { docNames } from "../../src/config.ts";
 import { base, html, output } from "./helpers.ts";
 
 Deno.test("Pagefind indexes Chinese content and loads only on the search page", async () => {

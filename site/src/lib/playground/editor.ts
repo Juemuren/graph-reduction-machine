@@ -14,14 +14,14 @@ import "monaco-editor/esm/vs/editor/contrib/suggest/browser/suggestController.js
 import "monaco-editor/esm/vs/editor/standalone/browser/quickAccess/standaloneCommandsQuickAccess.js";
 import "monaco-editor/esm/vs/editor/standalone/browser/quickAccess/standaloneGotoSymbolQuickAccess.js";
 import "monaco-editor/esm/vs/editor/standalone/browser/referenceSearch/standaloneReferenceSearch.js";
-import { createSourceHighlighter, highlightThemes } from "./highlight";
+import { createSourceHighlighter, highlightThemes } from "../highlight";
 
 const { editor, languages } = monaco;
 
 export async function createSourceEditor(container: HTMLElement) {
   globalThis.MonacoEnvironment = {
     getWorker: () =>
-      new Worker(new URL("./playground-editor.worker.ts", import.meta.url), {
+      new Worker(new URL("./editor.worker.ts", import.meta.url), {
         type: "module",
       }),
   };

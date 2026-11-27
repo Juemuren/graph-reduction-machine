@@ -1,5 +1,5 @@
 import assert from "node:assert/strict";
-import { highlightedLines } from "../src/lib/highlight.ts";
+import { highlightedLines } from "../../src/lib/highlight.ts";
 
 Deno.test("playground highlights Lambda and SKI with distinct token colors", async () => {
   for (
