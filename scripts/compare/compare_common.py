@@ -10,7 +10,7 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import Generic, Literal, TypeVar
 
-ROOT = Path(__file__).resolve().parents[1]
+ROOT = Path(__file__).resolve().parents[2]
 COMPILER = "lambda-compiler"
 INTERPRETER = "ski-interpreter"
 LIMIT_ERROR = "reduction exceeded step limit"

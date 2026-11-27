@@ -8,10 +8,10 @@ Haskell 代码使用 fourmolu 进行格式化
 cabal run fourmolu -- -i $(git ls-files '*.hs')
 ```
 
-BNFC 文法规则中的 `::=` 可用脚本 [align-bnfc.py](../scripts/align-bnfc.py) 对齐
+BNFC 文法规则中的 `::=` 可用脚本 [align-bnfc.py](../scripts/grammar/align-bnfc.py) 对齐
 
 ```sh
-python scripts/align-bnfc.py -g grammar/CoreLambda.cf
+python scripts/grammar/align-bnfc.py -g grammar/CoreLambda.cf
 ```
 
 ## 静态检查

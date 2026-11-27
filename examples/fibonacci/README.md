@@ -38,7 +38,7 @@ $$
 在仓库根目录运行：
 
 ```sh
-uv run scripts/compare_index.py examples/fibonacci/compare.json
+uv run scripts/compare/compare_index.py examples/fibonacci/compare.json
 ```
 
 得到的表格为：

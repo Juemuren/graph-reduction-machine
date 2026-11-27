@@ -41,7 +41,7 @@ $$
 在仓库根目录运行：
 
 ```sh
-uv run scripts/compare_real.py examples/e/compare.json
+uv run scripts/compare/compare_real.py examples/e/compare.json
 ```
 
 得到的表格为：

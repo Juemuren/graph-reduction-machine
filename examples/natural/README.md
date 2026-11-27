@@ -716,7 +716,7 @@ $$
 在仓库根目录运行：
 
 ```sh
-uv run scripts/compare_binary.py examples/encoding/compare.json
+uv run scripts/compare/compare_binary.py examples/encoding/compare.json
 ```
 
 每种运算生成两个表格和两张图片，分别为对角线采样和网格采样。

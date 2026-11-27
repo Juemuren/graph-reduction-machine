@@ -572,7 +572,7 @@ insert = Y insertStep;
 在仓库根目录运行：
 
 ```sh
-uv run scripts/compare_list.py examples/list/compare.json
+uv run scripts/compare/compare_list.py examples/list/compare.json
 ```
 
 以下比较均使用 Binary 自然数作为列表元素和列表索引。
