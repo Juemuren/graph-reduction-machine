@@ -1,0 +1,18 @@
+@< "./iterator.lambda" (iter, next);
+@< "./range.lambda" (range);
+
+remaining = Y (\go -> \state ->
+    next state NIL (\item -> \rest -> CONS item (go rest)));
+
+unionIter = Y (\go -> \left -> \right ->
+    next left (remaining right) (\x -> \leftRest ->
+        next right (CONS x (remaining leftRest)) (\y -> \rightRest ->
+            IF (LT x y)
+                (CONS x (go leftRest right))
+                (IF (LT y x)
+                    (CONS y (go left rightRest))
+                    (CONS x (go leftRest rightRest))))));
+
+@> union = \a -> \b -> unionIter (iter a) (iter b);
+
+@! union (range 2 5) (CONS 1 (CONS 4 (CONS 7 NIL)));

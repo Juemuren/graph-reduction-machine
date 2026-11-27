@@ -1,0 +1,2 @@
+@> iter = FOLDR CONS_S NIL_S;
+@> next = CASE_S;

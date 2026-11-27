@@ -1,0 +1,8 @@
+@> range = \start -> \end ->
+    Y (\go -> \current ->
+        IF (LEQ current end)
+            (CONS current (go (SUCC current)))
+            NIL)
+    start;
+
+@! range 5 10;

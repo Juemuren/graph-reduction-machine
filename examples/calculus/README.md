@@ -52,7 +52,7 @@ $$
 f'(5) = 13
 $$
 
-因此在仓库根目录运行：
+在仓库根目录运行：
 
 ```sh
 lambda-compiler examples/calculus/differential.lambda | ski-interpreter --decode=natural
@@ -100,7 +100,7 @@ $$
 F(2)=20/3
 $$
 
-因此在仓库根目录运行：
+在仓库根目录运行：
 
 ```sh
 lambda-compiler examples/calculus/integral.lambda | ski-interpreter --decode=rational

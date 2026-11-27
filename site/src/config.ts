@@ -19,6 +19,7 @@ export const exampleNames = [
   "string",
   "real",
   "fibonacci",
+  "iteration",
   "pi",
   "e",
   "calculus",

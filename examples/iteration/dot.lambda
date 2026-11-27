@@ -1,0 +1,11 @@
+@< "./iterator.lambda" (iter, next);
+@< "./range.lambda" (range);
+
+dotIter = Y (\go -> \left -> \right ->
+    next left ZERO (\x -> \leftRest ->
+        next right ZERO (\y -> \rightRest ->
+            ADD (MUL x y) (go leftRest rightRest))));
+
+@> dot = \a -> \b -> dotIter (iter a) (iter b);
+
+@! dot (range 2 4) (range 5 10);

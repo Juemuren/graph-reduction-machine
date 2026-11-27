@@ -1,0 +1,15 @@
+@< "./iterator.lambda" (iter, next);
+@< "./range.lambda" (range);
+
+intersectionIter = Y (\go -> \left -> \right ->
+    next left NIL (\x -> \leftRest ->
+        next right NIL (\y -> \rightRest ->
+            IF (LT x y)
+                (go leftRest right)
+                (IF (LT y x)
+                    (go left rightRest)
+                    (CONS x (go leftRest rightRest))))));
+
+@> intersection = \a -> \b -> intersectionIter (iter a) (iter b);
+
+@! intersection (range 2 5) (CONS 1 (CONS 4 (CONS 7 NIL)));
