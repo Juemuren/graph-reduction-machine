@@ -30,26 +30,31 @@ const runnableExamples = (await examples()).filter(({ files }) =>
             资源管理器
           </button>
           <span id="active-file" class="active-file">main.lambda</span>
+        </div>
+        <div class="toolbar-example" role="group" aria-label="示例">
           <select id="load-example" aria-label="载入示例" disabled>
             <option value="" selected disabled>载入示例</option>
             {runnableExamples.map(({ slug, label }) => (
               <option value={slug}>{label}</option>
             ))}
           </select>
+          <div class="example-actions">
+            <a
+              class="button"
+              id="example-help"
+              href={sitePath("/examples/")}
+              target="_blank"
+              rel="noopener"
+              hidden
+            >
+              查看示例说明
+            </a>
+            <button class="button" id="apply-preset" type="button" hidden>
+              应用示例预设
+            </button>
+          </div>
         </div>
-        <div class="toolbar-actions">
-          <a
-            class="button"
-            id="example-help"
-            href={sitePath("/examples/")}
-            target="_blank"
-            rel="noopener"
-            hidden
-            >打开示例说明</a
-          >
-          <button class="button" id="apply-preset" type="button" hidden>
-            应用示例预设
-          </button>
+        <div class="run-actions">
           <select id="stage" aria-label="运行阶段">
             {Object.entries(stageLabels).map(([value, label]) => (
               <option value={value}>{label}</option>
@@ -201,16 +206,22 @@ void startPlayground();
 .workspace [hidden] {
   display: none;
 }
-.toolbar,
+#run-settings {
+  container-type: inline-size;
+}
 .toolbar-file,
-.toolbar-actions,
+.toolbar-example,
+.example-actions,
+.run-actions,
 .file-sidebar-head {
   display: flex;
   align-items: center;
   gap: 8px;
 }
 .toolbar {
-  justify-content: space-between;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+  align-items: center;
   gap: 12px;
   padding: 10px 12px;
   background: var(--panel-bg);
@@ -226,11 +237,13 @@ void startPlayground();
   white-space: nowrap;
 }
 #load-example {
-  flex: none;
   max-width: 9rem;
 }
-.toolbar-actions {
-  flex-shrink: 0;
+.example-actions:not(:has(> :not([hidden]))) {
+  display: none;
+}
+.run-actions {
+  justify-self: end;
 }
 .workspace .button {
   padding: 5px 10px;
@@ -482,25 +495,19 @@ select:hover {
     max-height: 9rem;
   }
 }
-@media (max-width: 900px) {
-  .toolbar:has(#example-help:not([hidden])) {
-    flex-wrap: wrap;
-  }
-}
-@media (max-width: 640px) {
+@container (max-width: 60rem) {
   .toolbar {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .example-actions {
+    flex-shrink: 0;
+  }
+  .run-actions {
+    justify-self: stretch;
     flex-wrap: wrap;
   }
-  .toolbar-file {
-    width: 100%;
-  }
-  #load-example {
-    margin-inline-start: auto;
-  }
-  .toolbar-actions {
-    width: 100%;
-    flex-wrap: wrap;
-  }
+  .active-file,
+  .example-actions,
   #run {
     margin-inline-start: auto;
   }
