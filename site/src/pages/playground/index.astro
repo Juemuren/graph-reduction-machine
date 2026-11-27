@@ -59,13 +59,15 @@ const encodings = ["church", "scott", "binary"];
       <div class="settings-grid" id="advanced-settings" hidden>
         <fieldset id="compiler-options">
           <legend>编译选项</legend>
-          <label for="reduction">启用归约</label>
-          <select id="reduction">
-            <option value="none">关闭</option>
-            <option value="beta">β</option>
-            <option value="eta">η</option>
-            <option value="both">β + η</option>
-          </select>
+          <div class="settings-group" id="reduction-options">
+            <label for="reduction">归约规则</label>
+            <select id="reduction">
+              <option value="none">无</option>
+              <option value="beta">β</option>
+              <option value="eta">η</option>
+              <option value="both">β + η</option>
+            </select>
+          </div>
           <label for="encode-natural">自然数编码</label>
           <select id="encode-natural">
             {encodings.map((value) => <option>{value}</option>)}

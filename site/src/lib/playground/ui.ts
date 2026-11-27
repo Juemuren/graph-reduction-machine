@@ -35,6 +35,7 @@ export async function startPlayground() {
   const stage = element<HTMLSelectElement>("stage");
   const decode = element<HTMLInputElement>("decode");
   const compiler = element<HTMLFieldSetElement>("compiler-options");
+  const reduction = element<HTMLSelectElement>("reduction");
   const interpreter = element<HTMLFieldSetElement>("interpreter-options");
   const precision = element<HTMLInputElement>("precision");
   const steps = element<HTMLInputElement>("steps");
@@ -105,6 +106,8 @@ export async function startPlayground() {
     }
     if (stage.selectedOptions[0]?.disabled) stage.value = "interpret";
     compiler.hidden = compiler.disabled = !lambda;
+    element("reduction-options").hidden = reduction.disabled =
+      stage.value === "expand";
     const interpreting =
       stage.value === "interpret" || stage.value === "decode";
     interpreter.hidden = interpreter.disabled = !interpreting;
@@ -302,7 +305,7 @@ export async function startPlayground() {
       entry: activePath,
       files: Array.from(files),
       stage: stage.value as Stage,
-      reduction: element<HTMLSelectElement>("reduction").value,
+      reduction: reduction.value,
       natural: element<HTMLSelectElement>("encode-natural").value,
       string: element<HTMLSelectElement>("encode-string").value,
       decode: decode.value.trim(),
