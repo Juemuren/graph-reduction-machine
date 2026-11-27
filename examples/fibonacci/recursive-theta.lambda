@@ -2,3 +2,6 @@
 @< "./recursive.lambda" (fibRecur);
 
 @> fib = THETA fibRecur;
+
+# Example entry point.
+# @! fib 8;

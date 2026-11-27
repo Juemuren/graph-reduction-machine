@@ -1,3 +1,32 @@
 {
-  "entry": "factorial.lambda"
+  "entry": "factorial.lambda",
+  "presets": {
+    "binomial-lower.lambda": {
+      "stage": "decode",
+      "reduction": "none",
+      "natural": "church",
+      "string": "church<binary>",
+      "decode": "real",
+      "precision": 3,
+      "steps": 1000000
+    },
+    "binomial-upper.lambda": {
+      "stage": "decode",
+      "reduction": "none",
+      "natural": "church",
+      "string": "church<binary>",
+      "decode": "real",
+      "precision": 3,
+      "steps": 1000000
+    },
+    "factorial.lambda": {
+      "stage": "decode",
+      "reduction": "none",
+      "natural": "church",
+      "string": "church<binary>",
+      "decode": "real",
+      "precision": 3,
+      "steps": 1000000
+    }
+  }
 }

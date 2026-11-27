@@ -63,3 +63,6 @@ divRecur = \r -> \m -> \n ->
             (succ (r (sub m n) n)));
 @> div = Y divRecur;
 
+
+# Example entry point.
+# @! add 2 3;

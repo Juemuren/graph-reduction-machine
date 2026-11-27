@@ -1,3 +1,32 @@
 {
-  "entry": "arctan.lambda"
+  "entry": "arctan.lambda",
+  "presets": {
+    "arctan.lambda": {
+      "stage": "decode",
+      "reduction": "none",
+      "natural": "church",
+      "string": "church<binary>",
+      "decode": "real",
+      "precision": 0,
+      "steps": 1000000
+    },
+    "leibniz.lambda": {
+      "stage": "decode",
+      "reduction": "none",
+      "natural": "church",
+      "string": "church<binary>",
+      "decode": "real",
+      "precision": 3,
+      "steps": 1000000
+    },
+    "polygon.lambda": {
+      "stage": "decode",
+      "reduction": "none",
+      "natural": "church",
+      "string": "church<binary>",
+      "decode": "real",
+      "precision": 1,
+      "steps": 1000000
+    }
+  }
 }

@@ -1,3 +1,21 @@
 {
-  "entry": "church.lambda"
+  "entry": "church.lambda",
+  "presets": {
+    "church.lambda": {
+      "stage": "decode",
+      "reduction": "none",
+      "natural": "binary",
+      "string": "church<binary>",
+      "decode": "binary-natural",
+      "steps": 100000
+    },
+    "scott.lambda": {
+      "stage": "decode",
+      "reduction": "none",
+      "natural": "binary",
+      "string": "church<binary>",
+      "decode": "binary-natural",
+      "steps": 100000
+    }
+  }
 }

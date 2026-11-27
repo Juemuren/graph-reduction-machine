@@ -14,3 +14,6 @@ init = PAIR ZERO ONE;
     step
     init
 );
+
+# Example entry point.
+# @! fib 8;

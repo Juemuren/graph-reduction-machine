@@ -1,7 +1,43 @@
 {
   "entry": "skk.ski",
   "presets": {
+    "church.ski": {
+      "stage": "interpret",
+      "steps": 100000
+    },
+    "compile-reduce.ski": {
+      "stage": "interpret",
+      "steps": 100000
+    },
+    "i.ski": {
+      "stage": "interpret",
+      "steps": 100000
+    },
+    "k.ski": {
+      "stage": "interpret",
+      "steps": 100000
+    },
+    "merge.ski": {
+      "stage": "interpret",
+      "steps": 100000
+    },
+    "reduce-compile.ski": {
+      "stage": "interpret",
+      "steps": 100000
+    },
+    "s.ski": {
+      "stage": "interpret",
+      "steps": 100000
+    },
+    "scott.ski": {
+      "stage": "interpret",
+      "steps": 100000
+    },
     "skk.ski": {
+      "stage": "interpret",
+      "steps": 100000
+    },
+    "unfold.ski": {
       "stage": "interpret",
       "steps": 100000
     }

@@ -20,3 +20,6 @@ divInit = \m -> PAIR zero m;
     IF (isZero n)
         zero
         (FST (m (divTrans n) (divInit m)));
+
+# Example entry point.
+# @! add 2 3;

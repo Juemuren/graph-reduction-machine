@@ -2,3 +2,6 @@
 @< "./recursive.lambda" (fibRecur);
 
 @> fib = Z fibRecur;
+
+# Example entry point.
+# @! fib 8;

@@ -29,3 +29,6 @@ insertStep = \h -> \state ->
 insertInit = PAIR nil (\x -> cons x nil);
 insert = \x -> \l -> SND (l insertStep insertInit) x;
 @> sort = \l -> l insert nil;
+
+# Example entry point.
+# @! sum (cons 2 (cons 3 nil));

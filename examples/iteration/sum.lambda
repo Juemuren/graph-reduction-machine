@@ -1,6 +1,6 @@
 @< "./range.lambda" (range);
 
-sum = \start -> \end ->
+@> sum = \start -> \end ->
     FOLDL ADD ZERO (range start end);
 
 @! sum 5 10;

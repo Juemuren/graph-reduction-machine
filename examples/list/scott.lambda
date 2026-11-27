@@ -48,3 +48,6 @@ sortStep = \r -> \l ->
             insert h (r t))
         nil;
 @> sort = Y sortStep;
+
+# Example entry point.
+# @! sum (cons 2 (cons 3 nil));

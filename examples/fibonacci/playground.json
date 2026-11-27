@@ -1,3 +1,37 @@
 {
-  "entry": "loop.lambda"
+  "entry": "loop.lambda",
+  "presets": {
+    "loop.lambda": {
+      "stage": "decode",
+      "reduction": "none",
+      "natural": "church",
+      "string": "church<binary>",
+      "decode": "natural",
+      "steps": 100000
+    },
+    "recursive-theta.lambda": {
+      "stage": "decode",
+      "reduction": "none",
+      "natural": "church",
+      "string": "church<binary>",
+      "decode": "natural",
+      "steps": 100000
+    },
+    "recursive-y.lambda": {
+      "stage": "decode",
+      "reduction": "none",
+      "natural": "church",
+      "string": "church<binary>",
+      "decode": "natural",
+      "steps": 100000
+    },
+    "recursive-z.lambda": {
+      "stage": "decode",
+      "reduction": "none",
+      "natural": "church",
+      "string": "church<binary>",
+      "decode": "natural",
+      "steps": 100000
+    }
+  }
 }

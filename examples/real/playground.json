@@ -1,3 +1,41 @@
 {
-  "entry": "binary.lambda"
+  "entry": "binary.lambda",
+  "presets": {
+    "binary.lambda": {
+      "stage": "decode",
+      "reduction": "none",
+      "natural": "church",
+      "string": "church<binary>",
+      "decode": "real",
+      "precision": 2,
+      "steps": 1000000
+    },
+    "newton.lambda": {
+      "stage": "decode",
+      "reduction": "none",
+      "natural": "church",
+      "string": "church<binary>",
+      "decode": "real",
+      "precision": 2,
+      "steps": 1000000
+    },
+    "pell.lambda": {
+      "stage": "decode",
+      "reduction": "none",
+      "natural": "church",
+      "string": "church<binary>",
+      "decode": "real",
+      "precision": 2,
+      "steps": 1000000
+    },
+    "taylor.lambda": {
+      "stage": "decode",
+      "reduction": "none",
+      "natural": "church",
+      "string": "church<binary>",
+      "decode": "real",
+      "precision": 2,
+      "steps": 1000000
+    }
+  }
 }
