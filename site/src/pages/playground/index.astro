@@ -31,7 +31,7 @@ const runnableExamples = (await examples()).filter(({ files }) =>
           </button>
           <span id="active-file" class="active-file">main.lambda</span>
         </div>
-        <div class="toolbar-example" role="group" aria-label="示例">
+        <fieldset class="toolbar-example" aria-label="示例">
           <select id="load-example" aria-label="载入示例" disabled>
             <option value="" selected disabled>载入示例</option>
             {runnableExamples.map(({ slug, label }) => (
@@ -53,7 +53,7 @@ const runnableExamples = (await examples()).filter(({ files }) =>
               应用示例预设
             </button>
           </div>
-        </div>
+        </fieldset>
         <div class="run-actions">
           <select id="stage" aria-label="运行阶段">
             {Object.entries(stageLabels).map(([value, label]) => (
@@ -228,6 +228,11 @@ void startPlayground();
 }
 .toolbar-file {
   min-width: 0;
+}
+.toolbar-example {
+  margin: 0;
+  padding: 0;
+  border: 0;
 }
 .active-file {
   overflow: hidden;
