@@ -46,7 +46,7 @@ parseDecodeType source = do
   if all isSpace rest then Just value else Nothing
  where
   parseType input
-    | Just rest <- stripPrefix "string<" input = do
+    | Just rest <- stripPrefix "string:" input = do
         (scott, afterList) <- case stripPrefix "church<" rest of
           Just value -> Just (False, value)
           Nothing -> (True,) <$> stripPrefix "scott<" rest
@@ -58,9 +58,8 @@ parseDecodeType source = do
             ("scott", remaining) -> Just (ScottNaturalType, remaining)
             ("binary", remaining) -> Just (BinaryNaturalType, remaining)
             _ -> Nothing
-        afterInner <- stripPrefix ">" (dropWhile isSpace afterCharacter)
-        afterOuter <- stripPrefix ">" (dropWhile isSpace afterInner)
-        pure (EncodedStringType scott characterType, afterOuter)
+        afterClose <- stripPrefix ">" (dropWhile isSpace afterCharacter)
+        pure (EncodedStringType scott characterType, afterClose)
     | Just rest <- stripPrefix "scott-list<" input = do
         (elementType, afterElement) <- parseType (dropWhile isSpace rest)
         afterClose <- stripPrefix ">" (dropWhile isSpace afterElement)

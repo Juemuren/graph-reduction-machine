@@ -37,7 +37,7 @@
       "language": "lambda",
       "source": "@! \"A\";",
       "stage": "decode",
-      "options": { "encodeString": "church<church>", "decode": "string<church<church>>" },
+      "options": { "encodeString": "church<church>", "decode": "string:church<church>" },
       "expect": { "value": "A" }
     },
     {
@@ -45,7 +45,7 @@
       "language": "lambda",
       "source": "@! \"A\";",
       "stage": "decode",
-      "options": { "encodeString": "church<scott>", "decode": "string<church<scott>>" },
+      "options": { "encodeString": "church<scott>", "decode": "string:church<scott>" },
       "expect": { "value": "A" }
     },
     {
@@ -53,7 +53,7 @@
       "language": "lambda",
       "source": "@! \"A\";",
       "stage": "decode",
-      "options": { "encodeString": "church<binary>", "decode": "string<church<binary>>" },
+      "options": { "encodeString": "church<binary>", "decode": "string:church<binary>" },
       "expect": { "value": "A" }
     },
     {
@@ -61,7 +61,7 @@
       "language": "lambda",
       "source": "@! \"A\";",
       "stage": "decode",
-      "options": { "encodeString": "scott<church>", "decode": "string<scott<church>>" },
+      "options": { "encodeString": "scott<church>", "decode": "string:scott<church>" },
       "expect": { "value": "A" }
     },
     {
@@ -69,7 +69,7 @@
       "language": "lambda",
       "source": "@! \"A\";",
       "stage": "decode",
-      "options": { "encodeString": "scott<scott>", "decode": "string<scott<scott>>" },
+      "options": { "encodeString": "scott<scott>", "decode": "string:scott<scott>" },
       "expect": { "value": "A" }
     },
     {
@@ -77,7 +77,7 @@
       "language": "lambda",
       "source": "@! \"Hi\";",
       "stage": "decode",
-      "options": { "encodeString": "scott<binary>", "decode": "string<scott<binary>>" },
+      "options": { "encodeString": "scott<binary>", "decode": "string:scott<binary>" },
       "expect": { "value": "Hi" }
     },
     {
@@ -95,6 +95,14 @@
       "stage": "decode",
       "options": { "decode": "list<string>" },
       "expect": { "value": "[A, B]" }
+    },
+    {
+      "name": "explicit-encoding-in-pair-and-list",
+      "language": "lambda",
+      "source": "@! PAIR (CONS \"A\" NIL) \"B\";",
+      "stage": "decode",
+      "options": { "decode": "pair<list<string:church<binary>>, string:church<binary>>" },
+      "expect": { "value": "([A], B)" }
     },
     {
       "name": "invalid-character",

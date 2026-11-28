@@ -218,15 +218,20 @@ _grm_encode_string_completions() {
 _grm_decode_completions() {
     local rest=$1 prefix='' expected='type' candidate top
     local -a stack=()
-    local -a types=(natural scott-natural binary-natural boolean integer rational string 'list<' 'pair<')
+    local -a types=(natural scott-natural binary-natural boolean integer rational string 'list<' 'scott-list<' 'pair<')
+
+    while IFS= read -r candidate; do
+        types+=("string:$candidate")
+    done < <(_grm_encode_string_completions ""; printf '%s\n' "${COMPREPLY[@]}")
 
     while [[ -n $rest ]]; do
         if [[ $expected == type ]]; then
             case $rest in
-                list\<*)
+                list\<* | scott-list\<*)
                     stack+=(list)
-                    prefix+='list<'
-                    rest=${rest#list<}
+                    candidate="${rest%%<*}<"
+                    prefix+=$candidate
+                    rest=${rest#"$candidate"}
                     ;;
                 pair\<*)
                     stack+=(pair-first)
@@ -234,7 +239,7 @@ _grm_decode_completions() {
                     rest=${rest#pair<}
                     ;;
                 *)
-                    if [[ $rest =~ ^(natural|scott-natural|binary-natural|boolean|integer|rational|string|real)([,\>]|$) ]]; then
+                    if [[ $rest =~ ^(natural|scott-natural|binary-natural|boolean|integer|rational|string|real|string:(church|scott)\<(church|scott|binary)\>)([,\>]|$) ]]; then
                         candidate=${BASH_REMATCH[1]}
                         [[ $candidate == real && ${#stack[@]} -gt 0 ]] && break
                         prefix+=$candidate
@@ -246,6 +251,7 @@ _grm_decode_completions() {
                     ;;
             esac
         else
+            ((${#stack[@]} > 0)) || break
             top=${stack[${#stack[@]} - 1]-}
             case $top:$rest in
                 pair-first:,*)
@@ -273,6 +279,12 @@ _grm_decode_completions() {
             [[ $candidate == "$rest"* ]] && COMPREPLY+=("$prefix$candidate")
         done
     elif [[ -z $rest ]]; then
+        if [[ $prefix == *string ]]; then
+            for candidate in "${types[@]}"; do
+                [[ $candidate == string:* ]] && COMPREPLY+=("${prefix%string}$candidate")
+            done
+        fi
+        ((${#stack[@]} > 0)) || return 0
         top=${stack[${#stack[@]} - 1]-}
         case $top in
             list | pair-second) COMPREPLY+=("$prefix>") ;;
@@ -311,6 +323,22 @@ _grm_option_completions() {
     compopt -o nospace
 }
 
+_grm_decode_word_completions() {
+    local value=$1 quote=${1:0:1} index
+    if [[ $quote == "'" || $quote == '"' ]]; then
+        value=${value#"$quote"}
+        value=${value%"$quote"}
+        _grm_decode_completions "$value"
+        for index in "${!COMPREPLY[@]}"; do
+            COMPREPLY[index]="$quote${COMPREPLY[index]}$quote"
+        done
+        compopt -o nospace
+    else
+        _grm_decode_completions "${value//\\/}"
+        compopt -o nospace -o filenames
+    fi
+}
+
 _grm_tool_completion() {
     local current=${COMP_WORDS[COMP_CWORD]}
     local previous=${COMP_WORDS[COMP_CWORD - 1]}
@@ -328,6 +356,11 @@ _grm_tool_completion() {
         *)
             for word in "${COMP_WORDS[@]:1:COMP_CWORD-1}"; do
                 if [[ $word == -- ]]; then
+                    if [[ $command == invoke_interpreter && $previous == = &&
+                          ${COMP_WORDS[COMP_CWORD - 2]} == --decode ]]; then
+                        _grm_decode_word_completions "$current"
+                        return
+                    fi
                     _grm_option_completions "$command" "$current"
                     return
                 fi
@@ -367,8 +400,7 @@ _grm_tool_completion() {
                 return
                 ;;
             -d | --decode)
-                _grm_decode_completions "$current"
-                compopt -o nospace
+                _grm_decode_word_completions "$current"
                 return
                 ;;
         esac

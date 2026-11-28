@@ -253,14 +253,14 @@ function _GRM_GET-DecodeCompletion {
     $prefix = ''
     $expected = 'type'
     $stack = [System.Collections.Generic.List[string]]::new()
-    $atomPattern = '^(natural|scott-natural|binary-natural|boolean|integer|rational|string|real)(?=[,>]|$)'
+    $atomPattern = '^(natural|scott-natural|binary-natural|boolean|integer|rational|string|real|string:(?:church|scott)<(?:church|scott|binary)>)(?=[,>]|$)'
 
     while ($remaining.Length -gt 0) {
         if ($expected -eq 'type') {
-            if ($remaining.StartsWith('list<')) {
+            if ($remaining -match '^(?:scott-)?list<') {
                 $stack.Add('list')
-                $prefix += 'list<'
-                $remaining = $remaining.Substring(5)
+                $prefix += $Matches[0]
+                $remaining = $remaining.Substring($Matches[0].Length)
             }
             elseif ($remaining.StartsWith('pair<')) {
                 $stack.Add('pair-first')
@@ -296,7 +296,8 @@ function _GRM_GET-DecodeCompletion {
     }
 
     if ($expected -eq 'type') {
-        $types = @('natural', 'scott-natural', 'binary-natural', 'boolean', 'integer', 'rational', 'string', 'list<', 'pair<')
+        $types = @('natural', 'scott-natural', 'binary-natural', 'boolean', 'integer', 'rational', 'string', 'list<', 'scott-list<', 'pair<')
+        $types += @(_GRM_GET-EncodeStringCompletion '' | ForEach-Object { "string:$_" })
         if ($stack.Count -eq 0) {
             $types += 'real'
         }
@@ -306,13 +307,31 @@ function _GRM_GET-DecodeCompletion {
             }
         }
     }
-    elseif ($remaining.Length -eq 0 -and $stack.Count -gt 0) {
+    elseif ($remaining.Length -eq 0) {
+        if ($prefix.EndsWith('string')) {
+            foreach ($type in _GRM_GET-EncodeStringCompletion '') {
+                "${prefix}:$type"
+            }
+        }
+        if ($stack.Count -eq 0) {
+            return
+        }
         switch ($stack[$stack.Count - 1]) {
             'list' { "$prefix>" }
             'pair-first' { "$prefix," }
             'pair-second' { "$prefix>" }
         }
     }
+}
+
+function _GRM_NEW-CompletionResult {
+    param(
+        [string]$Value,
+        [switch]$Quote
+    )
+
+    $text = if ($Quote) { "'$Value'" } else { $Value }
+    [System.Management.Automation.CompletionResult]::new($text, $Value, 'ParameterValue', $Value)
 }
 
 function _GRM_GET-OptionCompletion {
@@ -336,7 +355,7 @@ function _GRM_GET-OptionCompletion {
     }
 
     foreach ($value in $values) {
-        [System.Management.Automation.CompletionResult]::new("'$value'", $value, 'ParameterValue', $value)
+        _GRM_NEW-CompletionResult $value -Quote
     }
 }
 
@@ -349,21 +368,21 @@ Register-ArgumentCompleter -Native -CommandName Invoke-Compiler, Invoke-Interpre
 Register-ArgumentCompleter -CommandName Invoke-IntegrationStage, Invoke-IntegrationSequence -ParameterName EncodeNatural -ScriptBlock {
     $prefix = ([string]$args[2]).Trim("'`"")
     foreach ($completion in _GRM_GET-EncodeNaturalCompletion $prefix) {
-        [System.Management.Automation.CompletionResult]::new($completion, $completion, 'ParameterValue', $completion)
+        _GRM_NEW-CompletionResult $completion
     }
 }
 
 Register-ArgumentCompleter -CommandName Invoke-IntegrationStage, Invoke-IntegrationSequence -ParameterName EncodeString -ScriptBlock {
     $prefix = ([string]$args[2]).Trim("'`"")
     foreach ($completion in _GRM_GET-EncodeStringCompletion $prefix) {
-        [System.Management.Automation.CompletionResult]::new("'$completion'", $completion, 'ParameterValue', $completion)
+        _GRM_NEW-CompletionResult $completion -Quote
     }
 }
 
 Register-ArgumentCompleter -CommandName Invoke-IntegrationStage, Invoke-IntegrationSequence -ParameterName Decode -ScriptBlock {
     $prefix = ([string]$args[2]).Trim("'`"")
     foreach ($completion in _GRM_GET-DecodeCompletion $prefix) {
-        [System.Management.Automation.CompletionResult]::new("'$completion'", $completion, 'ParameterValue', $completion)
+        _GRM_NEW-CompletionResult $completion -Quote
     }
 }
 
@@ -371,7 +390,7 @@ foreach ($parameter in @('Stage', 'Stages')) {
     Register-ArgumentCompleter -CommandName Invoke-IntegrationStage, Invoke-IntegrationSequence -ParameterName $parameter -ScriptBlock {
         $prefix = ([string]$args[2]).Trim("'`"")
         foreach ($completion in _GRM_GET-StageCompletion $prefix) {
-            [System.Management.Automation.CompletionResult]::new($completion, $completion, 'ParameterValue', $completion)
+            _GRM_NEW-CompletionResult $completion
         }
     }
 }

@@ -21,7 +21,7 @@ function choices(slot: Slot): string[] {
     case "root":
       return [...choices("type"), "real"];
     case "type":
-      return [...scalarTypes, "list<", "scott-list<", "pair<", "string<"];
+      return [...scalarTypes, "list<", "scott-list<", "pair<", "string:"];
     case "list-encoding":
       return ["church<", "scott<"];
     case "character-encoding":
@@ -42,8 +42,8 @@ function consume(expected: Slot[], token: string) {
     case "scott-list<":
       expected.push(">", "type");
       break;
-    case "string<":
-      expected.push(">", "list-encoding");
+    case "string:":
+      expected.push("list-encoding");
       break;
     case "church<":
     case "scott<":
@@ -55,7 +55,7 @@ function consume(expected: Slot[], token: string) {
 
 function parsePrefix(value: string) {
   const expected: Slot[] = ["root"];
-  const token = /\s*([a-z-]+<?|[,>])/y;
+  const token = /\s*([a-z-]+[<:]?|[,>])/y;
   let offset = 0;
   while (offset < value.length) {
     const match = token.exec(value);
@@ -94,16 +94,21 @@ export function completeDecode(
   const slot = parsePrefix(value.slice(0, start))?.at(-1);
   if (!slot) return [];
   const rest = value.slice(end);
-  const hasOpener = rest.startsWith("<");
+  const existingOpener = /^[<:]/.exec(rest)?.[0];
   return choices(slot).flatMap((token) => {
-    const opens = token.endsWith("<");
-    const name = opens ? token.slice(0, -1) : token;
-    if (!name.startsWith(prefix) || (hasOpener && !opens)) return [];
+    const opener = /[<:]$/.exec(token)?.[0];
+    const name = opener ? token.slice(0, -1) : token;
+    if (
+      !name.startsWith(prefix) ||
+      (existingOpener && existingOpener !== opener)
+    ) {
+      return [];
+    }
     if (token === "," || token === ">") {
       if (suffix || rest.trimStart().startsWith(token)) return [];
     }
     let insertion = token;
-    if (opens) {
+    if (opener === "<") {
       insertion = token === "pair<" ? "pair<, >" : `${token}>`;
     } else if (token === ",") {
       insertion = ", ";
@@ -111,10 +116,10 @@ export function completeDecode(
     return [
       {
         label: insertion.trimEnd(),
-        text: opens && hasOpener ? name : insertion,
+        text: existingOpener ? name : insertion,
         start,
         end,
-        cursor: start + (opens ? token.length : insertion.length),
+        cursor: start + (opener ? token.length : insertion.length),
       },
     ];
   });

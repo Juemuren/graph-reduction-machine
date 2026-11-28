@@ -31,7 +31,7 @@ Deno.test("offers only types and encodings allowed at the caret", () => {
   assert.deepEqual(completeDecode("re", 2).map(({ text }) => text), ["real"]);
   assert.deepEqual(completeDecode("list<re>", 7), []);
   assert.deepEqual(
-    completeDecode("list<string<church<b>>", 20).map(({ text }) => text),
+    completeDecode("list<string:church<b>>", 20).map(({ text }) => text),
     ["binary"],
   );
   assert.deepEqual(
@@ -39,6 +39,21 @@ Deno.test("offers only types and encodings allowed at the caret", () => {
       "boolean",
     ),
     true,
+  );
+});
+
+Deno.test("completes an explicit string decoder and preserves its colon", () => {
+  const input = "list<str:scott<binary>>";
+  assert.deepEqual(completeDecode(input, 8), [{
+    label: "string:",
+    text: "string",
+    start: 5,
+    end: 8,
+    cursor: 12,
+  }]);
+  assert.deepEqual(
+    completeDecode("string:", 7).map(({ text }) => text),
+    ["church<>", "scott<>"],
   );
 });
 
@@ -50,12 +65,12 @@ Deno.test("offers missing delimiters without duplicating existing ones", () => {
 
 Deno.test("validates complete decode types using the same grammar", () => {
   assert.equal(
-    validDecode("pair<list<natural>, scott-list<string<church<binary>>> >"),
+    validDecode("pair<list<natural>, scott-list<string:church<binary>> >"),
     true,
   );
   assert.equal(validDecode("real"), true);
   assert.equal(validDecode("list<real>"), false);
   assert.equal(validDecode("pair<, >"), false);
-  assert.equal(validDecode("string< church<binary>>"), false);
+  assert.equal(validDecode("string: church<binary>"), false);
   assert.equal(validDecode("list<natural>>"), false);
 });

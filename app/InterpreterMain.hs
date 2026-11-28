@@ -115,7 +115,7 @@ parseArgs = go Nothing False Raw Nothing Nothing Nothing Nothing
       , "[--show-steps]"
       , "[--share=preserve|merge|unfold]"
       , "[--output=ski|graphviz|mermaid]"
-      , "[--decode=natural|scott-natural|binary-natural|boolean|integer|rational|real|string|string<L<N>>|list<T>|scott-list<T>|pair<A,B>]"
+      , "[--decode=natural|scott-natural|binary-natural|boolean|integer|rational|real|string|string:L<N>|list<T>|scott-list<T>|pair<A,B>]"
       , "[--precision-real=N]"
       , "[FILE]"
       ]
