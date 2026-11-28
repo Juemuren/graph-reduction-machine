@@ -111,22 +111,20 @@ const runnableExamples = (await examples()).filter(({ files }) =>
           >
           <div class="settings-group" id="decode-options">
             <label for="decode">解码类型</label>
-            <input id="decode" list="decode-types" value="natural" required>
-            <datalist id="decode-types">
-              {[
-                "natural",
-                "scott-natural",
-                "binary-natural",
-                "boolean",
-                "integer",
-                "rational",
-                "real",
-                "string",
-                "list<natural>",
-                "scott-list<natural>",
-                "pair<natural,boolean>",
-              ].map((value) => <option value={value} />)}
-            </datalist>
+            <div class="decode-combobox">
+              <input
+                id="decode"
+                role="combobox"
+                aria-autocomplete="list"
+                aria-controls="decode-types"
+                aria-expanded="false"
+                autocomplete="off"
+                spellcheck="false"
+                value="natural"
+                required
+              >
+              <ul id="decode-types" role="listbox" aria-label="解码类型候选" hidden></ul>
+            </div>
             <div class="settings-group" id="precision-options" hidden>
               <label for="precision">实数精度</label>
               <input
@@ -333,6 +331,37 @@ select {
   color: var(--body-text);
   font: inherit;
   font-size: 0.875rem;
+}
+.decode-combobox {
+  position: relative;
+  min-width: 0;
+}
+.decode-combobox input {
+  box-sizing: border-box;
+  width: 100%;
+}
+.decode-combobox ul {
+  position: absolute;
+  z-index: 2;
+  inset: 100% 0 auto;
+  max-height: 12rem;
+  overflow: auto;
+  margin: 4px 0 0;
+  padding: 4px;
+  border: 1px solid var(--border);
+  border-radius: 5px;
+  background: var(--page-bg);
+  list-style: none;
+}
+.decode-combobox :global([role="option"]) {
+  padding: 4px 7px;
+  border-radius: 3px;
+  cursor: pointer;
+  font-size: 0.875rem;
+}
+.decode-combobox :global([role="option"]:hover),
+.decode-combobox :global([aria-selected="true"]) {
+  background: var(--surface-0);
 }
 select:hover {
   border-color: var(--overlay-0);

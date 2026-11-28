@@ -1,4 +1,5 @@
 import { stageLabels } from "../../config";
+import { validDecode } from "./decode-type";
 import type { RunRequest, Stage } from "./session";
 
 type Settings = Omit<RunRequest, "entry" | "files">;
@@ -26,29 +27,6 @@ export function runOptions(path: string, stage: string, decode: string) {
     decode: stage === "decode",
     precision: stage === "decode" && decode === "real",
   };
-}
-
-function validDecode(value: string) {
-  if (value === "real") return true;
-  // Match the interpreter's scalar and nested composite decode types.
-  const token =
-    /\s*(string<(?:church|scott)<\s*(?:church|scott|binary)\s*>\s*>|(?:scott-list|list|pair)<|natural|scott-natural|binary-natural|boolean|integer|rational|string|[,>])/y;
-  const expected = ["type"];
-  while (expected.length) {
-    const next = expected.pop();
-    const part = token.exec(value)?.[1];
-    if (!part) return false;
-    if (next !== "type") {
-      if (next !== part) return false;
-    } else if (part === "pair<") {
-      expected.push(">", "type", ",", "type");
-    } else if (part === "list<" || part === "scott-list<") {
-      expected.push(">", "type");
-    } else if (part === "," || part === ">") {
-      return false;
-    }
-  }
-  return token.lastIndex === value.length;
 }
 
 export function parsePreset(

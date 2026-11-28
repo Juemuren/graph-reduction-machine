@@ -1,6 +1,7 @@
 import { inputLimit, runTimeoutMs, stageLabels } from "../../config";
 import { highlightedLines } from "../highlight";
 import { sitePath } from "../urls";
+import { bindDecodeCombobox } from "./decode-combobox";
 import { createSourceEditor, createSourceModel } from "./editor";
 import { connectLanguageService } from "./language";
 import {
@@ -224,6 +225,7 @@ export async function startPlayground() {
   renderFiles();
   selectFile(activePath);
   stage.addEventListener("change", updateOptions);
+  bindDecodeCombobox(decode, element("decode-types"));
   decode.addEventListener("input", updateOptions);
 
   addFile.addEventListener("submit", (event) => {
