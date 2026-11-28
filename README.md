@@ -35,3 +35,5 @@ cabal exec -- ski-interpreter example.ski
 - 构建文档为 [build.md](docs/build.md)
 - 测试文档为 [test.md](docs/test.md)
 - 代码质量文档为 [quality.md](docs/quality.md)
+- VSCode 扩展文档为 [vscode-extension/README.md](vscode-extension/README.md)
+- Web 站点文档为 [site/README.md](site/README.md)

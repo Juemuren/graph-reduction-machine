@@ -1,6 +1,6 @@
 # AGENTS.md
 
-这是一个 Haskell 项目，目标是实现可运行 λ 演算的图归约机。
+这是一个编程语言研究项目，实现了一个可运行 λ 演算的图归约机。
 
 ## 文档
 
@@ -9,6 +9,8 @@
 - 构建文档为 [build.md](docs/build.md)
 - 测试文档为 [test.md](docs/test.md)
 - 代码质量文档为 [quality.md](docs/quality.md)
+- VSCode 扩展文档为 [vscode-extension/README.md](vscode-extension/README.md)
+- Web 站点文档为 [site/README.md](site/README.md)
 
 ## 测试
 
@@ -16,4 +18,4 @@
 
 ## 代码质量
 
-修改 Haskell 代码后，按照 `docs/quality.md` 中的说明运行格式化和静态检查。
+修改代码后，按照 `docs/quality.md` 中的说明运行格式化和静态检查。
