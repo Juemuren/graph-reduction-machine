@@ -123,7 +123,12 @@ const runnableExamples = (await examples()).filter(({ files }) =>
                 value="natural"
                 required
               >
-              <ul id="decode-types" role="listbox" aria-label="解码类型候选" hidden></ul>
+              <div
+                id="decode-types"
+                role="listbox"
+                aria-label="解码类型候选"
+                hidden
+              ></div>
             </div>
           </div>
         </fieldset>
@@ -328,7 +333,7 @@ select {
   box-sizing: border-box;
   width: 100%;
 }
-.decode-combobox ul {
+.decode-combobox #decode-types {
   position: absolute;
   z-index: 2;
   inset: 100% 0 auto;

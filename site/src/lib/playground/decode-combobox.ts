@@ -22,7 +22,7 @@ export function bindDecodeCombobox(input: HTMLInputElement, list: HTMLElement) {
     select(-1);
     list.replaceChildren(
       ...options.map(({ label }, index) => {
-        const item = document.createElement("li");
+        const item = document.createElement("div");
         item.id = `${list.id}-${index}`;
         item.setAttribute("role", "option");
         item.setAttribute("aria-selected", "false");
