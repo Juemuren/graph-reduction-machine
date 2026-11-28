@@ -88,17 +88,13 @@ def decode(
     mode: str,
     max_steps: int,
     context: str,
-    precision: int | None = None,
 ) -> tuple[int, str] | None:
     """Decode a graph and return (steps, value), or None at the step limit.
 
-    ``precision`` sets real-number decoding precision.
     ``context`` labels errors.
     """
 
     options = [interpreter, f"--decode={mode}"]
-    if precision is not None:
-        options.append(f"--precision-real={precision}")
     options.extend((f"--max-steps={max_steps}", "--show-steps"))
     result = subprocess.run(
         options,

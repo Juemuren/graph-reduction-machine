@@ -28,8 +28,14 @@ Deno.test("replaces the whole name and preserves the existing arguments", () => 
 });
 
 Deno.test("offers only types and encodings allowed at the caret", () => {
-  assert.deepEqual(completeDecode("re", 2).map(({ text }) => text), ["real"]);
-  assert.deepEqual(completeDecode("list<re>", 7), []);
+  assert.deepEqual(completeDecode("re", 2).map(({ text }) => text), [
+    "real",
+    "real:",
+  ]);
+  assert.deepEqual(
+    completeDecode("list<re>", 7).map(({ text }) => text),
+    ["real", "real:"],
+  );
   assert.deepEqual(
     completeDecode("list<string:church<b>>", 20).map(({ text }) => text),
     ["binary"],
@@ -69,7 +75,10 @@ Deno.test("validates complete decode types using the same grammar", () => {
     true,
   );
   assert.equal(validDecode("real"), true);
-  assert.equal(validDecode("list<real>"), false);
+  assert.equal(validDecode("pair<real, list<real:12>>"), true);
+  assert.equal(validDecode("real:"), false);
+  assert.equal(validDecode("real:-1"), false);
+  assert.equal(validDecode("real: 1"), false);
   assert.equal(validDecode("pair<, >"), false);
   assert.equal(validDecode("string: church<binary>"), false);
   assert.equal(validDecode("list<natural>>"), false);

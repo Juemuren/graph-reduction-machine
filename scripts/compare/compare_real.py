@@ -72,9 +72,8 @@ def measure_case(case: Case, base: Path) -> list[Measurement[int]]:
             compiler,
             interpreter,
             (base / method["file"]).read_text(encoding="utf-8"),
-            "real",
+            lambda index: f"real:{index}",
             lambda index, name=method["name"]: f"{case['name']}/{name} n={index}",
-            precision=lambda index: index,
             compile_context=f"{case['name']}/{method['name']}",
         )
         for method in case["methods"]

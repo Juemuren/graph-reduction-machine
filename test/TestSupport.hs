@@ -37,7 +37,7 @@ import qualified Data.ByteString.Lazy as ByteString
 import Data.JSON.JSONSchema (validate)
 import Data.List (nub, sort)
 import qualified Data.Map.Strict as Map
-import Data.Maybe (catMaybes, fromMaybe, isJust)
+import Data.Maybe (catMaybes, fromMaybe)
 import qualified Ski.Abs as Graph
 import Ski.Print (printTree)
 import System.Directory (doesDirectoryExist, doesFileExist, listDirectory)
@@ -69,7 +69,6 @@ data Input = Input String String (Map.Map FilePath String)
 data RunSpec = RunSpec
   { runStage :: String
   , runDecode :: Maybe String
-  , runPrecisionReal :: Maybe Integer
   , runMaxSteps :: Maybe Int
   , runEnableReduce :: Maybe String
   , runEncodeNatural :: Maybe String
@@ -91,7 +90,7 @@ instance FromJSON TestCase where
     options <- object .:? "options"
     spec <-
       maybe
-        (pure (RunSpec stage Nothing Nothing Nothing Nothing Nothing Nothing))
+        (pure (RunSpec stage Nothing Nothing Nothing Nothing Nothing))
         (parseRunSpec stage)
         options
     TestCase name input spec <$> object .: "expect"
@@ -124,7 +123,6 @@ parseRunSpec :: String -> Value -> Parser RunSpec
 parseRunSpec stage = withObject "options" $ \object ->
   RunSpec stage
     <$> object .:? "decode"
-    <*> object .:? "precisionReal"
     <*> object .:? "maxSteps"
     <*> object .:? "enableReduce"
     <*> object .:? "encodeNatural"
@@ -191,10 +189,6 @@ caseLimit :: String -> Int -> RunSpec -> IO Int
 caseLimit label defaultLimit spec = do
   let limit = fromMaybe defaultLimit (runMaxSteps spec)
   when (limit <= 0) $ die (label ++ ": maxSteps must be positive")
-  when (maybe False (< 0) (runPrecisionReal spec)) $
-    die (label ++ ": precisionReal must be nonnegative")
-  when (isJust (runPrecisionReal spec) && runDecode spec /= Just "real") $
-    die (label ++ ": precisionReal requires real decoding")
   pure limit
 
 parseReduction :: Maybe String -> Either String Reduction

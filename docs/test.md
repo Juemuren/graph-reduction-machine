@@ -38,8 +38,7 @@ cabal test
       "source": "@! \\n -> NTOQ n;",
       "stage": "decode",
       "options": {
-        "decode": "real",
-        "precisionReal": 2
+        "decode": "real:2"
       },
       "expect": {
         "value": "2/1"
@@ -62,7 +61,6 @@ cabal test
   - `options.encodeString` 是编译器对字符串字面量的编码方式。具体的编码方式参见 [compiler.md#编译器选项](compiler.md#编译器选项)
   - `options.maxSteps` 是解释器的归约步数上限。为正整数
   - `options.decode` 是解释器的解码方式。具体的编码方式参见 [interpreter.md#解释器选项](interpreter.md#解释器选项)
-  - `options.precisionReal` 是实数解码精度。为非负整数
 - `expect` 是预期的值。只能是 `value` / `error` 之一
   - `expect.value` 对于 `parse` / `expand` / `reduce` 比较语法树，对于 `compile` / `interpret` 比较图，对于 `decode` 比较文本
   - `expect.error` 比较错误消息

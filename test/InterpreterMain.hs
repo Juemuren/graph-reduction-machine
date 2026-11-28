@@ -45,7 +45,6 @@ assertDecodeCliError label source spec limit expected = do
     maybe (die (label ++ ": decode type is required")) pure (runDecode spec)
   let options =
         ["--max-steps=" ++ show limit, "--decode=" ++ decodeType]
-          ++ maybe [] (\index -> ["--precision-real=" ++ show index]) (runPrecisionReal spec)
   executable <- testExecutable "ski-interpreter"
   (status, output, problem) <-
     readProcessWithExitCode executable options source

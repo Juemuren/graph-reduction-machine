@@ -22,11 +22,8 @@ Deno.test("presets require applicable fields and ignore inapplicable fields", ()
     () => parsePreset("main.ski", { stage: "compile" }),
     /不支持/,
   );
-  assert.throws(
-    () =>
-      parsePreset("main.ski", { stage: "decode", decode: "real", steps: 100 }),
-    /缺少字段 precision/,
-  );
+  const realPreset = { stage: "decode", decode: "real:2", steps: 100 };
+  assert.deepEqual(parsePreset("main.ski", realPreset), realPreset);
   assert.throws(
     () =>
       parsePreset("main.ski", {

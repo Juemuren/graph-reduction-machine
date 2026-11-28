@@ -64,7 +64,7 @@ Invoke-Interpreter -File "examples/ski/church.ski" -- --decode=natural
 ```pwsh
 '@! ONE;' | Invoke-IntegrationStage -Stage expand
 Invoke-IntegrationStage -Source '@! ONE;' -Stage expand
-Invoke-IntegrationStage -File "examples/e/factorial.lambda" -Stage decode -Decode real
+Invoke-IntegrationStage -File "examples/e/factorial.lambda" -Stage decode -Decode real:1
 ```
 
 各参数为：
@@ -83,7 +83,7 @@ Invoke-IntegrationStage -File "examples/e/factorial.lambda" -Stage decode -Decod
 ```pwsh
 '@! ONE;' | Invoke-IntegrationSequence -Stages expand,reduce,decode
 Invoke-IntegrationSequence -Source '@! ONE;' -Stages compile,decode
-Invoke-IntegrationSequence -File "examples/e/factorial.lambda" -Stages decode -Decode real
+Invoke-IntegrationSequence -File "examples/e/factorial.lambda" -Stages decode -Decode real:1
 ```
 
 `Invoke-IntegrationSequence` 按 `expand` / `reduce` / `compile` / `interpret` / `decode` 的顺序依次运行选中的阶段。
@@ -157,7 +157,7 @@ invoke_interpreter -f examples/ski/church.ski -- --decode=natural
 ```sh
 printf '%s\n' '@! ONE;' | invoke_integration_stage -t expand
 invoke_integration_stage -s '@! ONE;' -t expand
-invoke_integration_stage -f examples/e/factorial.lambda -t decode -d real
+invoke_integration_stage -f examples/e/factorial.lambda -t decode -d real:1
 ```
 
 各参数为：
@@ -176,7 +176,7 @@ invoke_integration_stage -f examples/e/factorial.lambda -t decode -d real
 ```sh
 printf '%s\n' '@! ONE;' | invoke_integration_sequence -t expand,reduce,decode
 invoke_integration_sequence -s '@! ONE;' -t compile,decode
-invoke_integration_sequence -f examples/e/factorial.lambda -t decode -d real
+invoke_integration_sequence -f examples/e/factorial.lambda -t decode -d real:1
 ```
 
 `invoke_integration_sequence` 按 `expand` / `reduce` / `compile` / `interpret` / `decode` 的顺序依次运行选中的阶段。

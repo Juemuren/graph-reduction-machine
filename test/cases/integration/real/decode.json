@@ -6,8 +6,7 @@
       "source": "@! QTOR (PAIR (NTOZ ONE) (NTOZ TWO));\n",
       "stage": "decode",
       "options": {
-        "precisionReal": 0,
-        "decode": "real"
+        "decode": "real:0"
       },
       "expect": {
         "value": "1/2"
@@ -19,11 +18,58 @@
       "source": "@! \\n -> NTOQ n;\n",
       "stage": "decode",
       "options": {
-        "precisionReal": 2,
-        "decode": "real"
+        "decode": "real:2"
       },
       "expect": {
         "value": "2/1"
+      }
+    },
+    {
+      "name": "sequence-default",
+      "language": "lambda",
+      "source": "@! (\\n -> NTOQ n);\n",
+      "stage": "decode",
+      "options": {
+        "decode": "real"
+      },
+      "expect": {
+        "value": "0/1"
+      }
+    },
+    {
+      "name": "sequence-pair",
+      "language": "lambda",
+      "source": "@! PAIR (\\n -> NTOQ n) (\\n -> NTOQ n);\n",
+      "stage": "decode",
+      "options": {
+        "decode": "pair<real:1,real:5>"
+      },
+      "expect": {
+        "value": "(1/1, 5/1)"
+      }
+    },
+    {
+      "name": "sequence-list",
+      "language": "lambda",
+      "source": "@! CONS (\\n -> NTOQ n) (CONS (\\n -> NTOQ (SUCC n)) NIL);\n",
+      "stage": "decode",
+      "options": {
+        "decode": "list<real:2>"
+      },
+      "expect": {
+        "value": "[2/1, 3/1]"
+      }
+    },
+    {
+      "name": "sequence-scott-list",
+      "language": "lambda",
+      "source": "@! CONS_S (\\n -> NTOQ n) NIL_S;\n",
+      "stage": "decode",
+      "options": {
+        "decode": "scott-list<real:3>"
+      },
+      "expect": {
+        "value": "[3/1]"
       }
     }
   ]

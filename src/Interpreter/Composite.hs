@@ -8,7 +8,7 @@ module Interpreter.Composite (
   decodeCompositeSourceWithSteps,
 ) where
 
-import Data.Char (chr, isSpace)
+import Data.Char (chr, isDigit, isSpace)
 import Data.List (intercalate, stripPrefix)
 import Data.Ratio (denominator, numerator)
 import Interpreter.Binary (decodeBinaryNaturalAt)
@@ -18,12 +18,14 @@ import Interpreter.Church (
   decodeNaturalAt,
   decodePairAt,
   decodeRationalAt,
+  decodeRealAt,
  )
 import Interpreter.Machine
 import Interpreter.Scott (decodeScottNaturalAt)
 import Numeric.Natural (Natural)
 import qualified Ski.Abs as Graph
 import qualified Ski.Par as Graph
+import Text.Read (readMaybe)
 
 data DecodeType
   = NaturalType
@@ -32,6 +34,7 @@ data DecodeType
   | BooleanType
   | IntegerType
   | RationalType
+  | RealType Natural
   | StringType
   | EncodedStringType Bool DecodeType
   | PairType DecodeType DecodeType
@@ -83,6 +86,11 @@ parseDecodeType source = do
         ("boolean", rest) -> Just (BooleanType, rest)
         ("integer", rest) -> Just (IntegerType, rest)
         ("rational", rest) -> Just (RationalType, rest)
+        ("real", rest) -> Just (RealType 0, rest)
+        (name, rest)
+          | Just digits <- stripPrefix "real:" name
+          , not (null digits) && all isDigit digits ->
+              (,rest) . RealType <$> readMaybe digits
         ("string", rest) -> Just (StringType, rest)
         _ -> Nothing
 
@@ -105,6 +113,7 @@ decodeAt kind root = case kind of
     fmap (fmap (\value -> if value then "TRUE" else "FALSE")) (decodeBooleanAt root)
   IntegerType -> fmap (fmap show) (decodeIntegerAt root)
   RationalType -> fmap (fmap renderRational) (decodeRationalAt root)
+  RealType index -> fmap (fmap renderRational) (decodeRealAt index root)
   StringType -> decodeChurchListAt decodeCharacterAt root
   EncodedStringType scott characterType ->
     (if scott then decodeScottListAt else decodeChurchListAt)

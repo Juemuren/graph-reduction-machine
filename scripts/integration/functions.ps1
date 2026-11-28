@@ -253,7 +253,7 @@ function _GRM_GET-DecodeCompletion {
     $prefix = ''
     $expected = 'type'
     $stack = [System.Collections.Generic.List[string]]::new()
-    $atomPattern = '^(natural|scott-natural|binary-natural|boolean|integer|rational|string|real|string:(?:church|scott)<(?:church|scott|binary)>)(?=[,>]|$)'
+    $atomPattern = '^(natural|scott-natural|binary-natural|boolean|integer|rational|string|real(?::[0-9]+)?|string:(?:church|scott)<(?:church|scott|binary)>)(?=[,>]|$)'
 
     while ($remaining.Length -gt 0) {
         if ($expected -eq 'type') {
@@ -267,7 +267,7 @@ function _GRM_GET-DecodeCompletion {
                 $prefix += 'pair<'
                 $remaining = $remaining.Substring(5)
             }
-            elseif ($remaining -match $atomPattern -and ($Matches[1] -ne 'real' -or $stack.Count -eq 0)) {
+            elseif ($remaining -match $atomPattern) {
                 $prefix += $Matches[1]
                 $remaining = $remaining.Substring($Matches[1].Length)
                 $expected = 'after'
@@ -296,11 +296,8 @@ function _GRM_GET-DecodeCompletion {
     }
 
     if ($expected -eq 'type') {
-        $types = @('natural', 'scott-natural', 'binary-natural', 'boolean', 'integer', 'rational', 'string', 'list<', 'scott-list<', 'pair<')
+        $types = @('natural', 'scott-natural', 'binary-natural', 'boolean', 'integer', 'rational', 'real', 'real:0', 'string', 'list<', 'scott-list<', 'pair<')
         $types += @(_GRM_GET-EncodeStringCompletion '' | ForEach-Object { "string:$_" })
-        if ($stack.Count -eq 0) {
-            $types += 'real'
-        }
         foreach ($type in $types) {
             if ($type.StartsWith($remaining, [System.StringComparison]::OrdinalIgnoreCase)) {
                 "$prefix$type"
@@ -308,6 +305,9 @@ function _GRM_GET-DecodeCompletion {
         }
     }
     elseif ($remaining.Length -eq 0) {
+        if ($prefix.EndsWith('real')) {
+            "${prefix}:0"
+        }
         if ($prefix.EndsWith('string')) {
             foreach ($type in _GRM_GET-EncodeStringCompletion '') {
                 "${prefix}:$type"

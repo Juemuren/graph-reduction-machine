@@ -139,8 +139,6 @@ export async function runPlayground(
     ];
     if (stage === "decode") {
       args.push(`--decode=${request.decode}`);
-      if (request.decode === "real")
-        args.push(`--precision-real=${request.precision}`);
     }
     const result = await command(
       await load("ski-interpreter"),

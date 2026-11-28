@@ -94,13 +94,9 @@ decodeGraph spec limit graph = case runDecode spec of
   Just "boolean" -> showDecoded "Boolean" show (decodeBoolean limit graph)
   Just "integer" -> showDecoded "Integer" show (decodeInteger limit graph)
   Just "rational" -> showDecoded "Rational" renderRational (decodeRational limit graph)
-  Just "real" -> do
-    index <- maybe (Right 0) Right (runPrecisionReal spec)
-    if index < 0
-      then Left "precisionReal must be nonnegative"
-      else
-        showDecoded "Real" renderRational (decodeReal limit (fromInteger index) graph)
   Just name -> case parseDecodeType name of
+    Just (RealType index) ->
+      showDecoded "Real" renderRational (decodeReal limit index graph)
     Just StringType ->
       showComposite (decodeComposite limit StringType graph)
     Just kind@(EncodedStringType _ _) ->

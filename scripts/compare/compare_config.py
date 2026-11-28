@@ -103,11 +103,10 @@ def method_spec(
     compiler: str,
     interpreter: str,
     source: str | Callable[[Point], str],
-    decode_mode: str,
+    decode_mode: str | Callable[[Point], str],
     label: Callable[[Point], str],
     *,
     encode: str | None = None,
-    precision: Callable[[Point], int] | None = None,
     compile_context: str | None = None,
 ) -> MethodSpec[Point]:
     """Compile fixed source once, or generate and compile source for each input."""
@@ -128,10 +127,9 @@ def method_spec(
         return decode(
             interpreter,
             graph_for(point),
-            decode_mode,
+            decode_mode(point) if callable(decode_mode) else decode_mode,
             limit,
             context,
-            precision(point) if precision is not None else None,
         )
 
     return MethodSpec(name, probe, label)

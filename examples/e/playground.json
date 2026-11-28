@@ -6,8 +6,7 @@
       "reduction": "none",
       "natural": "church",
       "string": "church<binary>",
-      "decode": "real",
-      "precision": 3,
+      "decode": "real:3",
       "steps": 1000000
     },
     "binomial-upper.lambda": {
@@ -15,8 +14,7 @@
       "reduction": "none",
       "natural": "church",
       "string": "church<binary>",
-      "decode": "real",
-      "precision": 3,
+      "decode": "real:3",
       "steps": 1000000
     },
     "factorial.lambda": {
@@ -24,8 +22,7 @@
       "reduction": "none",
       "natural": "church",
       "string": "church<binary>",
-      "decode": "real",
-      "precision": 3,
+      "decode": "real:3",
       "steps": 1000000
     }
   }

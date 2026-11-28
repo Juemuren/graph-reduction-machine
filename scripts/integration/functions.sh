@@ -218,7 +218,7 @@ _grm_encode_string_completions() {
 _grm_decode_completions() {
     local rest=$1 prefix='' expected='type' candidate top
     local -a stack=()
-    local -a types=(natural scott-natural binary-natural boolean integer rational string 'list<' 'scott-list<' 'pair<')
+    local -a types=(natural scott-natural binary-natural boolean integer rational real real:0 string 'list<' 'scott-list<' 'pair<')
 
     while IFS= read -r candidate; do
         types+=("string:$candidate")
@@ -239,9 +239,8 @@ _grm_decode_completions() {
                     rest=${rest#pair<}
                     ;;
                 *)
-                    if [[ $rest =~ ^(natural|scott-natural|binary-natural|boolean|integer|rational|string|real|string:(church|scott)\<(church|scott|binary)\>)([,\>]|$) ]]; then
+                    if [[ $rest =~ ^(natural|scott-natural|binary-natural|boolean|integer|rational|string|real(:[0-9]+)?|string:(church|scott)\<(church|scott|binary)\>)([,\>]|$) ]]; then
                         candidate=${BASH_REMATCH[1]}
-                        [[ $candidate == real && ${#stack[@]} -gt 0 ]] && break
                         prefix+=$candidate
                         rest=${rest#"$candidate"}
                         expected=after
@@ -272,13 +271,13 @@ _grm_decode_completions() {
 
     COMPREPLY=()
     if [[ $expected == type ]]; then
-        if ((${#stack[@]} == 0)); then
-            types+=(real)
-        fi
         for candidate in "${types[@]}"; do
             [[ $candidate == "$rest"* ]] && COMPREPLY+=("$prefix$candidate")
         done
     elif [[ -z $rest ]]; then
+        if [[ $prefix == *real ]]; then
+            COMPREPLY+=("$prefix:0")
+        fi
         if [[ $prefix == *string ]]; then
             for candidate in "${types[@]}"; do
                 [[ $candidate == string:* ]] && COMPREPLY+=("${prefix%string}$candidate")

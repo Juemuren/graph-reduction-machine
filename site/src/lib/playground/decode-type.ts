@@ -1,10 +1,4 @@
-type Slot =
-  | "root"
-  | "type"
-  | "list-encoding"
-  | "character-encoding"
-  | ","
-  | ">";
+type Slot = "type" | "list-encoding" | "character-encoding" | "," | ">";
 
 const scalarTypes = [
   "natural",
@@ -13,15 +7,21 @@ const scalarTypes = [
   "boolean",
   "integer",
   "rational",
+  "real",
   "string",
 ];
 
 function choices(slot: Slot): string[] {
   switch (slot) {
-    case "root":
-      return [...choices("type"), "real"];
     case "type":
-      return [...scalarTypes, "list<", "scott-list<", "pair<", "string:"];
+      return [
+        ...scalarTypes,
+        "list<",
+        "scott-list<",
+        "pair<",
+        "string:",
+        "real:",
+      ];
     case "list-encoding":
       return ["church<", "scott<"];
     case "character-encoding":
@@ -33,7 +33,9 @@ function choices(slot: Slot): string[] {
 
 function consume(expected: Slot[], token: string) {
   const slot = expected.pop();
-  if (!slot || !choices(slot).includes(token)) return false;
+  if (!slot) return false;
+  if (slot === "type" && /^real:[0-9]+$/.test(token)) return true;
+  if (token === "real:" || !choices(slot).includes(token)) return false;
   switch (token) {
     case "pair<":
       expected.push(">", "type", ",", "type");
@@ -54,8 +56,8 @@ function consume(expected: Slot[], token: string) {
 }
 
 function parsePrefix(value: string) {
-  const expected: Slot[] = ["root"];
-  const token = /\s*([a-z-]+[<:]?|[,>])/y;
+  const expected: Slot[] = ["type"];
+  const token = /\s*(real:[0-9]+|[a-z-]+[<:]?|[,>])/y;
   let offset = 0;
   while (offset < value.length) {
     const match = token.exec(value);
@@ -70,8 +72,6 @@ function parsePrefix(value: string) {
 }
 
 export function validDecode(value: string) {
-  // Preserve the preset format's requirement for an exact top-level real.
-  if (value.trim() === "real") return value === "real";
   return !/\s$/.test(value) && parsePrefix(value)?.length === 0;
 }
 

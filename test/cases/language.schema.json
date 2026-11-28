@@ -51,12 +51,9 @@
         "encodeNatural": { "enum": ["church", "scott", "binary"] },
         "encodeString": { "enum": ["church<church>", "church<scott>", "church<binary>", "scott<church>", "scott<scott>", "scott<binary>"] },
         "maxSteps": { "type": "integer", "minimum": 1 },
-        "decode": { "type": "string", "minLength": 1 },
-        "precisionReal": { "type": "integer", "minimum": 0 }
+        "decode": { "type": "string", "minLength": 1 }
       },
-      "additionalProperties": false,
-      "if": { "required": ["precisionReal"] },
-      "then": { "properties": { "decode": { "const": "real" } }, "required": ["decode"] }
+      "additionalProperties": false
     },
     "expectation": {
       "oneOf": [

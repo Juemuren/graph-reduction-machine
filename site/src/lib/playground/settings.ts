@@ -17,7 +17,7 @@ export function supportsStage(path: string, stage: string) {
   );
 }
 
-export function runOptions(path: string, stage: string, decode: string) {
+export function runOptions(path: string, stage: string) {
   const compiler = path.endsWith(".lambda");
   const interpreter = stage === "interpret" || stage === "decode";
   return {
@@ -25,7 +25,6 @@ export function runOptions(path: string, stage: string, decode: string) {
     reduction: compiler && stage !== "expand",
     interpreter,
     decode: stage === "decode",
-    precision: stage === "decode" && decode === "real",
   };
 }
 
@@ -39,15 +38,9 @@ export function parsePreset(
   const fields = value as Record<string, unknown>;
   for (const key of Object.keys(fields)) {
     if (
-      ![
-        "stage",
-        "reduction",
-        "natural",
-        "string",
-        "decode",
-        "precision",
-        "steps",
-      ].includes(key)
+      !["stage", "reduction", "natural", "string", "decode", "steps"].includes(
+        key,
+      )
     ) {
       throw new Error(`未知字段 ${key}`);
     }
@@ -71,7 +64,7 @@ export function parsePreset(
     );
   }
 
-  function integer(key: "steps" | "precision") {
+  function integer(key: "steps") {
     return required(
       key,
       (item): item is number =>
@@ -84,7 +77,7 @@ export function parsePreset(
 
   const stage = choice("stage", Object.keys(stageLabels)) as Stage;
   if (!supportsStage(path, stage)) throw new Error("当前文件不支持该运行阶段");
-  const options = runOptions(path, stage, "");
+  const options = runOptions(path, stage);
   const preset: Pick<Settings, "stage"> & Partial<Settings> = { stage };
   if (options.reduction) preset.reduction = choice("reduction", reductions);
   if (options.compiler) {
@@ -98,9 +91,6 @@ export function parsePreset(
       (item): item is string =>
         typeof item === "string" && validDecode(item.trim()),
     ).trim();
-    if (runOptions(path, stage, preset.decode).precision) {
-      preset.precision = integer("precision");
-    }
   }
   return preset;
 }

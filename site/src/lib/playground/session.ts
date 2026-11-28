@@ -7,7 +7,6 @@ export interface RunRequest {
   natural: string;
   string: string;
   decode: string;
-  precision: number;
   steps: number;
 }
 

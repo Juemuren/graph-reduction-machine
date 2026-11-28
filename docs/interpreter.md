@@ -173,13 +173,19 @@
 - 用 `--decode=binary-natural` 解码二进制自然数
 - 用 `--decode=integer` 解码整数
 - 用 `--decode=rational` 解码有理数
-- 用 `--decode=real` 解码实数，用 `--precision-real=N` 指定解码时使用的自然数下标为 `N`
-- 用 `--decode=string` 解码用 Church 列表和 Binary 自然数表示的字符串，等价于 `--decode=string:church<binary>`
-- 用 `--decode=string:L<N>` 解码用 `L` 列表和 `N` 自然数表示的字符串，其中 `L` 可以是 `church` / `scott`，`N` 可以是 `church` / `scott` / `binary`
+- 用 `--decode=real:N` 解码实数。其中 `N` 是有理数序列的自然数下标。`--decode=real` 等价于 `--decode=real:0`
+- 用 `--decode=string:L<N>` 解码用 `L` 列表和 `N` 自然数表示的字符串，其中 `L` 可以是 `church` / `scott`，`N` 可以是 `church` / `scott` / `binary`。`--decode=string` 等价于 `--decode=string:church<binary>`
 - 用 `--decode=list<T>` 解码 Church 列表
 - 用 `--decode=scott-list<T>` 解码 Scott 列表
 - 用 `--decode=pair<A,B>` 解码 Church 有序对
 - `--decode` 不能与 `--share` 同时使用
 - `--decode` 不能与 `--output` 同时使用
 
-其中 `T`、`A`、`B` 可以是 `natural` / `scott-natural` / `binary-natural` / `boolean` / `integer` / `rational` / `string` / `string:L<N>`，也可以是嵌套的 `list<T>` / `scott-list<T>` / `pair<A,B>`；`real` 目前不能用于复合类型。
+其中 `T`、`A`、`B` 可以是 `natural` / `scott-natural` / `binary-natural` / `boolean` / `integer` / `rational` / `real` / `real:N` / `string` / `string:L<N>`，也可以是嵌套的 `list<T>` / `scott-list<T>` / `pair<A,B>`。
+
+例如：
+
+- `--decode='list<list<natural>>'` 表示解码列表，其中各元素为自然数列表
+- `--decode='pair<list<boolean>, natural>'` 表示解码有序对，其中第一分量为布尔值列表，第二分量为自然数的有序对
+- `--decode='list<string:scott<binary>>'` 表示解码列表，其中各元素为用 Scott 列表和 Binary 自然数表示的字符串
+- `--decode='pair<real:1,real:5>'` 表示解码有序对，其中第一分量为取下标 `1` 的实数，第二分量为取下标 `5` 的实数

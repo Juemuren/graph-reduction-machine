@@ -125,18 +125,6 @@ const runnableExamples = (await examples()).filter(({ files }) =>
               >
               <ul id="decode-types" role="listbox" aria-label="解码类型候选" hidden></ul>
             </div>
-            <div class="settings-group" id="precision-options" hidden>
-              <label for="precision">实数精度</label>
-              <input
-                id="precision"
-                type="number"
-                value="0"
-                min="0"
-                max={maxRunInteger}
-                step="1"
-                required
-              >
-            </div>
           </div>
         </fieldset>
       </div>

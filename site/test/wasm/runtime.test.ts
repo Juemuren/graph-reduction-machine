@@ -14,29 +14,34 @@ const defaults: RunRequest = {
   natural: "church",
   string: "church<binary>",
   decode: "natural",
-  precision: 0,
   steps: 100_000,
+};
+
+const loadProgram: Parameters<typeof runPlayground>[1] = async (program) => {
+  const file = new URL(
+    `../../public/playground/${program}.wasm`,
+    import.meta.url,
+  );
+  return WebAssembly.compile(await readFile(file));
 };
 
 Deno.test("Playground WASM resolves a relative import and a standard-library builtin", async () => {
   const messages: RunMessage[] = [];
-  await runPlayground({
-    ...defaults,
-    entry: "src/main.lambda",
-    files: [
-      [
-        "src/main.lambda",
-        '@< "../lib/helper.lambda" (number);\n@! ADD number 3;',
+  await runPlayground(
+    {
+      ...defaults,
+      entry: "src/main.lambda",
+      files: [
+        [
+          "src/main.lambda",
+          '@< "../lib/helper.lambda" (number);\n@! ADD number 3;',
+        ],
+        ["lib/helper.lambda", "@> number = 2;"],
       ],
-      ["lib/helper.lambda", "@> number = 2;"],
-    ],
-  }, async (program) => {
-    const file = new URL(
-      `../../public/playground/${program}.wasm`,
-      import.meta.url,
-    );
-    return WebAssembly.compile(await readFile(file));
-  }, (message) => messages.push(message));
+    },
+    loadProgram,
+    (message) => messages.push(message),
+  );
 
   const result = messages.at(-1);
   assert.ok(result && "output" in result, JSON.stringify(messages));

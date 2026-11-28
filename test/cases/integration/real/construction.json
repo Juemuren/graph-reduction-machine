@@ -6,8 +6,7 @@
       "source": "@! E;\n",
       "stage": "decode",
       "options": {
-        "precisionReal": 0,
-        "decode": "real"
+        "decode": "real:0"
       },
       "expect": {
         "value": "1/1"
@@ -19,8 +18,7 @@
       "source": "@! E;\n",
       "stage": "decode",
       "options": {
-        "precisionReal": 2,
-        "decode": "real"
+        "decode": "real:2"
       },
       "expect": {
         "value": "5/2"
@@ -32,8 +30,7 @@
       "source": "@! PI;\n",
       "stage": "decode",
       "options": {
-        "precisionReal": 0,
-        "decode": "real"
+        "decode": "real:0"
       },
       "expect": {
         "value": "10/3"
@@ -45,9 +42,8 @@
       "source": "@! PI;\n",
       "stage": "decode",
       "options": {
-        "precisionReal": 1,
         "maxSteps": 2000000,
-        "decode": "real"
+        "decode": "real:1"
       },
       "expect": {
         "value": "505/162"
@@ -59,8 +55,7 @@
       "source": "@! NTOR THREE;\n",
       "stage": "decode",
       "options": {
-        "precisionReal": 0,
-        "decode": "real"
+        "decode": "real:0"
       },
       "expect": {
         "value": "3/1"
@@ -72,8 +67,7 @@
       "source": "@! QTOR (PAIR (NTOZ ONE) (NTOZ TWO));\n",
       "stage": "decode",
       "options": {
-        "precisionReal": 3,
-        "decode": "real"
+        "decode": "real:3"
       },
       "expect": {
         "value": "1/2"
@@ -85,8 +79,7 @@
       "source": "@! ZTOR (ZNEG (NTOZ TWO));\n",
       "stage": "decode",
       "options": {
-        "precisionReal": 0,
-        "decode": "real"
+        "decode": "real:0"
       },
       "expect": {
         "value": "-2/1"
@@ -98,9 +91,8 @@
       "source": "@! QTOR_LOG (NTOQ TWO) (NTOQ EIGHT);\n",
       "stage": "decode",
       "options": {
-        "precisionReal": 1,
         "maxSteps": 1000000,
-        "decode": "real"
+        "decode": "real:1"
       },
       "expect": {
         "value": "3/1"
@@ -112,9 +104,8 @@
       "source": "@! QTOR_LOG (NTOQ TWO) (NTOQ THREE);\n",
       "stage": "decode",
       "options": {
-        "precisionReal": 0,
         "maxSteps": 1000000,
-        "decode": "real"
+        "decode": "real:0"
       },
       "expect": {
         "value": "1/1"
@@ -126,9 +117,8 @@
       "source": "@! QTOR_LOG (NTOQ TWO) (NTOQ THREE);\n",
       "stage": "decode",
       "options": {
-        "precisionReal": 1,
         "maxSteps": 1000000,
-        "decode": "real"
+        "decode": "real:1"
       },
       "expect": {
         "value": "3/2"
@@ -140,9 +130,8 @@
       "source": "@! QTOR_LOG (PAIR (NTOZ ONE) (NTOZ TWO)) (NTOQ TWO);\n",
       "stage": "decode",
       "options": {
-        "precisionReal": 0,
         "maxSteps": 1000000,
-        "decode": "real"
+        "decode": "real:0"
       },
       "expect": {
         "value": "-1/1"
@@ -154,9 +143,8 @@
       "source": "@! QTOR_LOG (NTOQ TWO) (PAIR (NTOZ ONE) (NTOZ TWO));\n",
       "stage": "decode",
       "options": {
-        "precisionReal": 0,
         "maxSteps": 1000000,
-        "decode": "real"
+        "decode": "real:0"
       },
       "expect": {
         "value": "-1/1"
@@ -168,9 +156,8 @@
       "source": "@! QTOR_POW (ZTOQ (NTOZ_NEG EIGHT)) (PAIR (NTOZ ONE) (NTOZ THREE));\n",
       "stage": "decode",
       "options": {
-        "precisionReal": 3,
         "maxSteps": 2000000,
-        "decode": "real"
+        "decode": "real:3"
       },
       "expect": {
         "value": "-2/1"
@@ -182,9 +169,8 @@
       "source": "@! QTOR_POW (NTOQ TWO) (PAIR (NTOZ ONE) (NTOZ TWO));\n",
       "stage": "decode",
       "options": {
-        "precisionReal": 0,
         "maxSteps": 2000000,
-        "decode": "real"
+        "decode": "real:0"
       },
       "expect": {
         "value": "1/1"
@@ -196,9 +182,8 @@
       "source": "@! QTOR_POW (NTOQ THREE) (PAIR (NTOZ ONE) (NTOZ TWO));\n",
       "stage": "decode",
       "options": {
-        "precisionReal": 2,
         "maxSteps": 2000000,
-        "decode": "real"
+        "decode": "real:2"
       },
       "expect": {
         "value": "3/2"
@@ -210,9 +195,8 @@
       "source": "@! QTOR_POW (NTOQ TWO) (PAIR (NTOZ ONE) (NTOZ TWO));\n",
       "stage": "decode",
       "options": {
-        "precisionReal": 3,
         "maxSteps": 2000000,
-        "decode": "real"
+        "decode": "real:3"
       },
       "expect": {
         "value": "11/8"
@@ -224,9 +208,8 @@
       "source": "@! QTOR_POW (NTOQ FOUR) (PAIR (ZNEG (NTOZ ONE)) (NTOZ TWO));\n",
       "stage": "decode",
       "options": {
-        "precisionReal": 3,
         "maxSteps": 2000000,
-        "decode": "real"
+        "decode": "real:3"
       },
       "expect": {
         "value": "1/2"
@@ -238,9 +221,8 @@
       "source": "@! QTOR_POW (PAIR (ZNEG (NTOZ ONE)) (NTOZ EIGHT)) (PAIR (NTOZ ONE) (NTOZ THREE));\n",
       "stage": "decode",
       "options": {
-        "precisionReal": 3,
         "maxSteps": 2000000,
-        "decode": "real"
+        "decode": "real:3"
       },
       "expect": {
         "value": "-1/2"
@@ -252,8 +234,7 @@
       "source": "@! QTOR_POW (NTOQ TWO) (ZTOQ (ZNEG (NTOZ TWO)));\n",
       "stage": "decode",
       "options": {
-        "precisionReal": 0,
-        "decode": "real"
+        "decode": "real:0"
       },
       "expect": {
         "value": "1/4"

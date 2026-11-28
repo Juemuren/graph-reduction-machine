@@ -42,7 +42,6 @@ export async function startPlayground() {
   const natural = element<HTMLSelectElement>("encode-natural");
   const string = element<HTMLSelectElement>("encode-string");
   const interpreter = element<HTMLFieldSetElement>("interpreter-options");
-  const precision = element<HTMLInputElement>("precision");
   const steps = element<HTMLInputElement>("steps");
   const run = element<HTMLButtonElement>("run");
   const cancel = element<HTMLButtonElement>("cancel");
@@ -106,7 +105,7 @@ export async function startPlayground() {
   }
 
   function updateOptions() {
-    const options = runOptions(activePath, stage.value, decode.value.trim());
+    const options = runOptions(activePath, stage.value);
     for (const option of stage.options) {
       option.disabled = !supportsStage(activePath, option.value);
     }
@@ -115,8 +114,6 @@ export async function startPlayground() {
       !options.reduction;
     interpreter.hidden = interpreter.disabled = !options.interpreter;
     element("decode-options").hidden = decode.disabled = !options.decode;
-    element("precision-options").hidden = precision.disabled =
-      !options.precision;
   }
 
   function renderFiles() {
@@ -316,7 +313,6 @@ export async function startPlayground() {
       natural: natural.value,
       string: string.value,
       decode: decode.value.trim(),
-      precision: precision.valueAsNumber,
       steps: steps.valueAsNumber,
     };
     phase =
@@ -395,8 +391,6 @@ export async function startPlayground() {
       if (preset.natural !== undefined) natural.value = preset.natural;
       if (preset.string !== undefined) string.value = preset.string;
       if (preset.decode !== undefined) decode.value = preset.decode;
-      if (preset.precision !== undefined)
-        precision.valueAsNumber = preset.precision;
       if (preset.steps !== undefined) steps.valueAsNumber = preset.steps;
       updateOptions();
       setStatus("已应用示例预设");

@@ -20,6 +20,7 @@ module Interpreter.Church (
   decodeRealSource,
   decodeRealSourceWithSteps,
   decodeReal,
+  decodeRealAt,
 ) where
 
 import Data.Ratio ((%))
@@ -94,17 +95,17 @@ decodeRealSourceWithSteps ::
   Maybe Int -> Natural -> String -> Either String (Maybe Rational, Natural)
 decodeRealSourceWithSteps limit precision source =
   Graph.pGraph (Graph.myLexer source) >>= \graph ->
-    runGraphWithSteps limit graph $ \root -> do
-      index <- allocate (ChurchNumeral precision)
-      approximation <- allocate (App root index)
-      decodeRationalAt approximation
+    runGraphWithSteps limit graph (decodeRealAt precision)
 
 decodeReal :: Int -> Natural -> Graph.Graph -> Either String (Maybe Rational)
 decodeReal limit precision graph =
-  runGraph limit graph $ \root -> do
-    index <- allocate (ChurchNumeral precision)
-    approximation <- allocate (App root index)
-    decodeRationalAt approximation
+  runGraph limit graph (decodeRealAt precision)
+
+decodeRealAt :: Natural -> Address -> Run (Maybe Rational)
+decodeRealAt precision root = do
+  index <- allocate (ChurchNumeral precision)
+  approximation <- allocate (App root index)
+  decodeRationalAt approximation
 
 decodePairAt :: Address -> Run (Maybe (Address, Address))
 decodePairAt root = do

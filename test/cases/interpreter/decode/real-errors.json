@@ -6,8 +6,7 @@
       "source": "#0 = I;\n",
       "stage": "decode",
       "options": {
-        "precisionReal": 2,
-        "decode": "real"
+        "decode": "real:2"
       },
       "expect": {
         "error": "not a Church Real"

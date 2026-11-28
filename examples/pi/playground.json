@@ -6,8 +6,7 @@
       "reduction": "none",
       "natural": "church",
       "string": "church<binary>",
-      "decode": "real",
-      "precision": 0,
+      "decode": "real:0",
       "steps": 1000000
     },
     "leibniz.lambda": {
@@ -15,8 +14,7 @@
       "reduction": "none",
       "natural": "church",
       "string": "church<binary>",
-      "decode": "real",
-      "precision": 3,
+      "decode": "real:3",
       "steps": 1000000
     },
     "polygon.lambda": {
@@ -24,8 +22,7 @@
       "reduction": "none",
       "natural": "church",
       "string": "church<binary>",
-      "decode": "real",
-      "precision": 1,
+      "decode": "real:1",
       "steps": 1000000
     }
   }
